@@ -1,0 +1,27 @@
+{
+  "name": "nperf",
+  "version": "0.0.0",
+  "authors": [
+    "Michal Niec <michal@npspace.pl>"
+  ],
+  "description": "erlang profiler",
+  "main": "main.js",
+  "keywords": [
+    "nperf"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "Flot": "flot#~0.8.3",
+    "bootstrap": "~3.3.5",
+    "c3": "~0.4.10",
+    "jquery": "~2.1.4",
+    "react": "~0.13.3"
+  }
+}

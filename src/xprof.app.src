@@ -1,0 +1,14 @@
+{application, xprof,
+ [{description, "An OTP application"}
+ ,{vsn, "0.1.0"}
+ ,{registered, []}
+ ,{mod, {'xprof_app', []}}
+ ,{applications,
+   [kernel
+   ,stdlib
+   ,cowboy
+   ,lager
+   ]}
+ ,{env,[]}
+ ,{modules, []}
+ ]}.
