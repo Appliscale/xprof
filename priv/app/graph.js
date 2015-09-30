@@ -28,6 +28,16 @@ export default class Graph extends React.Component {
     componentDidMount() {
         this.graph = new FlotGraph();
         this.graph.init("#" +this.chartId());
+
+        window.addEventListener('resize', this.handleResize.bind(this));
+    }
+
+    componentWillUnmount() {
+        window.removeEventListener('resize', this.handleResize.bind(this));
+    }
+
+    handleResize(e) {
+        this.graph.resize();
     }
 
     getData() {
