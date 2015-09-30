@@ -111,13 +111,11 @@ export default class Graph extends React.Component {
                 lastItem[key] = 0;
             }
 
-            console.log("lastTime", lastTime);
             for (let i=dps.length;i<MAX_DPS;i++){
                 var item = _.clone(lastItem);
                 item.time = lastTime + i;
                 dps.push(item);
             }
-            console.log(dps)
         }
 
         this.graph.update(dps);
@@ -125,7 +123,6 @@ export default class Graph extends React.Component {
     }
 
     handleDataError(jqXHR, error) {
-        console.log("error!", jqXHR.statusCode());
         this.state.error = true;
         this.setState(this.state);
     }
