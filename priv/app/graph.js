@@ -8,7 +8,7 @@ export default class Graph extends React.Component {
     constructor(props) {
         super(props);
         this.startMonitoring();
-        this.state = {dps: []};
+        this.state = {dps: [], error: false};
     }
 
     startMonitoring() {
@@ -34,18 +34,26 @@ export default class Graph extends React.Component {
         var fun = this.props.fun;
         $.ajax({
             url: "/api/data",
-            data: {mod: fun[0], fun: fun[1], arity: fun[2]}
-        }).done(
-            function (data) {
-                var state = this.state;
-                state.dps.push(data);
-                if(state.dps.length > MAX_DPS) {
-                    var truncData = state.dps.slice(state.dps.length - MAX_DPS, state.dps.length);
-                    state.dps = truncData;
-                }
-                this.graph.update(state.dps);
-                this.setState(state);
-            }.bind(this))
+            data: {mod: fun[0], fun: fun[1], arity: fun[2]},
+            success: this.dataHandler.bind(this),
+            error: this.errorHandler.bind(this)})
+    }
+
+    dataHandler(data) {
+        var state = this.state;
+        state.dps.push(data);
+        if(state.dps.length > MAX_DPS) {
+            var truncData = state.dps.slice(state.dps.length - MAX_DPS, state.dps.length);
+            state.dps = truncData;
+        }
+        this.graph.update(state.dps);
+        this.setState(state);
+    }
+
+    errorHandler(jqXHR, error) {
+        console.log("error!", jqXHR.statusCode());
+        this.state.error = true;
+        this.setState(this.state);
     }
 
     close() {
@@ -65,15 +73,20 @@ export default class Graph extends React.Component {
 
     render() {
         var fun = this.props.fun;
-        var dps = this.state.dps;
-        var chartId = this.chartId();
+        var panelType = "panel panel-default ";
+        var errorMsg = "";
+
+        if(this.state.error) {
+            panelType += "panel-danger";
+            errorMsg = <strong>  -  communication error</strong>;
+        }
 
         return (
-            <div className="panel panel-default">
+            <div className={panelType}>
                 <div className="panel-heading">
                     <button onClick={this.close.bind(this)} type="button" className="close" data-dismiss="modal"
                             aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                    <h3 className="panel-title">{fun[0]}:{fun[1]}/{fun[2]}</h3>
+                    <h3 className="panel-title">{fun[0]}:{fun[1]}/{fun[2]}{errorMsg}</h3>
                 </div>
                 <div className="panel-body">
                     <div id={this.chartId()} className="chart">
