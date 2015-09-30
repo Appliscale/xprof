@@ -90,15 +90,18 @@ class FunctionBrowser extends React.Component {
         var value = this.state.value;
 
         return (
-            <div className="col-md-11">
-                <div className="input-group input-group-lg">
-                    <span className="input-group-addon" id="sizing-addon3">{'>'}</span>
-                    <input ref='searchBox' type="text" className="form-control"
-                           placeholder="Function" aria-describedby="sizing-addon3"
-                           value={value} onChange={this.handleChange.bind(this)}/>
+            <form className="navbar-form">
+                <div className="form-group" style={{display:"inline"}}>
+                    <div className="input-group">
+                        <span className="input-group-addon" id="sizing-addon3">{'>'}</span>
+                        <input ref='searchBox' type="text" className="form-control"
+                               placeholder="Function" aria-describedby="sizing-addon3"
+                               value={value} onChange={this.handleChange.bind(this)}/>
+                    </div>
+
+                    <ACModal ref='acm' addGraph={this.props.addGraph}></ACModal>
                 </div>
-                <ACModal ref='acm' addGraph={this.props.addGraph}></ACModal>
-            </div>
+            </form>
         )
     }
 }
@@ -156,25 +159,15 @@ class App extends React.Component {
     render() {
         return (
             <div className="container-fluid">
-                <nav className="navbar navbar-inverse  navbar-fixed-top">
-                    <div className="container-fluid">
+                <nav className="navbar navbar-inverse navbar-fixed-top">
+                    <div className="navbar-header">
 
-                        <div className="row">
-                            <div className="col-md-1">&nbsp;
-                            </div>
-                        </div>
+                        <a className="navbar-brand" href="#">XProf</a>
+                    </div>
 
-                        <div className="row">
-                            <div className="col-md-1">
-                            </div>
-                            <FunctionBrowser ref='functionBrowser' addGraph={this.addGraph.bind(this)}/>
-                        </div>
 
-                        <div className="row">
-                            <div className="col-md-1">&nbsp;
-                            </div>
-                        </div>
-
+                    <div className="navbar-collapse collapse" id="navbar-collapsible">
+                        <FunctionBrowser ref='functionBrowser' addGraph={this.addGraph.bind(this)}/>
                     </div>
                 </nav>
                 <GraphPanel ref='graphPanel'/>
