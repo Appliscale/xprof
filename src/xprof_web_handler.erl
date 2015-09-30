@@ -23,39 +23,48 @@ handle_req(<<"funs">>, Req, State) ->
     Funs = lists:sort(xprof_vm_info:get_available_funs(Query)),
     Json = jiffy:encode(Funs),
 
-    lager:debug("Returning ~b functions matching phrase \"~s\"",
-                [length(Funs), Query]),
-
+    lager:info("Returning ~b functions matching phrase \"~s\"",
+               [length(Funs), Query]),
 
     {ok, Req2} = cowboy_req:reply(200,
-                                  [{<<"content-type">>, <<"application/json">>}],
+                                  [{<<"content-type">>,
+                                    <<"application/json">>}],
                                   Json,
                                   Req),
     {ok, Req2, State};
 handle_req(<<"mon_start">>, Req, State) ->
-    {M,F,A} = get_mfa(Req),
+    MFA = {M,F,A} = get_mfa(Req),
 
-    lager:debug("Starting monitoring on ~w:~w:~b~n",[M,F,A]),
+    lager:info("Starting monitoring on ~w:~w:~b~n",[M,F,A]),
 
-    xprof_tracer:monitor_fun({M,F,A}, true),
+    xprof_tracer:monitor_fun(MFA),
     {ok, Req, State};
 
 
 handle_req(<<"mon_stop">>, Req, State) ->
-    {M,F,A} = get_mfa(Req),
+    MFA = {M,F,A} = get_mfa(Req),
 
-    lager:debug("Stopping monitoring on ~w:~w:~b~n",[M,F,A]),
+    lager:info("Stopping monitoring on ~w:~w:~b~n",[M,F,A]),
 
-    xprof_tracer:monitor_fun({M,F,A}, true),
+    xprof_tracer:demonitor_fun(MFA),
     {ok, Req, State};
 
 handle_req(<<"data">>, Req, State) ->
-    Vals = xprof_tracer:pull_data(Req),
-    Json = jiffy:encode({Vals}),
-    {ok, Req2} = cowboy_req:reply(200,
-                                  [{<<"content-type">>, <<"application/json">>}],
-                                  Json, Req),
-    {ok, Req2, State}.
+    MFA = get_mfa(Req),
+    {ok, ResReq} =
+        case xprof_hist_db:exists(MFA) of
+            true ->
+                Vals = xprof_tracer:pull_data(MFA),
+                Json = jiffy:encode({Vals}),
+
+                cowboy_req:reply(200,
+                                 [{<<"content-type">>,
+                                   <<"application/json">>}],
+                                 Json, Req);
+            false ->
+                cowboy_req:reply(404, Req)
+        end,
+    {ok, ResReq, State}.
 
 %% Helpers
 
