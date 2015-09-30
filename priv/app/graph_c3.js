@@ -3,6 +3,8 @@ import 'jquery';
 import 'bootstrap/dist/css/bootstrap.css';
 import 'flot';
 
+// NOT IMPLEMENTED !!!!!!
+
 export default class C3Graph  {
     init(divid) {
        this.divid = divid;
