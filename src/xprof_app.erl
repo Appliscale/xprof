@@ -12,7 +12,7 @@
 %% API
 
 start(_StartType, _StartArgs) ->
-    init_ets(),
+    xprof_hist_db:init(),
     xprof_tracer:start(),
     start_cowboy(),
     xprof_sup:start_link().
@@ -20,7 +20,7 @@ start(_StartType, _StartArgs) ->
 stop(_State) ->
     stop_cowboy(),
     xprof_tracer:stop(),
-    finalize_ets(),
+    xprof_hist_db:finalize(),
     ok.
 
 %% Internal functions
@@ -39,9 +39,3 @@ cowboy_routes() ->
 
 stop_cowboy() ->
     cowboy:stop_listener(nperf_http_listener).
-
-init_ets() ->
-    ets:new(nperf_hists, [named_table, {read_concurrency, true}, public]).
-
-finalize_ets() ->
-    ets:delete(nperf_hists).
