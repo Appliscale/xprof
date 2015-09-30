@@ -7,7 +7,7 @@ var config = {
     // specify that react should be part of that chunk
     entry: {
         app: ['./app/graph_flot.js', './app/main.js'],
-        vendors: ['jquery', 'react', 'bootstrap', 'd3', 'flot']
+        vendors: ['jquery', 'underscore','react', 'bootstrap', 'd3', 'flot']
     },
     resolve: {
         root: [path.join(__dirname, "bower_components")],
@@ -18,7 +18,8 @@ var config = {
         new webpack.optimize.CommonsChunkPlugin('vendors', 'vendors.js'),
         new webpack.ProvidePlugin({
             $: "jquery",
-            jQuery: "jquery"
+            jQuery: "jquery",
+            _: "underscore"
         })
     ],
     output: {

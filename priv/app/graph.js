@@ -1,8 +1,9 @@
 import React from 'react';
+import 'underscore';
 import FlotGraph from  "./graph_flot.js"
 
 const UPDATE_INTERVAL = 1000;
-const MAX_DPS = 10 * 60; //10 minutes
+const MAX_DPS = 5 * 60; //10 minutes
 
 export default class Graph extends React.Component {
     constructor(props) {
@@ -92,12 +93,34 @@ export default class Graph extends React.Component {
 
     handleData(data) {
         var state = this.state;
+        var dps = [];
         state.dps.push(data);
+
+        /* truncrate data if needed */
         if(state.dps.length > MAX_DPS) {
             var truncData = state.dps.slice(state.dps.length - MAX_DPS, state.dps.length);
             state.dps = truncData;
+            dps = truncData;
         }
-        this.graph.update(state.dps);
+        /* pad data to maintain fixed width graph */
+        else {
+            dps = state.dps;
+            var lastItem = _.last(state.dps);
+            var lastTime = lastItem.time;
+            for(var key in lastItem){
+                lastItem[key] = 0;
+            }
+
+            console.log("lastTime", lastTime);
+            for (let i=dps.length;i<MAX_DPS;i++){
+                var item = _.clone(lastItem);
+                item.time = lastTime + i;
+                dps.push(item);
+            }
+            console.log(dps)
+        }
+
+        this.graph.update(dps);
         this.setState(state);
     }
 
