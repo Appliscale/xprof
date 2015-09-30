@@ -4,7 +4,7 @@ import 'bootstrap/dist/css/bootstrap.css';
 import d3 from 'd3';
 import c3 from 'c3/c3';
 import 'flot';
-import FlotGraph from  "./graph_flot.jsx";
+import FlotGraph from  "./graph_flot.js";
 
 const UPDATE_INTERVAL = 1000;
 const MAX_DPS = 10 * 60; //10 minutes
