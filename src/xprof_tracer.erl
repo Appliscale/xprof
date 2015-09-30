@@ -21,7 +21,9 @@ monitor_fun(MFA, true) ->
         _Ref -> monitor_fun(MFA, false)
     end,
     {ok, Ref} = hdr_histogram:open(1000000,3),
-    ets:insert(nperf_hists, {MFA, Ref}),
+
+    xprof_hist_db:put(MFA, Ref),
+
     dbg:tpl(MFA, x),
     ok;
 monitor_fun(MFA, false) ->
@@ -38,7 +40,7 @@ get_hist(Key) ->
 
 -spec pull_data(mfa()) -> proplists:proplist().
 pull_data(MFA) ->
-    HistRef = get_hist(MFA),
+    HistRef = xprof_hist_db:get(MFA),
     Vals = get_hdr_items(HistRef),
     hdr_histogram:reset(HistRef),
     Vals.
@@ -62,7 +64,7 @@ get_hdr_items(HistRef) ->
      {"count",   hdr_histogram:get_total_count(HistRef)}].
 
 print_stats(MFA) ->
-    HistRef = get_hist(MFA),
+    HistRef = xprof_hist_db:get(MFA),
     io:format("Min ~p~n",         [hdr_histogram:min(HistRef)]),
     io:format("Mean ~.3f~n",      [hdr_histogram:mean(HistRef)]),
     io:format("Median ~.3f~n",    [hdr_histogram:median(HistRef)]),
