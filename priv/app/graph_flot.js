@@ -4,6 +4,7 @@ import 'bootstrap/dist/css/bootstrap.css';
 import 'flot';
 import "Flot/jquery.flot.fillbetween.js";
 import "Flot/jquery.flot.time.js";
+
 export default class FlotGraph  {
     init(divid) {
         this.divid = divid;
@@ -30,6 +31,12 @@ export default class FlotGraph  {
                 show: true
 			}
 		});
+    }
+
+    resize(){
+        this.plot.resize();
+        this.plot.setupGrid();
+        this.plot.draw();
     }
 
     update(data:Array) {
