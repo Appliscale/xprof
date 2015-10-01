@@ -8673,14 +8673,10 @@ webpackJsonp([0],[
 	            /* pad data to maintain fixed width graph */
 	            else {
 	                    dps = state.dps;
-	                    var lastItem = _.last(state.dps);
-	                    var lastTime = lastItem.time;
-	                    for (var key in lastItem) {
-	                        lastItem[key] = 0;
-	                    }
+	                    var lastTime = _.last(state.dps).time;
 
 	                    for (var i = dps.length; i < MAX_DPS; i++) {
-	                        var item = _.clone(lastItem);
+	                        var item = {};
 	                        item.time = lastTime + i;
 	                        dps.push(item);
 	                    }
