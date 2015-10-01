@@ -86,18 +86,12 @@ print_stats(MFA) ->
 
 process_trace({trace, Pid, call, MFArgs}, Dict) ->
     Key = key(Pid,MFArgs),
-    io:format("Pid: ~p~n",[Pid]),
-    lager:info("MFA: ~p", [MFArgs]),
-
     dict:store(Key, os:timestamp(), Dict);
 process_trace({trace, Pid, return_from, MFA, _},Dict) ->
     Key = key(Pid, MFA),
-
-
     EndTime = os:timestamp(),
     StartTime = dict:fetch(Key, Dict),
     Time = timer:now_diff(EndTime, StartTime),
-    lager:info("MFA: ~p", [MFA]),
     HistRef = xprof_hist_db:get(MFA),
     hdr_histogram:record(HistRef, Time),
 

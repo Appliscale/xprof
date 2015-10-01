@@ -23,7 +23,7 @@ handle_req(<<"funs">>, Req, State) ->
     Funs = lists:sort(xprof_vm_info:get_available_funs(Query)),
     Json = jiffy:encode(Funs),
 
-    lager:info("Returning ~b functions matching phrase \"~s\"",
+    lager:debug("Returning ~b functions matching phrase \"~s\"",
                [length(Funs), Query]),
 
     {ok, Req2} = cowboy_req:reply(200,
