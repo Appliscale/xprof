@@ -92,9 +92,10 @@ process_trace({trace, Pid, return_from, MFA, _},Dict) ->
     EndTime = os:timestamp(),
     StartTime = dict:fetch(Key, Dict),
     Time = timer:now_diff(EndTime, StartTime),
-    HistRef = xprof_hist_db:get(MFA),
-    hdr_histogram:record(HistRef, Time),
-
+    case xprof_hist_db:get(MFA) of
+        no_hist -> lager:warn("No histogram for ~p",[MFA]);
+        Ref -> hdr_histogram:record(Ref, Time)
+    end,
     dict:erase(Key, Dict);
 process_trace(Msg, _) ->
     lager:error("Received unexpected trace message: ~p~n",[Msg]).
