@@ -1,108 +1,98 @@
+%% -*- erlang-indent-level: 4;indent-tabs-mode: nil -*-
+%% ex: ts=4 sw=4 et
+
 -module(xprof_tracer).
 
--include("xprof.hrl").
+-behaviour(gen_server).
 
--export([start/0, stop/0,
-         monitor_fun/1, demonitor_fun/1,
-         pull_data/1, print_stats/1]).
+-export([start_link/0, monitor/1, demonitor/1, data/2]).
 
--spec start() -> ok.
-%% @doc Starts DBG tracer for all processes in the VM.
-start() ->
-    dbg:tracer(process, {fun process_trace/2, dict:new()}),
-    {ok, _} = dbg:p(all, [c]),
+%% gen_server callbacks
+-export([init/1,
+         handle_call/3,
+         handle_cast/2,
+         handle_info/2,
+         terminate/2,
+         code_change/3]).
+
+-record(state, {}).
+
+-spec start_link() -> {ok, pid()}.
+start_link() ->
+    gen_server:start_link({local, ?MODULE}, ?MODULE, [], []).
+
+-spec monitor(mfa()) -> ok.
+monitor({Mod, Fun, Arity} = MFA) ->
+    lager:info("Starting monitoring ~w:~w/~b",[Mod,Fun,Arity]),
+    gen_server:call(?MODULE, {monitor, MFA}).
+
+-spec demonitor(mfa()) -> ok.
+demonitor({Mod, Fun, Arity} = MFA) ->
+    lager:info("Stopping monitoring ~w:~w/~b",[Mod,Fun,Arity]),
+    gen_server:call(?MODULE, {demonitor, MFA}).
+
+-spec data(mfa(), non_neg_integer()) ->
+                  proplists:proplist() | {error, not_found}.
+data(MFA, TS) ->
+    xprof_tracer_handler:data(MFA, TS).
+
+%% gen_server callbacks
+
+init([]) ->
+    init_tracer(),
+    {ok, #state{}}.
+
+handle_call({monitor, MFA}, _From, State) ->
+    case get({handler, MFA}) of
+        Pid when is_pid(Pid) ->
+            {reply, {error, already_traced}, State};
+        undefined ->
+            {ok, Pid} = supervisor:start_child(xprof_tracer_handler_sup, [MFA]),
+            put({handler, MFA}, Pid),
+            erlang:trace_pattern(MFA, true, [local]),
+            {reply, ok, State}
+    end;
+handle_call({demonitor, MFA}, _From, State) ->
+    erlang:trace_pattern(MFA, false, [local]),
+    Pid = erase({handler, MFA}),
+    supervisor:terminate_child(xprof_tracer_handler_sup, Pid),
+
+    {reply, ok, State};
+handle_call(_Request, _From, State) ->
+    {reply, ignored, State}.
+
+handle_cast(_Msg, State) ->
+    {noreply, State}.
+
+handle_info(Msg = {trace_ts, TracedPid, call, {M,F,Args}, _StartTime}, State) ->
+    MFA = {M,F,length(Args)},
+    case get({handler, MFA}) of
+        undefined ->
+            ok;
+        Pid ->
+            put({proc, TracedPid}, Pid),
+            erlang:send(Pid, Msg)
+    end,
+    {noreply, State};
+handle_info(Msg = {trace_ts, TracedPid, return_to, _, _StartTime}, State) ->
+    case erase({proc, TracedPid}) of
+        undefined ->
+            {noreply, State};
+        Pid ->
+            erlang:send(Pid, Msg),
+            {noreply, State}
+    end;
+handle_info(_Info, State) ->
+    {noreply, State}.
+
+terminate(_Reason, _State) ->
     ok.
 
-%% @doc Stops dbg and clears all trace patterns.
-%% @see dbg:stop_clear/0
--spec stop() -> ok.
-stop() ->
-    dbg:stop_clear().
+code_change(_OldVsn, State, _Extra) ->
+    {ok, State}.
 
-%% @doc Starts monitoring for particular function call.
--spec monitor_fun(mfa()) -> true.
-monitor_fun(MFA) ->
-    {ok, Ref} = hdr_histogram:open(1000000,3),
+%% Internal functions
 
-    xprof_hist_db:put(MFA, Ref),
-
-    dbg:tpl(MFA, x),
-    true.
-
--spec demonitor_fun(mfa()) -> boolean().
-demonitor_fun(MFA) ->
-    case xprof_hist_db:exists(MFA) of
-        true ->
-            Ref = xprof_hist_db:get(MFA),
-            hdr_histogram:close(Ref),
-
-            dbg:ctp(MFA),
-
-            xprof_hist_db:erase(MFA),
-            true;
-        false ->
-            false
-    end.
-
--spec pull_data(mfa()) -> proplists:proplist().
-pull_data(MFA) ->
-    HistRef = xprof_hist_db:get(MFA),
-    Vals = get_hdr_items(HistRef),
-    hdr_histogram:reset(HistRef),
-    Vals.
-
-get_hdr_items(HistRef) ->
-    {MS, S,_} = os:timestamp(),
-    Time = MS * 1000000 + S,
-    [{time, Time},
-     {min,      hdr_histogram:min(HistRef)},
-     {mean,     hdr_histogram:mean(HistRef)},
-     {median,   hdr_histogram:median(HistRef)},
-     {max,      hdr_histogram:max(HistRef)},
-     {stddev,   hdr_histogram:stddev(HistRef)},
-     {p25,      hdr_histogram:percentile(HistRef,25.0)},
-     {p50,      hdr_histogram:percentile(HistRef,50.0)},
-     {p75,      hdr_histogram:percentile(HistRef,75.0)},
-     {p90,      hdr_histogram:percentile(HistRef,90.0)},
-     {p99,      hdr_histogram:percentile(HistRef,99.0)},
-     {p9999999, hdr_histogram:percentile(HistRef,99.9999)},
-     {memsize,  hdr_histogram:get_memory_size(HistRef)},
-     {count,    hdr_histogram:get_total_count(HistRef)}].
-
-print_stats(MFA) ->
-    HistRef = xprof_hist_db:get(MFA),
-    io:format("Min ~p~n",         [hdr_histogram:min(HistRef)]),
-    io:format("Mean ~.3f~n",      [hdr_histogram:mean(HistRef)]),
-    io:format("Median ~.3f~n",    [hdr_histogram:median(HistRef)]),
-    io:format("Max ~p~n",         [hdr_histogram:max(HistRef)]),
-    io:format("Stddev ~.3f~n",    [hdr_histogram:stddev(HistRef)]),
-    io:format("99ile ~.3f~n",     [hdr_histogram:percentile(HistRef,99.0)]),
-    io:format("99.9999ile ~.3f~n",[hdr_histogram:percentile(HistRef,99.9999)]),
-    io:format("Memory Size ~p~n", [hdr_histogram:get_memory_size(HistRef)]),
-    io:format("Total Count ~p~n", [hdr_histogram:get_total_count(HistRef)]).
-
-
-%% Tracer callbacks
-
-process_trace({trace, Pid, call, MFArgs}, Dict) ->
-    Key = key(Pid,MFArgs),
-    dict:store(Key, os:timestamp(), Dict);
-process_trace({trace, Pid, return_from, MFA, _},Dict) ->
-    Key = key(Pid, MFA),
-    EndTime = os:timestamp(),
-    StartTime = dict:fetch(Key, Dict),
-    Time = timer:now_diff(EndTime, StartTime),
-    case xprof_hist_db:get(MFA) of
-        no_hist -> lager:warn("No histogram for ~p",[MFA]);
-        Ref -> hdr_histogram:record(Ref, Time)
-    end,
-    dict:erase(Key, Dict);
-process_trace(Msg, _) ->
-    lager:error("Received unexpected trace message: ~p~n",[Msg]).
-
-%% Helpers
-
-key(Pid, {M,F,A}) when is_list(A) ->
-    key(Pid, {M,F,length(A)});
-key(Pid, {M,F,A}) ->
-    {Pid,{M,F,A}}.
+init_tracer() ->
+    erlang:trace_pattern({'_','_','_'}, false, [local]),
+    erlang:trace(all, true, [timestamp, call, return_to]).

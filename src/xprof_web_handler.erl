@@ -15,6 +15,7 @@ terminate(_Reason, _Req, _State) ->
     ok.
 
 %% Private
+
 %% Handling different HTTP requests
 
 handle_req(<<"funs">>, Req, State) ->
@@ -24,7 +25,7 @@ handle_req(<<"funs">>, Req, State) ->
     Json = jiffy:encode(Funs),
 
     lager:debug("Returning ~b functions matching phrase \"~s\"",
-               [length(Funs), Query]),
+                [length(Funs), Query]),
 
     {ok, Req2} = cowboy_req:reply(200,
                                   [{<<"content-type">>,
@@ -35,35 +36,36 @@ handle_req(<<"funs">>, Req, State) ->
 handle_req(<<"mon_start">>, Req, State) ->
     MFA = {M,F,A} = get_mfa(Req),
 
-    lager:info("Starting monitoring on ~w:~w:~b~n",[M,F,A]),
+    lager:info("Starting monitoring via web on ~w:~w:~b~n",[M,F,A]),
 
-    xprof_tracer:monitor_fun(MFA),
+    xprof_tracer:monitor(MFA),
     {ok, Req, State};
 
 
 handle_req(<<"mon_stop">>, Req, State) ->
     MFA = {M,F,A} = get_mfa(Req),
 
-    lager:info("Stopping monitoring on ~w:~w:~b~n",[M,F,A]),
+    lager:info("Stopping monitoring via web on ~w:~w:~b~n",[M,F,A]),
 
-    xprof_tracer:demonitor_fun(MFA),
+    xprof_tracer:demonitor(MFA),
     {ok, Req, State};
 
 handle_req(<<"data">>, Req, State) ->
     MFA = get_mfa(Req),
+    {LastTS, _} = cowboy_req:qs_val(<<"last_ts">>, Req, <<"0">>),
+    
     {ok, ResReq} =
-        case xprof_hist_db:exists(MFA) of
-            true ->
-                Vals = xprof_tracer:pull_data(MFA),
-                Json = jiffy:encode({Vals}),
+        case xprof_tracer:data(MFA, binary_to_integer(LastTS)) of
+            {error, not_found} ->
+                cowboy_req:reply(404, Req);
+            Vals ->				
+                Json = jiffy:encode([{Val} || Val <- Vals]),
 
                 cowboy_req:reply(200,
                                  [{<<"content-type">>,
                                    <<"application/json">>}],
-                                 Json, Req);
-            false ->
-                cowboy_req:reply(404, Req)
-        end,
+                                 Json, Req)
+            end,
     {ok, ResReq, State}.
 
 %% Helpers

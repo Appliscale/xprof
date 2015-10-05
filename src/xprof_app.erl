@@ -12,15 +12,11 @@
 %% API
 
 start(_StartType, _StartArgs) ->
-    xprof_hist_db:init(),
-    xprof_tracer:start(),
     start_cowboy(),
     xprof_sup:start_link().
 
 stop(_State) ->
     stop_cowboy(),
-    xprof_tracer:stop(),
-    xprof_hist_db:finalize(),
     ok.
 
 %% Internal functions
