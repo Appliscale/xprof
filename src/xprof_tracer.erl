@@ -64,13 +64,19 @@ handle_call(_Request, _From, State) ->
 handle_cast(_Msg, State) ->
     {noreply, State}.
 
-handle_info(Msg = {trace_ts, TracedPid, call, {M,F,Args}, _StartTime}, State) ->
+handle_info(Msg = {trace_ts, TracedPid, call, {M,F,Args}, _StartTime}, State) ->    
     MFA = {M,F,length(Args)},
     case get({handler, MFA}) of
         undefined ->
             ok;
         Pid ->
-            put({proc, TracedPid}, Pid),
+            Handlers = case get({proc, TracedPid}) of
+                           undefined -> [Pid];
+                           List -> [Pid|List]
+                       end,
+            put({proc, TracedPid}, Handlers),
+            lager:info("Handlers: ~p", [Handlers]),
+            lager:info("Sending ~p to ~p", [Msg, Pid]),
             erlang:send(Pid, Msg)
     end,
     {noreply, State};
@@ -78,8 +84,13 @@ handle_info(Msg = {trace_ts, TracedPid, return_to, _, _StartTime}, State) ->
     case erase({proc, TracedPid}) of
         undefined ->
             {noreply, State};
-        Pid ->
+        [] ->
+            {noreply, State};
+        [Pid|Handlers] ->
+            lager:info("Handlers ~p", [Handlers]),
+            lager:info("Sending ~p to ~p", [Msg, Pid]),
             erlang:send(Pid, Msg),
+            put({proc, TracedPid}, Handlers),
             {noreply, State}
     end;
 handle_info(_Info, State) ->
