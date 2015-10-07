@@ -49,7 +49,8 @@ handle_call({monitor, MFA}, _From, State) ->
         undefined ->
             {ok, Pid} = supervisor:start_child(xprof_tracer_handler_sup, [MFA]),
             put({handler, MFA}, Pid),
-            erlang:trace_pattern(MFA, true, [local]),
+            MatchSpec = [{'_', [], [{return_trace}]}],
+            erlang:trace_pattern(MFA, MatchSpec, [local]),
             {reply, ok, State}
     end;
 handle_call({demonitor, MFA}, _From, State) ->
@@ -64,36 +65,25 @@ handle_call(_Request, _From, State) ->
 handle_cast(_Msg, State) ->
     {noreply, State}.
 
-handle_info(Msg = {trace_ts, TracedPid, call, {M,F,Args}, _StartTime}, State) ->    
+handle_info(Msg = {trace_ts, _TracedPid, call, {M,F,Args}, _StartTime}, State) ->    
     MFA = {M,F,length(Args)},
     case get({handler, MFA}) of
         undefined ->
             ok;
         Pid ->
-            Handlers = case get({proc, TracedPid}) of
-                           undefined -> [Pid];
-                           List -> [Pid|List]
-                       end,
-            put({proc, TracedPid}, Handlers),
-            lager:info("Handlers: ~p", [Handlers]),
-            lager:info("Sending ~p to ~p", [Msg, Pid]),
             erlang:send(Pid, Msg)
     end,
     {noreply, State};
-handle_info(Msg = {trace_ts, TracedPid, return_to, _, _StartTime}, State) ->
-    case erase({proc, TracedPid}) of
+handle_info(Msg = {trace_ts, _TracedPid, return_from, MFA ,_Res, _StartTime}, State) ->
+    case get({handler, MFA}) of
         undefined ->
             {noreply, State};
-        [] ->
-            {noreply, State};
-        [Pid|Handlers] ->
-            lager:info("Handlers ~p", [Handlers]),
-            lager:info("Sending ~p to ~p", [Msg, Pid]),
-            erlang:send(Pid, Msg),
-            put({proc, TracedPid}, Handlers),
+        Pid ->
+            erlang:send(Pid, Msg),          
             {noreply, State}
     end;
-handle_info(_Info, State) ->
+handle_info(Info, State) ->
+    lager:warn("Unexpected msg received: ~p", [Info]),
     {noreply, State}.
 
 terminate(_Reason, _State) ->
@@ -106,4 +96,4 @@ code_change(_OldVsn, State, _Extra) ->
 
 init_tracer() ->
     erlang:trace_pattern({'_','_','_'}, false, [local]),
-    erlang:trace(all, true, [timestamp, call, return_to]).
+    erlang:trace(all, true, [timestamp, call]).

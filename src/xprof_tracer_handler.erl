@@ -60,7 +60,7 @@ handle_info({trace_ts, Pid, call, _, StartTime}, State) ->
 
     {Timeout, NewState} = maybe_make_snapshot(State),
     {noreply, NewState, Timeout};
-handle_info({trace_ts, Pid, return_to, _, EndTime},
+handle_info({trace_ts, Pid, return_from, _, _, EndTime},
             State = #state{hdr_ref=Ref}) ->
     StartTime = erase({Pid, ts}),
 
