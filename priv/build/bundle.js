@@ -1515,6 +1515,25 @@ webpackJsonp([0],[
 	  }
 
 	  _createClass(FunctionBrowser, [{
+	    key: 'handleKeyDown',
+	    value: function handleKeyDown(e) {
+	      var regex = /(\w+):(\w+)\/(\d+)/;
+	      var res = regex.exec(e.target.value);
+	      var mod = null,
+	          fun = null,
+	          arity = null;
+
+	      if (res) {
+	        mod = res[1];
+	        fun = res[2];
+	        arity = res[3];
+	        console.log(e.type);
+	      }
+	      if (e.keyCode == 13 && mod != null) {
+	        this.props.addGraph([mod, fun, parseInt(arity)]);
+	      }
+	    }
+	  }, {
 	    key: 'handleChange',
 	    value: function handleChange(event) {
 	      this.setState({ value: event.target.value });
@@ -1557,7 +1576,8 @@ webpackJsonp([0],[
 	            ),
 	            _react2['default'].createElement('input', { ref: 'searchBox', type: 'text', className: 'form-control',
 	              placeholder: 'Function', 'aria-describedby': 'sizing-addon3',
-	              value: value, onChange: this.handleChange.bind(this) })
+	              value: value, onKeyDown: this.handleKeyDown.bind(this),
+	              onChange: this.handleChange.bind(this) })
 	          ),
 	          _react2['default'].createElement(ACModal, { ref: 'acm', addGraph: this.props.addGraph })
 	        )

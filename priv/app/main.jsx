@@ -64,6 +64,23 @@ class FunctionBrowser extends React.Component {
     this.state = {value: ""};
   }
 
+  handleKeyDown(e) {
+    var regex = /(\w+):(\w+)\/(\d+)/;
+    var res = regex.exec(e.target.value);
+    var mod = null, fun = null, arity =null;
+
+    if(res) {
+      mod = res[1];
+      fun = res[2];
+      arity = res[3];
+      console.log(e.type);
+    }
+    if(e.keyCode == 13 && mod != null) {
+      this.props.addGraph([mod,fun,parseInt(arity)]);
+    }
+
+  }
+
   handleChange(event) {
     this.setState({value: event.target.value});
     if (event.target.value != "") {
@@ -96,7 +113,8 @@ class FunctionBrowser extends React.Component {
             <span className="input-group-addon" id="sizing-addon3">{'>'}</span>
             <input ref='searchBox' type="text" className="form-control"
                     placeholder="Function" aria-describedby="sizing-addon3"
-                    value={value} onChange={this.handleChange.bind(this)}/>
+                    value={value} onKeyDown={this.handleKeyDown.bind(this)}
+                    onChange={this.handleChange.bind(this)}/>
           </div>
 
           <ACModal ref='acm' addGraph={this.props.addGraph}></ACModal>
@@ -163,10 +181,10 @@ class App extends React.Component {
           <div className="navbar-header">
             <a className="navbar-brand" href="#">XProf</a>
           </div>
-	  
+
           <div className="navbar-collapse collapse" id="navbar-collapsible">
             <FunctionBrowser ref='functionBrowser' addGraph={this.addGraph.bind(this)}/>
-          </div>	  
+          </div>
         </nav>
         <GraphPanel ref='graphPanel'/>
       </div>
