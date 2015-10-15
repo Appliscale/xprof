@@ -32,3 +32,4 @@ cover/
 _build/
 build/
 bower_components/
+ct_run*/
