@@ -55,15 +55,14 @@ handle_call(Request, _From, State) ->
 handle_cast(_Msg, State) ->
     {noreply, State}.
 
-handle_info({trace_ts, Pid, call, _, StartTime}, State) ->
+handle_info({trace_ts, Pid, call, _MFArgs, StartTime}, State) ->
     put({Pid, ts}, StartTime),
 
     {Timeout, NewState} = maybe_make_snapshot(State),
     {noreply, NewState, Timeout};
-handle_info({trace_ts, Pid, return_from, _, _, EndTime},
+handle_info({trace_ts, Pid, return_from, _, _Ret, EndTime},
             State = #state{hdr_ref=Ref}) ->
     StartTime = erase({Pid, ts}),
-
     CallTime = timer:now_diff(EndTime,StartTime),
     hdr_histogram:record(Ref, CallTime),
 
