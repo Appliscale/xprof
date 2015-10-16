@@ -31,7 +31,8 @@ start_link(MFA) ->
     gen_server:start_link({local, Name}, ?MODULE, [MFA, Name], []).
 
 %% @doc Returns histogram data for seconds that occured after FromEpoch.
--spec data(mfa(), non_neg_integer()) -> [proplists:proplist()].
+-spec data(mfa(), non_neg_integer()) -> [proplists:proplist()] |
+                                        {error, not_found}.
 data(MFA, FromEpoch) ->
     Name = xprof_lib:mfa2atom(MFA),
     try
@@ -49,7 +50,7 @@ init([MFA, Name]) ->
                 window_size=?WINDOW_SIZE}, 1000}.
 
 handle_call(Request, _From, State) ->
-    lager:warn("Received unknown message: ~p", [Request]),
+    lager:warning("Received unknown message: ~p", [Request]),
     {reply, ignored, State}.
 
 handle_cast(_Msg, State) ->

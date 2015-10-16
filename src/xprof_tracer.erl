@@ -41,7 +41,7 @@ demonitor({Mod, Fun, Arity} = MFA) ->
     gen_server:call(?MODULE, {demonitor, MFA}).
 
 %% @doc Returns metrics gathered for particular function.
--spec data(mfa(), non_neg_integer()) -> proplists:proplist() |
+-spec data(mfa(), non_neg_integer()) -> list(proplists:proplist()) |
                                         {error, not_found}.
 data(MFA, TS) ->
     xprof_tracer_handler:data(MFA, TS).
