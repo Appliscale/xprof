@@ -8,6 +8,7 @@
 -export([start_link/0,
          trace/1, stop_trace/0,
          monitor/1, demonitor/1,
+         all_monitored/0,
          data/2]).
 
 %% gen_server callbacks
@@ -18,9 +19,10 @@
          terminate/2,
          code_change/3]).
 
--record(state, {trace_spec,     %% trace specification
-                paused=false,   %% tracing paused by user?
-                overflow=false  %% tracing is paused because of overflow?
+-record(state, {trace_spec,          %% trace specification
+                paused      = false, %% tracing paused by user?
+                overflow    = false, %% tracing is paused because of overflow?
+                funs        = []     %% functions monitored by xprof
                }).
 
 %% @doc Starts xprof tracer process.
@@ -39,6 +41,11 @@ monitor({Mod, Fun, Arity} = MFA) ->
 demonitor({Mod, Fun, Arity} = MFA) ->
     lager:info("Stopping monitoring ~w:~w/~b",[Mod,Fun,Arity]),
     gen_server:call(?MODULE, {demonitor, MFA}).
+
+%% @doc Returns list of monitored functions
+-spec all_monitored() -> list(mfa()).
+all_monitored() ->
+    gen_server:call(?MODULE, all_monitored).
 
 %% @doc Returns metrics gathered for particular function.
 -spec data(mfa(), non_neg_integer()) -> list(proplists:proplist()) |
@@ -75,15 +82,22 @@ handle_call({monitor, MFA}, _From, State) ->
         undefined ->
             {ok, Pid} = supervisor:start_child(xprof_tracer_handler_sup, [MFA]),
             put({handler, MFA}, Pid),
+
             MatchSpec = [{'_', [], [{return_trace}]}],
             erlang:trace_pattern(MFA, MatchSpec, [local]),
-            {reply, ok, State}
+
+            {reply, ok, State#state{funs=State#state.funs ++ [MFA]}}
     end;
 handle_call({demonitor, MFA}, _From, State) ->
     erlang:trace_pattern(MFA, false, [local]),
+
     Pid = erase({handler, MFA}),
+    NewFuns = lists:filter(fun(E) -> E =/= MFA end, State#state.funs),
+
     supervisor:terminate_child(xprof_tracer_handler_sup, Pid),
-    {reply, ok, State};
+    {reply, ok, State#state{funs=NewFuns}};
+handle_call(all_monitored, _From, State = #state{funs=MFAs}) ->
+    {reply, MFAs, State};
 handle_call(_Request, _From, State) ->
     {reply, ignored, State}.
 
