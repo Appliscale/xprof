@@ -1189,7 +1189,6 @@ webpackJsonp([0],[
 	    _classCallCheck(this, Graph);
 
 	    _get(Object.getPrototypeOf(Graph.prototype), 'constructor', this).call(this, props);
-	    this.startMonitoring();
 	    this.state = { dps: [], error: false, lastTs: 0 };
 	  }
 
@@ -1200,6 +1199,11 @@ webpackJsonp([0],[
 	      this.graph.init("#" + this.chartId());
 
 	      window.addEventListener('resize', this.handleResize.bind(this));
+
+	      var ref = setInterval(this.getData.bind(this), UPDATE_INTERVAL);
+	      var newState = this.state;
+	      this.state.interval = ref;
+	      this.setState(this.state);
 	    }
 	  }, {
 	    key: 'componentWillUnmount',
@@ -1277,23 +1281,6 @@ webpackJsonp([0],[
 	        data: { mod: fun[0], fun: fun[1], arity: fun[2] }
 	      }).done((function () {
 	        return _this.props.removeGraph(fun);
-	      }).bind(this));
-	    }
-
-	    // Getting data
-
-	  }, {
-	    key: 'startMonitoring',
-	    value: function startMonitoring() {
-	      var fun = this.props.fun;
-	      $.ajax({
-	        url: "/api/mon_start",
-	        data: { mod: fun[0], fun: fun[1], arity: fun[2] }
-	      }).done((function (data) {
-	        var ref = setInterval(this.getData.bind(this), UPDATE_INTERVAL);
-	        var newState = this.state;
-	        newState.interval = ref;
-	        this.setState(newState);
 	      }).bind(this));
 	    }
 	  }, {
@@ -1472,15 +1459,18 @@ webpackJsonp([0],[
 	      var rows = [];
 
 	      for (var i = 0; i < funs.length && i < 100; i++) {
-	        rows.push(_react2['default'].createElement(FunItem, { key: funs[i], addGraph: this.props.addGraph, fun: funs[i] }));
+	        rows.push(_react2['default'].createElement(FunItem, { key: funs[i], addGraph: this.props.addGraph,
+	          fun: funs[i] }));
 	      }
+
 	      if (funs.length > 0) {
 	        return _react2['default'].createElement(
 	          'div',
 	          { className: 'input-group input-group-lg' },
 	          _react2['default'].createElement(
 	            'span',
-	            { style: { opacity: 0 }, className: 'input-group-addon', id: 'sizing-addon3' },
+	            { style: { opacity: 0 }, className: 'input-group-addon',
+	              id: 'sizing-addon3' },
 	            '>'
 	          ),
 	          _react2['default'].createElement(
@@ -1595,40 +1585,84 @@ webpackJsonp([0],[
 	    _classCallCheck(this, GraphPanel);
 
 	    _get(Object.getPrototypeOf(GraphPanel.prototype), 'constructor', this).call(this, props);
-	    this.state = { graphs: [] };
+	    this.state = { funs: [] };
 	  }
 
 	  _createClass(GraphPanel, [{
+	    key: 'componentDidMount',
+	    value: function componentDidMount() {
+	      this.funsInterval = window.setTimeout(this.getFunsList.bind(this), 500);
+	    }
+	  }, {
+	    key: 'componentWillUnmount',
+	    value: function componentWillUnmount() {
+	      window.clearTimeout(this.interval);
+	    }
+
+	    // Getting data
+
+	  }, {
+	    key: 'startMonitoring',
+	    value: function startMonitoring(fun) {
+	      $.ajax({
+	        url: "/api/mon_start",
+	        data: { mod: fun[0], fun: fun[1], arity: fun[2] }
+	      }).done((function () {
+	        this.getFunsList();
+	      }).bind(this));
+	    }
+	  }, {
 	    key: 'addGraph',
 	    value: function addGraph(fun) {
-	      var newState = this.state;
-	      newState.graphs.push(fun);
-	      this.setState(newState);
+	      this.startMonitoring(fun);
 	    }
 	  }, {
 	    key: 'removeGraph',
 	    value: function removeGraph(fun) {
 	      var newState = this.state;
-	      var index = this.state.graphs.indexOf(fun);
+	      var index = this.state.funs.indexOf(fun);
 	      if (index > -1) {
-	        newState.graphs.splice(index, 1);
+	        newState.funs.splice(index, 1);
 	      }
 	      this.setState(newState);
 	    }
 	  }, {
+	    key: 'getFunsList',
+	    value: function getFunsList() {
+	      $.ajax({
+	        url: "/api/mon_get_all",
+	        success: this.handleFuns.bind(this),
+	        error: this.handleFunsError.bind(this)
+	      });
+	    }
+	  }, {
+	    key: 'handleFuns',
+	    value: function handleFuns(data) {
+	      console.log("Funs", data);
+	      this.state.funs = data;
+	      this.setState(this.state);
+	      window.setTimeout(this.getFunsList.bind(this), 500);
+	    }
+	  }, {
+	    key: 'handleFunsError',
+	    value: function handleFunsError(jqXHR, error) {
+	      console.log("Getting funs error", error);
+	      window.setTimeout(this.getFunsList.bind(this), 1000);
+	    }
+	  }, {
 	    key: 'render',
 	    value: function render() {
-	      var graphs = this.state.graphs;
+	      var funs = this.state.funs;
 
 	      var graphsPanels = [];
-	      for (var i = 0; i < graphs.length; i++) {
+	      for (var i = 0; i < funs.length; i++) {
 	        graphsPanels.push(_react2['default'].createElement(
 	          'div',
-	          { key: graphs[i], className: 'row' },
+	          { key: funs[i], className: 'row' },
 	          _react2['default'].createElement(
 	            'div',
 	            { className: 'col-md-12' },
-	            _react2['default'].createElement(_graphJsx2['default'], { removeGraph: this.removeGraph.bind(this), fun: graphs[i] })
+	            _react2['default'].createElement(_graphJsx2['default'], { removeGraph: this.removeGraph.bind(this), fun: funs[i] })
 	          )
 	        ));
 	      }
@@ -1651,7 +1685,6 @@ webpackJsonp([0],[
 	    _classCallCheck(this, App);
 
 	    _get(Object.getPrototypeOf(App.prototype), 'constructor', this).call(this, props);
-	    this.state = {};
 	  }
 
 	  _createClass(App, [{

@@ -8,7 +8,6 @@ const MAX_DPS = 5 * 60; //10 minutes
 export default class Graph extends React.Component {
   constructor(props) {
     super(props);
-    this.startMonitoring();
     this.state = {dps: [], error: false, lastTs: 0};
   }
 
@@ -17,6 +16,11 @@ export default class Graph extends React.Component {
     this.graph.init("#" +this.chartId());
 
     window.addEventListener('resize', this.handleResize.bind(this));
+
+    var ref = setInterval(this.getData.bind(this), UPDATE_INTERVAL);
+    var newState = this.state;
+    this.state.interval = ref;
+    this.setState(this.state);
   }
 
   componentWillUnmount() {
@@ -64,22 +68,6 @@ export default class Graph extends React.Component {
     }).done((
       ()=>this.props.removeGraph(fun)
     ).bind(this));
-  }
-
-  // Getting data
-
-  startMonitoring() {
-    var fun = this.props.fun;
-    $.ajax({
-      url: "/api/mon_start",
-      data: {mod: fun[0], fun: fun[1], arity: fun[2]}
-    }).done(
-      function (data) {
-        var ref = setInterval(this.getData.bind(this), UPDATE_INTERVAL);
-        var newState = this.state;
-        newState.interval = ref;
-        this.setState(newState);
-      }.bind(this))
   }
 
   getData() {

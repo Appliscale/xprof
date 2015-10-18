@@ -37,13 +37,15 @@ class ACModal extends React.Component {
     var rows = [];
 
     for (let i = 0; i < funs.length && i < 100; i++) {
-      rows.push(<FunItem key={funs[i]} addGraph={this.props.addGraph} fun={funs[i]}/>);
+      rows.push(<FunItem key={funs[i]} addGraph={this.props.addGraph}
+                        fun={funs[i]}/>);
     }
+
     if (funs.length > 0) {
       return (
         <div className="input-group input-group-lg">
-          <span style={{opacity:0}} className="input-group-addon" id="sizing-addon3">{'>'}</span>
-
+          <span style={{opacity:0}} className="input-group-addon"
+                  id="sizing-addon3">{'>'}</span>
           <div className="panel panel-default">
             <div className="panel-body">
               <div className="list-group">
@@ -78,7 +80,6 @@ class FunctionBrowser extends React.Component {
     if(e.keyCode == 13 && mod != null) {
       this.props.addGraph([mod,fun,parseInt(arity)]);
     }
-
   }
 
   handleChange(event) {
@@ -127,33 +128,70 @@ class FunctionBrowser extends React.Component {
 class GraphPanel extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {graphs: []};
+    this.state = {funs: []};
+  }
+
+  componentDidMount() {
+    this.funsInterval = window.setTimeout(this.getFunsList.bind(this), 500);
+  }
+
+  componentWillUnmount() {
+    window.clearTimeout(this.interval);
+  }
+
+
+  // Getting data
+
+  startMonitoring(fun) {
+    $.ajax({
+      url: "/api/mon_start",
+      data: {mod: fun[0], fun: fun[1], arity: fun[2]}
+    }).done(function() { this.getFunsList()}.bind(this));
+
   }
 
   addGraph(fun) {
-    var newState = this.state;
-    newState.graphs.push(fun);
-    this.setState(newState);
+    this.startMonitoring(fun);
   }
 
   removeGraph(fun) {
     var newState = this.state;
-    var index = this.state.graphs.indexOf(fun);
+    var index = this.state.funs.indexOf(fun);
     if (index > -1) {
-      newState.graphs.splice(index, 1);
+      newState.funs.splice(index, 1);
     }
     this.setState(newState);
   }
 
+  getFunsList() {
+    $.ajax({
+      url: "/api/mon_get_all",
+      success: this.handleFuns.bind(this),
+      error: this.handleFunsError.bind(this)
+    });
+  }
+
+  handleFuns(data) {
+    console.log("Funs", data);
+    this.state.funs = data;
+    this.setState(this.state);
+    window.setTimeout(this.getFunsList.bind(this), 500);
+  }
+
+  handleFunsError(jqXHR, error) {
+    console.log("Getting funs error", error);
+    window.setTimeout(this.getFunsList.bind(this), 1000);
+  }
+
   render() {
-    var graphs = this.state.graphs;
+    var funs = this.state.funs;
 
     var graphsPanels = [];
-    for (var i = 0; i < graphs.length; i++) {
+    for (var i = 0; i < funs.length; i++) {
       graphsPanels.push(
-        <div key={graphs[i]} className="row">
+        <div key={funs[i]} className="row">
           <div className="col-md-12">
-            <Graph removeGraph={this.removeGraph.bind(this)}  fun={graphs[i]}/>
+            <Graph removeGraph={this.removeGraph.bind(this)}  fun={funs[i]}/>
           </div>
         </div>
       )
@@ -166,7 +204,6 @@ class GraphPanel extends React.Component {
 class App extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {}
   }
 
   addGraph(fun) {

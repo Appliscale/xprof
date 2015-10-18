@@ -50,22 +50,32 @@ handle_req(<<"mon_stop">>, Req, State) ->
     xprof_tracer:demonitor(MFA),
     {ok, Req, State};
 
+handle_req(<<"mon_get_all">>, Req, State) ->
+    Funs = xprof_tracer:all_monitored(),
+    FunsArr = [tuple_to_list(MFA) || MFA <- Funs],
+    Json = jiffy:encode(FunsArr),
+    {ok, ResReq} = cowboy_req:reply(200,
+                              [{<<"content-type">>,
+                                <<"application/json">>}],
+                              Json, Req),
+    {ok, ResReq, State};
+
 handle_req(<<"data">>, Req, State) ->
     MFA = get_mfa(Req),
     {LastTS, _} = cowboy_req:qs_val(<<"last_ts">>, Req, <<"0">>),
-    
+
     {ok, ResReq} =
         case xprof_tracer:data(MFA, binary_to_integer(LastTS)) of
             {error, not_found} ->
                 cowboy_req:reply(404, Req);
-            Vals ->				
+            Vals ->
                 Json = jiffy:encode([{Val} || Val <- Vals]),
 
                 cowboy_req:reply(200,
                                  [{<<"content-type">>,
                                    <<"application/json">>}],
                                  Json, Req)
-            end,
+        end,
     {ok, ResReq, State}.
 
 %% Helpers
