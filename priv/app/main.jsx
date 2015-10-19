@@ -5,6 +5,7 @@ import d3 from 'd3';
 import c3 from 'c3/c3';
 import 'flot';
 import Graph from './graph.jsx'
+import TracingSwitch from './tracing_switch.jsx'
 
 class FunItem extends React.Component {
   constructor(props) {
@@ -172,7 +173,6 @@ class GraphPanel extends React.Component {
   }
 
   handleFuns(data) {
-    console.log("Funs", data);
     this.state.funs = data;
     this.setState(this.state);
     window.setTimeout(this.getFunsList.bind(this), 500);
@@ -220,6 +220,7 @@ class App extends React.Component {
           </div>
 
           <div className="navbar-collapse collapse" id="navbar-collapsible">
+            <TracingSwitch/>
             <FunctionBrowser ref='functionBrowser' addGraph={this.addGraph.bind(this)}/>
           </div>
         </nav>

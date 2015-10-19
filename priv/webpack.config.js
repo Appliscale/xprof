@@ -24,7 +24,8 @@ var config = {
     ],
     output: {
         path: './build',
-        filename: 'bundle.js'
+        filename: 'bundle.js',
+        publicPath: 'build/'
     },
     module: {
         noParse: [],
