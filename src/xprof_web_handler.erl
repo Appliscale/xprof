@@ -2,6 +2,8 @@
 
 -export([init/3,handle/2,terminate/3]).
 
+-behavior(cowboy_http_handler).
+
 %% Cowboy callbacks
 
 init(_Type, Req, _Opts) ->
@@ -55,9 +57,9 @@ handle_req(<<"mon_get_all">>, Req, State) ->
     FunsArr = [tuple_to_list(MFA) || MFA <- Funs],
     Json = jiffy:encode(FunsArr),
     {ok, ResReq} = cowboy_req:reply(200,
-                              [{<<"content-type">>,
-                                <<"application/json">>}],
-                              Json, Req),
+                                    [{<<"content-type">>,
+                                      <<"application/json">>}],
+                                    Json, Req),
     {ok, ResReq, State};
 
 handle_req(<<"data">>, Req, State) ->
@@ -76,11 +78,35 @@ handle_req(<<"data">>, Req, State) ->
                                    <<"application/json">>}],
                                  Json, Req)
         end,
+    {ok, ResReq, State};
+
+handle_req(<<"trace_set">>, Req, State) ->
+    {Spec, _} = cowboy_req:qs_val(<<"spec">>, Req),
+
+    {ok, ResReq} = case lists:member(Spec, [<<"all">>, <<"pause">>]) of
+                       true ->
+                           xprof_tracer:trace(list_to_atom(binary_to_list(Spec))),
+                           cowboy_req:reply(200, Req);
+                       false ->
+                           lager:info("Wrong spec for tracing: ~p",[Spec]),
+                           cowboy_req:reply(400, Req)
+                   end,
+    {ok, ResReq, State};
+
+handle_req(<<"trace_status">>, Req, State) ->
+    {_, Paused, _} = xprof_tracer:trace_status(),
+    Json = jiffy:encode({[{tracing, not Paused}]}),
+    {ok, ResReq} = cowboy_req:reply(200,
+                                    [{<<"content-type">>,
+                                      <<"application/json">>}],
+                                    Json, Req),
+
     {ok, ResReq, State}.
+
 
 %% Helpers
 
--spec get_mfa(cowboy:req()) -> {module(),atom(),non_neg_integer()}.
+-spec get_mfa(cowboy:req()) -> {module(), atom(), non_neg_integer()}.
 get_mfa(Req) ->
     {Params, _} = cowboy_req:qs_vals(Req),
     {list_to_atom(binary_to_list(proplists:get_value(<<"mod">>, Params))),

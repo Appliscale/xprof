@@ -6,9 +6,10 @@
 -behaviour(gen_server).
 
 -export([start_link/0,
-         trace/1, stop_trace/0,
+         trace/1,
          monitor/1, demonitor/1,
          all_monitored/0,
+         trace_status/0,
          data/2]).
 
 %% gen_server callbacks
@@ -19,8 +20,8 @@
          terminate/2,
          code_change/3]).
 
--record(state, {trace_spec,          %% trace specification
-                paused      = false, %% tracing paused by user?
+-record(state, {trace_spec  = all,   %% trace specification
+                paused      = true,  %% tracing paused?
                 overflow    = false, %% tracing is paused because of overflow?
                 funs        = []     %% functions monitored by xprof
                }).
@@ -55,16 +56,17 @@ data(MFA, TS) ->
 
 %% @doc Turns on or resumes tracing for a process specified by pid, all
 %% processes or processes that are spawned by specified spawner pid.
--spec trace(pid() | resume | all | {spawner, pid()}) -> ok.
+-spec trace(pid() | pause| resume | all | {spawner, pid()}) -> ok.
 trace(PidOrSpec) ->
     lager:info("Tracing ~p", [PidOrSpec]),
     gen_server:call(?MODULE, {trace, PidOrSpec}).
 
-%% @doc Stops tracing without clearing all monitors. Tracing can be resumed by
-%% calling trace(resume) function.
-stop_trace() ->
-    lager:info("Sttoping tracing"),
-    gen_server:call(?MODULE, stop_trace).
+%% @doc Returns current tracing state.
+-spec trace_status() -> {all | {spawner, pid(), float()} | pid(),
+                         Paused :: boolean(), Overflow :: boolean()}.
+trace_status() ->
+    gen_server:call(?MODULE, trace_status).
+
 
 %% gen_server callbacks
 
@@ -72,9 +74,6 @@ init([]) ->
     init_tracer(),
     {ok, #state{}}.
 
-handle_call({trace, PidSpec}, _From, State) ->
-    NewState = setup_trace(PidSpec, State),
-    {reply, ok, NewState};
 handle_call({monitor, MFA}, _From, State) ->
     case get({handler, MFA}) of
         Pid when is_pid(Pid) ->
@@ -98,6 +97,13 @@ handle_call({demonitor, MFA}, _From, State) ->
     {reply, ok, State#state{funs=NewFuns}};
 handle_call(all_monitored, _From, State = #state{funs=MFAs}) ->
     {reply, MFAs, State};
+handle_call({trace, PidSpec}, _From, State) ->
+    NewState = setup_trace(PidSpec, State),
+    {reply, ok, NewState};
+handle_call(trace_status, _From, State = #state{trace_spec=TraceSpec,
+                                                paused=Paused,
+                                                overflow=Overflow}) ->
+    {reply, {TraceSpec, Paused, Overflow}, State};
 handle_call(_Request, _From, State) ->
     {reply, ignored, State}.
 
@@ -176,7 +182,9 @@ check_for_overflow(State = #state{paused=false, overflow=false,
             State#state{overflow=true};
         false ->
             State
-    end.
+    end;
+check_for_overflow(State) ->
+    State.
 
 setup_trace(pause, State) ->
     set_trace_opts(false, State#state.trace_spec),

@@ -40,6 +40,7 @@ pid_tracing(Config) ->
 
 basic_tracing(PidSpec, Config) ->
     ok = xprof_tracer:trace(PidSpec),
+    ?assertMatch({PidSpec, false, false}, xprof_tracer:trace_status()),
 
     {MS,S,_} = os:timestamp(),
     Last = MS * 1000000 + S,
@@ -58,10 +59,14 @@ basic_tracing(PidSpec, Config) ->
     ?assert(0 =< proplists:get_value(count, Items1)),
     ?assert(0 =< proplists:get_value(count, Items2)),
 
-    xprof_tracer:trace(pause).
+    xprof_tracer:trace(pause),
+    ?assertMatch({PidSpec, true, false}, xprof_tracer:trace_status()).
+
 
 spawner_tracing(Config) ->
     ok = xprof_tracer:trace({spawner, self(), 1.0}),
+    ?assertMatch({{spawner, _Pid, 1.0}, false, false},
+                 xprof_tracer:trace_status()),
 
     {MS,S,_} = os:timestamp(),
     Last = MS*1000000 + S,
@@ -80,7 +85,10 @@ spawner_tracing(Config) ->
     ?assert(0 =< proplists:get_value(count, Items1)),
     ?assert(0 =< proplists:get_value(count, Items2)),
 
-    xprof_tracer:trace(pause).
+    xprof_tracer:trace(pause),
+    ?assertMatch({{spawner, _Pid, 1.0}, true, false},
+                 xprof_tracer:trace_status()).
+
 
 monitor_many_funs(Config) ->
     MFAs = [{code, all_loaded, 0}, {?MODULE, test_run, 0},
