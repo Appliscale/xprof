@@ -3,7 +3,8 @@ webpackJsonp([0],[
 /***/ function(module, exports, __webpack_require__) {
 
 	__webpack_require__(1);
-	module.exports = __webpack_require__(15);
+	__webpack_require__(15);
+	module.exports = __webpack_require__(17);
 
 
 /***/ },
@@ -13,7 +14,7 @@ webpackJsonp([0],[
 	/* WEBPACK VAR INJECTION */(function($) {'use strict';
 
 	Object.defineProperty(exports, '__esModule', {
-	    value: true
+	  value: true
 	});
 
 	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -37,91 +38,91 @@ webpackJsonp([0],[
 	__webpack_require__(14);
 
 	var FlotGraph = (function () {
-	    function FlotGraph() {
-	        _classCallCheck(this, FlotGraph);
+	  function FlotGraph() {
+	    _classCallCheck(this, FlotGraph);
+	  }
+
+	  _createClass(FlotGraph, [{
+	    key: 'init',
+	    value: function init(divid) {
+	      this.divid = divid;
+	      this.plot = $.plot(this.divid, [this.createDataSet([])], {
+	        series: {
+	          shadowSize: 0 // Drawing is faster without shadows
+	        },
+	        yaxes: [{
+	          min: 0,
+	          tickFormatter: function tickFormatter(v) {
+	            return Math.round(v / 10.0) / 100.0 + " ms";
+	          },
+	          position: "left"
+	        }, {
+	          min: 0,
+	          position: "right"
+	        }],
+	        xaxis: {
+	          mode: "time",
+	          show: true
+	        }
+	      });
 	    }
+	  }, {
+	    key: 'resize',
+	    value: function resize() {
+	      this.plot.resize();
+	      this.plot.setupGrid();
+	      this.plot.draw();
+	    }
+	  }, {
+	    key: 'update',
+	    value: function update(data) {
+	      this.plot.setData(this.createDataSet(data));
+	      this.plot.setupGrid();
+	      this.plot.draw();
+	    }
+	  }, {
+	    key: 'close',
+	    value: function close(data) {}
+	  }, {
+	    key: 'createDataSet',
+	    value: function createDataSet(data) {
+	      var flotdata = { mean: [], max: [], min: [] };
 
-	    _createClass(FlotGraph, [{
-	        key: 'init',
-	        value: function init(divid) {
-	            this.divid = divid;
-	            console.log($.plot.plugins);
-	            this.plot = $.plot(this.divid, [this.createDataSet([])], {
-	                series: {
-	                    shadowSize: 0 // Drawing is faster without shadows
-	                },
-	                yaxes: [{
-	                    min: 0,
-	                    tickFormatter: function tickFormatter(v) {
-	                        return Math.round(v / 10.0) / 100.0 + " ms";
-	                    },
-	                    position: "left"
-	                }, {
-	                    min: 0,
-	                    position: "right"
-	                }],
-	                xaxis: {
-	                    mode: "time",
-	                    show: true
-	                }
-	            });
-	        }
-	    }, {
-	        key: 'resize',
-	        value: function resize() {
-	            this.plot.resize();
-	            this.plot.setupGrid();
-	            this.plot.draw();
-	        }
-	    }, {
-	        key: 'update',
-	        value: function update(data) {
-	            this.plot.setData(this.createDataSet(data));
-	            this.plot.setupGrid();
-	            this.plot.draw();
-	        }
-	    }, {
-	        key: 'close',
-	        value: function close(data) {}
-	    }, {
-	        key: 'createDataSet',
-	        value: function createDataSet(data) {
-	            var flotdata = { mean: [], max: [], min: [] };
+	      var _arr = ["mean", "min", "max", "p25", "p50", "p75", "p90", "p99", "count"];
+	      for (var _i = 0; _i < _arr.length; _i++) {
+	        var v = _arr[_i];
+	        flotdata[v] = [];
 
-	            var _arr = ["mean", "min", "max", "p25", "p50", "p75", "p90", "p99", "count"];
-	            for (var _i = 0; _i < _arr.length; _i++) {
-	                var v = _arr[_i];
-	                flotdata[v] = [];
-	                var _iteratorNormalCompletion = true;
-	                var _didIteratorError = false;
-	                var _iteratorError = undefined;
+	        var _iteratorNormalCompletion = true;
+	        var _didIteratorError = false;
+	        var _iteratorError = undefined;
 
-	                try {
-	                    for (var _iterator = data[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-	                        var item = _step.value;
-	                        flotdata[v].push([item.time * 1000, item[v]]);
-	                    }
-	                } catch (err) {
-	                    _didIteratorError = true;
-	                    _iteratorError = err;
-	                } finally {
-	                    try {
-	                        if (!_iteratorNormalCompletion && _iterator['return']) {
-	                            _iterator['return']();
-	                        }
-	                    } finally {
-	                        if (_didIteratorError) {
-	                            throw _iteratorError;
-	                        }
-	                    }
-	                }
+	        try {
+	          for (var _iterator = data[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+	            var item = _step.value;
+	            flotdata[v].push([item.time * 1000, item[v]]);
+	          }
+	        } catch (err) {
+	          _didIteratorError = true;
+	          _iteratorError = err;
+	        } finally {
+	          try {
+	            if (!_iteratorNormalCompletion && _iterator['return']) {
+	              _iterator['return']();
 	            }
-
-	            return [{ label: "mean", data: flotdata["mean"], lines: { show: true }, color: "rgb(50,50,255)", yaxis: 1 }, { label: "count", data: flotdata["count"], lines: { show: true }, color: "rgb(50,255,0)", yaxis: 2 }, { label: "min", id: "min", data: flotdata["min"], lines: { show: true, lineWidth: 0.5, fill: 0 }, color: "rgb(255,50,50)", yaxis: 1 }, { id: "p25", data: flotdata["p25"], lines: { show: true, lineWidth: 0, fill: 0.2 }, color: "rgb(255,50,50)", fillBetween: "min", yaxis: 1 }, { id: "p50", data: flotdata["p50"], lines: { show: true, lineWidth: 0.5, fill: 0.4, shadowSize: 0 }, color: "rgb(255,50,50)", fillBetween: "p25", yaxis: 1 }, { id: "p75", data: flotdata["p75"], lines: { show: true, lineWidth: 0, fill: 0.4 }, color: "rgb(255,50,50)", fillBetween: "p50", yaxis: 1 }, { id: "p90", data: flotdata["p90"], lines: { show: true, lineWidth: 0, fill: 0.2 }, color: "rgb(255,50,50)", fillBetween: "p75", yaxis: 1 }, { id: "p99", data: flotdata["p99"], lines: { show: true, lineWidth: 0.4, fill: 0.15 }, color: "rgb(255,50,50)", fillBetween: "p90", yaxis: 1 }, { label: "max", id: "max", data: flotdata["max"], lines: { show: true, lineWidth: 0.5, fill: 0.1 }, color: "rgb(255,50,50)", fillBetween: "p99", yaxis: 1 }];
+	          } finally {
+	            if (_didIteratorError) {
+	              throw _iteratorError;
+	            }
+	          }
 	        }
-	    }]);
+	      }
 
-	    return FlotGraph;
+	      return [{ label: "mean", data: flotdata["mean"], lines: { show: true }, color: "rgb(50,50,255)", yaxis: 1 }, { label: "count", data: flotdata["count"], lines: { show: true }, color: "rgb(50,255,0)", yaxis: 2 }, { label: "min", id: "min", data: flotdata["min"], lines: { show: true, lineWidth: 0.5, fill: 0 }, color: "rgb(255,50,50)", yaxis: 1 }, { id: "p25", data: flotdata["p25"], lines: { show: true, lineWidth: 0, fill: 0.2 }, color: "rgb(255,50,50)", fillBetween: "min", yaxis: 1 }, { id: "p50", data: flotdata["p50"], lines: { show: true, lineWidth: 0.5, fill: 0.4, shadowSize: 0 }, color: "rgb(255,50,50)", fillBetween: "p25", yaxis: 1 }, { id: "p75", data: flotdata["p75"], lines: { show: true, lineWidth: 0, fill: 0.4 }, color: "rgb(255,50,50)", fillBetween: "p50", yaxis: 1 }, { id: "p90", data: flotdata["p90"], lines: { show: true, lineWidth: 0, fill: 0.2 }, color: "rgb(255,50,50)", fillBetween: "p75", yaxis: 1 }, { id: "p99", data: flotdata["p99"], lines: { show: true, lineWidth: 0.4, fill: 0.15 }, color: "rgb(255,50,50)", fillBetween: "p90", yaxis: 1 }, { label: "max", id: "max", data: flotdata["max"], lines: { show: true, lineWidth: 0.5, fill: 0.1 }, color: "rgb(255,50,50)", fillBetween: "p99", yaxis: 1 }];
+	    }
+	  }]);
+
+	  return FlotGraph;
 	})();
 
 	exports['default'] = FlotGraph;
@@ -1152,6 +1153,222 @@ webpackJsonp([0],[
 /* 15 */
 /***/ function(module, exports, __webpack_require__) {
 
+	/* WEBPACK VAR INJECTION */(function($, _) {'use strict';
+
+	Object.defineProperty(exports, '__esModule', {
+	  value: true
+	});
+
+	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+	var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	var _react = __webpack_require__(3);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	__webpack_require__(16);
+
+	var _graph_flotJsx = __webpack_require__(1);
+
+	var _graph_flotJsx2 = _interopRequireDefault(_graph_flotJsx);
+
+	var UPDATE_INTERVAL = 1000;
+	var MAX_DPS = 5 * 60; //10 minutes
+
+	var Graph = (function (_React$Component) {
+	  _inherits(Graph, _React$Component);
+
+	  function Graph(props) {
+	    _classCallCheck(this, Graph);
+
+	    _get(Object.getPrototypeOf(Graph.prototype), 'constructor', this).call(this, props);
+	    this.state = { dps: [], error: false, lastTs: 0 };
+	  }
+
+	  _createClass(Graph, [{
+	    key: 'componentDidMount',
+	    value: function componentDidMount() {
+	      this.graph = new _graph_flotJsx2['default']();
+	      this.graph.init("#" + this.chartId());
+
+	      window.addEventListener('resize', this.handleResize.bind(this));
+
+	      var ref = setInterval(this.getData.bind(this), UPDATE_INTERVAL);
+	      var newState = this.state;
+	      this.state.interval = ref;
+	      this.setState(this.state);
+	    }
+	  }, {
+	    key: 'componentWillUnmount',
+	    value: function componentWillUnmount() {
+	      window.removeEventListener('resize', this.handleResize.bind(this));
+	    }
+	  }, {
+	    key: 'render',
+	    value: function render() {
+	      var fun = this.props.fun;
+	      var panelType = "panel panel-default ";
+	      var errorMsg = "";
+
+	      if (this.state.error) {
+	        panelType += "panel-danger";
+	        errorMsg = _react2['default'].createElement(
+	          'strong',
+	          null,
+	          '  -  communication error'
+	        );
+	      }
+
+	      return _react2['default'].createElement(
+	        'div',
+	        { className: panelType },
+	        _react2['default'].createElement(
+	          'div',
+	          { className: 'panel-heading' },
+	          _react2['default'].createElement(
+	            'button',
+	            { onClick: this.handleClose.bind(this), type: 'button',
+	              className: 'close', 'data-dismiss': 'modal',
+	              'aria-label': 'Close' },
+	            _react2['default'].createElement(
+	              'span',
+	              { 'aria-hidden': 'true' },
+	              '×'
+	            )
+	          ),
+	          _react2['default'].createElement(
+	            'h3',
+	            { className: 'panel-title' },
+	            fun[0],
+	            ':',
+	            fun[1],
+	            '/',
+	            fun[2],
+	            errorMsg
+	          )
+	        ),
+	        _react2['default'].createElement(
+	          'div',
+	          { className: 'panel-body' },
+	          _react2['default'].createElement('div', { id: this.chartId(), className: 'chart' })
+	        )
+	      );
+	    }
+
+	    // Handle actions
+
+	  }, {
+	    key: 'handleResize',
+	    value: function handleResize(e) {
+	      this.graph.resize();
+	    }
+	  }, {
+	    key: 'handleClose',
+	    value: function handleClose() {
+	      var _this = this;
+
+	      var fun = this.props.fun;
+	      clearInterval(this.state.interval);
+	      $.ajax({
+	        url: "/api/mon_stop",
+	        data: { mod: fun[0], fun: fun[1], arity: fun[2] }
+	      }).done((function () {
+	        return _this.props.removeGraph(fun);
+	      }).bind(this));
+	    }
+	  }, {
+	    key: 'getData',
+	    value: function getData() {
+	      var fun = this.props.fun;
+	      var lastTs = this.state.lastTs;
+
+	      $.ajax({
+	        url: "/api/data",
+	        data: {
+	          mod: fun[0],
+	          fun: fun[1],
+	          arity: fun[2],
+	          last_ts: lastTs
+	        },
+	        success: this.handleData.bind(this),
+	        error: this.handleDataError.bind(this) });
+	    }
+	  }, {
+	    key: 'handleData',
+	    value: function handleData(data) {
+	      var maxAge, currData, truncData, sortedData, padding, finalData;
+
+	      maxAge = Math.floor(new Date().getTime() / 1000) - MAX_DPS;
+
+	      currData = this.state.dps.concat(data);
+	      sortedData = this.sortData(currData);
+	      truncData = this.truncrateData(maxAge, sortedData);
+	      padding = this.padData(maxAge, _.first(truncData).time);
+	      finalData = padding.concat(truncData);
+
+	      this.graph.update(finalData);
+
+	      this.state.dps = truncData;
+	      this.state.lastTs = _.last(sortedData).time;
+	      this.state.error = false;
+	      this.setState(this.state);
+	    }
+	  }, {
+	    key: 'handleDataError',
+	    value: function handleDataError(jqXHR, error) {
+	      this.state.error = true;
+	      this.setState(this.state);
+	    }
+
+	    // Helpers
+
+	  }, {
+	    key: 'sortData',
+	    value: function sortData(data) {
+	      return data.sort(function (a, b) {
+	        return a.time - b.time;
+	      });
+	    }
+	  }, {
+	    key: 'truncrateData',
+	    value: function truncrateData(maxAge, data) {
+	      return data.filter(function (val) {
+	        return val.time >= maxAge;
+	      });
+	    }
+	  }, {
+	    key: 'padData',
+	    value: function padData(maxAge, firstTime) {
+	      var data = [];
+	      for (var i = maxAge; i < firstTime; i++) data.push({ time: i });
+	      return data;
+	    }
+	  }, {
+	    key: 'chartId',
+	    value: function chartId() {
+	      return 'chart_' + this.props.fun[0] + '_' + this.props.fun[1] + '_' + this.props.fun[2];
+	    }
+	  }]);
+
+	  return Graph;
+	})(_react2['default'].Component);
+
+	exports['default'] = Graph;
+	module.exports = exports['default'];
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2), __webpack_require__(16)))
+
+/***/ },
+/* 16 */,
+/* 17 */
+/***/ function(module, exports, __webpack_require__) {
+
 	/* WEBPACK VAR INJECTION */(function($) {'use strict';
 
 	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -1172,282 +1389,352 @@ webpackJsonp([0],[
 
 	__webpack_require__(4);
 
-	var _d3 = __webpack_require__(16);
+	var _d3 = __webpack_require__(18);
 
 	var _d32 = _interopRequireDefault(_d3);
 
-	var _c3C3 = __webpack_require__(17);
+	var _c3C3 = __webpack_require__(19);
 
 	var _c3C32 = _interopRequireDefault(_c3C3);
 
 	__webpack_require__(12);
 
-	var _graphJs = __webpack_require__(18);
+	var _graphJsx = __webpack_require__(15);
 
-	var _graphJs2 = _interopRequireDefault(_graphJs);
+	var _graphJsx2 = _interopRequireDefault(_graphJsx);
+
+	var _tracing_switchJsx = __webpack_require__(20);
+
+	var _tracing_switchJsx2 = _interopRequireDefault(_tracing_switchJsx);
 
 	var FunItem = (function (_React$Component) {
-	    _inherits(FunItem, _React$Component);
+	  _inherits(FunItem, _React$Component);
 
-	    function FunItem(props) {
-	        _classCallCheck(this, FunItem);
+	  function FunItem(props) {
+	    _classCallCheck(this, FunItem);
 
-	        _get(Object.getPrototypeOf(FunItem.prototype), 'constructor', this).call(this, props);
+	    _get(Object.getPrototypeOf(FunItem.prototype), 'constructor', this).call(this, props);
+	  }
+
+	  _createClass(FunItem, [{
+	    key: 'handleClick',
+	    value: function handleClick(event) {
+	      this.props.addGraph(this.props.fun);
 	    }
+	  }, {
+	    key: 'render',
+	    value: function render() {
+	      var fun = this.props.fun;
+	      return _react2['default'].createElement(
+	        'a',
+	        { href: '#', onClick: this.handleClick.bind(this),
+	          className: 'list-group-item' },
+	        fun[0],
+	        ':',
+	        fun[1],
+	        '/',
+	        fun[2]
+	      );
+	    }
+	  }]);
 
-	    _createClass(FunItem, [{
-	        key: 'handleClick',
-	        value: function handleClick(event) {
-	            this.props.addGraph(this.props.fun);
-	        }
-	    }, {
-	        key: 'render',
-	        value: function render() {
-	            var fun = this.props.fun;
-	            return _react2['default'].createElement(
-	                'a',
-	                { href: '#', onClick: this.handleClick.bind(this),
-	                    className: 'list-group-item' },
-	                fun[0],
-	                ':',
-	                fun[1],
-	                '/',
-	                fun[2]
-	            );
-	        }
-	    }]);
-
-	    return FunItem;
+	  return FunItem;
 	})(_react2['default'].Component);
 
 	var ACModal = (function (_React$Component2) {
-	    _inherits(ACModal, _React$Component2);
+	  _inherits(ACModal, _React$Component2);
 
-	    function ACModal(props) {
-	        _classCallCheck(this, ACModal);
+	  function ACModal(props) {
+	    _classCallCheck(this, ACModal);
 
-	        _get(Object.getPrototypeOf(ACModal.prototype), 'constructor', this).call(this, props);
-	        this.state = { funs: [] };
+	    _get(Object.getPrototypeOf(ACModal.prototype), 'constructor', this).call(this, props);
+	    this.state = { funs: [] };
+	  }
+
+	  _createClass(ACModal, [{
+	    key: 'displayFuns',
+	    value: function displayFuns(data) {
+	      this.setState({ funs: data });
 	    }
+	  }, {
+	    key: 'render',
+	    value: function render() {
+	      var funs = this.state.funs;
+	      var rows = [];
 
-	    _createClass(ACModal, [{
-	        key: 'displayFuns',
-	        value: function displayFuns(data) {
-	            this.setState({ funs: data });
-	        }
-	    }, {
-	        key: 'render',
-	        value: function render() {
-	            var funs = this.state.funs;
-	            var rows = [];
+	      for (var i = 0; i < funs.length && i < 100; i++) {
+	        rows.push(_react2['default'].createElement(FunItem, { key: funs[i], addGraph: this.props.addGraph,
+	          fun: funs[i] }));
+	      }
 
-	            for (var i = 0; i < funs.length && i < 100; i++) {
-	                rows.push(_react2['default'].createElement(FunItem, { key: funs[i], addGraph: this.props.addGraph, fun: funs[i] }));
-	            }
-	            if (funs.length > 0) {
-	                return _react2['default'].createElement(
-	                    'div',
-	                    { className: 'input-group input-group-lg' },
-	                    _react2['default'].createElement(
-	                        'span',
-	                        { style: { opacity: 0 }, className: 'input-group-addon', id: 'sizing-addon3' },
-	                        '>'
-	                    ),
-	                    _react2['default'].createElement(
-	                        'div',
-	                        { className: 'panel panel-default' },
-	                        _react2['default'].createElement(
-	                            'div',
-	                            { className: 'panel-body' },
-	                            _react2['default'].createElement(
-	                                'div',
-	                                { className: 'list-group' },
-	                                rows
-	                            )
-	                        )
-	                    )
-	                );
-	            } else return _react2['default'].createElement('div', null);
-	        }
-	    }]);
+	      if (funs.length > 0) {
+	        return _react2['default'].createElement(
+	          'div',
+	          { className: 'input-group input-group-lg' },
+	          _react2['default'].createElement(
+	            'span',
+	            { style: { opacity: 0 }, className: 'input-group-addon',
+	              id: 'sizing-addon3' },
+	            '>'
+	          ),
+	          _react2['default'].createElement(
+	            'div',
+	            { className: 'panel panel-default' },
+	            _react2['default'].createElement(
+	              'div',
+	              { className: 'panel-body' },
+	              _react2['default'].createElement(
+	                'div',
+	                { className: 'list-group' },
+	                rows
+	              )
+	            )
+	          )
+	        );
+	      } else return _react2['default'].createElement('div', null);
+	    }
+	  }]);
 
-	    return ACModal;
+	  return ACModal;
 	})(_react2['default'].Component);
 
 	var FunctionBrowser = (function (_React$Component3) {
-	    _inherits(FunctionBrowser, _React$Component3);
+	  _inherits(FunctionBrowser, _React$Component3);
 
-	    function FunctionBrowser(props) {
-	        _classCallCheck(this, FunctionBrowser);
+	  function FunctionBrowser(props) {
+	    _classCallCheck(this, FunctionBrowser);
 
-	        _get(Object.getPrototypeOf(FunctionBrowser.prototype), 'constructor', this).call(this, props);
-	        this.state = { value: "" };
+	    _get(Object.getPrototypeOf(FunctionBrowser.prototype), 'constructor', this).call(this, props);
+	    this.state = { value: "" };
+	  }
+
+	  _createClass(FunctionBrowser, [{
+	    key: 'handleKeyDown',
+	    value: function handleKeyDown(e) {
+	      var regex = /(\w+):(\w+)\/(\d+)/;
+	      var res = regex.exec(e.target.value);
+	      var mod = null,
+	          fun = null,
+	          arity = null;
+
+	      if (res) {
+	        mod = res[1];
+	        fun = res[2];
+	        arity = res[3];
+	        console.log(e.type);
+	      }
+	      if (e.keyCode == 13 && mod != null) {
+	        this.props.addGraph([mod, fun, parseInt(arity)]);
+	      }
 	    }
+	  }, {
+	    key: 'handleChange',
+	    value: function handleChange(event) {
+	      this.setState({ value: event.target.value });
+	      if (event.target.value != "") {
+	        $.getJSON("/api/funs", { query: event.target.value }, this.funsSuccess.bind(this));
+	      } else {
+	        this.refs.acm.displayFuns([]);
+	      }
+	    }
+	  }, {
+	    key: 'clear',
+	    value: function clear() {
+	      this.refs.acm.displayFuns([]);
+	      $(_react2['default'].findDOMNode(this.refs.searchBox)).val("");
+	    }
+	  }, {
+	    key: 'funsSuccess',
+	    value: function funsSuccess(data) {
+	      if (this.state.value != "") this.refs.acm.displayFuns(data);
+	    }
+	  }, {
+	    key: 'render',
+	    value: function render() {
+	      var autocomp = null;
+	      var value = this.state.value;
 
-	    _createClass(FunctionBrowser, [{
-	        key: 'handleChange',
-	        value: function handleChange(event) {
-	            this.setState({ value: event.target.value });
-	            if (event.target.value != "") {
-	                $.getJSON("/api/funs", { query: event.target.value }, this.funsSuccess.bind(this));
-	            } else {
-	                this.refs.acm.displayFuns([]);
-	            }
-	        }
-	    }, {
-	        key: 'clear',
-	        value: function clear() {
-	            this.refs.acm.displayFuns([]);
-	            $(_react2['default'].findDOMNode(this.refs.searchBox)).val("");
-	        }
-	    }, {
-	        key: 'funsSuccess',
-	        value: function funsSuccess(data) {
-	            if (this.state.value != "") this.refs.acm.displayFuns(data);
-	        }
-	    }, {
-	        key: 'render',
-	        value: function render() {
-	            var autocomp = null;
-	            var value = this.state.value;
+	      return _react2['default'].createElement(
+	        'form',
+	        { className: 'navbar-form' },
+	        _react2['default'].createElement(
+	          'div',
+	          { className: 'form-group', style: { display: "inline" } },
+	          _react2['default'].createElement(
+	            'div',
+	            { className: 'input-group' },
+	            _react2['default'].createElement(
+	              'span',
+	              { className: 'input-group-addon', id: 'sizing-addon3' },
+	              '>'
+	            ),
+	            _react2['default'].createElement('input', { ref: 'searchBox', type: 'text', className: 'form-control',
+	              placeholder: 'Function', 'aria-describedby': 'sizing-addon3',
+	              value: value, onKeyDown: this.handleKeyDown.bind(this),
+	              onChange: this.handleChange.bind(this) })
+	          ),
+	          _react2['default'].createElement(ACModal, { ref: 'acm', addGraph: this.props.addGraph })
+	        )
+	      );
+	    }
+	  }]);
 
-	            return _react2['default'].createElement(
-	                'form',
-	                { className: 'navbar-form' },
-	                _react2['default'].createElement(
-	                    'div',
-	                    { className: 'form-group', style: { display: "inline" } },
-	                    _react2['default'].createElement(
-	                        'div',
-	                        { className: 'input-group' },
-	                        _react2['default'].createElement(
-	                            'span',
-	                            { className: 'input-group-addon', id: 'sizing-addon3' },
-	                            '>'
-	                        ),
-	                        _react2['default'].createElement('input', { ref: 'searchBox', type: 'text', className: 'form-control',
-	                            placeholder: 'Function', 'aria-describedby': 'sizing-addon3',
-	                            value: value, onChange: this.handleChange.bind(this) })
-	                    ),
-	                    _react2['default'].createElement(ACModal, { ref: 'acm', addGraph: this.props.addGraph })
-	                )
-	            );
-	        }
-	    }]);
-
-	    return FunctionBrowser;
+	  return FunctionBrowser;
 	})(_react2['default'].Component);
 
 	var GraphPanel = (function (_React$Component4) {
-	    _inherits(GraphPanel, _React$Component4);
+	  _inherits(GraphPanel, _React$Component4);
 
-	    function GraphPanel(props) {
-	        _classCallCheck(this, GraphPanel);
+	  function GraphPanel(props) {
+	    _classCallCheck(this, GraphPanel);
 
-	        _get(Object.getPrototypeOf(GraphPanel.prototype), 'constructor', this).call(this, props);
-	        this.state = { graphs: [] };
+	    _get(Object.getPrototypeOf(GraphPanel.prototype), 'constructor', this).call(this, props);
+	    this.state = { funs: [] };
+	  }
+
+	  _createClass(GraphPanel, [{
+	    key: 'componentDidMount',
+	    value: function componentDidMount() {
+	      this.funsInterval = window.setTimeout(this.getFunsList.bind(this), 500);
+	    }
+	  }, {
+	    key: 'componentWillUnmount',
+	    value: function componentWillUnmount() {
+	      window.clearTimeout(this.interval);
 	    }
 
-	    _createClass(GraphPanel, [{
-	        key: 'addGraph',
-	        value: function addGraph(fun) {
-	            var newState = this.state;
-	            newState.graphs.push(fun);
-	            this.setState(newState);
-	        }
-	    }, {
-	        key: 'removeGraph',
-	        value: function removeGraph(fun) {
-	            var newState = this.state;
-	            var index = this.state.graphs.indexOf(fun);
-	            if (index > -1) {
-	                newState.graphs.splice(index, 1);
-	            }
-	            this.setState(newState);
-	        }
-	    }, {
-	        key: 'render',
-	        value: function render() {
-	            var graphs = this.state.graphs;
+	    // Getting data
 
-	            var graphsPanels = [];
-	            for (var i = 0; i < graphs.length; i++) {
-	                graphsPanels.push(_react2['default'].createElement(
-	                    'div',
-	                    { key: graphs[i], className: 'row' },
-	                    _react2['default'].createElement(
-	                        'div',
-	                        { className: 'col-md-12' },
-	                        _react2['default'].createElement(_graphJs2['default'], { removeGraph: this.removeGraph.bind(this), fun: graphs[i] })
-	                    )
-	                ));
-	            }
+	  }, {
+	    key: 'startMonitoring',
+	    value: function startMonitoring(fun) {
+	      $.ajax({
+	        url: "/api/mon_start",
+	        data: { mod: fun[0], fun: fun[1], arity: fun[2] }
+	      }).done((function () {
+	        this.getFunsList();
+	      }).bind(this));
+	    }
+	  }, {
+	    key: 'addGraph',
+	    value: function addGraph(fun) {
+	      this.startMonitoring(fun);
+	    }
+	  }, {
+	    key: 'removeGraph',
+	    value: function removeGraph(fun) {
+	      var newState = this.state;
+	      var index = this.state.funs.indexOf(fun);
+	      if (index > -1) {
+	        newState.funs.splice(index, 1);
+	      }
+	      this.setState(newState);
+	    }
+	  }, {
+	    key: 'getFunsList',
+	    value: function getFunsList() {
+	      $.ajax({
+	        url: "/api/mon_get_all",
+	        success: this.handleFuns.bind(this),
+	        error: this.handleFunsError.bind(this)
+	      });
+	    }
+	  }, {
+	    key: 'handleFuns',
+	    value: function handleFuns(data) {
+	      this.state.funs = data;
+	      this.setState(this.state);
+	      window.setTimeout(this.getFunsList.bind(this), 500);
+	    }
+	  }, {
+	    key: 'handleFunsError',
+	    value: function handleFunsError(jqXHR, error) {
+	      console.log("Getting funs error", error);
+	      window.setTimeout(this.getFunsList.bind(this), 1000);
+	    }
+	  }, {
+	    key: 'render',
+	    value: function render() {
+	      var funs = this.state.funs;
 
-	            return _react2['default'].createElement(
-	                'div',
-	                { className: 'container-fluid' },
-	                graphsPanels
-	            );
-	        }
-	    }]);
+	      var graphsPanels = [];
+	      for (var i = 0; i < funs.length; i++) {
+	        graphsPanels.push(_react2['default'].createElement(
+	          'div',
+	          { key: funs[i], className: 'row' },
+	          _react2['default'].createElement(
+	            'div',
+	            { className: 'col-md-12' },
+	            _react2['default'].createElement(_graphJsx2['default'], { removeGraph: this.removeGraph.bind(this), fun: funs[i] })
+	          )
+	        ));
+	      }
 
-	    return GraphPanel;
+	      return _react2['default'].createElement(
+	        'div',
+	        { className: 'container-fluid' },
+	        graphsPanels
+	      );
+	    }
+	  }]);
+
+	  return GraphPanel;
 	})(_react2['default'].Component);
 
 	var App = (function (_React$Component5) {
-	    _inherits(App, _React$Component5);
+	  _inherits(App, _React$Component5);
 
-	    function App(props) {
-	        _classCallCheck(this, App);
+	  function App(props) {
+	    _classCallCheck(this, App);
 
-	        _get(Object.getPrototypeOf(App.prototype), 'constructor', this).call(this, props);
-	        this.state = {};
+	    _get(Object.getPrototypeOf(App.prototype), 'constructor', this).call(this, props);
+	  }
+
+	  _createClass(App, [{
+	    key: 'addGraph',
+	    value: function addGraph(fun) {
+	      this.refs.graphPanel.addGraph(fun);
+	      this.refs.functionBrowser.clear();
 	    }
+	  }, {
+	    key: 'render',
+	    value: function render() {
+	      return _react2['default'].createElement(
+	        'div',
+	        { className: 'container-fluid' },
+	        _react2['default'].createElement(
+	          'nav',
+	          { className: 'navbar navbar-inverse navbar-fixed-top' },
+	          _react2['default'].createElement(
+	            'div',
+	            { className: 'navbar-header' },
+	            _react2['default'].createElement(
+	              'a',
+	              { className: 'navbar-brand', href: '#' },
+	              'XProf'
+	            )
+	          ),
+	          _react2['default'].createElement(
+	            'div',
+	            { className: 'navbar-collapse collapse', id: 'navbar-collapsible' },
+	            _react2['default'].createElement(_tracing_switchJsx2['default'], null),
+	            _react2['default'].createElement(FunctionBrowser, { ref: 'functionBrowser', addGraph: this.addGraph.bind(this) })
+	          )
+	        ),
+	        _react2['default'].createElement(GraphPanel, { ref: 'graphPanel' })
+	      );
+	    }
+	  }]);
 
-	    _createClass(App, [{
-	        key: 'addGraph',
-	        value: function addGraph(fun) {
-	            this.refs.graphPanel.addGraph(fun);
-	            this.refs.functionBrowser.clear();
-	        }
-	    }, {
-	        key: 'render',
-	        value: function render() {
-	            return _react2['default'].createElement(
-	                'div',
-	                { className: 'container-fluid' },
-	                _react2['default'].createElement(
-	                    'nav',
-	                    { className: 'navbar navbar-inverse navbar-fixed-top' },
-	                    _react2['default'].createElement(
-	                        'div',
-	                        { className: 'navbar-header' },
-	                        _react2['default'].createElement(
-	                            'a',
-	                            { className: 'navbar-brand', href: '#' },
-	                            'XProf'
-	                        )
-	                    ),
-	                    _react2['default'].createElement(
-	                        'div',
-	                        { className: 'navbar-collapse collapse', id: 'navbar-collapsible' },
-	                        _react2['default'].createElement(FunctionBrowser, { ref: 'functionBrowser', addGraph: this.addGraph.bind(this) })
-	                    )
-	                ),
-	                _react2['default'].createElement(GraphPanel, { ref: 'graphPanel' })
-	            );
-	        }
-	    }]);
-
-	    return App;
+	  return App;
 	})(_react2['default'].Component);
 
 	_react2['default'].render(_react2['default'].createElement(App, null), document.getElementById('main-container'));
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2)))
 
 /***/ },
-/* 16 */,
-/* 17 */
+/* 18 */,
+/* 19 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;(function (window) {
@@ -1498,7 +1785,7 @@ webpackJsonp([0],[
 
 	    function ChartInternal(api) {
 	        var $$ = this;
-	        $$.d3 = window.d3 ? window.d3 :  true ? __webpack_require__(16) : undefined;
+	        $$.d3 = window.d3 ? window.d3 :  true ? __webpack_require__(18) : undefined;
 	        $$.api = api;
 	        $$.config = $$.getDefaultConfig();
 	        $$.data = {};
@@ -8491,7 +8778,7 @@ webpackJsonp([0],[
 	    }
 
 	    if (true) {
-	        !(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(16)], __WEBPACK_AMD_DEFINE_FACTORY__ = (c3), __WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ? (__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+	        !(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(18)], __WEBPACK_AMD_DEFINE_FACTORY__ = (c3), __WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ? (__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 	    } else if ('undefined' !== typeof exports && 'undefined' !== typeof module) {
 	        module.exports = c3;
 	    } else {
@@ -8502,13 +8789,13 @@ webpackJsonp([0],[
 
 
 /***/ },
-/* 18 */
+/* 20 */
 /***/ function(module, exports, __webpack_require__) {
 
-	/* WEBPACK VAR INJECTION */(function($, _) {'use strict';
+	/* WEBPACK VAR INJECTION */(function($) {'use strict';
 
 	Object.defineProperty(exports, '__esModule', {
-	    value: true
+	  value: true
 	});
 
 	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -8525,188 +8812,79 @@ webpackJsonp([0],[
 
 	var _react2 = _interopRequireDefault(_react);
 
-	__webpack_require__(19);
+	__webpack_require__(16);
 
-	var _graph_flotJs = __webpack_require__(1);
+	var TracingSwitch = (function (_React$Component) {
+	  _inherits(TracingSwitch, _React$Component);
 
-	var _graph_flotJs2 = _interopRequireDefault(_graph_flotJs);
+	  function TracingSwitch(props) {
+	    _classCallCheck(this, TracingSwitch);
 
-	var UPDATE_INTERVAL = 1000;
-	var MAX_DPS = 5 * 60; //10 minutes
+	    _get(Object.getPrototypeOf(TracingSwitch.prototype), 'constructor', this).call(this, props);
+	    this.state = { tracing: false };
+	  }
 
-	var Graph = (function (_React$Component) {
-	    _inherits(Graph, _React$Component);
-
-	    function Graph(props) {
-	        _classCallCheck(this, Graph);
-
-	        _get(Object.getPrototypeOf(Graph.prototype), 'constructor', this).call(this, props);
-	        this.startMonitoring();
-	        this.state = { dps: [], error: false };
+	  _createClass(TracingSwitch, [{
+	    key: 'componentDidMount',
+	    value: function componentDidMount() {
+	      this.state.timeout = window.setTimeout(this.getTracingStatus.bind(this), 1000);
 	    }
+	  }, {
+	    key: 'componentDidUnmount',
+	    value: function componentDidUnmount() {
+	      window.clearTimeout(this.state.timeout);
+	    }
+	  }, {
+	    key: 'handleClick',
+	    value: function handleClick(event) {
+	      var spec = this.state.tracing ? "pause" : "all";
 
-	    _createClass(Graph, [{
-	        key: 'componentDidMount',
-	        value: function componentDidMount() {
-	            this.graph = new _graph_flotJs2['default']();
-	            this.graph.init("#" + this.chartId());
+	      $.ajax({
+	        url: "/api/trace_set",
+	        data: { spec: spec }
+	      }).error(function (jqXHR, errorcode) {
+	        return console.error("Cant set tracing", errorcode);
+	      }).always((function () {
+	        clearTimeout(this.state.timeout);
+	        this.getTracingStatus();
+	      }).bind(this));
+	    }
+	  }, {
+	    key: 'getTracingStatus',
+	    value: function getTracingStatus() {
+	      $.ajax({ url: "/api/trace_status" }).done((function (data) {
+	        this.state.tracing = data.tracing;
+	        this.state.timeout = window.setTimeout(this.getTracingStatus.bind(this), 1000);
+	        this.setState(this.state);
+	      }).bind(this));
+	    }
+	  }, {
+	    key: 'render',
+	    value: function render() {
+	      var symbol = "glyphicon glyphicon-" + (this.state.tracing ? "pause" : "record");
+	      var btnColor = "btn btn-" + (this.state.tracing ? "danger" : "success");
+	      var text = this.state.tracing ? "Pause tracing" : "Trace all";
 
-	            window.addEventListener('resize', this.handleResize.bind(this));
-	        }
-	    }, {
-	        key: 'componentWillUnmount',
-	        value: function componentWillUnmount() {
-	            window.removeEventListener('resize', this.handleResize.bind(this));
-	        }
-	    }, {
-	        key: 'render',
-	        value: function render() {
-	            var fun = this.props.fun;
-	            var panelType = "panel panel-default ";
-	            var errorMsg = "";
+	      return _react2['default'].createElement(
+	        'form',
+	        { className: 'navbar-form navbar-left', role: 'search' },
+	        _react2['default'].createElement(
+	          'button',
+	          { type: 'button', onClick: this.handleClick.bind(this), className: btnColor },
+	          _react2['default'].createElement('span', { className: symbol, 'aria-hidden': 'true' }),
+	          ' ',
+	          text
+	        )
+	      );
+	    }
+	  }]);
 
-	            if (this.state.error) {
-	                panelType += "panel-danger";
-	                errorMsg = _react2['default'].createElement(
-	                    'strong',
-	                    null,
-	                    '  -  communication error'
-	                );
-	            }
-
-	            return _react2['default'].createElement(
-	                'div',
-	                { className: panelType },
-	                _react2['default'].createElement(
-	                    'div',
-	                    { className: 'panel-heading' },
-	                    _react2['default'].createElement(
-	                        'button',
-	                        { onClick: this.handleClose.bind(this), type: 'button', className: 'close', 'data-dismiss': 'modal',
-	                            'aria-label': 'Close' },
-	                        _react2['default'].createElement(
-	                            'span',
-	                            { 'aria-hidden': 'true' },
-	                            '×'
-	                        )
-	                    ),
-	                    _react2['default'].createElement(
-	                        'h3',
-	                        { className: 'panel-title' },
-	                        fun[0],
-	                        ':',
-	                        fun[1],
-	                        '/',
-	                        fun[2],
-	                        errorMsg
-	                    )
-	                ),
-	                _react2['default'].createElement(
-	                    'div',
-	                    { className: 'panel-body' },
-	                    _react2['default'].createElement('div', { id: this.chartId(), className: 'chart' })
-	                )
-	            );
-	        }
-
-	        // Handle actions
-
-	    }, {
-	        key: 'handleResize',
-	        value: function handleResize(e) {
-	            this.graph.resize();
-	        }
-	    }, {
-	        key: 'handleClose',
-	        value: function handleClose() {
-	            var _this = this;
-
-	            var fun = this.props.fun;
-	            clearInterval(this.state.interval);
-	            $.ajax({
-	                url: "/api/mon_stop",
-	                data: { mod: fun[0], fun: fun[1], arity: fun[2] }
-	            }).done((function () {
-	                return _this.props.removeGraph(fun);
-	            }).bind(this));
-	        }
-
-	        // Getting data
-
-	    }, {
-	        key: 'startMonitoring',
-	        value: function startMonitoring() {
-	            var fun = this.props.fun;
-	            $.ajax({
-	                url: "/api/mon_start",
-	                data: { mod: fun[0], fun: fun[1], arity: fun[2] }
-	            }).done((function (data) {
-	                var ref = setInterval(this.getData.bind(this), UPDATE_INTERVAL);
-	                var newState = this.state;
-	                newState.interval = ref;
-	                this.setState(newState);
-	            }).bind(this));
-	        }
-	    }, {
-	        key: 'getData',
-	        value: function getData() {
-	            var fun = this.props.fun;
-	            $.ajax({
-	                url: "/api/data",
-	                data: { mod: fun[0], fun: fun[1], arity: fun[2] },
-	                success: this.handleData.bind(this),
-	                error: this.handleDataError.bind(this) });
-	        }
-	    }, {
-	        key: 'handleData',
-	        value: function handleData(data) {
-	            var state = this.state;
-	            var dps = [];
-	            state.dps.push(data);
-
-	            /* truncrate data if needed */
-	            if (state.dps.length > MAX_DPS) {
-	                var truncData = state.dps.slice(state.dps.length - MAX_DPS, state.dps.length);
-	                state.dps = truncData;
-	                dps = truncData;
-	            }
-	            /* pad data to maintain fixed width graph */
-	            else {
-	                    dps = state.dps;
-	                    var lastTime = _.last(state.dps).time;
-
-	                    for (var i = dps.length; i < MAX_DPS; i++) {
-	                        var item = {};
-	                        item.time = lastTime + i;
-	                        dps.push(item);
-	                    }
-	                }
-
-	            this.graph.update(dps);
-	            this.setState(state);
-	        }
-	    }, {
-	        key: 'handleDataError',
-	        value: function handleDataError(jqXHR, error) {
-	            this.state.error = true;
-	            this.setState(this.state);
-	        }
-
-	        // Helpers
-
-	    }, {
-	        key: 'chartId',
-	        value: function chartId() {
-	            return 'chart_' + this.props.fun[0] + '_' + this.props.fun[1] + '_' + this.props.fun[2];
-	        }
-	    }]);
-
-	    return Graph;
+	  return TracingSwitch;
 	})(_react2['default'].Component);
 
-	exports['default'] = Graph;
+	exports['default'] = TracingSwitch;
 	module.exports = exports['default'];
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2), __webpack_require__(19)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2)))
 
 /***/ }
 ]);

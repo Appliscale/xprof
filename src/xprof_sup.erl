@@ -1,8 +1,4 @@
-%%%-------------------------------------------------------------------
 %% @doc xprof top level supervisor.
-%% @end
-%%%-------------------------------------------------------------------
-
 -module(xprof_sup).
 
 -behaviour(supervisor).
@@ -15,21 +11,26 @@
 
 -define(SERVER, ?MODULE).
 
-%%====================================================================
 %% API functions
-%%====================================================================
 
 start_link() ->
     supervisor:start_link({local, ?SERVER}, ?MODULE, []).
 
-%%====================================================================
 %% Supervisor callbacks
-%%====================================================================
 
-%% Child :: {Id,StartFunc,Restart,Shutdown,Type,Modules}
 init([]) ->
-    {ok, { {one_for_all, 0, 1}, []} }.
-
-%%====================================================================
-%% Internal functions
-%%====================================================================
+    TraceHandlerSup = 
+	{xprof_tracer_handler_sup,
+	 {xprof_tracer_handler_sup, start_link, []},
+	 permanent,
+	 5000,
+	 supervisor,
+	 [xprof_tracer_handler_sup]},
+    Tracer = 
+	{xprof_tracer,
+	 {xprof_tracer, start_link, []},
+	 permanent,
+	 5000,
+	 worker,
+	 [xprof_tracer]},
+    {ok, { {rest_for_one, 0, 1}, [TraceHandlerSup, Tracer]} }.

@@ -12,15 +12,11 @@
 %% API
 
 start(_StartType, _StartArgs) ->
-    xprof_hist_db:init(),
-    xprof_tracer:start(),
     start_cowboy(),
     xprof_sup:start_link().
 
 stop(_State) ->
     stop_cowboy(),
-    xprof_tracer:stop(),
-    xprof_hist_db:finalize(),
     ok.
 
 %% Internal functions
@@ -34,7 +30,7 @@ start_cowboy() ->
 cowboy_routes() ->
     [{'_', [{"/api/:what", xprof_web_handler, []},
             {"/build/[...]", cowboy_static, {priv_dir, ?APP, "build"}},
-            {"/", cowboy_static, {priv_file, ?APP, "index.html"}}
+            {"/", cowboy_static, {priv_file, ?APP, "build/index.html"}}
            ]}].
 
 stop_cowboy() ->

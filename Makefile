@@ -2,7 +2,7 @@ compile:
 	./rebar3 compile
 
 dev: compile bower webpack
-	erl -pa _build/default/lib/*/ebin -s sync go -s xprof start
+	./rebar3 shell
 
 bower:
 	cd priv; bower install

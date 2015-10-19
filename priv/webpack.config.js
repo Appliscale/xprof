@@ -6,7 +6,7 @@ var config = {
     // We split the entry into two specific chunks. Our app and vendors. Vendors
     // specify that react should be part of that chunk
     entry: {
-        app: ['./app/graph_flot.js', './app/main.js'],
+        app: ['./app/graph_flot.jsx', './app/graph.jsx', './app/main.jsx'],
         vendors: ['jquery', 'underscore','react', 'd3', 'flot']
     },
     resolve: {
@@ -24,7 +24,8 @@ var config = {
     ],
     output: {
         path: './build',
-        filename: 'bundle.js'
+        filename: 'bundle.js',
+        publicPath: 'build/'
     },
     module: {
         noParse: [],
