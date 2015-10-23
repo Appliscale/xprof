@@ -57,15 +57,18 @@ handle_cast(_Msg, State) ->
     {noreply, State}.
 
 handle_info({trace_ts, Pid, call, _MFArgs, StartTime}, State) ->
-    put({Pid, ts}, StartTime),
+    put_ts(Pid, StartTime),
 
     {Timeout, NewState} = maybe_make_snapshot(State),
     {noreply, NewState, Timeout};
 handle_info({trace_ts, Pid, return_from, _, _Ret, EndTime},
             State = #state{hdr_ref=Ref}) ->
-    StartTime = erase({Pid, ts}),
-    CallTime = timer:now_diff(EndTime,StartTime),
-    hdr_histogram:record(Ref, CallTime),
+    case get_ts(Pid) of
+        undefined -> ok;
+        StartTime ->
+            CallTime = timer:now_diff(EndTime, StartTime),
+            hdr_histogram:record(Ref, CallTime)
+    end,
 
     {Timeout, NewState} = maybe_make_snapshot(State),
     {noreply, NewState, Timeout};
@@ -126,3 +129,28 @@ get_current_hist_stats(HistRef, Time) ->
 
 remove_outdated_snapshots(Name, TS) ->
     ets:select_delete(Name, [{ {{sec, '$1'},'_'},[{'<','$1',TS}],[true]}]).
+
+%% @doc Count the depth of recursion in this process
+put_ts(Pid, StartTime) ->
+    case get({Pid, call_count}) of
+        undefined ->
+            put({Pid, ts}, StartTime),
+            put({Pid, call_count}, 1);
+        CC ->
+            put({Pid, call_count}, CC + 1)
+    end.
+
+%% @doc Only return start time of the outermost call
+get_ts(Pid) ->
+    case get({Pid, call_count}) of
+        undefined ->
+            %% we missed the call of this function
+            undefined;
+        1 ->
+            erase({Pid, call_count}),
+            StartTime = erase({Pid, ts}),
+            StartTime;
+        CC when CC > 1 ->
+            put({Pid, call_count}, CC - 1),
+            undefined
+    end.
