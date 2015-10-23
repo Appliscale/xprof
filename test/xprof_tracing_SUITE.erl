@@ -26,7 +26,7 @@ end_per_suite(_Config) ->
     ok.
 
 init_per_group( simulate_tracing, Config) ->
-    xprof_tracer:monitor(MFA = {?MODULE, test_run, 0}),
+    xprof_tracer:monitor(MFA = {?MODULE, test_fun, 0}),
     [{mfa, MFA} | Config].
 
 end_per_group( simulate_tracing, Config) ->
@@ -44,15 +44,13 @@ basic_tracing(PidSpec, Config) ->
     ok = xprof_tracer:trace(PidSpec),
     ?assertMatch({PidSpec, false, false}, xprof_tracer:trace_status()),
 
-    {MS,S,_} = os:timestamp(),
-    Last = MS * 1000000 + S,
-    ct:pal("Time before test: ~p", [Last]),
+    Last = get_print_current_time(),
 
-    test_run(),
-    test_run(),
+    test_fun(),
+    test_fun(),
     ct:sleep(1000),
-    test_run(),
-    test_run(),
+    test_fun(),
+    test_fun(),
     ct:sleep(2000),
 
     Values = xprof_tracer:data(?config(mfa, Config), Last),
@@ -62,7 +60,8 @@ basic_tracing(PidSpec, Config) ->
     ?assert(0 =< proplists:get_value(count, Items2)),
 
     xprof_tracer:trace(pause),
-    ?assertMatch({PidSpec, true, false}, xprof_tracer:trace_status()).
+    ?assertMatch({PidSpec, true, false}, xprof_tracer:trace_status()),
+    ok.
 
 
 spawner_tracing(Config) ->
@@ -70,15 +69,13 @@ spawner_tracing(Config) ->
     ?assertMatch({{spawner, _Pid, 1.0}, false, false},
                  xprof_tracer:trace_status()),
 
-    {MS,S,_} = os:timestamp(),
-    Last = MS*1000000 + S,
-    ct:pal("Time before test: ~p", [Last]),
+    Last = get_print_current_time(),
 
-    spawn_test_run(),
-    spawn_test_run(),
+    spawn_test_fun(),
+    spawn_test_fun(),
     ct:sleep(1000),
-    spawn_test_run(),
-    spawn_test_run(),
+    spawn_test_fun(),
+    spawn_test_fun(),
     ct:sleep(2000),
 
     Values = xprof_tracer:data(?config(mfa, Config), Last),
@@ -89,12 +86,12 @@ spawner_tracing(Config) ->
 
     xprof_tracer:trace(pause),
     ?assertMatch({{spawner, _Pid, 1.0}, true, false},
-                 xprof_tracer:trace_status()).
-
+                 xprof_tracer:trace_status()),
+    ok.
 
 monitor_many_funs(_Config) ->
-    MFAs = [{code, all_loaded, 0}, {?MODULE, test_run, 0},
-            {?MODULE, spawn_test_run, 0}, {os, timestamp, 0},
+    MFAs = [{code, all_loaded, 0}, {?MODULE, test_fun, 0},
+            {?MODULE, spawn_test_fun, 0}, {os, timestamp, 0},
             {erl_scan, string, 0}],
 
     ?assertEqual([], xprof_tracer:all_monitored()),
@@ -110,17 +107,16 @@ monitor_many_funs(_Config) ->
     ct:log("Stop monitoring all 5 funs"),
     [xprof_tracer:demonitor(MFA) || MFA <- MFAs],
 
-    ?assertEqual([], xprof_tracer:all_monitored()).
+    ?assertEqual([], xprof_tracer:all_monitored()),
+    ok.
 
 monitor_recursive_fun(_Config) ->
-    xprof_tracer:monitor(MFA = {?MODULE, recursive_test_run, 1}),
+    xprof_tracer:monitor(MFA = {?MODULE, recursive_test_fun, 1}),
     ok = xprof_tracer:trace(self()),
 
-    {MS,S,_} = os:timestamp(),
-    Last = MS*1000000 + S,
-    ct:pal("Time before test: ~p", [Last]),
+    Last = get_print_current_time(),
 
-    recursive_test_run(10),
+    recursive_test_fun(10),
     ct:sleep(1000),
 
     %% although the function was called 10 times recursively
@@ -134,19 +130,22 @@ monitor_recursive_fun(_Config) ->
     xprof_tracer:demonitor(MFA),
     ok.
 
-
 %% Helpers
 
-test_run() ->
+test_fun() ->
     ct:sleep(random:uniform(10)).
 
 
-spawn_test_run() ->
-    spawn(fun() -> test_run() end).
+spawn_test_fun() ->
+    spawn(fun() -> test_fun() end).
 
-
-recursive_test_run(1) ->
+recursive_test_fun(1) ->
     ok;
-recursive_test_run(N) ->
+recursive_test_fun(N) ->
     ct:sleep(10),
-    recursive_test_run(N - 1).
+    recursive_test_fun(N - 1).
+
+get_print_current_time() ->
+    {MS,S,_} = os:timestamp(),
+    Last = MS * 1000000 + S,
+    ct:pal("Time before test: ~p", [Last]).

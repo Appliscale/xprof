@@ -54,6 +54,14 @@ all_monitored() ->
 data(MFA, TS) ->
     xprof_tracer_handler:data(MFA, TS).
 
+%% @doc Starts capturing args and results from function calls that lasted long
+%% than specified time threshold.
+-spec capture(mfa(), non_neg_integer()) -> reference().
+capture(MFA = {M,F,A}, Threshold, Limit) ->
+    lager:info("Capturing ~p calls to ~w:~w/~b that exceed ~p ms:",
+               [Limit, M, F, A, Threshold]),
+    xprof_tracer_handler:capture(MFA, Threshold, Limit).                     
+
 %% @doc Turns on or resumes tracing for a process specified by pid, all
 %% processes or processes that are spawned by specified spawner pid.
 -spec trace(pid() | pause| resume | all | {spawner, pid()}) -> ok.

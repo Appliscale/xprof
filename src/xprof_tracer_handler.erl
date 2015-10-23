@@ -42,6 +42,20 @@ data(MFA, FromEpoch) ->
             {error, not_found}
     end.
 
+%% @doc Starts function args and results.
+-spec capture(mfa(), non_neg_integer()) -> ok().
+capture(MFA = {M,F,A}, Threshold, Limit) ->
+    lager:info("Capturing ~p calls to ~w:~w/~b that exceed ~p ms:",
+               [Limit, M, F, A, Threshold]),
+    gen_server:call({capture, MFA, Threshold, Limit}).
+
+-spec capture_data(mfa()) -> empty | {non_neg_integer(), 
+                                      non_neg_integer(), list(any())}.
+captured_data(MFA, Offset) ->
+    %% get data from ets
+    %% return it
+    ok.
+
 %% gen_server callbacks
 
 init([MFA, Name]) ->
@@ -49,6 +63,10 @@ init([MFA, Name]) ->
     {ok, #state{mfa=MFA, hdr_ref=HDR, name=Name, last_ts=os:timestamp(),
                 window_size=?WINDOW_SIZE}, 1000}.
 
+handle_call({capture, MFA, Threshold, Limit}, _From, State) ->
+    % set state to enable recording
+    % reply with struct ref
+    
 handle_call(Request, _From, State) ->
     lager:warning("Received unknown message: ~p", [Request]),
     {reply, ignored, State}.
@@ -61,7 +79,7 @@ handle_info({trace_ts, Pid, call, _MFArgs, StartTime}, State) ->
 
     {Timeout, NewState} = maybe_make_snapshot(State),
     {noreply, NewState, Timeout};
-handle_info({trace_ts, Pid, return_from, _, _Ret, EndTime},
+handle_info({trace_ts, Pid, return_from, _MFA, Ret, EndTime},
             State = #state{hdr_ref=Ref}) ->
     case get_ts(Pid) of
         undefined -> ok;
