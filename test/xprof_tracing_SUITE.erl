@@ -123,6 +123,7 @@ monitor_recursive_fun(_Config) ->
     %% only 1 sample is recorded
     [Items1|_] = xprof_tracer:data(MFA, Last),
     ?assertEqual(1, proplists:get_value(count, Items1)),
+
     %% the duration of the outermost call is at least 100 ms
     ?assert(100 < (proplists:get_value(min, Items1) div 1000)),
 
@@ -133,19 +134,23 @@ monitor_recursive_fun(_Config) ->
 %% Helpers
 
 test_fun() ->
-    ct:sleep(random:uniform(10)).
+    test_fun(10).
 
+test_fun(Time) ->
+    timer:sleep(Time),
+    {res, Time}.
 
 spawn_test_fun() ->
     spawn(fun() -> test_fun() end).
 
-recursive_test_fun(1) ->
+recursive_test_fun(0) ->
     ok;
 recursive_test_fun(N) ->
-    ct:sleep(10),
+    timer:sleep(10),
     recursive_test_fun(N - 1).
 
 get_print_current_time() ->
     {MS,S,_} = os:timestamp(),
     Last = MS * 1000000 + S,
-    ct:pal("Time before test: ~p", [Last]).
+    ct:pal("Time before test: ~p", [Last]),
+    Last.
