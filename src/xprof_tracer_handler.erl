@@ -9,7 +9,7 @@
 
 -behaviour(gen_server).
 
--export([start_link/1, data/2 ]).
+-export([start_link/1, data/2, capture/3, get_captured_data/2]).
 
 %% gen_server callbacks
 -export([init/1,
@@ -19,7 +19,8 @@
          terminate/2,
          code_change/3]).
 
--record(state, {mfa, name, last_ts, hdr_ref, window_size}).
+-record(state, {mfa, name, last_ts, hdr_ref, window_size,
+                capture_spec, capture_id=0, capture_counter=0}).
 
 -define(ONE_SEC, 1000000). %% Second in microseconds
 -define(WINDOW_SIZE, 10*60). %% 10 min window size
@@ -36,37 +37,61 @@ start_link(MFA) ->
 data(MFA, FromEpoch) ->
     Name = xprof_lib:mfa2atom(MFA),
     try
-        ets:select(Name, [{ {{sec, '$1'},'$2'},[{'>','$1',FromEpoch}],['$2']}])
+        ets:select(Name, [{
+                            {{sec, '$1'},'$2'},
+                            [{'>','$1',FromEpoch}],
+                            ['$2']
+                          }])
     catch
         error:badarg ->
             {error, not_found}
     end.
 
-%% @doc Starts function args and results.
--spec capture(mfa(), non_neg_integer()) -> ok().
+%% @doc Starts capturing args and results from function calls that lasted long
+%% than specified time threshold.
+-spec capture(mfa(), non_neg_integer(), non_neg_integer()) -> ok.
 capture(MFA = {M,F,A}, Threshold, Limit) ->
     lager:info("Capturing ~p calls to ~w:~w/~b that exceed ~p ms:",
                [Limit, M, F, A, Threshold]),
-    gen_server:call({capture, MFA, Threshold, Limit}).
 
--spec capture_data(mfa()) -> empty | {non_neg_integer(), 
-                                      non_neg_integer(), list(any())}.
-captured_data(MFA, Offset) ->
-    %% get data from ets
-    %% return it
-    ok.
+    Name = xprof_lib:mfa2atom(MFA),
+    gen_server:call(Name, {capture, Threshold, Limit}).
+
+%% @doc
+-spec get_captured_data(mfa(), non_neg_integer()) ->
+                               empty | {non_neg_integer(),
+                                        non_neg_integer(),
+                                        list(any())}.
+get_captured_data(MFA, Offset) ->
+    Name = xprof_lib:mfa2atom(MFA),
+    Items = lists:sort(ets:select(Name,
+                                  [{
+                                     {{args_res, '$1'},
+                                      {'$2', '$3','$4','$5'}},
+                                     [{'>','$1',Offset}],
+                                     [['$1', '$2', '$3', '$4', '$5']]
+                                   }])),
+
+    [{capture_spec, Id, Threshold, Limit}] = ets:lookup(Name, capture_spec),
+    {ok, {Id, Threshold, Limit}, Items}.
+
 
 %% gen_server callbacks
 
 init([MFA, Name]) ->
     {ok, HDR} = init_storage(Name),
-    {ok, #state{mfa=MFA, hdr_ref=HDR, name=Name, last_ts=os:timestamp(),
+    {ok, #state{mfa=MFA, hdr_ref=HDR, name=Name,
+                last_ts=os:timestamp(),
                 window_size=?WINDOW_SIZE}, 1000}.
 
-handle_call({capture, MFA, Threshold, Limit}, _From, State) ->
-    % set state to enable recording
-    % reply with struct ref
-    
+handle_call({capture, Threshold, Limit}, _From,
+            State = #state{}) ->
+    NewId = State#state.capture_id + 1,
+    NewState = State#state{capture_spec = {Threshold, Limit},
+                           capture_id = NewId,
+                           capture_counter = 1},
+    init_new_capture_in_ets(NewState),
+    {reply, {ok, NewId}, NewState};
 handle_call(Request, _From, State) ->
     lager:warning("Received unknown message: ~p", [Request]),
     {reply, ignored, State}.
@@ -74,22 +99,23 @@ handle_call(Request, _From, State) ->
 handle_cast(_Msg, State) ->
     {noreply, State}.
 
-handle_info({trace_ts, Pid, call, _MFArgs, StartTime}, State) ->
-    put_ts(Pid, StartTime),
+handle_info({trace_ts, Pid, call, {_M, _F, Args}, StartTime}, State) ->
+    put_ts_args(Pid, StartTime, Args),
 
     {Timeout, NewState} = maybe_make_snapshot(State),
     {noreply, NewState, Timeout};
-handle_info({trace_ts, Pid, return_from, _MFA, Ret, EndTime},
-            State = #state{hdr_ref=Ref}) ->
-    case get_ts(Pid) of
-        undefined -> ok;
-        StartTime ->
-            CallTime = timer:now_diff(EndTime, StartTime),
-            hdr_histogram:record(Ref, CallTime)
-    end,
+handle_info({trace_ts, Pid, return_from, _MFA, Ret, EndTime}, State) ->
 
-    {Timeout, NewState} = maybe_make_snapshot(State),
-    {noreply, NewState, Timeout};
+    NewState = case get_ts_args(Pid) of
+                   undefined ->
+                       State;
+                   {StartTime, Args} ->
+                       CallTime = timer:now_diff(EndTime, StartTime),
+                       record_results(Pid, CallTime, Args, Ret, State)
+               end,
+
+    {Timeout, NewState2} = maybe_make_snapshot(NewState),
+    {noreply, NewState2, Timeout};
 handle_info(timeout, State) ->
     {Timeout, NewState} = maybe_make_snapshot(State),
     {noreply, NewState, Timeout};
@@ -146,12 +172,30 @@ get_current_hist_stats(HistRef, Time) ->
      {count,    hdr_histogram:get_total_count(HistRef)}].
 
 remove_outdated_snapshots(Name, TS) ->
-    ets:select_delete(Name, [{ {{sec, '$1'},'_'},[{'<','$1',TS}],[true]}]).
+    ets:select_delete(Name,
+                      [{
+                         {{sec, '$1'},'_'},
+                         [{'<','$1',TS}],
+                         [true]
+                       }]).
+
+init_new_capture_in_ets(State) ->
+    #state{name=Name, capture_id=Id,
+           capture_spec={Threshold, Limit}} = State,
+
+    ets:select_delete(Name,
+                      [{
+                         {{args_res, '_'},'_'},
+                         [],
+                         [true]
+                       }]),
+    ets:insert(Name, {capture_spec, Id, Threshold, Limit}).
 
 %% @doc Count the depth of recursion in this process
-put_ts(Pid, StartTime) ->
+put_ts_args(Pid, StartTime, Args) ->
     case get({Pid, call_count}) of
         undefined ->
+            put({Pid, args}, Args),
             put({Pid, ts}, StartTime),
             put({Pid, call_count}, 1);
         CC ->
@@ -159,7 +203,7 @@ put_ts(Pid, StartTime) ->
     end.
 
 %% @doc Only return start time of the outermost call
-get_ts(Pid) ->
+get_ts_args(Pid) ->
     case get({Pid, call_count}) of
         undefined ->
             %% we missed the call of this function
@@ -167,8 +211,26 @@ get_ts(Pid) ->
         1 ->
             erase({Pid, call_count}),
             StartTime = erase({Pid, ts}),
-            StartTime;
+            {StartTime, erase({Pid, args})};
         CC when CC > 1 ->
             put({Pid, call_count}, CC - 1),
             undefined
+    end.
+
+record_results(Pid, CallTime, Args, Res,
+               State = #state{name = Name,
+                              hdr_ref = Ref,
+                              capture_spec = CaptureSpec,
+                              capture_counter = Count}) ->
+
+    hdr_histogram:record(Ref, CallTime),
+
+    case {CaptureSpec, CallTime} of
+        {{Threshold, Limit}, CallTime}
+          when CallTime > Threshold * 1000 andalso Count =< Limit ->
+            ets:insert(Name, {{args_res, Count},
+                              {Pid, CallTime, Args, Res}}),
+            State#state{capture_counter = Count + 1};
+        _ ->
+            State
     end.

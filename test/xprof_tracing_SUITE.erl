@@ -10,12 +10,12 @@
 all() ->
     [monitor_many_funs,
      monitor_recursive_fun,
+     capture_args_res,
      {group, simulate_tracing}].
 
 groups() ->
     [{simulate_tracing, [shuffle, {repeat, 2}],
       [spawner_tracing, all_tracing, pid_tracing]}].
-
 
 init_per_suite(Config) ->
     {ok, _} = xprof:start(),
@@ -130,6 +130,47 @@ monitor_recursive_fun(_Config) ->
     xprof_tracer:trace(pause),
     xprof_tracer:demonitor(MFA),
     ok.
+
+capture_args_res(_Config) ->
+    xprof_tracer:monitor(MFA = {?MODULE, test_fun, 1}),
+    ok = xprof_tracer:trace(self()),
+
+    %% Start first capture
+    {ok, Id} = xprof_tracer_handler:capture(MFA, 20, 3),
+
+    test_fun(25),
+    test_fun(10),
+    test_fun(33),
+
+    ct:sleep(10), %% Let trace messages reach the process
+
+    {ok, {Id, 20, 3}, [Item1, Item2]} =
+        xprof_tracer_handler:get_captured_data(MFA,0),
+
+    ?assertMatch([_Num, _Pid, _Time, [25], {res, 25}], Item1),
+    ?assertMatch([_Num, _Pid, _Time, [33], {res, 33}], Item2),
+
+    test_fun(5),
+    test_fun(7),
+    test_fun(40),
+
+    ct:sleep(10), %% Let trace messages reach the process
+
+    {ok, {Id, 20, 3}, [Item3]} = xprof_tracer_handler:get_captured_data(MFA, 2),
+    ?assertMatch([_Num, _Pid, _Time, [40], {res, 40}], Item3),
+
+    {ok, {Id, 20, 3}, [Item1, Item2, Item3]} =
+        xprof_tracer_handler:get_captured_data(MFA,0),
+
+    %% Start new capture session
+    {ok, Id2} = xprof_tracer_handler:capture(MFA, 21, 4),
+
+    {ok, {Id2, 21, 4}, []} = xprof_tracer_handler:get_captured_data(MFA, 0),
+
+    xprof_tracer:trace(pause),
+    xprof_tracer:demonitor(MFA),
+    ok.
+
 
 %% Helpers
 
