@@ -6,7 +6,7 @@ import c3 from 'c3/c3';
 import 'flot';
 import Graph from './graph.jsx'
 import TracingSwitch from './tracing_switch.jsx'
-
+import GraphPanel from './graph_panel.jsx'
 class FunItem extends React.Component {
   constructor(props) {
     super(props);

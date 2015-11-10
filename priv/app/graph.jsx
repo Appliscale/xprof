@@ -1,6 +1,7 @@
 import React from 'react';
 import 'underscore';
 import FlotGraph from  "./graph_flot.jsx"
+import CallsTracer from "./call_tracer.jsx"
 
 const UPDATE_INTERVAL = 1000;
 const MAX_DPS = 5 * 60; //10 minutes
@@ -47,7 +48,12 @@ export default class Graph extends React.Component {
           <h3 className="panel-title">{fun[0]}:{fun[1]}/{fun[2]}{errorMsg}</h3>
         </div>
         <div className="panel-body">
-          <div id={this.chartId()} className="chart"></div>
+
+          <div className="container-fluid">
+            <div id={this.chartId()} className="chart"></div>
+            <br/>
+	    <CallsTracer fun={fun} />
+          </div>
         </div>
       </div>
     )
