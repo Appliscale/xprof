@@ -49,7 +49,8 @@ data(MFA, FromEpoch) ->
 
 %% @doc Starts capturing args and results from function calls that lasted long
 %% than specified time threshold.
--spec capture(mfa(), non_neg_integer(), non_neg_integer()) -> ok.
+-spec capture(mfa(), non_neg_integer(), non_neg_integer()) ->
+                     {ok, non_neg_integer()}.
 capture(MFA = {M,F,A}, Threshold, Limit) ->
     lager:info("Capturing ~p calls to ~w:~w/~b that exceed ~p ms:",
                [Limit, M, F, A, Threshold]),
@@ -59,8 +60,10 @@ capture(MFA = {M,F,A}, Threshold, Limit) ->
 
 %% @doc
 -spec get_captured_data(mfa(), non_neg_integer()) ->
-                               empty | {non_neg_integer(),
-                                        non_neg_integer(),
+                               empty | {ok,
+                                        {Id :: non_neg_integer(),
+                                         Threshold :: non_neg_integer(),
+                                         Limit :: non_neg_integer()},
                                         list(any())}.
 get_captured_data(MFA, Offset) ->
     Name = xprof_lib:mfa2atom(MFA),

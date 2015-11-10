@@ -101,8 +101,44 @@ handle_req(<<"trace_status">>, Req, State) ->
                                       <<"application/json">>}],
                                     Json, Req),
 
-    {ok, ResReq, State}.
+    {ok, ResReq, State};
 
+handle_req(<<"capture">>, Req, State) ->
+    MFA = {M,F,A} = get_mfa(Req),
+    {ThresholdStr, _} = cowboy_req:qs_val(<<"threshold">>, Req),
+    {LimitStr, _} = cowboy_req:qs_val(<<"limit">>, Req),
+    Threshold = binary_to_integer(ThresholdStr),
+    Limit = binary_to_integer(LimitStr),
+
+    lager:info("Capture ~b calls to ~w:~w:~b~n exceeding ~b ms",
+               [Limit ,M,F,A,Threshold]),
+
+    {ok, CaptureId} = xprof_tracer_handler:capture(MFA, Threshold, Limit),
+    Json = jiffy:encode({[{capture_id, CaptureId}]}),
+
+    {ok, ResReq} = cowboy_req:reply(200,
+                                    [{<<"content-type">>,
+                                      <<"application/json">>}], Json, Req),
+    {ok, ResReq, State};
+handle_req(<<"capture_data">>, Req, State) ->
+    MFA  = get_mfa(Req),
+    {OffsetStr, _} = cowboy_req:qs_val(<<"offset">>, Req),
+    Offset = binary_to_integer(OffsetStr),
+
+
+    {ok, {Id, Threshold, Limit}, Items} =
+        xprof_tracer_handler:get_captured_data(MFA, Offset),
+
+    ItemsJson = [{args_res2proplist(Item)} || Item <- Items],
+    Json = jiffy:encode({[{capture_id, Id},
+                          {threshold, Threshold},
+                          {limit, Limit},
+                          {items, ItemsJson}]}),
+    {ok, ResReq} = cowboy_req:reply(200,
+                                    [{<<"content-type">>,
+                                      <<"application/json">>}],
+                                    Json, Req),
+    {ok, ResReq, State}.
 
 %% Helpers
 
@@ -112,3 +148,10 @@ get_mfa(Req) ->
     {list_to_atom(binary_to_list(proplists:get_value(<<"mod">>, Params))),
      list_to_atom(binary_to_list(proplists:get_value(<<"fun">>, Params))),
      binary_to_integer(proplists:get_value(<<"arity">>, Params))}.
+
+args_res2proplist([Id, Pid, CallTime, Args, Res]) ->
+    [{id, Id},
+     {pid, list_to_binary(io_lib:format("~p",[Pid]))},
+     {call_time, CallTime},
+     {args, list_to_binary(io_lib:format("~p",[Args]))},
+     {res, list_to_binary(io_lib:format("~p",[Res]))}].
