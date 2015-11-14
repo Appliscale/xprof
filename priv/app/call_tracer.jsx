@@ -22,6 +22,7 @@ export default class CallsTracer extends React.Component {
 
   handleClick(e) {
     e.preventDefault();
+
     var fun = this.props.fun;
     var threshold = $(React.findDOMNode(this.refs.thresholdInput)).val();
     var limit = $(React.findDOMNode(this.refs.limitInput)).val();
@@ -42,11 +43,22 @@ export default class CallsTracer extends React.Component {
     }.bind(this));
   }
 
-  handleCodeBoxClick(e) {
-    if($(e.target).css("max-height") == "100%") {
-      $(e.target).css("max-height", "50px")
+  handleRowExpandClick(ref, e) {
+    e.preventDefault();
+    var target_row = React.findDOMNode(this.refs[ref]);
+
+    if($(target_row).data("expanded")) {
+      $(target_row).data("expanded", false);
+      $(target_row).removeClass("row-expanded");
+      $(target_row).addClass("row-normal");
+      $(".expand-chevron", target_row).removeClass("glyphicon-chevron-down");
+      $(".expand-chevron", target_row).addClass("glyphicon-chevron-right");
     } else {
-      $(e.target).css("max-height", "100%")
+      $(target_row).data("expanded", true);
+      $(target_row).removeClass("row-normal");
+      $(target_row).addClass("row-expanded");
+      $(".expand-chevron", target_row).removeClass("glyphicon-chevron-right");
+      $(".expand-chevron", target_row).addClass("glyphicon-chevron-down");
     }
   }
 
@@ -71,7 +83,7 @@ export default class CallsTracer extends React.Component {
       }
       else{
         this.state.capture_id = e.capture_id;
-        this.state.offset = 0;
+        this.state.offset = lastId;
         this.state.items = sortedItems;
       }
 
@@ -80,28 +92,36 @@ export default class CallsTracer extends React.Component {
     }.bind(this)).done(function() {
       this.state.timeoutRef = setTimeout(this.getCaptureData.bind(this),1000);
     }.bind(this));
-
   }
 
   render() {
     var items = [];
-
     for(var i=0;i < this.state.items.length;i++) {
       var item = this.state.items[i];
+      var ref = this.state.capture_id + "_" + item.id;
       items.push(
-        <tr key={this.state.catpure_id+"_"+item.id}>
+        <tr key={ref} ref={ref} data-expanded="false" className="row-normal">
+          <td>
+            <button onClick={this.handleRowExpandClick.bind(this,ref)} type="button"
+                    className="btn btn-default">
+              <span className="expand-chevron glyphicon glyphicon-chevron-right"
+                    aria-hidden="true">
+              </span>
+            </button>
+          </td>
           <td>{item.id}</td>
           <td>{item.call_time} us</td>
           <td>{item.pid}</td>
           <td style={{maxWidth:"500px"}}>
-            <div onClick={this.handleCodeBoxClick.bind(this)}
-                    className="well well-sm code-longbox" style={{margin:0}}>
+            <div className="code-longbox"
+                 style={{margin:0}}>
               {item.args}
             </div>
           </td>
           <td style={{maxWidth:"500px"}}>
-            <div onClick={this.handleCodeBoxClick.bind(this)}
-                    className="well well-sm code-longbox" style={{margin:0}}>{item.res}
+            <div className="code-longbox"
+                 style={{margin:0}}>
+              {item.res}
             </div>
           </td>
         </tr>);
@@ -112,6 +132,7 @@ export default class CallsTracer extends React.Component {
       table =
       <table className="table table-striped">
         <thead>
+          <th></th>
           <th>Id</th>
           <th>Call time</th>
           <th>Pid</th>
@@ -135,7 +156,8 @@ export default class CallsTracer extends React.Component {
             <div className="form-group">
               <div className="input-group">
                 <div className="input-group-addon">Treshold</div>
-                <input ref="thresholdInput" type="text" className="form-control" id="tresholdInput" placeholder="100"/>
+                <input ref="thresholdInput" type="text" className="form-control"
+                       id="tresholdInput" placeholder="100"/>
                 <div className="input-group-addon">ms</div>
               </div>
             </div>
@@ -144,7 +166,8 @@ export default class CallsTracer extends React.Component {
             <div className="form-group">
               <div className="input-group">
                 <div className="input-group-addon">Limit</div>
-                <input ref="limitInput" type="text" className="form-control" id="limitInput" placeholder="2"/>
+                <input ref="limitInput" type="text" className="form-control"
+                       id="limitInput" placeholder="2"/>
                 <div className="input-group-addon">calls</div>
               </div>
             </div>
@@ -158,4 +181,3 @@ export default class CallsTracer extends React.Component {
       </div>)
   }
 }
-

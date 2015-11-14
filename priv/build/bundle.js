@@ -1439,6 +1439,7 @@ webpackJsonp([0],[
 	    key: 'handleClick',
 	    value: function handleClick(e) {
 	      e.preventDefault();
+
 	      var fun = this.props.fun;
 	      var threshold = $(_react2['default'].findDOMNode(this.refs.thresholdInput)).val();
 	      var limit = $(_react2['default'].findDOMNode(this.refs.limitInput)).val();
@@ -1458,12 +1459,23 @@ webpackJsonp([0],[
 	      }).bind(this));
 	    }
 	  }, {
-	    key: 'handleCodeBoxClick',
-	    value: function handleCodeBoxClick(e) {
-	      if ($(e.target).css("max-height") == "100%") {
-	        $(e.target).css("max-height", "50px");
+	    key: 'handleRowExpandClick',
+	    value: function handleRowExpandClick(ref, e) {
+	      e.preventDefault();
+	      var target_row = _react2['default'].findDOMNode(this.refs[ref]);
+
+	      if ($(target_row).data("expanded")) {
+	        $(target_row).data("expanded", false);
+	        $(target_row).removeClass("row-expanded");
+	        $(target_row).addClass("row-normal");
+	        $(".expand-chevron", target_row).removeClass("glyphicon-chevron-down");
+	        $(".expand-chevron", target_row).addClass("glyphicon-chevron-right");
 	      } else {
-	        $(e.target).css("max-height", "100%");
+	        $(target_row).data("expanded", true);
+	        $(target_row).removeClass("row-normal");
+	        $(target_row).addClass("row-expanded");
+	        $(".expand-chevron", target_row).removeClass("glyphicon-chevron-right");
+	        $(".expand-chevron", target_row).addClass("glyphicon-chevron-down");
 	      }
 	    }
 	  }, {
@@ -1488,7 +1500,7 @@ webpackJsonp([0],[
 	          this.state.offset = lastId;
 	        } else {
 	          this.state.capture_id = e.capture_id;
-	          this.state.offset = 0;
+	          this.state.offset = lastId;
 	          this.state.items = sortedItems;
 	        }
 
@@ -1501,12 +1513,23 @@ webpackJsonp([0],[
 	    key: 'render',
 	    value: function render() {
 	      var items = [];
-
 	      for (var i = 0; i < this.state.items.length; i++) {
 	        var item = this.state.items[i];
+	        var ref = this.state.capture_id + "_" + item.id;
 	        items.push(_react2['default'].createElement(
 	          'tr',
-	          { key: this.state.catpure_id + "_" + item.id },
+	          { key: ref, ref: ref, 'data-expanded': 'false', className: 'row-normal' },
+	          _react2['default'].createElement(
+	            'td',
+	            null,
+	            _react2['default'].createElement(
+	              'button',
+	              { onClick: this.handleRowExpandClick.bind(this, ref), type: 'button',
+	                className: 'btn btn-default' },
+	              _react2['default'].createElement('span', { className: 'expand-chevron glyphicon glyphicon-chevron-right',
+	                'aria-hidden': 'true' })
+	            )
+	          ),
 	          _react2['default'].createElement(
 	            'td',
 	            null,
@@ -1528,8 +1551,8 @@ webpackJsonp([0],[
 	            { style: { maxWidth: "500px" } },
 	            _react2['default'].createElement(
 	              'div',
-	              { onClick: this.handleCodeBoxClick.bind(this),
-	                className: 'well well-sm code-longbox', style: { margin: 0 } },
+	              { className: 'code-longbox',
+	                style: { margin: 0 } },
 	              item.args
 	            )
 	          ),
@@ -1538,8 +1561,8 @@ webpackJsonp([0],[
 	            { style: { maxWidth: "500px" } },
 	            _react2['default'].createElement(
 	              'div',
-	              { onClick: this.handleCodeBoxClick.bind(this),
-	                className: 'well well-sm code-longbox', style: { margin: 0 } },
+	              { className: 'code-longbox',
+	                style: { margin: 0 } },
 	              item.res
 	            )
 	          )
@@ -1554,6 +1577,7 @@ webpackJsonp([0],[
 	          _react2['default'].createElement(
 	            'thead',
 	            null,
+	            _react2['default'].createElement('th', null),
 	            _react2['default'].createElement(
 	              'th',
 	              null,
@@ -1613,7 +1637,8 @@ webpackJsonp([0],[
 	                  { className: 'input-group-addon' },
 	                  'Treshold'
 	                ),
-	                _react2['default'].createElement('input', { ref: 'thresholdInput', type: 'text', className: 'form-control', id: 'tresholdInput', placeholder: '100' }),
+	                _react2['default'].createElement('input', { ref: 'thresholdInput', type: 'text', className: 'form-control',
+	                  id: 'tresholdInput', placeholder: '100' }),
 	                _react2['default'].createElement(
 	                  'div',
 	                  { className: 'input-group-addon' },
@@ -1637,7 +1662,8 @@ webpackJsonp([0],[
 	                  { className: 'input-group-addon' },
 	                  'Limit'
 	                ),
-	                _react2['default'].createElement('input', { ref: 'limitInput', type: 'text', className: 'form-control', id: 'limitInput', placeholder: '2' }),
+	                _react2['default'].createElement('input', { ref: 'limitInput', type: 'text', className: 'form-control',
+	                  id: 'limitInput', placeholder: '2' }),
 	                _react2['default'].createElement(
 	                  'div',
 	                  { className: 'input-group-addon' },
