@@ -130,7 +130,7 @@ export default class CallsTracer extends React.Component {
     var table = "";
     if(items.length > 0 ) {
       table =
-      <table className="table table-striped">
+      <table className="table table-hover table-striped">
         <thead>
           <th></th>
           <th>Id</th>

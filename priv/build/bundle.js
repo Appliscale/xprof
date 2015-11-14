@@ -1573,7 +1573,7 @@ webpackJsonp([0],[
 	      if (items.length > 0) {
 	        table = _react2['default'].createElement(
 	          'table',
-	          { className: 'table table-striped' },
+	          { className: 'table table-hover table-striped' },
 	          _react2['default'].createElement(
 	            'thead',
 	            null,
@@ -9107,42 +9107,8 @@ webpackJsonp([0],[
 
 	__webpack_require__(17);
 
-	var FunItem = (function (_React$Component) {
-	  _inherits(FunItem, _React$Component);
-
-	  function FunItem(props) {
-	    _classCallCheck(this, FunItem);
-
-	    _get(Object.getPrototypeOf(FunItem.prototype), 'constructor', this).call(this, props);
-	  }
-
-	  _createClass(FunItem, [{
-	    key: 'handleClick',
-	    value: function handleClick(event) {
-	      this.props.addGraph(this.props.fun);
-	    }
-	  }, {
-	    key: 'render',
-	    value: function render() {
-	      var fun = this.props.fun;
-	      return _react2['default'].createElement(
-	        'a',
-	        { href: '#', onClick: this.handleClick.bind(this),
-	          className: 'list-group-item' },
-	        fun[0],
-	        ':',
-	        fun[1],
-	        '/',
-	        fun[2]
-	      );
-	    }
-	  }]);
-
-	  return FunItem;
-	})(_react2['default'].Component);
-
-	var ACModal = (function (_React$Component2) {
-	  _inherits(ACModal, _React$Component2);
+	var ACModal = (function (_React$Component) {
+	  _inherits(ACModal, _React$Component);
 
 	  function ACModal(props) {
 	    _classCallCheck(this, ACModal);
@@ -9157,37 +9123,43 @@ webpackJsonp([0],[
 	      this.setState({ funs: data });
 	    }
 	  }, {
+	    key: 'handleFunClick',
+	    value: function handleFunClick(fun, e) {
+	      this.props.addGraph(fun);
+	    }
+	  }, {
 	    key: 'render',
 	    value: function render() {
 	      var funs = this.state.funs;
 	      var rows = [];
 
 	      for (var i = 0; i < funs.length && i < 100; i++) {
-	        rows.push(_react2['default'].createElement(FunItem, { key: funs[i], addGraph: this.props.addGraph,
-	          fun: funs[i] }));
+	        rows.push(_react2['default'].createElement(
+	          'tr',
+	          { key: funs[i], onClick: this.handleFunClick.bind(this, funs[i]) },
+	          _react2['default'].createElement(
+	            'td',
+	            null,
+	            funs[i][0],
+	            ':',
+	            funs[i][1],
+	            '/',
+	            funs[i][2]
+	          )
+	        ));
 	      }
 
 	      if (funs.length > 0) {
 	        return _react2['default'].createElement(
 	          'div',
-	          { className: 'input-group input-group-lg' },
+	          { className: 'panel panel-default' },
 	          _react2['default'].createElement(
-	            'span',
-	            { style: { opacity: 0 }, className: 'input-group-addon',
-	              id: 'sizing-addon3' },
-	            '>'
-	          ),
-	          _react2['default'].createElement(
-	            'div',
-	            { className: 'panel panel-default' },
+	            'table',
+	            { className: 'table table-hover table-striped' },
 	            _react2['default'].createElement(
-	              'div',
-	              { className: 'panel-body' },
-	              _react2['default'].createElement(
-	                'div',
-	                { className: 'list-group' },
-	                rows
-	              )
+	              'tbody',
+	              null,
+	              rows
 	            )
 	          )
 	        );
@@ -9198,8 +9170,8 @@ webpackJsonp([0],[
 	  return ACModal;
 	})(_react2['default'].Component);
 
-	var FunctionBrowser = (function (_React$Component3) {
-	  _inherits(FunctionBrowser, _React$Component3);
+	var FunctionBrowser = (function (_React$Component2) {
+	  _inherits(FunctionBrowser, _React$Component2);
 
 	  function FunctionBrowser(props) {
 	    _classCallCheck(this, FunctionBrowser);
@@ -9211,20 +9183,32 @@ webpackJsonp([0],[
 	  _createClass(FunctionBrowser, [{
 	    key: 'handleKeyDown',
 	    value: function handleKeyDown(e) {
-	      var regex = /(\w+):(\w+)\/(\d+)/;
-	      var res = regex.exec(e.target.value);
+	      console.log("keyCode", e.keyCode);
+
 	      var mod = null,
 	          fun = null,
 	          arity = null;
 
+	      /* scan input for function signature */
+	      var regex = /(\w+):(\w+)\/(\d+)/;
+	      var res = regex.exec(e.target.value);
 	      if (res) {
 	        mod = res[1];
 	        fun = res[2];
 	        arity = res[3];
 	        console.log(e.type);
 	      }
-	      if (e.keyCode == 13 && mod != null) {
-	        this.props.addGraph([mod, fun, parseInt(arity)]);
+
+	      switch (e.keyCode) {
+	        case 27:
+	          this.clear();
+	          break;
+	        case 13:
+	          e.preventDefault();
+	          if (mod != null) {
+	            this.props.addGraph([mod, fun, parseInt(arity)]);
+	          }
+	          break;
 	      }
 	    }
 	  }, {
@@ -9240,8 +9224,9 @@ webpackJsonp([0],[
 	  }, {
 	    key: 'clear',
 	    value: function clear() {
+	      var searchBoxDOM = _react2['default'].findDOMNode(this.refs.searchBox);
+	      searchBoxDOM.value = "";
 	      this.refs.acm.displayFuns([]);
-	      $(_react2['default'].findDOMNode(this.refs.searchBox)).val("");
 	    }
 	  }, {
 	    key: 'funsSuccess',
