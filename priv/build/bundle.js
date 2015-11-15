@@ -9114,13 +9114,18 @@ webpackJsonp([0],[
 	    _classCallCheck(this, ACModal);
 
 	    _get(Object.getPrototypeOf(ACModal.prototype), 'constructor', this).call(this, props);
-	    this.state = { funs: [] };
+	    this.state = {
+	      funs: [],
+	      position: -1
+	    };
 	  }
 
 	  _createClass(ACModal, [{
 	    key: 'displayFuns',
 	    value: function displayFuns(data) {
-	      this.setState({ funs: data });
+	      this.state.funs = data;
+	      this.state.position = -1;
+	      this.setState(this.state);
 	    }
 	  }, {
 	    key: 'handleFunClick',
@@ -9128,23 +9133,45 @@ webpackJsonp([0],[
 	      this.props.addGraph(fun);
 	    }
 	  }, {
+	    key: 'moveHighlight',
+	    value: function moveHighlight(delta) {
+	      var targetPosition = this.state.position + delta;
+
+	      if (targetPosition > 0 || targetPosition < this.state.funs.length) {
+	        this.state.position = targetPosition;
+	        this.setState(this.state);
+	      }
+	    }
+	  }, {
+	    key: 'highlightedFun',
+	    value: function highlightedFun() {
+	      var fun = null;
+	      var pos = this.state.position;
+
+	      if (pos != -1) {
+	        fun = this.state.funs[pos];
+	      }
+
+	      return fun;
+	    }
+	  }, {
 	    key: 'render',
 	    value: function render() {
 	      var funs = this.state.funs;
 	      var rows = [];
+	      var highlightClass = "";
 
 	      for (var i = 0; i < funs.length && i < 100; i++) {
+
+	        if (i == this.state.position) highlightClass = "row-highlight";else highlightClass = "";
+
 	        rows.push(_react2['default'].createElement(
 	          'tr',
-	          { key: funs[i], onClick: this.handleFunClick.bind(this, funs[i]) },
+	          { className: highlightClass, key: funs[i], onClick: this.handleFunClick.bind(this, funs[i]) },
 	          _react2['default'].createElement(
 	            'td',
 	            null,
-	            funs[i][0],
-	            ':',
-	            funs[i][1],
-	            '/',
-	            funs[i][2]
+	            ACModal.formatFun(funs[i])
 	          )
 	        ));
 	      }
@@ -9155,7 +9182,7 @@ webpackJsonp([0],[
 	          { className: 'panel panel-default' },
 	          _react2['default'].createElement(
 	            'table',
-	            { className: 'table table-hover table-striped' },
+	            { className: 'table table-striped' },
 	            _react2['default'].createElement(
 	              'tbody',
 	              null,
@@ -9164,6 +9191,11 @@ webpackJsonp([0],[
 	          )
 	        );
 	      } else return _react2['default'].createElement('div', null);
+	    }
+	  }], [{
+	    key: 'formatFun',
+	    value: function formatFun(fun) {
+	      return fun[0] + ':' + fun[1] + '/' + fun[2];
 	    }
 	  }]);
 
@@ -9181,33 +9213,50 @@ webpackJsonp([0],[
 	  }
 
 	  _createClass(FunctionBrowser, [{
+	    key: 'matchFunSignature',
+	    value: function matchFunSignature(input) {
+	      var regex = /(\w+):(\w+)\/(\d+)/;
+	      var res = regex.exec(input);
+
+	      if (res) return [res[1], res[2], parseInt(res[3])];else return null;
+	    }
+	  }, {
 	    key: 'handleKeyDown',
 	    value: function handleKeyDown(e) {
-	      console.log("keyCode", e.keyCode);
-
 	      var mod = null,
 	          fun = null,
 	          arity = null;
-
-	      /* scan input for function signature */
-	      var regex = /(\w+):(\w+)\/(\d+)/;
-	      var res = regex.exec(e.target.value);
-	      if (res) {
-	        mod = res[1];
-	        fun = res[2];
-	        arity = res[3];
-	        console.log(e.type);
-	      }
+	      var regex, enteredFun;
 
 	      switch (e.keyCode) {
 	        case 27:
+	          /* ESC */
+	          /* erase everything */
 	          this.clear();
 	          break;
 	        case 13:
+	          /* RETURN */
+	          /* submit funciton or try to compelete using selected fun */
 	          e.preventDefault();
-	          if (mod != null) {
-	            this.props.addGraph([mod, fun, parseInt(arity)]);
-	          }
+
+	          enteredFun = this.matchFunSignature(e.target.value);
+	          if (enteredFun) this.props.addGraph(enteredFun);else this.completeSearch();
+	          break;
+	        case 9:
+	          /* TAB */
+	          /* try to complete using selected suggestion*/
+	          e.preventDefault();
+	          this.completeSearch();
+	          break;
+	        case 38:
+	          /* ARROw UP */
+	          /* select next fun from the list */
+	          this.refs.acm.moveHighlight(-1);
+	          break;
+	        case 40:
+	          /* ARROW DOWN */
+	          /* select previous fun from the list */
+	          this.refs.acm.moveHighlight(1);
 	          break;
 	      }
 	    }
@@ -9222,10 +9271,26 @@ webpackJsonp([0],[
 	      }
 	    }
 	  }, {
+	    key: 'getSearchBox',
+	    value: function getSearchBox() {
+	      return _react2['default'].findDOMNode(this.refs.searchBox);
+	    }
+	  }, {
+	    key: 'completeSearch',
+	    value: function completeSearch() {
+	      var highlightedFun = this.refs.acm.highlightedFun();
+	      var funStr;
+
+	      if (highlightedFun) {
+	        funStr = ACModal.formatFun(highlightedFun);
+	        $(this.getSearchBox()).val(funStr);
+	        this.refs.acm.displayFuns([]);
+	      }
+	    }
+	  }, {
 	    key: 'clear',
 	    value: function clear() {
-	      var searchBoxDOM = _react2['default'].findDOMNode(this.refs.searchBox);
-	      searchBoxDOM.value = "";
+	      this.getSearchBox().value = "";
 	      this.refs.acm.displayFuns([]);
 	    }
 	  }, {

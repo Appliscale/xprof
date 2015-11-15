@@ -4,32 +4,68 @@ import 'underscore';
 class ACModal extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {funs: []};
+    this.state = {
+      funs: [],
+      position: -1
+    };
   }
 
   displayFuns(data) {
-    this.setState({funs: data});
+    this.state.funs = data;
+    this.state.position = -1;
+    this.setState(this.state);
   }
 
   handleFunClick(fun, e) {
     this.props.addGraph(fun)
   }
 
+  moveHighlight(delta) {
+    var targetPosition = this.state.position + delta;
+
+    if(targetPosition > 0 || targetPosition < this.state.funs.length){
+      this.state.position = targetPosition;
+      this.setState(this.state);
+    }
+  }
+
+  highlightedFun() {
+    var fun = null;
+    var pos = this.state.position;
+
+    if(pos != -1) {
+      fun = this.state.funs[pos];
+    }
+
+    return fun;
+  }
+
+  static formatFun(fun) {
+    return `${fun[0]}:${fun[1]}/${fun[2]}`
+  }
+
   render() {
     var funs = this.state.funs;
     var rows = [];
+    var highlightClass = "";
 
     for (let i = 0; i < funs.length && i < 100; i++) {
+
+      if(i == this.state.position)
+        highlightClass = "row-highlight";
+      else
+        highlightClass = "";
+
       rows.push(
-        <tr key={funs[i]} onClick={this.handleFunClick.bind(this, funs[i])}>
-          <td>{funs[i][0]}:{funs[i][1]}/{funs[i][2]}</td>
+        <tr className={highlightClass} key={funs[i]} onClick={this.handleFunClick.bind(this, funs[i])}>
+          <td>{ACModal.formatFun(funs[i])}</td>
         </tr>);
     }
 
     if (funs.length > 0) {
       return (
         <div className="panel panel-default">
-          <table className="table table-hover table-striped">
+          <table className="table table-striped">
             <tbody>
               {rows}
             </tbody>
@@ -47,30 +83,47 @@ export default class FunctionBrowser extends React.Component {
     this.state = {value: ""};
   }
 
-  handleKeyDown(e) {
-    console.log("keyCode", e.keyCode);
-
-    var mod = null, fun = null, arity =null;
-
-    /* scan input for function signature */
+  matchFunSignature(input) {
     var regex = /(\w+):(\w+)\/(\d+)/;
-    var res = regex.exec(e.target.value);
-    if(res) {
-      mod = res[1];
-      fun = res[2];
-      arity = res[3];
-      console.log(e.type);
-    }
+    var res = regex.exec(input);
+
+    if(res)
+      return [res[1], res[2], parseInt(res[3])];
+    else
+      return null;
+  }
+
+  handleKeyDown(e) {
+    var mod = null, fun = null, arity =null;
+    var regex, enteredFun;
 
     switch(e.keyCode) {
-      case 27:
+      case 27: /* ESC */
+        /* erase everything */
         this.clear();
         break;
-      case 13:
+      case 13: /* RETURN */
+        /* submit funciton or try to compelete using selected fun */
         e.preventDefault();
-        if(mod != null) {
-          this.props.addGraph([mod,fun,parseInt(arity)]);
-        }
+
+        enteredFun = this.matchFunSignature(e.target.value);
+        if(enteredFun)
+          this.props.addGraph(enteredFun);
+        else
+          this.completeSearch();
+        break;
+      case 9: /* TAB */
+        /* try to complete using selected suggestion*/
+        e.preventDefault();
+        this.completeSearch();
+        break;
+      case 38: /* ARROw UP */
+        /* select next fun from the list */
+        this.refs.acm.moveHighlight(-1);
+        break;
+      case 40: /* ARROW DOWN */
+        /* select previous fun from the list */
+        this.refs.acm.moveHighlight(1);
         break;
     }
   }
@@ -86,9 +139,23 @@ export default class FunctionBrowser extends React.Component {
     }
   }
 
+  getSearchBox() {
+    return React.findDOMNode(this.refs.searchBox);
+  }
+
+  completeSearch() {
+    var highlightedFun = this.refs.acm.highlightedFun();
+    var funStr;
+
+    if(highlightedFun) {
+      funStr = ACModal.formatFun(highlightedFun);
+      $(this.getSearchBox()).val(funStr);
+      this.refs.acm.displayFuns([]);
+    }
+  }
+
   clear() {
-    var searchBoxDOM = React.findDOMNode(this.refs.searchBox);
-    searchBoxDOM.value = "";
+    this.getSearchBox().value = "";
     this.refs.acm.displayFuns([]);
   }
 
@@ -102,21 +169,20 @@ export default class FunctionBrowser extends React.Component {
     var value = this.state.value;
 
     return (
-
       <form className="navbar-form">
         <div className="form-group" style={{display:"inline"}}>
           <div className="input-group" style={{display:"table"}}>
-            <span className="input-group-addon" style={{width:"1%"}}><span className="glyphicon glyphicon-search"></span></span>
-            <input ref='searchBox' type="text" className="form-control"
-                   placeholder="Function" aria-describedby="sizing-addon3"
-                   value={value} onKeyDown={this.handleKeyDown.bind(this)}
-                   onChange={this.handleChange.bind(this)} autofocus="autofocus"/>
+            <span className="input-group-addon" style={{width:"1%"}}>
+              <span className="glyphicon glyphicon-search"></span></span>
+              <input ref='searchBox' type="text" className="form-control"
+                     placeholder="Function" aria-describedby="sizing-addon3"
+                     value={value} onKeyDown={this.handleKeyDown.bind(this)}
+                     onChange={this.handleChange.bind(this)} autofocus="autofocus"/>
 
           </div>
         </div>
         <ACModal ref='acm' addGraph={this.props.addGraph}></ACModal>
       </form>
-
     )
   }
 }
