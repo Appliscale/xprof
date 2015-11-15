@@ -1,5 +1,5 @@
 {
-  "name": "nperf",
+  "name": "xprof",
   "version": "0.0.0",
   "authors": [
     "Michal Niec <michal@npspace.pl>"
@@ -7,7 +7,7 @@
   "description": "erlang profiler",
   "main": "main.js",
   "keywords": [
-    "nperf"
+    "xprof"
   ],
   "license": "MIT",
   "ignore": [

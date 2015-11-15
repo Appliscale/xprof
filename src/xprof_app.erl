@@ -24,7 +24,7 @@ stop(_State) ->
 start_cowboy() ->
     Port = application:get_env(?APP, port, ?DEF_WEB_IF_PORT),
     Dispatch = cowboy_router:compile(cowboy_routes()),
-    cowboy:start_http(nperf_http_listener, 100, [{port, Port}],
+    cowboy:start_http(xprof_http_listener, 100, [{port, Port}],
                       [{env, [{dispatch, Dispatch}]}]).
 
 cowboy_routes() ->
@@ -34,4 +34,4 @@ cowboy_routes() ->
            ]}].
 
 stop_cowboy() ->
-    cowboy:stop_listener(nperf_http_listener).
+    cowboy:stop_listener(xprof_http_listener).
