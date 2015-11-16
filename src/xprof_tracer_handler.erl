@@ -135,6 +135,7 @@ code_change(_OldVsn, State, _Extra) ->
 
 init_storage(Name) ->
     ets:new(Name, [public, named_table]),
+    ets:insert(Name, {capture_spec, -1, -1, -1}),
     hdr_histogram:open(1000000,3).
 
 maybe_make_snapshot(State = #state{name=Name, last_ts=LastTS,

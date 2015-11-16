@@ -1573,7 +1573,7 @@ webpackJsonp([0],[
 	      if (items.length > 0) {
 	        table = _react2['default'].createElement(
 	          'table',
-	          { className: 'table table-striped' },
+	          { className: 'table table-hover table-striped' },
 	          _react2['default'].createElement(
 	            'thead',
 	            null,
@@ -1700,7 +1700,7 @@ webpackJsonp([0],[
 /* 19 */
 /***/ function(module, exports, __webpack_require__) {
 
-	/* WEBPACK VAR INJECTION */(function($) {'use strict';
+	'use strict';
 
 	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
@@ -1742,183 +1742,12 @@ webpackJsonp([0],[
 
 	var _graph_panelJsx2 = _interopRequireDefault(_graph_panelJsx);
 
-	var FunItem = (function (_React$Component) {
-	  _inherits(FunItem, _React$Component);
+	var _function_browserJsx = __webpack_require__(24);
 
-	  function FunItem(props) {
-	    _classCallCheck(this, FunItem);
+	var _function_browserJsx2 = _interopRequireDefault(_function_browserJsx);
 
-	    _get(Object.getPrototypeOf(FunItem.prototype), 'constructor', this).call(this, props);
-	  }
-
-	  _createClass(FunItem, [{
-	    key: 'handleClick',
-	    value: function handleClick(event) {
-	      this.props.addGraph(this.props.fun);
-	    }
-	  }, {
-	    key: 'render',
-	    value: function render() {
-	      var fun = this.props.fun;
-	      return _react2['default'].createElement(
-	        'a',
-	        { href: '#', onClick: this.handleClick.bind(this),
-	          className: 'list-group-item' },
-	        fun[0],
-	        ':',
-	        fun[1],
-	        '/',
-	        fun[2]
-	      );
-	    }
-	  }]);
-
-	  return FunItem;
-	})(_react2['default'].Component);
-
-	var ACModal = (function (_React$Component2) {
-	  _inherits(ACModal, _React$Component2);
-
-	  function ACModal(props) {
-	    _classCallCheck(this, ACModal);
-
-	    _get(Object.getPrototypeOf(ACModal.prototype), 'constructor', this).call(this, props);
-	    this.state = { funs: [] };
-	  }
-
-	  _createClass(ACModal, [{
-	    key: 'displayFuns',
-	    value: function displayFuns(data) {
-	      this.setState({ funs: data });
-	    }
-	  }, {
-	    key: 'render',
-	    value: function render() {
-	      var funs = this.state.funs;
-	      var rows = [];
-
-	      for (var i = 0; i < funs.length && i < 100; i++) {
-	        rows.push(_react2['default'].createElement(FunItem, { key: funs[i], addGraph: this.props.addGraph,
-	          fun: funs[i] }));
-	      }
-
-	      if (funs.length > 0) {
-	        return _react2['default'].createElement(
-	          'div',
-	          { className: 'input-group input-group-lg' },
-	          _react2['default'].createElement(
-	            'span',
-	            { style: { opacity: 0 }, className: 'input-group-addon',
-	              id: 'sizing-addon3' },
-	            '>'
-	          ),
-	          _react2['default'].createElement(
-	            'div',
-	            { className: 'panel panel-default' },
-	            _react2['default'].createElement(
-	              'div',
-	              { className: 'panel-body' },
-	              _react2['default'].createElement(
-	                'div',
-	                { className: 'list-group' },
-	                rows
-	              )
-	            )
-	          )
-	        );
-	      } else return _react2['default'].createElement('div', null);
-	    }
-	  }]);
-
-	  return ACModal;
-	})(_react2['default'].Component);
-
-	var FunctionBrowser = (function (_React$Component3) {
-	  _inherits(FunctionBrowser, _React$Component3);
-
-	  function FunctionBrowser(props) {
-	    _classCallCheck(this, FunctionBrowser);
-
-	    _get(Object.getPrototypeOf(FunctionBrowser.prototype), 'constructor', this).call(this, props);
-	    this.state = { value: "" };
-	  }
-
-	  _createClass(FunctionBrowser, [{
-	    key: 'handleKeyDown',
-	    value: function handleKeyDown(e) {
-	      var regex = /(\w+):(\w+)\/(\d+)/;
-	      var res = regex.exec(e.target.value);
-	      var mod = null,
-	          fun = null,
-	          arity = null;
-
-	      if (res) {
-	        mod = res[1];
-	        fun = res[2];
-	        arity = res[3];
-	        console.log(e.type);
-	      }
-	      if (e.keyCode == 13 && mod != null) {
-	        this.props.addGraph([mod, fun, parseInt(arity)]);
-	      }
-	    }
-	  }, {
-	    key: 'handleChange',
-	    value: function handleChange(event) {
-	      this.setState({ value: event.target.value });
-	      if (event.target.value != "") {
-	        $.getJSON("/api/funs", { query: event.target.value }, this.funsSuccess.bind(this));
-	      } else {
-	        this.refs.acm.displayFuns([]);
-	      }
-	    }
-	  }, {
-	    key: 'clear',
-	    value: function clear() {
-	      this.refs.acm.displayFuns([]);
-	      $(_react2['default'].findDOMNode(this.refs.searchBox)).val("");
-	    }
-	  }, {
-	    key: 'funsSuccess',
-	    value: function funsSuccess(data) {
-	      if (this.state.value != "") this.refs.acm.displayFuns(data);
-	    }
-	  }, {
-	    key: 'render',
-	    value: function render() {
-	      var autocomp = null;
-	      var value = this.state.value;
-
-	      return _react2['default'].createElement(
-	        'form',
-	        { className: 'navbar-form' },
-	        _react2['default'].createElement(
-	          'div',
-	          { className: 'form-group', style: { display: "inline" } },
-	          _react2['default'].createElement(
-	            'div',
-	            { className: 'input-group', style: { display: "table" } },
-	            _react2['default'].createElement(
-	              'span',
-	              { className: 'input-group-addon', style: { width: "1%" } },
-	              _react2['default'].createElement('span', { className: 'glyphicon glyphicon-search' })
-	            ),
-	            _react2['default'].createElement('input', { ref: 'searchBox', type: 'text', className: 'form-control',
-	              placeholder: 'Function', 'aria-describedby': 'sizing-addon3',
-	              value: value, onKeyDown: this.handleKeyDown.bind(this),
-	              onChange: this.handleChange.bind(this), autofocus: 'autofocus' }),
-	            _react2['default'].createElement(ACModal, { ref: 'acm', addGraph: this.props.addGraph })
-	          )
-	        )
-	      );
-	    }
-	  }]);
-
-	  return FunctionBrowser;
-	})(_react2['default'].Component);
-
-	var App = (function (_React$Component4) {
-	  _inherits(App, _React$Component4);
+	var App = (function (_React$Component) {
+	  _inherits(App, _React$Component);
 
 	  function App(props) {
 	    _classCallCheck(this, App);
@@ -1954,7 +1783,7 @@ webpackJsonp([0],[
 	            'div',
 	            { className: 'navbar-collapse collapse', id: 'navbar-collapsible' },
 	            _react2['default'].createElement(_tracing_switchJsx2['default'], null),
-	            _react2['default'].createElement(FunctionBrowser, { ref: 'functionBrowser', addGraph: this.addGraph.bind(this) })
+	            _react2['default'].createElement(_function_browserJsx2['default'], { ref: 'functionBrowser', addGraph: this.addGraph.bind(this) })
 	          )
 	        ),
 	        _react2['default'].createElement(_graph_panelJsx2['default'], { ref: 'graphPanel' })
@@ -1966,7 +1795,6 @@ webpackJsonp([0],[
 	})(_react2['default'].Component);
 
 	_react2['default'].render(_react2['default'].createElement(App, null), document.getElementById('main-container'));
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2)))
 
 /***/ },
 /* 20 */,
@@ -9250,6 +9078,285 @@ webpackJsonp([0],[
 	})(_react2['default'].Component);
 
 	exports['default'] = GraphPanel;
+	module.exports = exports['default'];
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2)))
+
+/***/ },
+/* 24 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function($) {'use strict';
+
+	Object.defineProperty(exports, '__esModule', {
+	  value: true
+	});
+
+	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+	var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	var _react = __webpack_require__(3);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	__webpack_require__(17);
+
+	var ACModal = (function (_React$Component) {
+	  _inherits(ACModal, _React$Component);
+
+	  function ACModal(props) {
+	    _classCallCheck(this, ACModal);
+
+	    _get(Object.getPrototypeOf(ACModal.prototype), 'constructor', this).call(this, props);
+	    this.state = {
+	      funs: [],
+	      position: -1
+	    };
+	    this.cleared = false;
+	  }
+
+	  _createClass(ACModal, [{
+	    key: 'componentDidUpdate',
+	    value: function componentDidUpdate() {
+	      /* check if we need to scroll up because list of funs was reloaded */
+	      if (this.cleared) {
+	        var node = _react2['default'].findDOMNode(this.refs.suggestionsPanel);
+	        if (node) {
+	          node.scrollTop = 0;
+	          this.cleared = false;
+	        }
+	      }
+	    }
+	  }, {
+	    key: 'displayFuns',
+	    value: function displayFuns(data) {
+	      console.log("data", data);
+
+	      if (data.length == 0) {
+	        this.cleared = true;
+	      }
+	      this.state.funs = data;
+	      this.state.position = -1;
+	      this.setState(this.state);
+	    }
+	  }, {
+	    key: 'handleFunClick',
+	    value: function handleFunClick(fun, e) {
+	      this.props.addGraph(fun);
+	    }
+	  }, {
+	    key: 'moveHighlight',
+	    value: function moveHighlight(delta) {
+	      var targetPosition = this.state.position + delta;
+
+	      if (targetPosition > 0 || targetPosition < this.state.funs.length) {
+	        this.state.position = targetPosition;
+	        this.setState(this.state);
+	      }
+	    }
+	  }, {
+	    key: 'highlightedFun',
+	    value: function highlightedFun() {
+	      var fun = null;
+	      var pos = this.state.position;
+
+	      if (pos != -1) {
+	        fun = this.state.funs[pos];
+	      }
+
+	      return fun;
+	    }
+	  }, {
+	    key: 'render',
+	    value: function render() {
+	      var funs = this.state.funs;
+	      var rows = [];
+	      var highlightClass = "";
+	      var width, height;
+
+	      for (var i = 0; i < funs.length && i < 100; i++) {
+
+	        if (i == this.state.position) highlightClass = "row-highlight";else highlightClass = "";
+
+	        rows.push(_react2['default'].createElement(
+	          'tr',
+	          { className: highlightClass, key: funs[i],
+	            onClick: this.handleFunClick.bind(this, funs[i]) },
+	          _react2['default'].createElement(
+	            'td',
+	            null,
+	            ACModal.formatFun(funs[i])
+	          )
+	        ));
+	      }
+
+	      width = $("#searchBox").css("width");
+	      height = $("#searchBox").css("height");
+
+	      if (funs.length > 0) {
+	        return _react2['default'].createElement(
+	          'div',
+	          { ref: 'suggestionsPanel', className: 'panel panel-default suggestions-panel',
+	            style: { top: height, width: width } },
+	          _react2['default'].createElement(
+	            'table',
+	            { className: 'table table-striped' },
+	            _react2['default'].createElement(
+	              'tbody',
+	              null,
+	              rows
+	            )
+	          )
+	        );
+	      } else return _react2['default'].createElement('div', null);
+	    }
+	  }], [{
+	    key: 'formatFun',
+	    value: function formatFun(fun) {
+	      return fun[0] + ':' + fun[1] + '/' + fun[2];
+	    }
+	  }]);
+
+	  return ACModal;
+	})(_react2['default'].Component);
+
+	var FunctionBrowser = (function (_React$Component2) {
+	  _inherits(FunctionBrowser, _React$Component2);
+
+	  function FunctionBrowser(props) {
+	    _classCallCheck(this, FunctionBrowser);
+
+	    _get(Object.getPrototypeOf(FunctionBrowser.prototype), 'constructor', this).call(this, props);
+	    this.state = { value: "" };
+	  }
+
+	  _createClass(FunctionBrowser, [{
+	    key: 'matchFunSignature',
+	    value: function matchFunSignature(input) {
+	      var regex = /(\w+):(\w+)\/(\d+)/;
+	      var res = regex.exec(input);
+
+	      if (res) return [res[1], res[2], parseInt(res[3])];else return null;
+	    }
+	  }, {
+	    key: 'handleKeyDown',
+	    value: function handleKeyDown(e) {
+	      var mod = null,
+	          fun = null,
+	          arity = null;
+	      var regex, enteredFun;
+
+	      switch (e.keyCode) {
+	        case 27:
+	          /* ESC */
+	          /* erase everything */
+	          this.clear();
+	          break;
+	        case 13:
+	          /* RETURN */
+	          /* submit funciton or try to compelete using selected fun */
+	          e.preventDefault();
+
+	          enteredFun = this.matchFunSignature(e.target.value);
+	          if (enteredFun) this.props.addGraph(enteredFun);else this.completeSearch();
+	          break;
+	        case 9:
+	          /* TAB */
+	          /* try to complete using selected suggestion*/
+	          e.preventDefault();
+	          this.completeSearch();
+	          break;
+	        case 38:
+	          /* ARROw UP */
+	          /* select next fun from the list */
+	          this.refs.acm.moveHighlight(-1);
+	          break;
+	        case 40:
+	          /* ARROW DOWN */
+	          /* select previous fun from the list */
+	          this.refs.acm.moveHighlight(1);
+	          break;
+	      }
+	    }
+	  }, {
+	    key: 'handleChange',
+	    value: function handleChange(event) {
+	      this.setState({ value: event.target.value });
+	      if (event.target.value != "") {
+	        $.getJSON("/api/funs", { query: event.target.value }, this.funsSuccess.bind(this));
+	      } else {
+	        this.refs.acm.displayFuns([]);
+	      }
+	    }
+	  }, {
+	    key: 'getSearchBox',
+	    value: function getSearchBox() {
+	      return _react2['default'].findDOMNode(this.refs.searchBox);
+	    }
+	  }, {
+	    key: 'completeSearch',
+	    value: function completeSearch() {
+	      var highlightedFun = this.refs.acm.highlightedFun();
+	      var funStr;
+
+	      if (highlightedFun) {
+	        funStr = ACModal.formatFun(highlightedFun);
+	        $(this.getSearchBox()).val(funStr);
+	        this.refs.acm.displayFuns([]);
+	      }
+	    }
+	  }, {
+	    key: 'clear',
+	    value: function clear() {
+	      this.getSearchBox().value = "";
+	      this.refs.acm.displayFuns([]);
+	    }
+	  }, {
+	    key: 'funsSuccess',
+	    value: function funsSuccess(data) {
+	      if (this.state.value != "") this.refs.acm.displayFuns(data);
+	    }
+	  }, {
+	    key: 'render',
+	    value: function render() {
+	      var autocomp = null;
+	      var value = this.state.value;
+
+	      return _react2['default'].createElement(
+	        'form',
+	        { className: 'navbar-form' },
+	        _react2['default'].createElement(
+	          'div',
+	          { className: 'form-group', style: { display: "inline" } },
+	          _react2['default'].createElement(
+	            'div',
+	            { className: 'input-group', style: { display: "table" } },
+	            _react2['default'].createElement(
+	              'span',
+	              { className: 'input-group-addon', style: { width: "1%" } },
+	              _react2['default'].createElement('span', { className: 'glyphicon glyphicon-search' })
+	            ),
+	            _react2['default'].createElement('input', { id: 'searchBox', ref: 'searchBox', type: 'text', className: 'form-control',
+	              placeholder: 'Function', 'aria-describedby': 'sizing-addon3',
+	              value: value, onKeyDown: this.handleKeyDown.bind(this),
+	              onChange: this.handleChange.bind(this), autofocus: 'autofocus' }),
+	            _react2['default'].createElement(ACModal, { ref: 'acm', addGraph: this.props.addGraph })
+	          )
+	        )
+	      );
+	    }
+	  }]);
+
+	  return FunctionBrowser;
+	})(_react2['default'].Component);
+
+	exports['default'] = FunctionBrowser;
 	module.exports = exports['default'];
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2)))
 
