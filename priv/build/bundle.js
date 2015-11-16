@@ -9118,11 +9118,29 @@ webpackJsonp([0],[
 	      funs: [],
 	      position: -1
 	    };
+	    this.cleared = false;
 	  }
 
 	  _createClass(ACModal, [{
+	    key: 'componentDidUpdate',
+	    value: function componentDidUpdate() {
+	      /* check if we need to scroll up because list of funs was reloaded */
+	      if (this.cleared) {
+	        var node = _react2['default'].findDOMNode(this.refs.suggestionsPanel);
+	        if (node) {
+	          node.scrollTop = 0;
+	          this.cleared = false;
+	        }
+	      }
+	    }
+	  }, {
 	    key: 'displayFuns',
 	    value: function displayFuns(data) {
+	      console.log("data", data);
+
+	      if (data.length == 0) {
+	        this.cleared = true;
+	      }
 	      this.state.funs = data;
 	      this.state.position = -1;
 	      this.setState(this.state);
@@ -9160,6 +9178,7 @@ webpackJsonp([0],[
 	      var funs = this.state.funs;
 	      var rows = [];
 	      var highlightClass = "";
+	      var width, height;
 
 	      for (var i = 0; i < funs.length && i < 100; i++) {
 
@@ -9167,7 +9186,8 @@ webpackJsonp([0],[
 
 	        rows.push(_react2['default'].createElement(
 	          'tr',
-	          { className: highlightClass, key: funs[i], onClick: this.handleFunClick.bind(this, funs[i]) },
+	          { className: highlightClass, key: funs[i],
+	            onClick: this.handleFunClick.bind(this, funs[i]) },
 	          _react2['default'].createElement(
 	            'td',
 	            null,
@@ -9176,10 +9196,14 @@ webpackJsonp([0],[
 	        ));
 	      }
 
+	      width = $("#searchBox").css("width");
+	      height = $("#searchBox").css("height");
+
 	      if (funs.length > 0) {
 	        return _react2['default'].createElement(
 	          'div',
-	          { className: 'panel panel-default' },
+	          { ref: 'suggestionsPanel', className: 'panel panel-default suggestions-panel',
+	            style: { top: height, width: width } },
 	          _react2['default'].createElement(
 	            'table',
 	            { className: 'table table-striped' },
@@ -9318,13 +9342,13 @@ webpackJsonp([0],[
 	              { className: 'input-group-addon', style: { width: "1%" } },
 	              _react2['default'].createElement('span', { className: 'glyphicon glyphicon-search' })
 	            ),
-	            _react2['default'].createElement('input', { ref: 'searchBox', type: 'text', className: 'form-control',
+	            _react2['default'].createElement('input', { id: 'searchBox', ref: 'searchBox', type: 'text', className: 'form-control',
 	              placeholder: 'Function', 'aria-describedby': 'sizing-addon3',
 	              value: value, onKeyDown: this.handleKeyDown.bind(this),
-	              onChange: this.handleChange.bind(this), autofocus: 'autofocus' })
+	              onChange: this.handleChange.bind(this), autofocus: 'autofocus' }),
+	            _react2['default'].createElement(ACModal, { ref: 'acm', addGraph: this.props.addGraph })
 	          )
-	        ),
-	        _react2['default'].createElement(ACModal, { ref: 'acm', addGraph: this.props.addGraph })
+	        )
 	      );
 	    }
 	  }]);

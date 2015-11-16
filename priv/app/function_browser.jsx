@@ -8,9 +8,26 @@ class ACModal extends React.Component {
       funs: [],
       position: -1
     };
+    this.cleared = false;
+  }
+
+  componentDidUpdate() {
+    /* check if we need to scroll up because list of funs was reloaded */
+    if(this.cleared) {
+      var node = React.findDOMNode(this.refs.suggestionsPanel);
+      if(node) {
+        node.scrollTop = 0;
+        this.cleared = false;
+      }
+    }
   }
 
   displayFuns(data) {
+    console.log("data", data);
+
+    if(data.length == 0) {
+      this.cleared = true;
+    }
     this.state.funs = data;
     this.state.position = -1;
     this.setState(this.state);
@@ -48,6 +65,7 @@ class ACModal extends React.Component {
     var funs = this.state.funs;
     var rows = [];
     var highlightClass = "";
+    var width, height;
 
     for (let i = 0; i < funs.length && i < 100; i++) {
 
@@ -57,14 +75,19 @@ class ACModal extends React.Component {
         highlightClass = "";
 
       rows.push(
-        <tr className={highlightClass} key={funs[i]} onClick={this.handleFunClick.bind(this, funs[i])}>
+        <tr className={highlightClass} key={funs[i]}
+            onClick={this.handleFunClick.bind(this, funs[i])}>
           <td>{ACModal.formatFun(funs[i])}</td>
         </tr>);
     }
 
+    width = $("#searchBox").css("width");
+    height = $("#searchBox").css("height");
+
     if (funs.length > 0) {
       return (
-        <div className="panel panel-default">
+        <div ref="suggestionsPanel" className="panel panel-default suggestions-panel"
+             style={{top:height,width:width}}>
           <table className="table table-striped">
             <tbody>
               {rows}
@@ -174,14 +197,13 @@ export default class FunctionBrowser extends React.Component {
           <div className="input-group" style={{display:"table"}}>
             <span className="input-group-addon" style={{width:"1%"}}>
               <span className="glyphicon glyphicon-search"></span></span>
-              <input ref='searchBox' type="text" className="form-control"
+              <input id="searchBox" ref='searchBox' type="text" className="form-control"
                      placeholder="Function" aria-describedby="sizing-addon3"
                      value={value} onKeyDown={this.handleKeyDown.bind(this)}
                      onChange={this.handleChange.bind(this)} autofocus="autofocus"/>
-
+              <ACModal ref='acm' addGraph={this.props.addGraph}></ACModal>
           </div>
         </div>
-        <ACModal ref='acm' addGraph={this.props.addGraph}></ACModal>
       </form>
     )
   }
