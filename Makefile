@@ -10,4 +10,7 @@ bower:
 webpack:
 	cd priv; webpack
 
-.PHONY=compile dev bower webpack
+test: compile
+	./rebar3 ct
+
+.PHONY=compile dev bower webpack test
