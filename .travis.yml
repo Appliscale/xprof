@@ -1,0 +1,10 @@
+language: erlang
+branches:
+    only:
+        - master
+otp_release:
+    - 18.0
+    - 17.5
+    - R16B03-1
+script:
+    make test
