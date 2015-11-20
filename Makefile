@@ -11,6 +11,6 @@ webpack:
 	cd priv; webpack
 
 test: compile
-	./rebar3 ct
+	./rebar3 ct -c
 
 .PHONY=compile dev bower webpack test
