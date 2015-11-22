@@ -8,3 +8,6 @@ otp_release:
     - R16B03-1
 script:
     make test
+after_success:
+    - ./rebar3 cover
+    - erl -noshell -pa _build/test/lib/*/ebin -eval 'ecoveralls:travis_ci("_build/test/cover/ct.coverdata"), init:stop()'
