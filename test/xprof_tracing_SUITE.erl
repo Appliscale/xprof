@@ -15,7 +15,7 @@ all() ->
 
 groups() ->
     [{simulate_tracing, [shuffle, {repeat, 2}],
-      [spawner_tracing, all_tracing, pid_tracing]}].
+      [spawner_tracing, all_tracing, pid_tracing, dead_proc_tracing]}].
 
 init_per_suite(Config) ->
     {ok, _} = xprof:start(),
@@ -86,6 +86,19 @@ spawner_tracing(Config) ->
 
     xprof_tracer:trace(pause),
     ?assertMatch({{spawner, _Pid, 1.0}, true, false},
+                 xprof_tracer:trace_status()),
+    ok.
+
+dead_proc_tracing(_Config) ->
+    {Pid, MRef} = spawn_monitor(fun() -> ok end),
+    %% wait for the process to terminate
+    receive {'DOWN', MRef, _, _, _} -> ok end,
+    ok = xprof_tracer:trace(Pid),
+    ?assertMatch({Pid, false, false},
+                 xprof_tracer:trace_status()),
+
+    ok = xprof_tracer:trace({spawner, Pid, 1.0}),
+    ?assertMatch({{spawner, Pid, 1.0}, false, false},
                  xprof_tracer:trace_status()),
     ok.
 

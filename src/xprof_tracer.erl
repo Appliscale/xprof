@@ -196,14 +196,27 @@ setup_trace(Spec, State = #state{trace_spec=undefined}) ->
     set_trace_opts(true, Spec),
     State#state{trace_spec=Spec, paused=false};
 setup_trace(Spec, State) ->
-    catch set_trace_opts(false, State#state.trace_spec),
+    set_trace_opts(false, State#state.trace_spec),
     setup_trace(Spec, State#state{trace_spec=undefined}).
 
 set_trace_opts(How, {spawner, SpwPid, _Sampl}) ->
-    erlang:trace(SpwPid, How, [procs, timestamp]);
+    trace(SpwPid, How, [procs, timestamp]);
 set_trace_opts(How, all) ->
-    erlang:trace(all, How, [call, timestamp]);
+    trace(all, How, [call, timestamp]);
 set_trace_opts(How, Pid) when is_pid(Pid) ->
-    erlang:trace(Pid, How, [call, timestamp]);
+    trace(Pid, How, [call, timestamp]);
 set_trace_opts(_How, undefined) ->
     true.
+
+trace(PidSpec, How, Flags) ->
+    try
+        erlang:trace(PidSpec, How, Flags)
+    catch
+        error:badarg ->
+            case is_pid(PidSpec) andalso not is_process_alive(PidSpec) of
+                true ->
+                    0;
+                _ ->
+                    error(badarg, [PidSpec, How, Flags])
+            end
+    end.
