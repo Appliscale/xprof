@@ -17,7 +17,7 @@ get_available_funs(Query) ->
         [ModBin, Rest] ->
             case is_module(ModBin) of
                 {true, Mod} ->
-                    Funs = get_global_functions(Mod) ++ get_local_functions(Mod),
+                    Funs = get_all_functions(Mod),
                     [[Mod, Fun, Arity]
                      || {Fun, Arity} <- filter_funs(binary_to_list(Rest), Funs)];
                 false ->
@@ -46,18 +46,11 @@ filter_mods(Prefix, Mods) ->
 get_global_functions(Mod) ->
     [FA || FA = {F, _} <- Mod:module_info(exports), F =/= module_info].
 
--spec get_local_functions(module()) -> [{atom(), arity()}].
-get_local_functions(Mod) ->
-    case code:which(Mod) of
-        Error when is_atom(Error) ->
-            %% non_existing | preloaded | cover_compiled ... who knows what else
-            [];
-        File ->
-            {ok, {Mod, [{locals, Locals}]}} = beam_lib:chunks(File, [locals]),
-            %% filter out functions generated for fun objects
-            %% and list comprehensions like '-filter_funs/2-fun-0-'
-            [FA || FA = {F, _} <- Locals, not lists:prefix("-", atom_to_list(F))]
-    end.
+-spec get_all_functions(module()) -> [{atom(), arity()}].
+get_all_functions(Mod) ->
+    %% filter out functions generated for fun objects
+    %% and list comprehensions like '-filter_funs/2-fun-0-'
+    [FA || FA = {F, _} <- Mod:module_info(functions), not lists:prefix("-", atom_to_list(F))].
 
 is_module(ModBin) ->
     try list_to_existing_atom(binary_to_list(ModBin)) of
