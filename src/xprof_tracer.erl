@@ -161,8 +161,7 @@ code_change(_OldVsn, State, _Extra) ->
 %% Internal functions
 
 init_tracer() ->
-    erlang:trace_pattern({'_','_','_'}, false, [local]),
-    erlang:trace(all, true, [call, timestamp]).
+    erlang:trace_pattern({'_','_','_'}, false, [local]).
 
 check_for_overflow(State = #state{paused=false, overflow=true,
                                   trace_spec=TraceSpec}) ->
