@@ -47,7 +47,7 @@ data(MFA, FromEpoch) ->
             {error, not_found}
     end.
 
-%% @doc Starts capturing args and results from function calls that lasted long
+%% @doc Starts capturing args and results from function calls that lasted longer
 %% than specified time threshold.
 -spec capture(mfa(), non_neg_integer(), non_neg_integer()) ->
                      {ok, non_neg_integer()}.
@@ -88,12 +88,13 @@ init([MFA, Name]) ->
                 window_size=?WINDOW_SIZE}, 1000}.
 
 handle_call({capture, Threshold, Limit}, _From,
-            State = #state{}) ->
+            State = #state{mfa = MFA}) ->
     NewId = State#state.capture_id + 1,
     NewState = State#state{capture_spec = {Threshold, Limit},
                            capture_id = NewId,
                            capture_counter = 1},
     init_new_capture_in_ets(NewState),
+    capture_args_trace_on(MFA),
     {reply, {ok, NewId}, NewState};
 handle_call(Request, _From, State) ->
     lager:warning("Received unknown message: ~p", [Request]),
@@ -102,7 +103,7 @@ handle_call(Request, _From, State) ->
 handle_cast(_Msg, State) ->
     {noreply, State}.
 
-handle_info({trace_ts, Pid, call, {_M, _F, Args}, StartTime}, State) ->
+handle_info({trace_ts, Pid, call, _MFA, Args, StartTime}, State) ->
     put_ts_args(Pid, StartTime, Args),
 
     {Timeout, NewState} = maybe_make_snapshot(State),
@@ -222,19 +223,31 @@ get_ts_args(Pid) ->
     end.
 
 record_results(Pid, CallTime, Args, Res,
-               State = #state{name = Name,
+               State = #state{mfa = MFA,
+                              name = Name,
                               hdr_ref = Ref,
                               capture_spec = CaptureSpec,
                               capture_counter = Count}) ->
 
     hdr_histogram:record(Ref, CallTime),
 
-    case {CaptureSpec, CallTime} of
-        {{Threshold, Limit}, CallTime}
+    case CaptureSpec of
+        {Threshold, Limit}
           when CallTime > Threshold * 1000 andalso Count =< Limit ->
             ets:insert(Name, {{args_res, Count},
                               {Pid, CallTime, Args, Res}}),
+            %% reached limit - turn off args tracing
+            Count =:= Limit andalso
+                capture_args_trace_off(MFA),
             State#state{capture_counter = Count + 1};
         _ ->
             State
     end.
+
+capture_args_trace_on(MFA) ->
+    MatchSpec = [{'$1', [], [{return_trace}, {message, '$1'}]}],
+    erlang:trace_pattern(MFA, MatchSpec, [local]).
+
+capture_args_trace_off(MFA) ->
+    MatchSpec = [{'_', [], [{return_trace}, {message, arity}]}],
+    erlang:trace_pattern(MFA, MatchSpec, [local]).

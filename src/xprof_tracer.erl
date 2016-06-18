@@ -83,7 +83,7 @@ handle_call({monitor, MFA}, _From, State) ->
             {ok, Pid} = supervisor:start_child(xprof_tracer_handler_sup, [MFA]),
             put({handler, MFA}, Pid),
 
-            MatchSpec = [{'_', [], [{return_trace}]}],
+            MatchSpec = [{'_', [], [{return_trace}, {message, arity}]}],
             erlang:trace_pattern(MFA, MatchSpec, [local]),
 
             {reply, ok, State#state{funs=State#state.funs ++ [MFA]}}
@@ -111,9 +111,8 @@ handle_call(_Request, _From, State) ->
 handle_cast(_Msg, State) ->
     {noreply, State}.
 
-handle_info(Msg = {trace_ts, _TracedPid, call, {M,F,Args}, _StartTime}, State) ->
+handle_info(Msg = {trace_ts, _TracedPid, call, MFA, _Args, _StartTime}, State) ->
     NewState = check_for_overflow(State),
-    MFA = {M,F,length(Args)},
     case get({handler, MFA}) of
         undefined ->
             ok;
@@ -201,9 +200,9 @@ setup_trace(Spec, State) ->
 set_trace_opts(How, {spawner, SpwPid, _Sampl}) ->
     trace(SpwPid, How, [procs, timestamp]);
 set_trace_opts(How, all) ->
-    trace(all, How, [call, timestamp]);
+    trace(all, How, [call, arity, timestamp]);
 set_trace_opts(How, Pid) when is_pid(Pid) ->
-    trace(Pid, How, [call, timestamp]);
+    trace(Pid, How, [call, arity, timestamp]);
 set_trace_opts(_How, undefined) ->
     true.
 
