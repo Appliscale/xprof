@@ -38,7 +38,7 @@ handle_req(<<"funs">>, Req, State) ->
 handle_req(<<"mon_start">>, Req, State) ->
     MFA = {M,F,A} = get_mfa(Req),
 
-    lager:info("Starting monitoring via web on ~w:~w:~b~n",[M,F,A]),
+    lager:info("Starting monitoring via web on ~w:~w/~w~n",[M,F,A]),
 
     xprof_tracer:monitor(MFA),
     {ok, Req, State};
@@ -47,7 +47,7 @@ handle_req(<<"mon_start">>, Req, State) ->
 handle_req(<<"mon_stop">>, Req, State) ->
     MFA = {M,F,A} = get_mfa(Req),
 
-    lager:info("Stopping monitoring via web on ~w:~w:~b~n",[M,F,A]),
+    lager:info("Stopping monitoring via web on ~w:~w/~w~n",[M,F,A]),
 
     xprof_tracer:demonitor(MFA),
     {ok, Req, State};
@@ -142,12 +142,15 @@ handle_req(<<"capture_data">>, Req, State) ->
 
 %% Helpers
 
--spec get_mfa(cowboy:req()) -> {module(), atom(), non_neg_integer()}.
+-spec get_mfa(cowboy:req()) -> xprof:mfaid().
 get_mfa(Req) ->
     {Params, _} = cowboy_req:qs_vals(Req),
     {list_to_atom(binary_to_list(proplists:get_value(<<"mod">>, Params))),
      list_to_atom(binary_to_list(proplists:get_value(<<"fun">>, Params))),
-     binary_to_integer(proplists:get_value(<<"arity">>, Params))}.
+     case proplists:get_value(<<"arity">>, Params) of
+         <<"*">> -> '*';
+         Arity -> binary_to_integer(Arity)
+     end}.
 
 args_res2proplist([Id, Pid, CallTime, Args, Res]) ->
     [{id, Id},

@@ -10,7 +10,9 @@
 all() ->
     [monitor_many_funs,
      monitor_recursive_fun,
+     monitor_ms,
      capture_args_res,
+     capture_args_ms,
      {group, simulate_tracing}].
 
 groups() ->
@@ -144,6 +146,35 @@ monitor_recursive_fun(_Config) ->
     xprof_tracer:demonitor(MFA),
     ok.
 
+monitor_ms(_Config) ->
+    Query = ?MODULE_STRING ++ ":test_fun([T]) when T < 5 -> true.",
+    MFA = {?MODULE, test_fun, '*'},
+    xprof_tracer:monitor(Query),
+    ?assertEqual([MFA], xprof_tracer:all_monitored()),
+
+    ok = xprof_tracer:trace(self()),
+
+    Last = get_print_current_time(),
+
+    test_fun(10),
+    test_fun(2),
+    ct:sleep(1000),
+
+    %% although the function was called 2 times
+    %% only the second call matched the match-spec
+    [Items1|_] = xprof_tracer:data(MFA, Last),
+    ?assertEqual(1, proplists:get_value(count, Items1)),
+
+    %% only one instance of MF (of any arity) can be monitored at once
+    ?assertEqual(
+       {error, already_traced},
+       xprof_tracer:monitor(?MODULE_STRING ++ ":test_fun(_) -> true.")),
+
+    xprof_tracer:trace(pause),
+    xprof_tracer:demonitor(MFA),
+    ?assertEqual([], xprof_tracer:all_monitored()),
+    ok.
+
 capture_args_res(_Config) ->
     xprof_tracer:monitor(MFA = {?MODULE, test_fun, 1}),
     ok = xprof_tracer:trace(self()),
@@ -179,6 +210,35 @@ capture_args_res(_Config) ->
     {ok, Id2} = xprof_tracer_handler:capture(MFA, 21, 4),
 
     {ok, {Id2, 21, 4}, []} = xprof_tracer_handler:get_captured_data(MFA, 0),
+
+    xprof_tracer:trace(pause),
+    xprof_tracer:demonitor(MFA),
+    ok.
+
+capture_args_ms(_Config) ->
+    Query = ?MODULE_STRING ++ ":test_fun([T]) -> message({time, T}).",
+    MFA = {?MODULE, test_fun, '*'},
+    xprof_tracer:monitor(Query),
+    ok = xprof_tracer:trace(self()),
+
+    %%?assertEqual({}, sys:get_state(xprof_lib:mfa2atom(MFA))),
+
+    %% Start first capture
+    {ok, Id} = xprof_tracer_handler:capture(MFA, 20, 2),
+
+    test_fun(25),
+    test_fun(10),
+    test_fun(33),
+    test_fun(40),
+
+    ct:sleep(10), %% Let trace messages reach the process
+
+    {ok, {Id, 20, 2}, [Item1, Item2]} =
+        xprof_tracer_handler:get_captured_data(MFA,0),
+
+    %% message defined in match-spec in place of args
+    ?assertMatch([_Num, _Pid, _Time, {time, 25}, {res, 25}], Item1),
+    ?assertMatch([_Num, _Pid, _Time, {time, 33}, {res, 33}], Item2),
 
     xprof_tracer:trace(pause),
     xprof_tracer:demonitor(MFA),

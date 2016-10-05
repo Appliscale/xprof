@@ -33,25 +33,34 @@ start_link() ->
     gen_server:start_link({local, ?MODULE}, ?MODULE, [], []).
 
 %% @doc Starts monitoring specified function calls.
--spec monitor(mfa()) -> ok.
+-spec monitor(mfa() | string()) -> ok.
+monitor(Query) when is_list(Query) ->
+    case xprof_ms:fun2ms(Query) of
+        {_, M, F, Thing} ->
+            lager:info("Starting monitoring ~s",[Query]),
+            gen_server:call(?MODULE, {monitor, {M, F, Thing}});
+        {error, Reason} = Error ->
+            lager:error(Reason),
+            Error
+    end;
 monitor({Mod, Fun, Arity} = MFA) ->
     lager:info("Starting monitoring ~w:~w/~b",[Mod,Fun,Arity]),
     gen_server:call(?MODULE, {monitor, MFA}).
 
 %% @doc Stops monitoring specified function calls.
--spec demonitor(mfa()) -> ok.
+-spec demonitor(xprof:mfaid()) -> ok.
 demonitor({Mod, Fun, Arity} = MFA) ->
-    lager:info("Stopping monitoring ~w:~w/~b",[Mod,Fun,Arity]),
+    lager:info("Stopping monitoring ~w:~w/~w",[Mod,Fun,Arity]),
     gen_server:call(?MODULE, {demonitor, MFA}).
 
 %% @doc Returns list of monitored functions
--spec all_monitored() -> list(mfa()).
+-spec all_monitored() -> list(xprof:mfaid()).
 all_monitored() ->
     gen_server:call(?MODULE, all_monitored).
 
 %% @doc Returns metrics gathered for particular function.
--spec data(mfa(), non_neg_integer()) -> list(proplists:proplist()) |
-                                        {error, not_found}.
+-spec data(xprof:mfaid(), non_neg_integer()) -> list(proplists:proplist()) |
+                                          {error, not_found}.
 data(MFA, TS) ->
     xprof_tracer_handler:data(MFA, TS).
 
@@ -75,23 +84,20 @@ init([]) ->
     init_tracer(),
     {ok, #state{}}.
 
-handle_call({monitor, MFA}, _From, State) ->
-    case get({handler, MFA}) of
+handle_call({monitor, MFASpec}, _From, State) ->
+    MFAId = xprof_lib:mfaspec2id(MFASpec),
+    case get_pid(MFAId) of
         Pid when is_pid(Pid) ->
             {reply, {error, already_traced}, State};
         undefined ->
-            {ok, Pid} = supervisor:start_child(xprof_tracer_handler_sup, [MFA]),
-            put({handler, MFA}, Pid),
-
-            MatchSpec = [{'_', [], [{return_trace}, {message, arity}]}],
-            erlang:trace_pattern(MFA, MatchSpec, [local]),
-
-            {reply, ok, State#state{funs=State#state.funs ++ [MFA]}}
+            {ok, Pid} = supervisor:start_child(xprof_tracer_handler_sup, [MFASpec]),
+            put_pid(MFAId, Pid),
+            {reply, ok, State#state{funs=State#state.funs ++ [MFAId]}}
     end;
 handle_call({demonitor, MFA}, _From, State) ->
-    erlang:trace_pattern(MFA, false, [local]),
+    xprof_tracer_handler:trace_mfa_off(MFA),
 
-    Pid = erase({handler, MFA}),
+    Pid = erase_pid(MFA),
     NewFuns = lists:filter(fun(E) -> E =/= MFA end, State#state.funs),
 
     supervisor:terminate_child(xprof_tracer_handler_sup, Pid),
@@ -113,23 +119,13 @@ handle_cast(_Msg, State) ->
 
 handle_info(Msg = {trace_ts, _TracedPid, call, MFA, _Args, _StartTime}, State) ->
     NewState = check_for_overflow(State),
-    case get({handler, MFA}) of
-        undefined ->
-            ok;
-        Pid ->
-            erlang:send(Pid, Msg)
-    end,
+    send2pids(MFA, Msg),
     {noreply, NewState};
 handle_info(Msg = {trace_ts, _TracedPid, return_from, MFA , _Res, _StartTime},
             State) ->
     NewState = check_for_overflow(State),
-    case get({handler, MFA}) of
-        undefined ->
-            {noreply, NewState};
-        Pid ->
-            erlang:send(Pid, Msg),
-            {noreply, NewState}
-    end;
+    send2pids(MFA, Msg),
+    {noreply, NewState};
 handle_info({trace_ts, _Spawner, spawn, NewProc, _MFArgs,_TimeStamp},
             State = #state{trace_spec=TraceSpec}) ->
     NewState = check_for_overflow(State),
@@ -218,3 +214,28 @@ trace(PidSpec, How, Flags) ->
                     error(badarg, [PidSpec, How, Flags])
             end
     end.
+
+-spec send2pids(mfa(), term()) -> any().
+send2pids({M, F, _} = MFA, Msg) ->
+    send2pid(MFA, Msg),
+    send2pid({M, F, '*'}, Msg),
+    ok.
+
+-spec send2pid(xprof:mfaid(), term()) -> any().
+send2pid(MFA, Msg) ->
+    case get_pid(MFA) of
+        undefined -> ok;
+        Pid -> erlang:send(Pid, Msg)
+    end.
+
+-spec get_pid(xprof:mfaid()) -> pid() | undefined.
+get_pid(MFA) ->
+    get({handler, MFA}).
+
+-spec put_pid(xprof:mfaid(), pid()) -> any().
+put_pid(MFA, Pid) ->
+    put({handler, MFA}, Pid).
+
+-spec erase_pid(xprof:mfaid()) -> pid() | undefined.
+erase_pid(MFA) ->
+    erase({handler, MFA}).

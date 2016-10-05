@@ -126,7 +126,7 @@ export default class FunctionBrowser extends React.Component {
         this.clear();
         break;
       case 13: /* RETURN */
-        /* submit funciton or try to compelete using selected fun */
+        /* submit function or try to complete using selected fun */
         e.preventDefault();
 
         enteredFun = this.matchFunSignature(e.target.value);
@@ -140,7 +140,7 @@ export default class FunctionBrowser extends React.Component {
         e.preventDefault();
         this.completeSearch();
         break;
-      case 38: /* ARROw UP */
+      case 38: /* ARROW UP */
         /* select next fun from the list */
         this.refs.acm.moveHighlight(-1);
         break;

@@ -1,15 +1,17 @@
 %% -*- erlang-indent-level: 4;indent-tabs-mode: nil -*-
 %% ex: ts=4 sw=4 et
 
-%% @doc Gen server that that tracks all calls to particular function. It
-%% registers it localy under a atom that consists of MFA and xprof_monitor
-%% prefix. The same name is used to create public ETS table that holds etries
-%% with call time stats for evey second.
+%% @doc Gen server that tracks all calls to a particular function. It
+%% registers itself localy under a atom that consists of MFA and xprof_monitor
+%% prefix. The same name is used to create public ETS table that holds entries
+%% with call time stats for every second.
 -module(xprof_tracer_handler).
 
 -behaviour(gen_server).
 
 -export([start_link/1, data/2, capture/3, get_captured_data/2]).
+
+-export([trace_mfa_off/1]).
 
 %% gen_server callbacks
 -export([init/1,
@@ -26,14 +28,14 @@
 -define(WINDOW_SIZE, 10*60). %% 10 min window size
 
 %% @doc Starts new process registered localy.
--spec start_link(mfa()) -> {ok, pid()}.
+-spec start_link(xprof:mfaspec()) -> {ok, pid()}.
 start_link(MFA) ->
     Name = xprof_lib:mfa2atom(MFA),
     gen_server:start_link({local, Name}, ?MODULE, [MFA, Name], []).
 
 %% @doc Returns histogram data for seconds that occured after FromEpoch.
--spec data(mfa(), non_neg_integer()) -> [proplists:proplist()] |
-                                        {error, not_found}.
+-spec data(xprof:mfaid(), non_neg_integer()) -> [proplists:proplist()] |
+                                                {error, not_found}.
 data(MFA, FromEpoch) ->
     Name = xprof_lib:mfa2atom(MFA),
     try
@@ -49,10 +51,10 @@ data(MFA, FromEpoch) ->
 
 %% @doc Starts capturing args and results from function calls that lasted longer
 %% than specified time threshold.
--spec capture(mfa(), non_neg_integer(), non_neg_integer()) ->
+-spec capture(xprof:mfaid(), non_neg_integer(), non_neg_integer()) ->
                      {ok, non_neg_integer()}.
 capture(MFA = {M,F,A}, Threshold, Limit) ->
-    lager:info("Capturing ~p calls to ~w:~w/~b that exceed ~p ms:",
+    lager:info("Capturing ~p calls to ~w:~w/~w that exceed ~p ms:",
                [Limit, M, F, A, Threshold]),
 
     Name = xprof_lib:mfa2atom(MFA),
@@ -83,6 +85,8 @@ get_captured_data(MFA, Offset) ->
 
 init([MFA, Name]) ->
     {ok, HDR} = init_storage(Name),
+    %% add trace pattern with args capturing turned off
+    capture_args_trace_off(MFA),
     {ok, #state{mfa=MFA, hdr_ref=HDR, name=Name,
                 last_ts=os:timestamp(),
                 window_size=?WINDOW_SIZE}, 1000}.
@@ -244,10 +248,25 @@ record_results(Pid, CallTime, Args, Res,
             State
     end.
 
+-spec capture_args_trace_on(xprof:mfaspec()) -> any().
+capture_args_trace_on({M, F, {_MSOff, MSOn}}) ->
+    erlang:trace_pattern({M, F, '_'}, MSOn, [local]);
 capture_args_trace_on(MFA) ->
-    MatchSpec = [{'$1', [], [{return_trace}, {message, '$1'}]}],
+    MatchSpec = [{'_', [], [{return_trace}, {message, '$_'}]}],
     erlang:trace_pattern(MFA, MatchSpec, [local]).
 
+-spec capture_args_trace_off(xprof:mfaspec()) -> any().
+capture_args_trace_off({M, F, {MSOff, _MSOn}}) ->
+    erlang:trace_pattern({M, F, '_'}, MSOff, [local]);
 capture_args_trace_off(MFA) ->
     MatchSpec = [{'_', [], [{return_trace}, {message, arity}]}],
     erlang:trace_pattern(MFA, MatchSpec, [local]).
+
+-spec trace_mfa_off(xprof:mfaid()) -> any().
+trace_mfa_off({M, F, '*'}) ->
+    %% FIXME: this will turn off tracing also
+    %% for the same function with a given arity
+    erlang:trace_pattern({M, F, '_'}, false, [local]);
+trace_mfa_off(MFA) ->
+    erlang:trace_pattern(MFA, false, [local]).
+
