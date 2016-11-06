@@ -15,7 +15,8 @@ fun2ms(Str) ->
                 {ok, {MFA, default_ms()}};
             {clauses, M, F, Clauses} ->
                 Arity = get_arity(Clauses),
-                MS = ms(Clauses),
+                RecDefs = xprof_core_records:get_record_defs(),
+                MS = ms(Clauses, RecDefs),
                 {ok, {{M, F, Arity}, fix_ms(MS)}}
         end
     catch throw:Error ->
@@ -25,20 +26,26 @@ fun2ms(Str) ->
 default_ms() ->
     fix_ms([{'_', [], []}]).
 
-ms(Clauses) ->
+%% @doc Convert the fun to a match spec
+%% In order to also support records the parse_transform callback is used
+%% which collects record definitions from the input forms
+%% (the transform_from_shell api does not support recods as the shell
+%%  already expanded records before it passes the fun clauses as input)
+ms(Clauses, RecDefs) ->
     IsEmptyArgs = (get_arity(Clauses) =:= 0),
     ERR_HEAD = 3,
-    case ms_transform:transform_from_shell(
-           dbg, wrap_args(Clauses), _ImportList = []) of
+    case ms_transform:parse_transform(
+           wrap_forms(wrap_args(Clauses), RecDefs), _Options = []) of
         {error,[{_, [{_, ms_transform, ERR_HEAD}|_]}|_], _} when IsEmptyArgs ->
             %% A bug in ms_trasform that was only fixed in OTP 19.2 prevents
             %% empty list as head in "dbg:fun2ms(fun([]) -> ..."
             %% (see https://github.com/erlang/otp/commit/8db6c68b)
-            workaround_empty_args_ms(ms(workaround_empty_args_cl(Clauses)));
+            workaround_empty_args_ms(
+              ms(workaround_empty_args_cl(Clauses), RecDefs));
         {error,[{_,[{Loc,Mod,Code}|_]}|_],_} ->
             err(Loc, Mod, Code);
-        MS ->
-            MS
+        Forms ->
+            unwrap_forms(Forms)
     end.
 
 get_arity([{clause, _, Args, _, _}|_]) ->
@@ -61,6 +68,28 @@ workaround_empty_args_cl(Clauses) ->
 workaround_empty_args_ms(Ms) ->
     [{[], G, B} || {['_'], G, B} <- Ms].
 
+%% @doc The match spec fun clauses are wrapped into a form list
+%% which contains the record definitions from module M
+%% followed by the below function definition
+%% `f() -> dbg:fun2ms(fun <Clauses>).'
+%% The body of the function (ie the call dbg:fun2ms) is converted
+%% to a match spec by the parse transform.
+wrap_forms(Clauses, RecDefs) ->
+    RecDefs
+        ++
+    [{function,{1,1},f,0,
+      [{clause,{1,1},[],[],
+        [{call,{1,1},
+          {remote,{1,1},{atom,{1,1},dbg},{atom,{1,1},fun2ms}},
+          [{'fun',{1,1},{clauses, Clauses}}]
+         }]
+       }]
+     }].
+
+unwrap_forms(Forms) ->
+    {function, _, f, 0, [{clause, _, [], [], [MsAst]}]} = lists:last(Forms),
+    erl_syntax:concrete(MsAst).
+
 %% @doc Ensure that the match-spec does not create traces that have different
 %% format than what xprof_core_trace_handler anticipates (ie. {message, _}
 %% directives might have to be modified)
@@ -73,9 +102,8 @@ workaround_empty_args_ms(Ms) ->
 %% behavior, ie. trace message is sent with no extra information). These calls
 %% are replaced with our default message ({message, arity} or {message, '$_'})
 
-%% - Other values for messages are allowed but later overriden by placing
-%% {message, arity} at the end of the match-spec body in case argument capturing
-%% is off
+%% - Other values for messages are allowed but replaced by {message, arity} in
+%% case argument capturing is off
 
 %% - For the general case when the match-spec body does not contain any message
 %% directive a default message ({message, arity} or {message, '$_'}) is inserted
@@ -113,6 +141,7 @@ traverse_ms_c([], _) ->
     [];
 traverse_ms_c(Other, _) ->
     Other.
+
 
 -spec err(string()) -> no_return().
 err(Fmt) ->
