@@ -17,16 +17,16 @@ export default class GraphPanel extends React.Component {
 
   // Getting data
 
-  startMonitoring(fun) {
+  startMonitoring(query) {
     $.ajax({
       url: "/api/mon_start",
-      data: {mod: fun[0], fun: fun[1], arity: fun[2]}
+      data: {query: query}
     }).done(function() { this.getFunsList()}.bind(this));
 
   }
 
-  addGraph(fun) {
-    this.startMonitoring(fun);
+  addGraph(query) {
+    this.startMonitoring(query);
   }
 
   removeGraph(fun) {

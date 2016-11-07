@@ -33,7 +33,7 @@ start_link() ->
     gen_server:start_link({local, ?MODULE}, ?MODULE, [], []).
 
 %% @doc Starts monitoring specified function calls.
--spec monitor(mfa() | string()) -> ok.
+-spec monitor(mfa() | string()) -> ok | {error, term()}.
 monitor(Query) when is_list(Query) ->
     case xprof_ms:fun2ms(Query) of
         {_, M, F, Thing} ->

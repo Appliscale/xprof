@@ -32,7 +32,8 @@ class ACModal extends React.Component {
   }
 
   handleFunClick(fun, e) {
-    this.props.addGraph(fun)
+    var query = ACModal.formatFun(fun);
+    this.props.addGraph(query);
   }
 
   moveHighlight(delta) {
@@ -104,19 +105,18 @@ export default class FunctionBrowser extends React.Component {
     this.state = {value: ""};
   }
 
-  matchFunSignature(input) {
-    var regex = /(\w+(?:\.\w+)*):(\w+)\/(\d+)/;
-    var res = regex.exec(input);
-
-    if(res)
-      return [res[1], res[2], parseInt(res[3])];
+  checkInput(input) {
+    /* for now this is mostly just a placeholder to check function browser input
+       whether it is suitable to add a graph */
+    if(input)
+      return input;
     else
       return null;
   }
 
   handleKeyDown(e) {
     var mod = null, fun = null, arity =null;
-    var regex, enteredFun;
+    var enteredQuery;
 
     switch(e.keyCode) {
       case 27: /* ESC */
@@ -127,9 +127,9 @@ export default class FunctionBrowser extends React.Component {
         /* submit function or try to complete using selected fun */
         e.preventDefault();
 
-        enteredFun = this.matchFunSignature(e.target.value);
-        if(enteredFun)
-          this.props.addGraph(enteredFun);
+        enteredQuery = this.checkInput(e.target.value);
+        if(enteredQuery)
+          this.props.addGraph(enteredQuery);
         else
           this.completeSearch();
         break;

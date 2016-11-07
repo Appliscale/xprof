@@ -36,12 +36,18 @@ handle_req(<<"funs">>, Req, State) ->
                                   Req),
     {ok, Req2, State};
 handle_req(<<"mon_start">>, Req, State) ->
-    MFA = {M,F,A} = get_mfa(Req),
+    Query = get_query(Req),
+    lager:info("Starting monitoring via web on '~s'~n", [Query]),
 
-    lager:info("Starting monitoring via web on ~w:~w/~w~n",[M,F,A]),
-
-    xprof_tracer:monitor(MFA),
-    {ok, Req, State};
+    Req2 =
+        case xprof_tracer:monitor(Query) of
+            ok -> Req;
+            {error, already_traced} -> Req;
+            _Error ->
+                {ok, ResReq} = cowboy_req:reply(400, Req),
+                ResReq
+        end,
+    {ok, Req2, State};
 
 
 handle_req(<<"mon_stop">>, Req, State) ->
@@ -153,6 +159,11 @@ get_mfa(Req) ->
          <<"*">> -> '*';
          Arity -> binary_to_integer(Arity)
      end}.
+
+-spec get_query(cowboy:req()) -> string().
+get_query(Req) ->
+    {Params, _} = cowboy_req:qs_vals(Req),
+    binary_to_list(proplists:get_value(<<"query">>, Params)).
 
 args_res2proplist([Id, Pid, CallTime, Args, Res]) ->
     [{id, Id},
