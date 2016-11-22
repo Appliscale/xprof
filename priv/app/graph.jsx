@@ -134,6 +134,9 @@ export default class Graph extends React.Component {
   }
 
   chartId() {
-    return `chart_${this.props.fun[0]}_${this.props.fun[1]}_${this.props.fun[2]}`
+    var arity = this.props.fun[2];
+    // '*' is not a valid character in a tag id
+    if(arity == '*') arity = 'x';
+    return `chart_${this.props.fun[0]}_${this.props.fun[1]}_${arity}`
   }
 }

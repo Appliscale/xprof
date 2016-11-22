@@ -9,7 +9,7 @@ that lasted longer than given number of milliseconds.
 
 XProf was created to help solving performance problems of live, highly
 concurrent and utilized BE systems. It's often the case that high latency or big
-CPU usage driven by is caused by very specific requests that are triggering
+CPU usage is caused by very specific requests that are triggering
 inefficient code. Finding this code is usually pretty difficult.
 
 ## How to use it
@@ -38,6 +38,32 @@ Key         | Default     | Description
 :-----------|:------------|:-----------
 port        |7890         |Port for the web interface
 
+## Xprof flavoured match-spec funs
+
+In the function browser you can also specify further filters in the form of a
+match-spec fun (similar to recon or redbug). After the module and function name
+one can also give a function definition instead of arity. This gives the user
+the full power of match specifications and can be used both to selectively
+measure duration of function calls that match complicated filters and to capture
+only part of the arguments. The function has the same limitations as
+`dbg:fun2ms/1`. (See
+[Match Specifications in Erlang](http://erlang.org/doc/apps/erts/match_spec.html) and
+[ms\_transform](http://erlang.org/doc/man/ms_transform.html)). The function can
+be terminated by a single dot or `end.` and `return_trace` is always implicitly
+on (that is how xprof measures duration)
+
+For example only measure the duration of `ets:lookup` on table `data`
+
+```erlang
+ets:lookup([data, _]) -> true.
+```
+
+Or only capture the `important` field of a possibly big `data` record
+
+```erlang
+ets:insert([_, #data{important = I}]) -> message(I).
+```
+
 ## Contributing
 
 All improvements, fixes and ideas are very welcomed!
@@ -48,8 +74,8 @@ build JS sources in order to run xprof.
 
 ### Running tests
 
-```erlang
-./rebar3 ct
+```bash
+make test
 ```
 
 ### Working with JS sources
@@ -74,7 +100,7 @@ reloads modules that have changed.
 
 ```bash
 $ export REBAR_PROFILE=dev
-$ ./rebar shell
+$ ./rebar3 shell
 > sync:go().
 > xprof:start().
 ```
