@@ -1,4 +1,4 @@
-XProf [![Build Status](https://travis-ci.org/mniec/xprof.svg?branch=master)](https://travis-ci.org/mniec/xprof) [![Coverage Status](https://coveralls.io/repos/mniec/xprof/badge.svg?branch=master&service=github)](https://coveralls.io/github/mniec/xprof?branch=master)
+XProf [![Build Status](https://travis-ci.org/Appliscale/xprof.svg?branch=master)](https://travis-ci.org/Appliscale/xprof) [![Coverage Status](https://coveralls.io/repos/github/Appliscale/xprof/badge.svg?branch=master)](https://coveralls.io/github/Appliscale/xprof?branch=master)
 =====
 
 XProf is a profiler that allows you to track execution time of Erlang
