@@ -81,6 +81,7 @@ make test
 ### Working with JS sources
 
 The WebUI uses
+
 * React.js
 * ECMAScript 6
 * Bootstap
@@ -111,6 +112,7 @@ are modified.
 
 ```bash
 $ cd priv;
+$ npm install
 $ bower install
 $ webpack -d
 ```

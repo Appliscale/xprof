@@ -1,7 +1,7 @@
 import React from 'react';
 import 'jquery';
 import 'bootstrap/dist/css/bootstrap.css';
-import 'flot';
+import 'Flot';
 import "Flot/jquery.flot.fillbetween.js";
 import "Flot/jquery.flot.time.js";
 
@@ -38,7 +38,7 @@ export default class FlotGraph  {
     this.plot.draw();
   }
 
-  update(data:Array) {
+  update(data) {
     this.plot.setData(this.createDataSet(data));
     this.plot.setupGrid();
     this.plot.draw();
@@ -52,7 +52,7 @@ export default class FlotGraph  {
 
     for(let v of ["mean", "min", "max", "p25", "p50", "p75", "p90", "p99", "count"]){
       flotdata[v] = [];
-      
+
       for(let item of data) flotdata[v].push([item.time*1000, item[v]]);
     }
 

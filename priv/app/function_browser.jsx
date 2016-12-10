@@ -105,7 +105,7 @@ export default class FunctionBrowser extends React.Component {
   }
 
   matchFunSignature(input) {
-    var regex = /([\w\.]+):(\w+)\/(\d+)/;
+    var regex = /(\w+(?:\.\w+)*):(\w+)\/(\d+)/;
     var res = regex.exec(input);
 
     if(res)

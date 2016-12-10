@@ -1,47 +1,53 @@
 webpackJsonp([0],[
 /* 0 */
+/*!*****************!*\
+  !*** multi app ***!
+  \*****************/
 /***/ function(module, exports, __webpack_require__) {
 
-	__webpack_require__(1);
-	__webpack_require__(16);
-	module.exports = __webpack_require__(19);
+	__webpack_require__(/*! ./app/graph_flot.jsx */1);
+	__webpack_require__(/*! ./app/graph.jsx */16);
+	module.exports = __webpack_require__(/*! ./app/main.jsx */19);
 
 
 /***/ },
 /* 1 */
+/*!****************************!*\
+  !*** ./app/graph_flot.jsx ***!
+  \****************************/
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function($) {'use strict';
-
-	Object.defineProperty(exports, '__esModule', {
+	
+	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
-
-	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
-
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
-
-	var _react = __webpack_require__(3);
-
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	var _react = __webpack_require__(/*! react */ 3);
+	
 	var _react2 = _interopRequireDefault(_react);
-
-	__webpack_require__(2);
-
-	__webpack_require__(4);
-
-	__webpack_require__(13);
-
-	__webpack_require__(14);
-
-	__webpack_require__(15);
-
-	var FlotGraph = (function () {
+	
+	__webpack_require__(/*! jquery */ 2);
+	
+	__webpack_require__(/*! bootstrap/dist/css/bootstrap.css */ 4);
+	
+	__webpack_require__(/*! Flot */ 13);
+	
+	__webpack_require__(/*! Flot/jquery.flot.fillbetween.js */ 14);
+	
+	__webpack_require__(/*! Flot/jquery.flot.time.js */ 15);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	var FlotGraph = function () {
 	  function FlotGraph() {
 	    _classCallCheck(this, FlotGraph);
 	  }
-
+	
 	  _createClass(FlotGraph, [{
 	    key: 'init',
 	    value: function init(divid) {
@@ -87,16 +93,16 @@ webpackJsonp([0],[
 	    key: 'createDataSet',
 	    value: function createDataSet(data) {
 	      var flotdata = { mean: [], max: [], min: [] };
-
+	
 	      var _arr = ["mean", "min", "max", "p25", "p50", "p75", "p90", "p99", "count"];
 	      for (var _i = 0; _i < _arr.length; _i++) {
 	        var v = _arr[_i];
 	        flotdata[v] = [];
-
+	
 	        var _iteratorNormalCompletion = true;
 	        var _didIteratorError = false;
 	        var _iteratorError = undefined;
-
+	
 	        try {
 	          for (var _iterator = data[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
 	            var item = _step.value;
@@ -107,8 +113,8 @@ webpackJsonp([0],[
 	          _iteratorError = err;
 	        } finally {
 	          try {
-	            if (!_iteratorNormalCompletion && _iterator['return']) {
-	              _iterator['return']();
+	            if (!_iteratorNormalCompletion && _iterator.return) {
+	              _iterator.return();
 	            }
 	          } finally {
 	            if (_didIteratorError) {
@@ -117,38 +123,40 @@ webpackJsonp([0],[
 	          }
 	        }
 	      }
-
+	
 	      return [{ label: "mean", data: flotdata["mean"], lines: { show: true }, color: "rgb(50,50,255)", yaxis: 1 }, { label: "count", data: flotdata["count"], lines: { show: true }, color: "rgb(50,255,0)", yaxis: 2 }, { label: "min", id: "min", data: flotdata["min"], lines: { show: true, lineWidth: 0.5, fill: 0 }, color: "rgb(255,50,50)", yaxis: 1 }, { id: "p25", data: flotdata["p25"], lines: { show: true, lineWidth: 0, fill: 0.2 }, color: "rgb(255,50,50)", fillBetween: "min", yaxis: 1 }, { id: "p50", data: flotdata["p50"], lines: { show: true, lineWidth: 0.5, fill: 0.4, shadowSize: 0 }, color: "rgb(255,50,50)", fillBetween: "p25", yaxis: 1 }, { id: "p75", data: flotdata["p75"], lines: { show: true, lineWidth: 0, fill: 0.4 }, color: "rgb(255,50,50)", fillBetween: "p50", yaxis: 1 }, { id: "p90", data: flotdata["p90"], lines: { show: true, lineWidth: 0, fill: 0.2 }, color: "rgb(255,50,50)", fillBetween: "p75", yaxis: 1 }, { id: "p99", data: flotdata["p99"], lines: { show: true, lineWidth: 0.4, fill: 0.15 }, color: "rgb(255,50,50)", fillBetween: "p90", yaxis: 1 }, { label: "max", id: "max", data: flotdata["max"], lines: { show: true, lineWidth: 0.5, fill: 0.1 }, color: "rgb(255,50,50)", fillBetween: "p99", yaxis: 1 }];
 	    }
 	  }]);
-
+	
 	  return FlotGraph;
-	})();
-
-	exports['default'] = FlotGraph;
-	module.exports = exports['default'];
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2)))
+	}();
+	
+	exports.default = FlotGraph;
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(/*! jquery */ 2)))
 
 /***/ },
 /* 2 */,
 /* 3 */,
 /* 4 */
+/*!***********************************************************!*\
+  !*** ./bower_components/bootstrap/dist/css/bootstrap.css ***!
+  \***********************************************************/
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
-
+	
 	// load the styles
-	var content = __webpack_require__(5);
+	var content = __webpack_require__(/*! !./../../../../~/css-loader!./bootstrap.css */ 5);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
-	var update = __webpack_require__(12)(content, {});
+	var update = __webpack_require__(/*! ./../../../../~/style-loader/addStyles.js */ 12)(content, {});
 	if(content.locals) module.exports = content.locals;
 	// Hot Module Replacement
 	if(false) {
 		// When the styles change, update the <style> tags
 		if(!content.locals) {
-			module.hot.accept("!!./../../../../../../../../node_modules/css-loader/index.js!./bootstrap.css", function() {
-				var newContent = require("!!./../../../../../../../../node_modules/css-loader/index.js!./bootstrap.css");
+			module.hot.accept("!!./../../../../node_modules/css-loader/index.js!./bootstrap.css", function() {
+				var newContent = require("!!./../../../../node_modules/css-loader/index.js!./bootstrap.css");
 				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
 				update(newContent);
 			});
@@ -159,20 +167,26 @@ webpackJsonp([0],[
 
 /***/ },
 /* 5 */
+/*!**************************************************************************!*\
+  !*** ./~/css-loader!./bower_components/bootstrap/dist/css/bootstrap.css ***!
+  \**************************************************************************/
 /***/ function(module, exports, __webpack_require__) {
 
-	exports = module.exports = __webpack_require__(6)();
+	exports = module.exports = __webpack_require__(/*! ./../../../../~/css-loader/lib/css-base.js */ 6)();
 	// imports
-
-
+	
+	
 	// module
-	exports.push([module.id, "/*!\n * Bootstrap v3.3.5 (http://getbootstrap.com)\n * Copyright 2011-2015 Twitter, Inc.\n * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)\n */\n/*! normalize.css v3.0.3 | MIT License | github.com/necolas/normalize.css */\nhtml {\n  font-family: sans-serif;\n  -webkit-text-size-adjust: 100%;\n      -ms-text-size-adjust: 100%;\n}\nbody {\n  margin: 0;\n}\narticle,\naside,\ndetails,\nfigcaption,\nfigure,\nfooter,\nheader,\nhgroup,\nmain,\nmenu,\nnav,\nsection,\nsummary {\n  display: block;\n}\naudio,\ncanvas,\nprogress,\nvideo {\n  display: inline-block;\n  vertical-align: baseline;\n}\naudio:not([controls]) {\n  display: none;\n  height: 0;\n}\n[hidden],\ntemplate {\n  display: none;\n}\na {\n  background-color: transparent;\n}\na:active,\na:hover {\n  outline: 0;\n}\nabbr[title] {\n  border-bottom: 1px dotted;\n}\nb,\nstrong {\n  font-weight: bold;\n}\ndfn {\n  font-style: italic;\n}\nh1 {\n  margin: .67em 0;\n  font-size: 2em;\n}\nmark {\n  color: #000;\n  background: #ff0;\n}\nsmall {\n  font-size: 80%;\n}\nsub,\nsup {\n  position: relative;\n  font-size: 75%;\n  line-height: 0;\n  vertical-align: baseline;\n}\nsup {\n  top: -.5em;\n}\nsub {\n  bottom: -.25em;\n}\nimg {\n  border: 0;\n}\nsvg:not(:root) {\n  overflow: hidden;\n}\nfigure {\n  margin: 1em 40px;\n}\nhr {\n  height: 0;\n  -webkit-box-sizing: content-box;\n     -moz-box-sizing: content-box;\n          box-sizing: content-box;\n}\npre {\n  overflow: auto;\n}\ncode,\nkbd,\npre,\nsamp {\n  font-family: monospace, monospace;\n  font-size: 1em;\n}\nbutton,\ninput,\noptgroup,\nselect,\ntextarea {\n  margin: 0;\n  font: inherit;\n  color: inherit;\n}\nbutton {\n  overflow: visible;\n}\nbutton,\nselect {\n  text-transform: none;\n}\nbutton,\nhtml input[type=\"button\"],\ninput[type=\"reset\"],\ninput[type=\"submit\"] {\n  -webkit-appearance: button;\n  cursor: pointer;\n}\nbutton[disabled],\nhtml input[disabled] {\n  cursor: default;\n}\nbutton::-moz-focus-inner,\ninput::-moz-focus-inner {\n  padding: 0;\n  border: 0;\n}\ninput {\n  line-height: normal;\n}\ninput[type=\"checkbox\"],\ninput[type=\"radio\"] {\n  -webkit-box-sizing: border-box;\n     -moz-box-sizing: border-box;\n          box-sizing: border-box;\n  padding: 0;\n}\ninput[type=\"number\"]::-webkit-inner-spin-button,\ninput[type=\"number\"]::-webkit-outer-spin-button {\n  height: auto;\n}\ninput[type=\"search\"] {\n  -webkit-box-sizing: content-box;\n     -moz-box-sizing: content-box;\n          box-sizing: content-box;\n  -webkit-appearance: textfield;\n}\ninput[type=\"search\"]::-webkit-search-cancel-button,\ninput[type=\"search\"]::-webkit-search-decoration {\n  -webkit-appearance: none;\n}\nfieldset {\n  padding: .35em .625em .75em;\n  margin: 0 2px;\n  border: 1px solid #c0c0c0;\n}\nlegend {\n  padding: 0;\n  border: 0;\n}\ntextarea {\n  overflow: auto;\n}\noptgroup {\n  font-weight: bold;\n}\ntable {\n  border-spacing: 0;\n  border-collapse: collapse;\n}\ntd,\nth {\n  padding: 0;\n}\n/*! Source: https://github.com/h5bp/html5-boilerplate/blob/master/src/css/main.css */\n@media print {\n  *,\n  *:before,\n  *:after {\n    color: #000 !important;\n    text-shadow: none !important;\n    background: transparent !important;\n    -webkit-box-shadow: none !important;\n            box-shadow: none !important;\n  }\n  a,\n  a:visited {\n    text-decoration: underline;\n  }\n  a[href]:after {\n    content: \" (\" attr(href) \")\";\n  }\n  abbr[title]:after {\n    content: \" (\" attr(title) \")\";\n  }\n  a[href^=\"#\"]:after,\n  a[href^=\"javascript:\"]:after {\n    content: \"\";\n  }\n  pre,\n  blockquote {\n    border: 1px solid #999;\n\n    page-break-inside: avoid;\n  }\n  thead {\n    display: table-header-group;\n  }\n  tr,\n  img {\n    page-break-inside: avoid;\n  }\n  img {\n    max-width: 100% !important;\n  }\n  p,\n  h2,\n  h3 {\n    orphans: 3;\n    widows: 3;\n  }\n  h2,\n  h3 {\n    page-break-after: avoid;\n  }\n  .navbar {\n    display: none;\n  }\n  .btn > .caret,\n  .dropup > .btn > .caret {\n    border-top-color: #000 !important;\n  }\n  .label {\n    border: 1px solid #000;\n  }\n  .table {\n    border-collapse: collapse !important;\n  }\n  .table td,\n  .table th {\n    background-color: #fff !important;\n  }\n  .table-bordered th,\n  .table-bordered td {\n    border: 1px solid #ddd !important;\n  }\n}\n@font-face {\n  font-family: 'Glyphicons Halflings';\n\n  src: url(" + __webpack_require__(7) + ");\n  src: url(" + __webpack_require__(7) + "?#iefix) format('embedded-opentype'), url(" + __webpack_require__(8) + ") format('woff2'), url(" + __webpack_require__(9) + ") format('woff'), url(" + __webpack_require__(10) + ") format('truetype'), url(" + __webpack_require__(11) + "#glyphicons_halflingsregular) format('svg');\n}\n.glyphicon {\n  position: relative;\n  top: 1px;\n  display: inline-block;\n  font-family: 'Glyphicons Halflings';\n  font-style: normal;\n  font-weight: normal;\n  line-height: 1;\n\n  -webkit-font-smoothing: antialiased;\n  -moz-osx-font-smoothing: grayscale;\n}\n.glyphicon-asterisk:before {\n  content: \"*\";\n}\n.glyphicon-plus:before {\n  content: \"+\";\n}\n.glyphicon-euro:before,\n.glyphicon-eur:before {\n  content: \"\\20AC\";\n}\n.glyphicon-minus:before {\n  content: \"\\2212\";\n}\n.glyphicon-cloud:before {\n  content: \"\\2601\";\n}\n.glyphicon-envelope:before {\n  content: \"\\2709\";\n}\n.glyphicon-pencil:before {\n  content: \"\\270F\";\n}\n.glyphicon-glass:before {\n  content: \"\\E001\";\n}\n.glyphicon-music:before {\n  content: \"\\E002\";\n}\n.glyphicon-search:before {\n  content: \"\\E003\";\n}\n.glyphicon-heart:before {\n  content: \"\\E005\";\n}\n.glyphicon-star:before {\n  content: \"\\E006\";\n}\n.glyphicon-star-empty:before {\n  content: \"\\E007\";\n}\n.glyphicon-user:before {\n  content: \"\\E008\";\n}\n.glyphicon-film:before {\n  content: \"\\E009\";\n}\n.glyphicon-th-large:before {\n  content: \"\\E010\";\n}\n.glyphicon-th:before {\n  content: \"\\E011\";\n}\n.glyphicon-th-list:before {\n  content: \"\\E012\";\n}\n.glyphicon-ok:before {\n  content: \"\\E013\";\n}\n.glyphicon-remove:before {\n  content: \"\\E014\";\n}\n.glyphicon-zoom-in:before {\n  content: \"\\E015\";\n}\n.glyphicon-zoom-out:before {\n  content: \"\\E016\";\n}\n.glyphicon-off:before {\n  content: \"\\E017\";\n}\n.glyphicon-signal:before {\n  content: \"\\E018\";\n}\n.glyphicon-cog:before {\n  content: \"\\E019\";\n}\n.glyphicon-trash:before {\n  content: \"\\E020\";\n}\n.glyphicon-home:before {\n  content: \"\\E021\";\n}\n.glyphicon-file:before {\n  content: \"\\E022\";\n}\n.glyphicon-time:before {\n  content: \"\\E023\";\n}\n.glyphicon-road:before {\n  content: \"\\E024\";\n}\n.glyphicon-download-alt:before {\n  content: \"\\E025\";\n}\n.glyphicon-download:before {\n  content: \"\\E026\";\n}\n.glyphicon-upload:before {\n  content: \"\\E027\";\n}\n.glyphicon-inbox:before {\n  content: \"\\E028\";\n}\n.glyphicon-play-circle:before {\n  content: \"\\E029\";\n}\n.glyphicon-repeat:before {\n  content: \"\\E030\";\n}\n.glyphicon-refresh:before {\n  content: \"\\E031\";\n}\n.glyphicon-list-alt:before {\n  content: \"\\E032\";\n}\n.glyphicon-lock:before {\n  content: \"\\E033\";\n}\n.glyphicon-flag:before {\n  content: \"\\E034\";\n}\n.glyphicon-headphones:before {\n  content: \"\\E035\";\n}\n.glyphicon-volume-off:before {\n  content: \"\\E036\";\n}\n.glyphicon-volume-down:before {\n  content: \"\\E037\";\n}\n.glyphicon-volume-up:before {\n  content: \"\\E038\";\n}\n.glyphicon-qrcode:before {\n  content: \"\\E039\";\n}\n.glyphicon-barcode:before {\n  content: \"\\E040\";\n}\n.glyphicon-tag:before {\n  content: \"\\E041\";\n}\n.glyphicon-tags:before {\n  content: \"\\E042\";\n}\n.glyphicon-book:before {\n  content: \"\\E043\";\n}\n.glyphicon-bookmark:before {\n  content: \"\\E044\";\n}\n.glyphicon-print:before {\n  content: \"\\E045\";\n}\n.glyphicon-camera:before {\n  content: \"\\E046\";\n}\n.glyphicon-font:before {\n  content: \"\\E047\";\n}\n.glyphicon-bold:before {\n  content: \"\\E048\";\n}\n.glyphicon-italic:before {\n  content: \"\\E049\";\n}\n.glyphicon-text-height:before {\n  content: \"\\E050\";\n}\n.glyphicon-text-width:before {\n  content: \"\\E051\";\n}\n.glyphicon-align-left:before {\n  content: \"\\E052\";\n}\n.glyphicon-align-center:before {\n  content: \"\\E053\";\n}\n.glyphicon-align-right:before {\n  content: \"\\E054\";\n}\n.glyphicon-align-justify:before {\n  content: \"\\E055\";\n}\n.glyphicon-list:before {\n  content: \"\\E056\";\n}\n.glyphicon-indent-left:before {\n  content: \"\\E057\";\n}\n.glyphicon-indent-right:before {\n  content: \"\\E058\";\n}\n.glyphicon-facetime-video:before {\n  content: \"\\E059\";\n}\n.glyphicon-picture:before {\n  content: \"\\E060\";\n}\n.glyphicon-map-marker:before {\n  content: \"\\E062\";\n}\n.glyphicon-adjust:before {\n  content: \"\\E063\";\n}\n.glyphicon-tint:before {\n  content: \"\\E064\";\n}\n.glyphicon-edit:before {\n  content: \"\\E065\";\n}\n.glyphicon-share:before {\n  content: \"\\E066\";\n}\n.glyphicon-check:before {\n  content: \"\\E067\";\n}\n.glyphicon-move:before {\n  content: \"\\E068\";\n}\n.glyphicon-step-backward:before {\n  content: \"\\E069\";\n}\n.glyphicon-fast-backward:before {\n  content: \"\\E070\";\n}\n.glyphicon-backward:before {\n  content: \"\\E071\";\n}\n.glyphicon-play:before {\n  content: \"\\E072\";\n}\n.glyphicon-pause:before {\n  content: \"\\E073\";\n}\n.glyphicon-stop:before {\n  content: \"\\E074\";\n}\n.glyphicon-forward:before {\n  content: \"\\E075\";\n}\n.glyphicon-fast-forward:before {\n  content: \"\\E076\";\n}\n.glyphicon-step-forward:before {\n  content: \"\\E077\";\n}\n.glyphicon-eject:before {\n  content: \"\\E078\";\n}\n.glyphicon-chevron-left:before {\n  content: \"\\E079\";\n}\n.glyphicon-chevron-right:before {\n  content: \"\\E080\";\n}\n.glyphicon-plus-sign:before {\n  content: \"\\E081\";\n}\n.glyphicon-minus-sign:before {\n  content: \"\\E082\";\n}\n.glyphicon-remove-sign:before {\n  content: \"\\E083\";\n}\n.glyphicon-ok-sign:before {\n  content: \"\\E084\";\n}\n.glyphicon-question-sign:before {\n  content: \"\\E085\";\n}\n.glyphicon-info-sign:before {\n  content: \"\\E086\";\n}\n.glyphicon-screenshot:before {\n  content: \"\\E087\";\n}\n.glyphicon-remove-circle:before {\n  content: \"\\E088\";\n}\n.glyphicon-ok-circle:before {\n  content: \"\\E089\";\n}\n.glyphicon-ban-circle:before {\n  content: \"\\E090\";\n}\n.glyphicon-arrow-left:before {\n  content: \"\\E091\";\n}\n.glyphicon-arrow-right:before {\n  content: \"\\E092\";\n}\n.glyphicon-arrow-up:before {\n  content: \"\\E093\";\n}\n.glyphicon-arrow-down:before {\n  content: \"\\E094\";\n}\n.glyphicon-share-alt:before {\n  content: \"\\E095\";\n}\n.glyphicon-resize-full:before {\n  content: \"\\E096\";\n}\n.glyphicon-resize-small:before {\n  content: \"\\E097\";\n}\n.glyphicon-exclamation-sign:before {\n  content: \"\\E101\";\n}\n.glyphicon-gift:before {\n  content: \"\\E102\";\n}\n.glyphicon-leaf:before {\n  content: \"\\E103\";\n}\n.glyphicon-fire:before {\n  content: \"\\E104\";\n}\n.glyphicon-eye-open:before {\n  content: \"\\E105\";\n}\n.glyphicon-eye-close:before {\n  content: \"\\E106\";\n}\n.glyphicon-warning-sign:before {\n  content: \"\\E107\";\n}\n.glyphicon-plane:before {\n  content: \"\\E108\";\n}\n.glyphicon-calendar:before {\n  content: \"\\E109\";\n}\n.glyphicon-random:before {\n  content: \"\\E110\";\n}\n.glyphicon-comment:before {\n  content: \"\\E111\";\n}\n.glyphicon-magnet:before {\n  content: \"\\E112\";\n}\n.glyphicon-chevron-up:before {\n  content: \"\\E113\";\n}\n.glyphicon-chevron-down:before {\n  content: \"\\E114\";\n}\n.glyphicon-retweet:before {\n  content: \"\\E115\";\n}\n.glyphicon-shopping-cart:before {\n  content: \"\\E116\";\n}\n.glyphicon-folder-close:before {\n  content: \"\\E117\";\n}\n.glyphicon-folder-open:before {\n  content: \"\\E118\";\n}\n.glyphicon-resize-vertical:before {\n  content: \"\\E119\";\n}\n.glyphicon-resize-horizontal:before {\n  content: \"\\E120\";\n}\n.glyphicon-hdd:before {\n  content: \"\\E121\";\n}\n.glyphicon-bullhorn:before {\n  content: \"\\E122\";\n}\n.glyphicon-bell:before {\n  content: \"\\E123\";\n}\n.glyphicon-certificate:before {\n  content: \"\\E124\";\n}\n.glyphicon-thumbs-up:before {\n  content: \"\\E125\";\n}\n.glyphicon-thumbs-down:before {\n  content: \"\\E126\";\n}\n.glyphicon-hand-right:before {\n  content: \"\\E127\";\n}\n.glyphicon-hand-left:before {\n  content: \"\\E128\";\n}\n.glyphicon-hand-up:before {\n  content: \"\\E129\";\n}\n.glyphicon-hand-down:before {\n  content: \"\\E130\";\n}\n.glyphicon-circle-arrow-right:before {\n  content: \"\\E131\";\n}\n.glyphicon-circle-arrow-left:before {\n  content: \"\\E132\";\n}\n.glyphicon-circle-arrow-up:before {\n  content: \"\\E133\";\n}\n.glyphicon-circle-arrow-down:before {\n  content: \"\\E134\";\n}\n.glyphicon-globe:before {\n  content: \"\\E135\";\n}\n.glyphicon-wrench:before {\n  content: \"\\E136\";\n}\n.glyphicon-tasks:before {\n  content: \"\\E137\";\n}\n.glyphicon-filter:before {\n  content: \"\\E138\";\n}\n.glyphicon-briefcase:before {\n  content: \"\\E139\";\n}\n.glyphicon-fullscreen:before {\n  content: \"\\E140\";\n}\n.glyphicon-dashboard:before {\n  content: \"\\E141\";\n}\n.glyphicon-paperclip:before {\n  content: \"\\E142\";\n}\n.glyphicon-heart-empty:before {\n  content: \"\\E143\";\n}\n.glyphicon-link:before {\n  content: \"\\E144\";\n}\n.glyphicon-phone:before {\n  content: \"\\E145\";\n}\n.glyphicon-pushpin:before {\n  content: \"\\E146\";\n}\n.glyphicon-usd:before {\n  content: \"\\E148\";\n}\n.glyphicon-gbp:before {\n  content: \"\\E149\";\n}\n.glyphicon-sort:before {\n  content: \"\\E150\";\n}\n.glyphicon-sort-by-alphabet:before {\n  content: \"\\E151\";\n}\n.glyphicon-sort-by-alphabet-alt:before {\n  content: \"\\E152\";\n}\n.glyphicon-sort-by-order:before {\n  content: \"\\E153\";\n}\n.glyphicon-sort-by-order-alt:before {\n  content: \"\\E154\";\n}\n.glyphicon-sort-by-attributes:before {\n  content: \"\\E155\";\n}\n.glyphicon-sort-by-attributes-alt:before {\n  content: \"\\E156\";\n}\n.glyphicon-unchecked:before {\n  content: \"\\E157\";\n}\n.glyphicon-expand:before {\n  content: \"\\E158\";\n}\n.glyphicon-collapse-down:before {\n  content: \"\\E159\";\n}\n.glyphicon-collapse-up:before {\n  content: \"\\E160\";\n}\n.glyphicon-log-in:before {\n  content: \"\\E161\";\n}\n.glyphicon-flash:before {\n  content: \"\\E162\";\n}\n.glyphicon-log-out:before {\n  content: \"\\E163\";\n}\n.glyphicon-new-window:before {\n  content: \"\\E164\";\n}\n.glyphicon-record:before {\n  content: \"\\E165\";\n}\n.glyphicon-save:before {\n  content: \"\\E166\";\n}\n.glyphicon-open:before {\n  content: \"\\E167\";\n}\n.glyphicon-saved:before {\n  content: \"\\E168\";\n}\n.glyphicon-import:before {\n  content: \"\\E169\";\n}\n.glyphicon-export:before {\n  content: \"\\E170\";\n}\n.glyphicon-send:before {\n  content: \"\\E171\";\n}\n.glyphicon-floppy-disk:before {\n  content: \"\\E172\";\n}\n.glyphicon-floppy-saved:before {\n  content: \"\\E173\";\n}\n.glyphicon-floppy-remove:before {\n  content: \"\\E174\";\n}\n.glyphicon-floppy-save:before {\n  content: \"\\E175\";\n}\n.glyphicon-floppy-open:before {\n  content: \"\\E176\";\n}\n.glyphicon-credit-card:before {\n  content: \"\\E177\";\n}\n.glyphicon-transfer:before {\n  content: \"\\E178\";\n}\n.glyphicon-cutlery:before {\n  content: \"\\E179\";\n}\n.glyphicon-header:before {\n  content: \"\\E180\";\n}\n.glyphicon-compressed:before {\n  content: \"\\E181\";\n}\n.glyphicon-earphone:before {\n  content: \"\\E182\";\n}\n.glyphicon-phone-alt:before {\n  content: \"\\E183\";\n}\n.glyphicon-tower:before {\n  content: \"\\E184\";\n}\n.glyphicon-stats:before {\n  content: \"\\E185\";\n}\n.glyphicon-sd-video:before {\n  content: \"\\E186\";\n}\n.glyphicon-hd-video:before {\n  content: \"\\E187\";\n}\n.glyphicon-subtitles:before {\n  content: \"\\E188\";\n}\n.glyphicon-sound-stereo:before {\n  content: \"\\E189\";\n}\n.glyphicon-sound-dolby:before {\n  content: \"\\E190\";\n}\n.glyphicon-sound-5-1:before {\n  content: \"\\E191\";\n}\n.glyphicon-sound-6-1:before {\n  content: \"\\E192\";\n}\n.glyphicon-sound-7-1:before {\n  content: \"\\E193\";\n}\n.glyphicon-copyright-mark:before {\n  content: \"\\E194\";\n}\n.glyphicon-registration-mark:before {\n  content: \"\\E195\";\n}\n.glyphicon-cloud-download:before {\n  content: \"\\E197\";\n}\n.glyphicon-cloud-upload:before {\n  content: \"\\E198\";\n}\n.glyphicon-tree-conifer:before {\n  content: \"\\E199\";\n}\n.glyphicon-tree-deciduous:before {\n  content: \"\\E200\";\n}\n.glyphicon-cd:before {\n  content: \"\\E201\";\n}\n.glyphicon-save-file:before {\n  content: \"\\E202\";\n}\n.glyphicon-open-file:before {\n  content: \"\\E203\";\n}\n.glyphicon-level-up:before {\n  content: \"\\E204\";\n}\n.glyphicon-copy:before {\n  content: \"\\E205\";\n}\n.glyphicon-paste:before {\n  content: \"\\E206\";\n}\n.glyphicon-alert:before {\n  content: \"\\E209\";\n}\n.glyphicon-equalizer:before {\n  content: \"\\E210\";\n}\n.glyphicon-king:before {\n  content: \"\\E211\";\n}\n.glyphicon-queen:before {\n  content: \"\\E212\";\n}\n.glyphicon-pawn:before {\n  content: \"\\E213\";\n}\n.glyphicon-bishop:before {\n  content: \"\\E214\";\n}\n.glyphicon-knight:before {\n  content: \"\\E215\";\n}\n.glyphicon-baby-formula:before {\n  content: \"\\E216\";\n}\n.glyphicon-tent:before {\n  content: \"\\26FA\";\n}\n.glyphicon-blackboard:before {\n  content: \"\\E218\";\n}\n.glyphicon-bed:before {\n  content: \"\\E219\";\n}\n.glyphicon-apple:before {\n  content: \"\\F8FF\";\n}\n.glyphicon-erase:before {\n  content: \"\\E221\";\n}\n.glyphicon-hourglass:before {\n  content: \"\\231B\";\n}\n.glyphicon-lamp:before {\n  content: \"\\E223\";\n}\n.glyphicon-duplicate:before {\n  content: \"\\E224\";\n}\n.glyphicon-piggy-bank:before {\n  content: \"\\E225\";\n}\n.glyphicon-scissors:before {\n  content: \"\\E226\";\n}\n.glyphicon-bitcoin:before {\n  content: \"\\E227\";\n}\n.glyphicon-btc:before {\n  content: \"\\E227\";\n}\n.glyphicon-xbt:before {\n  content: \"\\E227\";\n}\n.glyphicon-yen:before {\n  content: \"\\A5\";\n}\n.glyphicon-jpy:before {\n  content: \"\\A5\";\n}\n.glyphicon-ruble:before {\n  content: \"\\20BD\";\n}\n.glyphicon-rub:before {\n  content: \"\\20BD\";\n}\n.glyphicon-scale:before {\n  content: \"\\E230\";\n}\n.glyphicon-ice-lolly:before {\n  content: \"\\E231\";\n}\n.glyphicon-ice-lolly-tasted:before {\n  content: \"\\E232\";\n}\n.glyphicon-education:before {\n  content: \"\\E233\";\n}\n.glyphicon-option-horizontal:before {\n  content: \"\\E234\";\n}\n.glyphicon-option-vertical:before {\n  content: \"\\E235\";\n}\n.glyphicon-menu-hamburger:before {\n  content: \"\\E236\";\n}\n.glyphicon-modal-window:before {\n  content: \"\\E237\";\n}\n.glyphicon-oil:before {\n  content: \"\\E238\";\n}\n.glyphicon-grain:before {\n  content: \"\\E239\";\n}\n.glyphicon-sunglasses:before {\n  content: \"\\E240\";\n}\n.glyphicon-text-size:before {\n  content: \"\\E241\";\n}\n.glyphicon-text-color:before {\n  content: \"\\E242\";\n}\n.glyphicon-text-background:before {\n  content: \"\\E243\";\n}\n.glyphicon-object-align-top:before {\n  content: \"\\E244\";\n}\n.glyphicon-object-align-bottom:before {\n  content: \"\\E245\";\n}\n.glyphicon-object-align-horizontal:before {\n  content: \"\\E246\";\n}\n.glyphicon-object-align-left:before {\n  content: \"\\E247\";\n}\n.glyphicon-object-align-vertical:before {\n  content: \"\\E248\";\n}\n.glyphicon-object-align-right:before {\n  content: \"\\E249\";\n}\n.glyphicon-triangle-right:before {\n  content: \"\\E250\";\n}\n.glyphicon-triangle-left:before {\n  content: \"\\E251\";\n}\n.glyphicon-triangle-bottom:before {\n  content: \"\\E252\";\n}\n.glyphicon-triangle-top:before {\n  content: \"\\E253\";\n}\n.glyphicon-console:before {\n  content: \"\\E254\";\n}\n.glyphicon-superscript:before {\n  content: \"\\E255\";\n}\n.glyphicon-subscript:before {\n  content: \"\\E256\";\n}\n.glyphicon-menu-left:before {\n  content: \"\\E257\";\n}\n.glyphicon-menu-right:before {\n  content: \"\\E258\";\n}\n.glyphicon-menu-down:before {\n  content: \"\\E259\";\n}\n.glyphicon-menu-up:before {\n  content: \"\\E260\";\n}\n* {\n  -webkit-box-sizing: border-box;\n     -moz-box-sizing: border-box;\n          box-sizing: border-box;\n}\n*:before,\n*:after {\n  -webkit-box-sizing: border-box;\n     -moz-box-sizing: border-box;\n          box-sizing: border-box;\n}\nhtml {\n  font-size: 10px;\n\n  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);\n}\nbody {\n  font-family: \"Helvetica Neue\", Helvetica, Arial, sans-serif;\n  font-size: 14px;\n  line-height: 1.42857143;\n  color: #333;\n  background-color: #fff;\n}\ninput,\nbutton,\nselect,\ntextarea {\n  font-family: inherit;\n  font-size: inherit;\n  line-height: inherit;\n}\na {\n  color: #337ab7;\n  text-decoration: none;\n}\na:hover,\na:focus {\n  color: #23527c;\n  text-decoration: underline;\n}\na:focus {\n  outline: thin dotted;\n  outline: 5px auto -webkit-focus-ring-color;\n  outline-offset: -2px;\n}\nfigure {\n  margin: 0;\n}\nimg {\n  vertical-align: middle;\n}\n.img-responsive,\n.thumbnail > img,\n.thumbnail a > img,\n.carousel-inner > .item > img,\n.carousel-inner > .item > a > img {\n  display: block;\n  max-width: 100%;\n  height: auto;\n}\n.img-rounded {\n  border-radius: 6px;\n}\n.img-thumbnail {\n  display: inline-block;\n  max-width: 100%;\n  height: auto;\n  padding: 4px;\n  line-height: 1.42857143;\n  background-color: #fff;\n  border: 1px solid #ddd;\n  border-radius: 4px;\n  -webkit-transition: all .2s ease-in-out;\n       -o-transition: all .2s ease-in-out;\n          transition: all .2s ease-in-out;\n}\n.img-circle {\n  border-radius: 50%;\n}\nhr {\n  margin-top: 20px;\n  margin-bottom: 20px;\n  border: 0;\n  border-top: 1px solid #eee;\n}\n.sr-only {\n  position: absolute;\n  width: 1px;\n  height: 1px;\n  padding: 0;\n  margin: -1px;\n  overflow: hidden;\n  clip: rect(0, 0, 0, 0);\n  border: 0;\n}\n.sr-only-focusable:active,\n.sr-only-focusable:focus {\n  position: static;\n  width: auto;\n  height: auto;\n  margin: 0;\n  overflow: visible;\n  clip: auto;\n}\n[role=\"button\"] {\n  cursor: pointer;\n}\nh1,\nh2,\nh3,\nh4,\nh5,\nh6,\n.h1,\n.h2,\n.h3,\n.h4,\n.h5,\n.h6 {\n  font-family: inherit;\n  font-weight: 500;\n  line-height: 1.1;\n  color: inherit;\n}\nh1 small,\nh2 small,\nh3 small,\nh4 small,\nh5 small,\nh6 small,\n.h1 small,\n.h2 small,\n.h3 small,\n.h4 small,\n.h5 small,\n.h6 small,\nh1 .small,\nh2 .small,\nh3 .small,\nh4 .small,\nh5 .small,\nh6 .small,\n.h1 .small,\n.h2 .small,\n.h3 .small,\n.h4 .small,\n.h5 .small,\n.h6 .small {\n  font-weight: normal;\n  line-height: 1;\n  color: #777;\n}\nh1,\n.h1,\nh2,\n.h2,\nh3,\n.h3 {\n  margin-top: 20px;\n  margin-bottom: 10px;\n}\nh1 small,\n.h1 small,\nh2 small,\n.h2 small,\nh3 small,\n.h3 small,\nh1 .small,\n.h1 .small,\nh2 .small,\n.h2 .small,\nh3 .small,\n.h3 .small {\n  font-size: 65%;\n}\nh4,\n.h4,\nh5,\n.h5,\nh6,\n.h6 {\n  margin-top: 10px;\n  margin-bottom: 10px;\n}\nh4 small,\n.h4 small,\nh5 small,\n.h5 small,\nh6 small,\n.h6 small,\nh4 .small,\n.h4 .small,\nh5 .small,\n.h5 .small,\nh6 .small,\n.h6 .small {\n  font-size: 75%;\n}\nh1,\n.h1 {\n  font-size: 36px;\n}\nh2,\n.h2 {\n  font-size: 30px;\n}\nh3,\n.h3 {\n  font-size: 24px;\n}\nh4,\n.h4 {\n  font-size: 18px;\n}\nh5,\n.h5 {\n  font-size: 14px;\n}\nh6,\n.h6 {\n  font-size: 12px;\n}\np {\n  margin: 0 0 10px;\n}\n.lead {\n  margin-bottom: 20px;\n  font-size: 16px;\n  font-weight: 300;\n  line-height: 1.4;\n}\n@media (min-width: 768px) {\n  .lead {\n    font-size: 21px;\n  }\n}\nsmall,\n.small {\n  font-size: 85%;\n}\nmark,\n.mark {\n  padding: .2em;\n  background-color: #fcf8e3;\n}\n.text-left {\n  text-align: left;\n}\n.text-right {\n  text-align: right;\n}\n.text-center {\n  text-align: center;\n}\n.text-justify {\n  text-align: justify;\n}\n.text-nowrap {\n  white-space: nowrap;\n}\n.text-lowercase {\n  text-transform: lowercase;\n}\n.text-uppercase {\n  text-transform: uppercase;\n}\n.text-capitalize {\n  text-transform: capitalize;\n}\n.text-muted {\n  color: #777;\n}\n.text-primary {\n  color: #337ab7;\n}\na.text-primary:hover,\na.text-primary:focus {\n  color: #286090;\n}\n.text-success {\n  color: #3c763d;\n}\na.text-success:hover,\na.text-success:focus {\n  color: #2b542c;\n}\n.text-info {\n  color: #31708f;\n}\na.text-info:hover,\na.text-info:focus {\n  color: #245269;\n}\n.text-warning {\n  color: #8a6d3b;\n}\na.text-warning:hover,\na.text-warning:focus {\n  color: #66512c;\n}\n.text-danger {\n  color: #a94442;\n}\na.text-danger:hover,\na.text-danger:focus {\n  color: #843534;\n}\n.bg-primary {\n  color: #fff;\n  background-color: #337ab7;\n}\na.bg-primary:hover,\na.bg-primary:focus {\n  background-color: #286090;\n}\n.bg-success {\n  background-color: #dff0d8;\n}\na.bg-success:hover,\na.bg-success:focus {\n  background-color: #c1e2b3;\n}\n.bg-info {\n  background-color: #d9edf7;\n}\na.bg-info:hover,\na.bg-info:focus {\n  background-color: #afd9ee;\n}\n.bg-warning {\n  background-color: #fcf8e3;\n}\na.bg-warning:hover,\na.bg-warning:focus {\n  background-color: #f7ecb5;\n}\n.bg-danger {\n  background-color: #f2dede;\n}\na.bg-danger:hover,\na.bg-danger:focus {\n  background-color: #e4b9b9;\n}\n.page-header {\n  padding-bottom: 9px;\n  margin: 40px 0 20px;\n  border-bottom: 1px solid #eee;\n}\nul,\nol {\n  margin-top: 0;\n  margin-bottom: 10px;\n}\nul ul,\nol ul,\nul ol,\nol ol {\n  margin-bottom: 0;\n}\n.list-unstyled {\n  padding-left: 0;\n  list-style: none;\n}\n.list-inline {\n  padding-left: 0;\n  margin-left: -5px;\n  list-style: none;\n}\n.list-inline > li {\n  display: inline-block;\n  padding-right: 5px;\n  padding-left: 5px;\n}\ndl {\n  margin-top: 0;\n  margin-bottom: 20px;\n}\ndt,\ndd {\n  line-height: 1.42857143;\n}\ndt {\n  font-weight: bold;\n}\ndd {\n  margin-left: 0;\n}\n@media (min-width: 768px) {\n  .dl-horizontal dt {\n    float: left;\n    width: 160px;\n    overflow: hidden;\n    clear: left;\n    text-align: right;\n    text-overflow: ellipsis;\n    white-space: nowrap;\n  }\n  .dl-horizontal dd {\n    margin-left: 180px;\n  }\n}\nabbr[title],\nabbr[data-original-title] {\n  cursor: help;\n  border-bottom: 1px dotted #777;\n}\n.initialism {\n  font-size: 90%;\n  text-transform: uppercase;\n}\nblockquote {\n  padding: 10px 20px;\n  margin: 0 0 20px;\n  font-size: 17.5px;\n  border-left: 5px solid #eee;\n}\nblockquote p:last-child,\nblockquote ul:last-child,\nblockquote ol:last-child {\n  margin-bottom: 0;\n}\nblockquote footer,\nblockquote small,\nblockquote .small {\n  display: block;\n  font-size: 80%;\n  line-height: 1.42857143;\n  color: #777;\n}\nblockquote footer:before,\nblockquote small:before,\nblockquote .small:before {\n  content: '\\2014   \\A0';\n}\n.blockquote-reverse,\nblockquote.pull-right {\n  padding-right: 15px;\n  padding-left: 0;\n  text-align: right;\n  border-right: 5px solid #eee;\n  border-left: 0;\n}\n.blockquote-reverse footer:before,\nblockquote.pull-right footer:before,\n.blockquote-reverse small:before,\nblockquote.pull-right small:before,\n.blockquote-reverse .small:before,\nblockquote.pull-right .small:before {\n  content: '';\n}\n.blockquote-reverse footer:after,\nblockquote.pull-right footer:after,\n.blockquote-reverse small:after,\nblockquote.pull-right small:after,\n.blockquote-reverse .small:after,\nblockquote.pull-right .small:after {\n  content: '\\A0   \\2014';\n}\naddress {\n  margin-bottom: 20px;\n  font-style: normal;\n  line-height: 1.42857143;\n}\ncode,\nkbd,\npre,\nsamp {\n  font-family: Menlo, Monaco, Consolas, \"Courier New\", monospace;\n}\ncode {\n  padding: 2px 4px;\n  font-size: 90%;\n  color: #c7254e;\n  background-color: #f9f2f4;\n  border-radius: 4px;\n}\nkbd {\n  padding: 2px 4px;\n  font-size: 90%;\n  color: #fff;\n  background-color: #333;\n  border-radius: 3px;\n  -webkit-box-shadow: inset 0 -1px 0 rgba(0, 0, 0, .25);\n          box-shadow: inset 0 -1px 0 rgba(0, 0, 0, .25);\n}\nkbd kbd {\n  padding: 0;\n  font-size: 100%;\n  font-weight: bold;\n  -webkit-box-shadow: none;\n          box-shadow: none;\n}\npre {\n  display: block;\n  padding: 9.5px;\n  margin: 0 0 10px;\n  font-size: 13px;\n  line-height: 1.42857143;\n  color: #333;\n  word-break: break-all;\n  word-wrap: break-word;\n  background-color: #f5f5f5;\n  border: 1px solid #ccc;\n  border-radius: 4px;\n}\npre code {\n  padding: 0;\n  font-size: inherit;\n  color: inherit;\n  white-space: pre-wrap;\n  background-color: transparent;\n  border-radius: 0;\n}\n.pre-scrollable {\n  max-height: 340px;\n  overflow-y: scroll;\n}\n.container {\n  padding-right: 15px;\n  padding-left: 15px;\n  margin-right: auto;\n  margin-left: auto;\n}\n@media (min-width: 768px) {\n  .container {\n    width: 750px;\n  }\n}\n@media (min-width: 992px) {\n  .container {\n    width: 970px;\n  }\n}\n@media (min-width: 1200px) {\n  .container {\n    width: 1170px;\n  }\n}\n.container-fluid {\n  padding-right: 15px;\n  padding-left: 15px;\n  margin-right: auto;\n  margin-left: auto;\n}\n.row {\n  margin-right: -15px;\n  margin-left: -15px;\n}\n.col-xs-1, .col-sm-1, .col-md-1, .col-lg-1, .col-xs-2, .col-sm-2, .col-md-2, .col-lg-2, .col-xs-3, .col-sm-3, .col-md-3, .col-lg-3, .col-xs-4, .col-sm-4, .col-md-4, .col-lg-4, .col-xs-5, .col-sm-5, .col-md-5, .col-lg-5, .col-xs-6, .col-sm-6, .col-md-6, .col-lg-6, .col-xs-7, .col-sm-7, .col-md-7, .col-lg-7, .col-xs-8, .col-sm-8, .col-md-8, .col-lg-8, .col-xs-9, .col-sm-9, .col-md-9, .col-lg-9, .col-xs-10, .col-sm-10, .col-md-10, .col-lg-10, .col-xs-11, .col-sm-11, .col-md-11, .col-lg-11, .col-xs-12, .col-sm-12, .col-md-12, .col-lg-12 {\n  position: relative;\n  min-height: 1px;\n  padding-right: 15px;\n  padding-left: 15px;\n}\n.col-xs-1, .col-xs-2, .col-xs-3, .col-xs-4, .col-xs-5, .col-xs-6, .col-xs-7, .col-xs-8, .col-xs-9, .col-xs-10, .col-xs-11, .col-xs-12 {\n  float: left;\n}\n.col-xs-12 {\n  width: 100%;\n}\n.col-xs-11 {\n  width: 91.66666667%;\n}\n.col-xs-10 {\n  width: 83.33333333%;\n}\n.col-xs-9 {\n  width: 75%;\n}\n.col-xs-8 {\n  width: 66.66666667%;\n}\n.col-xs-7 {\n  width: 58.33333333%;\n}\n.col-xs-6 {\n  width: 50%;\n}\n.col-xs-5 {\n  width: 41.66666667%;\n}\n.col-xs-4 {\n  width: 33.33333333%;\n}\n.col-xs-3 {\n  width: 25%;\n}\n.col-xs-2 {\n  width: 16.66666667%;\n}\n.col-xs-1 {\n  width: 8.33333333%;\n}\n.col-xs-pull-12 {\n  right: 100%;\n}\n.col-xs-pull-11 {\n  right: 91.66666667%;\n}\n.col-xs-pull-10 {\n  right: 83.33333333%;\n}\n.col-xs-pull-9 {\n  right: 75%;\n}\n.col-xs-pull-8 {\n  right: 66.66666667%;\n}\n.col-xs-pull-7 {\n  right: 58.33333333%;\n}\n.col-xs-pull-6 {\n  right: 50%;\n}\n.col-xs-pull-5 {\n  right: 41.66666667%;\n}\n.col-xs-pull-4 {\n  right: 33.33333333%;\n}\n.col-xs-pull-3 {\n  right: 25%;\n}\n.col-xs-pull-2 {\n  right: 16.66666667%;\n}\n.col-xs-pull-1 {\n  right: 8.33333333%;\n}\n.col-xs-pull-0 {\n  right: auto;\n}\n.col-xs-push-12 {\n  left: 100%;\n}\n.col-xs-push-11 {\n  left: 91.66666667%;\n}\n.col-xs-push-10 {\n  left: 83.33333333%;\n}\n.col-xs-push-9 {\n  left: 75%;\n}\n.col-xs-push-8 {\n  left: 66.66666667%;\n}\n.col-xs-push-7 {\n  left: 58.33333333%;\n}\n.col-xs-push-6 {\n  left: 50%;\n}\n.col-xs-push-5 {\n  left: 41.66666667%;\n}\n.col-xs-push-4 {\n  left: 33.33333333%;\n}\n.col-xs-push-3 {\n  left: 25%;\n}\n.col-xs-push-2 {\n  left: 16.66666667%;\n}\n.col-xs-push-1 {\n  left: 8.33333333%;\n}\n.col-xs-push-0 {\n  left: auto;\n}\n.col-xs-offset-12 {\n  margin-left: 100%;\n}\n.col-xs-offset-11 {\n  margin-left: 91.66666667%;\n}\n.col-xs-offset-10 {\n  margin-left: 83.33333333%;\n}\n.col-xs-offset-9 {\n  margin-left: 75%;\n}\n.col-xs-offset-8 {\n  margin-left: 66.66666667%;\n}\n.col-xs-offset-7 {\n  margin-left: 58.33333333%;\n}\n.col-xs-offset-6 {\n  margin-left: 50%;\n}\n.col-xs-offset-5 {\n  margin-left: 41.66666667%;\n}\n.col-xs-offset-4 {\n  margin-left: 33.33333333%;\n}\n.col-xs-offset-3 {\n  margin-left: 25%;\n}\n.col-xs-offset-2 {\n  margin-left: 16.66666667%;\n}\n.col-xs-offset-1 {\n  margin-left: 8.33333333%;\n}\n.col-xs-offset-0 {\n  margin-left: 0;\n}\n@media (min-width: 768px) {\n  .col-sm-1, .col-sm-2, .col-sm-3, .col-sm-4, .col-sm-5, .col-sm-6, .col-sm-7, .col-sm-8, .col-sm-9, .col-sm-10, .col-sm-11, .col-sm-12 {\n    float: left;\n  }\n  .col-sm-12 {\n    width: 100%;\n  }\n  .col-sm-11 {\n    width: 91.66666667%;\n  }\n  .col-sm-10 {\n    width: 83.33333333%;\n  }\n  .col-sm-9 {\n    width: 75%;\n  }\n  .col-sm-8 {\n    width: 66.66666667%;\n  }\n  .col-sm-7 {\n    width: 58.33333333%;\n  }\n  .col-sm-6 {\n    width: 50%;\n  }\n  .col-sm-5 {\n    width: 41.66666667%;\n  }\n  .col-sm-4 {\n    width: 33.33333333%;\n  }\n  .col-sm-3 {\n    width: 25%;\n  }\n  .col-sm-2 {\n    width: 16.66666667%;\n  }\n  .col-sm-1 {\n    width: 8.33333333%;\n  }\n  .col-sm-pull-12 {\n    right: 100%;\n  }\n  .col-sm-pull-11 {\n    right: 91.66666667%;\n  }\n  .col-sm-pull-10 {\n    right: 83.33333333%;\n  }\n  .col-sm-pull-9 {\n    right: 75%;\n  }\n  .col-sm-pull-8 {\n    right: 66.66666667%;\n  }\n  .col-sm-pull-7 {\n    right: 58.33333333%;\n  }\n  .col-sm-pull-6 {\n    right: 50%;\n  }\n  .col-sm-pull-5 {\n    right: 41.66666667%;\n  }\n  .col-sm-pull-4 {\n    right: 33.33333333%;\n  }\n  .col-sm-pull-3 {\n    right: 25%;\n  }\n  .col-sm-pull-2 {\n    right: 16.66666667%;\n  }\n  .col-sm-pull-1 {\n    right: 8.33333333%;\n  }\n  .col-sm-pull-0 {\n    right: auto;\n  }\n  .col-sm-push-12 {\n    left: 100%;\n  }\n  .col-sm-push-11 {\n    left: 91.66666667%;\n  }\n  .col-sm-push-10 {\n    left: 83.33333333%;\n  }\n  .col-sm-push-9 {\n    left: 75%;\n  }\n  .col-sm-push-8 {\n    left: 66.66666667%;\n  }\n  .col-sm-push-7 {\n    left: 58.33333333%;\n  }\n  .col-sm-push-6 {\n    left: 50%;\n  }\n  .col-sm-push-5 {\n    left: 41.66666667%;\n  }\n  .col-sm-push-4 {\n    left: 33.33333333%;\n  }\n  .col-sm-push-3 {\n    left: 25%;\n  }\n  .col-sm-push-2 {\n    left: 16.66666667%;\n  }\n  .col-sm-push-1 {\n    left: 8.33333333%;\n  }\n  .col-sm-push-0 {\n    left: auto;\n  }\n  .col-sm-offset-12 {\n    margin-left: 100%;\n  }\n  .col-sm-offset-11 {\n    margin-left: 91.66666667%;\n  }\n  .col-sm-offset-10 {\n    margin-left: 83.33333333%;\n  }\n  .col-sm-offset-9 {\n    margin-left: 75%;\n  }\n  .col-sm-offset-8 {\n    margin-left: 66.66666667%;\n  }\n  .col-sm-offset-7 {\n    margin-left: 58.33333333%;\n  }\n  .col-sm-offset-6 {\n    margin-left: 50%;\n  }\n  .col-sm-offset-5 {\n    margin-left: 41.66666667%;\n  }\n  .col-sm-offset-4 {\n    margin-left: 33.33333333%;\n  }\n  .col-sm-offset-3 {\n    margin-left: 25%;\n  }\n  .col-sm-offset-2 {\n    margin-left: 16.66666667%;\n  }\n  .col-sm-offset-1 {\n    margin-left: 8.33333333%;\n  }\n  .col-sm-offset-0 {\n    margin-left: 0;\n  }\n}\n@media (min-width: 992px) {\n  .col-md-1, .col-md-2, .col-md-3, .col-md-4, .col-md-5, .col-md-6, .col-md-7, .col-md-8, .col-md-9, .col-md-10, .col-md-11, .col-md-12 {\n    float: left;\n  }\n  .col-md-12 {\n    width: 100%;\n  }\n  .col-md-11 {\n    width: 91.66666667%;\n  }\n  .col-md-10 {\n    width: 83.33333333%;\n  }\n  .col-md-9 {\n    width: 75%;\n  }\n  .col-md-8 {\n    width: 66.66666667%;\n  }\n  .col-md-7 {\n    width: 58.33333333%;\n  }\n  .col-md-6 {\n    width: 50%;\n  }\n  .col-md-5 {\n    width: 41.66666667%;\n  }\n  .col-md-4 {\n    width: 33.33333333%;\n  }\n  .col-md-3 {\n    width: 25%;\n  }\n  .col-md-2 {\n    width: 16.66666667%;\n  }\n  .col-md-1 {\n    width: 8.33333333%;\n  }\n  .col-md-pull-12 {\n    right: 100%;\n  }\n  .col-md-pull-11 {\n    right: 91.66666667%;\n  }\n  .col-md-pull-10 {\n    right: 83.33333333%;\n  }\n  .col-md-pull-9 {\n    right: 75%;\n  }\n  .col-md-pull-8 {\n    right: 66.66666667%;\n  }\n  .col-md-pull-7 {\n    right: 58.33333333%;\n  }\n  .col-md-pull-6 {\n    right: 50%;\n  }\n  .col-md-pull-5 {\n    right: 41.66666667%;\n  }\n  .col-md-pull-4 {\n    right: 33.33333333%;\n  }\n  .col-md-pull-3 {\n    right: 25%;\n  }\n  .col-md-pull-2 {\n    right: 16.66666667%;\n  }\n  .col-md-pull-1 {\n    right: 8.33333333%;\n  }\n  .col-md-pull-0 {\n    right: auto;\n  }\n  .col-md-push-12 {\n    left: 100%;\n  }\n  .col-md-push-11 {\n    left: 91.66666667%;\n  }\n  .col-md-push-10 {\n    left: 83.33333333%;\n  }\n  .col-md-push-9 {\n    left: 75%;\n  }\n  .col-md-push-8 {\n    left: 66.66666667%;\n  }\n  .col-md-push-7 {\n    left: 58.33333333%;\n  }\n  .col-md-push-6 {\n    left: 50%;\n  }\n  .col-md-push-5 {\n    left: 41.66666667%;\n  }\n  .col-md-push-4 {\n    left: 33.33333333%;\n  }\n  .col-md-push-3 {\n    left: 25%;\n  }\n  .col-md-push-2 {\n    left: 16.66666667%;\n  }\n  .col-md-push-1 {\n    left: 8.33333333%;\n  }\n  .col-md-push-0 {\n    left: auto;\n  }\n  .col-md-offset-12 {\n    margin-left: 100%;\n  }\n  .col-md-offset-11 {\n    margin-left: 91.66666667%;\n  }\n  .col-md-offset-10 {\n    margin-left: 83.33333333%;\n  }\n  .col-md-offset-9 {\n    margin-left: 75%;\n  }\n  .col-md-offset-8 {\n    margin-left: 66.66666667%;\n  }\n  .col-md-offset-7 {\n    margin-left: 58.33333333%;\n  }\n  .col-md-offset-6 {\n    margin-left: 50%;\n  }\n  .col-md-offset-5 {\n    margin-left: 41.66666667%;\n  }\n  .col-md-offset-4 {\n    margin-left: 33.33333333%;\n  }\n  .col-md-offset-3 {\n    margin-left: 25%;\n  }\n  .col-md-offset-2 {\n    margin-left: 16.66666667%;\n  }\n  .col-md-offset-1 {\n    margin-left: 8.33333333%;\n  }\n  .col-md-offset-0 {\n    margin-left: 0;\n  }\n}\n@media (min-width: 1200px) {\n  .col-lg-1, .col-lg-2, .col-lg-3, .col-lg-4, .col-lg-5, .col-lg-6, .col-lg-7, .col-lg-8, .col-lg-9, .col-lg-10, .col-lg-11, .col-lg-12 {\n    float: left;\n  }\n  .col-lg-12 {\n    width: 100%;\n  }\n  .col-lg-11 {\n    width: 91.66666667%;\n  }\n  .col-lg-10 {\n    width: 83.33333333%;\n  }\n  .col-lg-9 {\n    width: 75%;\n  }\n  .col-lg-8 {\n    width: 66.66666667%;\n  }\n  .col-lg-7 {\n    width: 58.33333333%;\n  }\n  .col-lg-6 {\n    width: 50%;\n  }\n  .col-lg-5 {\n    width: 41.66666667%;\n  }\n  .col-lg-4 {\n    width: 33.33333333%;\n  }\n  .col-lg-3 {\n    width: 25%;\n  }\n  .col-lg-2 {\n    width: 16.66666667%;\n  }\n  .col-lg-1 {\n    width: 8.33333333%;\n  }\n  .col-lg-pull-12 {\n    right: 100%;\n  }\n  .col-lg-pull-11 {\n    right: 91.66666667%;\n  }\n  .col-lg-pull-10 {\n    right: 83.33333333%;\n  }\n  .col-lg-pull-9 {\n    right: 75%;\n  }\n  .col-lg-pull-8 {\n    right: 66.66666667%;\n  }\n  .col-lg-pull-7 {\n    right: 58.33333333%;\n  }\n  .col-lg-pull-6 {\n    right: 50%;\n  }\n  .col-lg-pull-5 {\n    right: 41.66666667%;\n  }\n  .col-lg-pull-4 {\n    right: 33.33333333%;\n  }\n  .col-lg-pull-3 {\n    right: 25%;\n  }\n  .col-lg-pull-2 {\n    right: 16.66666667%;\n  }\n  .col-lg-pull-1 {\n    right: 8.33333333%;\n  }\n  .col-lg-pull-0 {\n    right: auto;\n  }\n  .col-lg-push-12 {\n    left: 100%;\n  }\n  .col-lg-push-11 {\n    left: 91.66666667%;\n  }\n  .col-lg-push-10 {\n    left: 83.33333333%;\n  }\n  .col-lg-push-9 {\n    left: 75%;\n  }\n  .col-lg-push-8 {\n    left: 66.66666667%;\n  }\n  .col-lg-push-7 {\n    left: 58.33333333%;\n  }\n  .col-lg-push-6 {\n    left: 50%;\n  }\n  .col-lg-push-5 {\n    left: 41.66666667%;\n  }\n  .col-lg-push-4 {\n    left: 33.33333333%;\n  }\n  .col-lg-push-3 {\n    left: 25%;\n  }\n  .col-lg-push-2 {\n    left: 16.66666667%;\n  }\n  .col-lg-push-1 {\n    left: 8.33333333%;\n  }\n  .col-lg-push-0 {\n    left: auto;\n  }\n  .col-lg-offset-12 {\n    margin-left: 100%;\n  }\n  .col-lg-offset-11 {\n    margin-left: 91.66666667%;\n  }\n  .col-lg-offset-10 {\n    margin-left: 83.33333333%;\n  }\n  .col-lg-offset-9 {\n    margin-left: 75%;\n  }\n  .col-lg-offset-8 {\n    margin-left: 66.66666667%;\n  }\n  .col-lg-offset-7 {\n    margin-left: 58.33333333%;\n  }\n  .col-lg-offset-6 {\n    margin-left: 50%;\n  }\n  .col-lg-offset-5 {\n    margin-left: 41.66666667%;\n  }\n  .col-lg-offset-4 {\n    margin-left: 33.33333333%;\n  }\n  .col-lg-offset-3 {\n    margin-left: 25%;\n  }\n  .col-lg-offset-2 {\n    margin-left: 16.66666667%;\n  }\n  .col-lg-offset-1 {\n    margin-left: 8.33333333%;\n  }\n  .col-lg-offset-0 {\n    margin-left: 0;\n  }\n}\ntable {\n  background-color: transparent;\n}\ncaption {\n  padding-top: 8px;\n  padding-bottom: 8px;\n  color: #777;\n  text-align: left;\n}\nth {\n  text-align: left;\n}\n.table {\n  width: 100%;\n  max-width: 100%;\n  margin-bottom: 20px;\n}\n.table > thead > tr > th,\n.table > tbody > tr > th,\n.table > tfoot > tr > th,\n.table > thead > tr > td,\n.table > tbody > tr > td,\n.table > tfoot > tr > td {\n  padding: 8px;\n  line-height: 1.42857143;\n  vertical-align: top;\n  border-top: 1px solid #ddd;\n}\n.table > thead > tr > th {\n  vertical-align: bottom;\n  border-bottom: 2px solid #ddd;\n}\n.table > caption + thead > tr:first-child > th,\n.table > colgroup + thead > tr:first-child > th,\n.table > thead:first-child > tr:first-child > th,\n.table > caption + thead > tr:first-child > td,\n.table > colgroup + thead > tr:first-child > td,\n.table > thead:first-child > tr:first-child > td {\n  border-top: 0;\n}\n.table > tbody + tbody {\n  border-top: 2px solid #ddd;\n}\n.table .table {\n  background-color: #fff;\n}\n.table-condensed > thead > tr > th,\n.table-condensed > tbody > tr > th,\n.table-condensed > tfoot > tr > th,\n.table-condensed > thead > tr > td,\n.table-condensed > tbody > tr > td,\n.table-condensed > tfoot > tr > td {\n  padding: 5px;\n}\n.table-bordered {\n  border: 1px solid #ddd;\n}\n.table-bordered > thead > tr > th,\n.table-bordered > tbody > tr > th,\n.table-bordered > tfoot > tr > th,\n.table-bordered > thead > tr > td,\n.table-bordered > tbody > tr > td,\n.table-bordered > tfoot > tr > td {\n  border: 1px solid #ddd;\n}\n.table-bordered > thead > tr > th,\n.table-bordered > thead > tr > td {\n  border-bottom-width: 2px;\n}\n.table-striped > tbody > tr:nth-of-type(odd) {\n  background-color: #f9f9f9;\n}\n.table-hover > tbody > tr:hover {\n  background-color: #f5f5f5;\n}\ntable col[class*=\"col-\"] {\n  position: static;\n  display: table-column;\n  float: none;\n}\ntable td[class*=\"col-\"],\ntable th[class*=\"col-\"] {\n  position: static;\n  display: table-cell;\n  float: none;\n}\n.table > thead > tr > td.active,\n.table > tbody > tr > td.active,\n.table > tfoot > tr > td.active,\n.table > thead > tr > th.active,\n.table > tbody > tr > th.active,\n.table > tfoot > tr > th.active,\n.table > thead > tr.active > td,\n.table > tbody > tr.active > td,\n.table > tfoot > tr.active > td,\n.table > thead > tr.active > th,\n.table > tbody > tr.active > th,\n.table > tfoot > tr.active > th {\n  background-color: #f5f5f5;\n}\n.table-hover > tbody > tr > td.active:hover,\n.table-hover > tbody > tr > th.active:hover,\n.table-hover > tbody > tr.active:hover > td,\n.table-hover > tbody > tr:hover > .active,\n.table-hover > tbody > tr.active:hover > th {\n  background-color: #e8e8e8;\n}\n.table > thead > tr > td.success,\n.table > tbody > tr > td.success,\n.table > tfoot > tr > td.success,\n.table > thead > tr > th.success,\n.table > tbody > tr > th.success,\n.table > tfoot > tr > th.success,\n.table > thead > tr.success > td,\n.table > tbody > tr.success > td,\n.table > tfoot > tr.success > td,\n.table > thead > tr.success > th,\n.table > tbody > tr.success > th,\n.table > tfoot > tr.success > th {\n  background-color: #dff0d8;\n}\n.table-hover > tbody > tr > td.success:hover,\n.table-hover > tbody > tr > th.success:hover,\n.table-hover > tbody > tr.success:hover > td,\n.table-hover > tbody > tr:hover > .success,\n.table-hover > tbody > tr.success:hover > th {\n  background-color: #d0e9c6;\n}\n.table > thead > tr > td.info,\n.table > tbody > tr > td.info,\n.table > tfoot > tr > td.info,\n.table > thead > tr > th.info,\n.table > tbody > tr > th.info,\n.table > tfoot > tr > th.info,\n.table > thead > tr.info > td,\n.table > tbody > tr.info > td,\n.table > tfoot > tr.info > td,\n.table > thead > tr.info > th,\n.table > tbody > tr.info > th,\n.table > tfoot > tr.info > th {\n  background-color: #d9edf7;\n}\n.table-hover > tbody > tr > td.info:hover,\n.table-hover > tbody > tr > th.info:hover,\n.table-hover > tbody > tr.info:hover > td,\n.table-hover > tbody > tr:hover > .info,\n.table-hover > tbody > tr.info:hover > th {\n  background-color: #c4e3f3;\n}\n.table > thead > tr > td.warning,\n.table > tbody > tr > td.warning,\n.table > tfoot > tr > td.warning,\n.table > thead > tr > th.warning,\n.table > tbody > tr > th.warning,\n.table > tfoot > tr > th.warning,\n.table > thead > tr.warning > td,\n.table > tbody > tr.warning > td,\n.table > tfoot > tr.warning > td,\n.table > thead > tr.warning > th,\n.table > tbody > tr.warning > th,\n.table > tfoot > tr.warning > th {\n  background-color: #fcf8e3;\n}\n.table-hover > tbody > tr > td.warning:hover,\n.table-hover > tbody > tr > th.warning:hover,\n.table-hover > tbody > tr.warning:hover > td,\n.table-hover > tbody > tr:hover > .warning,\n.table-hover > tbody > tr.warning:hover > th {\n  background-color: #faf2cc;\n}\n.table > thead > tr > td.danger,\n.table > tbody > tr > td.danger,\n.table > tfoot > tr > td.danger,\n.table > thead > tr > th.danger,\n.table > tbody > tr > th.danger,\n.table > tfoot > tr > th.danger,\n.table > thead > tr.danger > td,\n.table > tbody > tr.danger > td,\n.table > tfoot > tr.danger > td,\n.table > thead > tr.danger > th,\n.table > tbody > tr.danger > th,\n.table > tfoot > tr.danger > th {\n  background-color: #f2dede;\n}\n.table-hover > tbody > tr > td.danger:hover,\n.table-hover > tbody > tr > th.danger:hover,\n.table-hover > tbody > tr.danger:hover > td,\n.table-hover > tbody > tr:hover > .danger,\n.table-hover > tbody > tr.danger:hover > th {\n  background-color: #ebcccc;\n}\n.table-responsive {\n  min-height: .01%;\n  overflow-x: auto;\n}\n@media screen and (max-width: 767px) {\n  .table-responsive {\n    width: 100%;\n    margin-bottom: 15px;\n    overflow-y: hidden;\n    -ms-overflow-style: -ms-autohiding-scrollbar;\n    border: 1px solid #ddd;\n  }\n  .table-responsive > .table {\n    margin-bottom: 0;\n  }\n  .table-responsive > .table > thead > tr > th,\n  .table-responsive > .table > tbody > tr > th,\n  .table-responsive > .table > tfoot > tr > th,\n  .table-responsive > .table > thead > tr > td,\n  .table-responsive > .table > tbody > tr > td,\n  .table-responsive > .table > tfoot > tr > td {\n    white-space: nowrap;\n  }\n  .table-responsive > .table-bordered {\n    border: 0;\n  }\n  .table-responsive > .table-bordered > thead > tr > th:first-child,\n  .table-responsive > .table-bordered > tbody > tr > th:first-child,\n  .table-responsive > .table-bordered > tfoot > tr > th:first-child,\n  .table-responsive > .table-bordered > thead > tr > td:first-child,\n  .table-responsive > .table-bordered > tbody > tr > td:first-child,\n  .table-responsive > .table-bordered > tfoot > tr > td:first-child {\n    border-left: 0;\n  }\n  .table-responsive > .table-bordered > thead > tr > th:last-child,\n  .table-responsive > .table-bordered > tbody > tr > th:last-child,\n  .table-responsive > .table-bordered > tfoot > tr > th:last-child,\n  .table-responsive > .table-bordered > thead > tr > td:last-child,\n  .table-responsive > .table-bordered > tbody > tr > td:last-child,\n  .table-responsive > .table-bordered > tfoot > tr > td:last-child {\n    border-right: 0;\n  }\n  .table-responsive > .table-bordered > tbody > tr:last-child > th,\n  .table-responsive > .table-bordered > tfoot > tr:last-child > th,\n  .table-responsive > .table-bordered > tbody > tr:last-child > td,\n  .table-responsive > .table-bordered > tfoot > tr:last-child > td {\n    border-bottom: 0;\n  }\n}\nfieldset {\n  min-width: 0;\n  padding: 0;\n  margin: 0;\n  border: 0;\n}\nlegend {\n  display: block;\n  width: 100%;\n  padding: 0;\n  margin-bottom: 20px;\n  font-size: 21px;\n  line-height: inherit;\n  color: #333;\n  border: 0;\n  border-bottom: 1px solid #e5e5e5;\n}\nlabel {\n  display: inline-block;\n  max-width: 100%;\n  margin-bottom: 5px;\n  font-weight: bold;\n}\ninput[type=\"search\"] {\n  -webkit-box-sizing: border-box;\n     -moz-box-sizing: border-box;\n          box-sizing: border-box;\n}\ninput[type=\"radio\"],\ninput[type=\"checkbox\"] {\n  margin: 4px 0 0;\n  margin-top: 1px \\9;\n  line-height: normal;\n}\ninput[type=\"file\"] {\n  display: block;\n}\ninput[type=\"range\"] {\n  display: block;\n  width: 100%;\n}\nselect[multiple],\nselect[size] {\n  height: auto;\n}\ninput[type=\"file\"]:focus,\ninput[type=\"radio\"]:focus,\ninput[type=\"checkbox\"]:focus {\n  outline: thin dotted;\n  outline: 5px auto -webkit-focus-ring-color;\n  outline-offset: -2px;\n}\noutput {\n  display: block;\n  padding-top: 7px;\n  font-size: 14px;\n  line-height: 1.42857143;\n  color: #555;\n}\n.form-control {\n  display: block;\n  width: 100%;\n  height: 34px;\n  padding: 6px 12px;\n  font-size: 14px;\n  line-height: 1.42857143;\n  color: #555;\n  background-color: #fff;\n  background-image: none;\n  border: 1px solid #ccc;\n  border-radius: 4px;\n  -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);\n          box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);\n  -webkit-transition: border-color ease-in-out .15s, -webkit-box-shadow ease-in-out .15s;\n       -o-transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;\n          transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;\n}\n.form-control:focus {\n  border-color: #66afe9;\n  outline: 0;\n  -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px rgba(102, 175, 233, .6);\n          box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px rgba(102, 175, 233, .6);\n}\n.form-control::-moz-placeholder {\n  color: #999;\n  opacity: 1;\n}\n.form-control:-ms-input-placeholder {\n  color: #999;\n}\n.form-control::-webkit-input-placeholder {\n  color: #999;\n}\n.form-control[disabled],\n.form-control[readonly],\nfieldset[disabled] .form-control {\n  background-color: #eee;\n  opacity: 1;\n}\n.form-control[disabled],\nfieldset[disabled] .form-control {\n  cursor: not-allowed;\n}\ntextarea.form-control {\n  height: auto;\n}\ninput[type=\"search\"] {\n  -webkit-appearance: none;\n}\n@media screen and (-webkit-min-device-pixel-ratio: 0) {\n  input[type=\"date\"].form-control,\n  input[type=\"time\"].form-control,\n  input[type=\"datetime-local\"].form-control,\n  input[type=\"month\"].form-control {\n    line-height: 34px;\n  }\n  input[type=\"date\"].input-sm,\n  input[type=\"time\"].input-sm,\n  input[type=\"datetime-local\"].input-sm,\n  input[type=\"month\"].input-sm,\n  .input-group-sm input[type=\"date\"],\n  .input-group-sm input[type=\"time\"],\n  .input-group-sm input[type=\"datetime-local\"],\n  .input-group-sm input[type=\"month\"] {\n    line-height: 30px;\n  }\n  input[type=\"date\"].input-lg,\n  input[type=\"time\"].input-lg,\n  input[type=\"datetime-local\"].input-lg,\n  input[type=\"month\"].input-lg,\n  .input-group-lg input[type=\"date\"],\n  .input-group-lg input[type=\"time\"],\n  .input-group-lg input[type=\"datetime-local\"],\n  .input-group-lg input[type=\"month\"] {\n    line-height: 46px;\n  }\n}\n.form-group {\n  margin-bottom: 15px;\n}\n.radio,\n.checkbox {\n  position: relative;\n  display: block;\n  margin-top: 10px;\n  margin-bottom: 10px;\n}\n.radio label,\n.checkbox label {\n  min-height: 20px;\n  padding-left: 20px;\n  margin-bottom: 0;\n  font-weight: normal;\n  cursor: pointer;\n}\n.radio input[type=\"radio\"],\n.radio-inline input[type=\"radio\"],\n.checkbox input[type=\"checkbox\"],\n.checkbox-inline input[type=\"checkbox\"] {\n  position: absolute;\n  margin-top: 4px \\9;\n  margin-left: -20px;\n}\n.radio + .radio,\n.checkbox + .checkbox {\n  margin-top: -5px;\n}\n.radio-inline,\n.checkbox-inline {\n  position: relative;\n  display: inline-block;\n  padding-left: 20px;\n  margin-bottom: 0;\n  font-weight: normal;\n  vertical-align: middle;\n  cursor: pointer;\n}\n.radio-inline + .radio-inline,\n.checkbox-inline + .checkbox-inline {\n  margin-top: 0;\n  margin-left: 10px;\n}\ninput[type=\"radio\"][disabled],\ninput[type=\"checkbox\"][disabled],\ninput[type=\"radio\"].disabled,\ninput[type=\"checkbox\"].disabled,\nfieldset[disabled] input[type=\"radio\"],\nfieldset[disabled] input[type=\"checkbox\"] {\n  cursor: not-allowed;\n}\n.radio-inline.disabled,\n.checkbox-inline.disabled,\nfieldset[disabled] .radio-inline,\nfieldset[disabled] .checkbox-inline {\n  cursor: not-allowed;\n}\n.radio.disabled label,\n.checkbox.disabled label,\nfieldset[disabled] .radio label,\nfieldset[disabled] .checkbox label {\n  cursor: not-allowed;\n}\n.form-control-static {\n  min-height: 34px;\n  padding-top: 7px;\n  padding-bottom: 7px;\n  margin-bottom: 0;\n}\n.form-control-static.input-lg,\n.form-control-static.input-sm {\n  padding-right: 0;\n  padding-left: 0;\n}\n.input-sm {\n  height: 30px;\n  padding: 5px 10px;\n  font-size: 12px;\n  line-height: 1.5;\n  border-radius: 3px;\n}\nselect.input-sm {\n  height: 30px;\n  line-height: 30px;\n}\ntextarea.input-sm,\nselect[multiple].input-sm {\n  height: auto;\n}\n.form-group-sm .form-control {\n  height: 30px;\n  padding: 5px 10px;\n  font-size: 12px;\n  line-height: 1.5;\n  border-radius: 3px;\n}\n.form-group-sm select.form-control {\n  height: 30px;\n  line-height: 30px;\n}\n.form-group-sm textarea.form-control,\n.form-group-sm select[multiple].form-control {\n  height: auto;\n}\n.form-group-sm .form-control-static {\n  height: 30px;\n  min-height: 32px;\n  padding: 6px 10px;\n  font-size: 12px;\n  line-height: 1.5;\n}\n.input-lg {\n  height: 46px;\n  padding: 10px 16px;\n  font-size: 18px;\n  line-height: 1.3333333;\n  border-radius: 6px;\n}\nselect.input-lg {\n  height: 46px;\n  line-height: 46px;\n}\ntextarea.input-lg,\nselect[multiple].input-lg {\n  height: auto;\n}\n.form-group-lg .form-control {\n  height: 46px;\n  padding: 10px 16px;\n  font-size: 18px;\n  line-height: 1.3333333;\n  border-radius: 6px;\n}\n.form-group-lg select.form-control {\n  height: 46px;\n  line-height: 46px;\n}\n.form-group-lg textarea.form-control,\n.form-group-lg select[multiple].form-control {\n  height: auto;\n}\n.form-group-lg .form-control-static {\n  height: 46px;\n  min-height: 38px;\n  padding: 11px 16px;\n  font-size: 18px;\n  line-height: 1.3333333;\n}\n.has-feedback {\n  position: relative;\n}\n.has-feedback .form-control {\n  padding-right: 42.5px;\n}\n.form-control-feedback {\n  position: absolute;\n  top: 0;\n  right: 0;\n  z-index: 2;\n  display: block;\n  width: 34px;\n  height: 34px;\n  line-height: 34px;\n  text-align: center;\n  pointer-events: none;\n}\n.input-lg + .form-control-feedback,\n.input-group-lg + .form-control-feedback,\n.form-group-lg .form-control + .form-control-feedback {\n  width: 46px;\n  height: 46px;\n  line-height: 46px;\n}\n.input-sm + .form-control-feedback,\n.input-group-sm + .form-control-feedback,\n.form-group-sm .form-control + .form-control-feedback {\n  width: 30px;\n  height: 30px;\n  line-height: 30px;\n}\n.has-success .help-block,\n.has-success .control-label,\n.has-success .radio,\n.has-success .checkbox,\n.has-success .radio-inline,\n.has-success .checkbox-inline,\n.has-success.radio label,\n.has-success.checkbox label,\n.has-success.radio-inline label,\n.has-success.checkbox-inline label {\n  color: #3c763d;\n}\n.has-success .form-control {\n  border-color: #3c763d;\n  -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);\n          box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);\n}\n.has-success .form-control:focus {\n  border-color: #2b542c;\n  -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075), 0 0 6px #67b168;\n          box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075), 0 0 6px #67b168;\n}\n.has-success .input-group-addon {\n  color: #3c763d;\n  background-color: #dff0d8;\n  border-color: #3c763d;\n}\n.has-success .form-control-feedback {\n  color: #3c763d;\n}\n.has-warning .help-block,\n.has-warning .control-label,\n.has-warning .radio,\n.has-warning .checkbox,\n.has-warning .radio-inline,\n.has-warning .checkbox-inline,\n.has-warning.radio label,\n.has-warning.checkbox label,\n.has-warning.radio-inline label,\n.has-warning.checkbox-inline label {\n  color: #8a6d3b;\n}\n.has-warning .form-control {\n  border-color: #8a6d3b;\n  -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);\n          box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);\n}\n.has-warning .form-control:focus {\n  border-color: #66512c;\n  -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075), 0 0 6px #c0a16b;\n          box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075), 0 0 6px #c0a16b;\n}\n.has-warning .input-group-addon {\n  color: #8a6d3b;\n  background-color: #fcf8e3;\n  border-color: #8a6d3b;\n}\n.has-warning .form-control-feedback {\n  color: #8a6d3b;\n}\n.has-error .help-block,\n.has-error .control-label,\n.has-error .radio,\n.has-error .checkbox,\n.has-error .radio-inline,\n.has-error .checkbox-inline,\n.has-error.radio label,\n.has-error.checkbox label,\n.has-error.radio-inline label,\n.has-error.checkbox-inline label {\n  color: #a94442;\n}\n.has-error .form-control {\n  border-color: #a94442;\n  -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);\n          box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);\n}\n.has-error .form-control:focus {\n  border-color: #843534;\n  -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075), 0 0 6px #ce8483;\n          box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075), 0 0 6px #ce8483;\n}\n.has-error .input-group-addon {\n  color: #a94442;\n  background-color: #f2dede;\n  border-color: #a94442;\n}\n.has-error .form-control-feedback {\n  color: #a94442;\n}\n.has-feedback label ~ .form-control-feedback {\n  top: 25px;\n}\n.has-feedback label.sr-only ~ .form-control-feedback {\n  top: 0;\n}\n.help-block {\n  display: block;\n  margin-top: 5px;\n  margin-bottom: 10px;\n  color: #737373;\n}\n@media (min-width: 768px) {\n  .form-inline .form-group {\n    display: inline-block;\n    margin-bottom: 0;\n    vertical-align: middle;\n  }\n  .form-inline .form-control {\n    display: inline-block;\n    width: auto;\n    vertical-align: middle;\n  }\n  .form-inline .form-control-static {\n    display: inline-block;\n  }\n  .form-inline .input-group {\n    display: inline-table;\n    vertical-align: middle;\n  }\n  .form-inline .input-group .input-group-addon,\n  .form-inline .input-group .input-group-btn,\n  .form-inline .input-group .form-control {\n    width: auto;\n  }\n  .form-inline .input-group > .form-control {\n    width: 100%;\n  }\n  .form-inline .control-label {\n    margin-bottom: 0;\n    vertical-align: middle;\n  }\n  .form-inline .radio,\n  .form-inline .checkbox {\n    display: inline-block;\n    margin-top: 0;\n    margin-bottom: 0;\n    vertical-align: middle;\n  }\n  .form-inline .radio label,\n  .form-inline .checkbox label {\n    padding-left: 0;\n  }\n  .form-inline .radio input[type=\"radio\"],\n  .form-inline .checkbox input[type=\"checkbox\"] {\n    position: relative;\n    margin-left: 0;\n  }\n  .form-inline .has-feedback .form-control-feedback {\n    top: 0;\n  }\n}\n.form-horizontal .radio,\n.form-horizontal .checkbox,\n.form-horizontal .radio-inline,\n.form-horizontal .checkbox-inline {\n  padding-top: 7px;\n  margin-top: 0;\n  margin-bottom: 0;\n}\n.form-horizontal .radio,\n.form-horizontal .checkbox {\n  min-height: 27px;\n}\n.form-horizontal .form-group {\n  margin-right: -15px;\n  margin-left: -15px;\n}\n@media (min-width: 768px) {\n  .form-horizontal .control-label {\n    padding-top: 7px;\n    margin-bottom: 0;\n    text-align: right;\n  }\n}\n.form-horizontal .has-feedback .form-control-feedback {\n  right: 15px;\n}\n@media (min-width: 768px) {\n  .form-horizontal .form-group-lg .control-label {\n    padding-top: 14.333333px;\n    font-size: 18px;\n  }\n}\n@media (min-width: 768px) {\n  .form-horizontal .form-group-sm .control-label {\n    padding-top: 6px;\n    font-size: 12px;\n  }\n}\n.btn {\n  display: inline-block;\n  padding: 6px 12px;\n  margin-bottom: 0;\n  font-size: 14px;\n  font-weight: normal;\n  line-height: 1.42857143;\n  text-align: center;\n  white-space: nowrap;\n  vertical-align: middle;\n  -ms-touch-action: manipulation;\n      touch-action: manipulation;\n  cursor: pointer;\n  -webkit-user-select: none;\n     -moz-user-select: none;\n      -ms-user-select: none;\n          user-select: none;\n  background-image: none;\n  border: 1px solid transparent;\n  border-radius: 4px;\n}\n.btn:focus,\n.btn:active:focus,\n.btn.active:focus,\n.btn.focus,\n.btn:active.focus,\n.btn.active.focus {\n  outline: thin dotted;\n  outline: 5px auto -webkit-focus-ring-color;\n  outline-offset: -2px;\n}\n.btn:hover,\n.btn:focus,\n.btn.focus {\n  color: #333;\n  text-decoration: none;\n}\n.btn:active,\n.btn.active {\n  background-image: none;\n  outline: 0;\n  -webkit-box-shadow: inset 0 3px 5px rgba(0, 0, 0, .125);\n          box-shadow: inset 0 3px 5px rgba(0, 0, 0, .125);\n}\n.btn.disabled,\n.btn[disabled],\nfieldset[disabled] .btn {\n  cursor: not-allowed;\n  filter: alpha(opacity=65);\n  -webkit-box-shadow: none;\n          box-shadow: none;\n  opacity: .65;\n}\na.btn.disabled,\nfieldset[disabled] a.btn {\n  pointer-events: none;\n}\n.btn-default {\n  color: #333;\n  background-color: #fff;\n  border-color: #ccc;\n}\n.btn-default:focus,\n.btn-default.focus {\n  color: #333;\n  background-color: #e6e6e6;\n  border-color: #8c8c8c;\n}\n.btn-default:hover {\n  color: #333;\n  background-color: #e6e6e6;\n  border-color: #adadad;\n}\n.btn-default:active,\n.btn-default.active,\n.open > .dropdown-toggle.btn-default {\n  color: #333;\n  background-color: #e6e6e6;\n  border-color: #adadad;\n}\n.btn-default:active:hover,\n.btn-default.active:hover,\n.open > .dropdown-toggle.btn-default:hover,\n.btn-default:active:focus,\n.btn-default.active:focus,\n.open > .dropdown-toggle.btn-default:focus,\n.btn-default:active.focus,\n.btn-default.active.focus,\n.open > .dropdown-toggle.btn-default.focus {\n  color: #333;\n  background-color: #d4d4d4;\n  border-color: #8c8c8c;\n}\n.btn-default:active,\n.btn-default.active,\n.open > .dropdown-toggle.btn-default {\n  background-image: none;\n}\n.btn-default.disabled,\n.btn-default[disabled],\nfieldset[disabled] .btn-default,\n.btn-default.disabled:hover,\n.btn-default[disabled]:hover,\nfieldset[disabled] .btn-default:hover,\n.btn-default.disabled:focus,\n.btn-default[disabled]:focus,\nfieldset[disabled] .btn-default:focus,\n.btn-default.disabled.focus,\n.btn-default[disabled].focus,\nfieldset[disabled] .btn-default.focus,\n.btn-default.disabled:active,\n.btn-default[disabled]:active,\nfieldset[disabled] .btn-default:active,\n.btn-default.disabled.active,\n.btn-default[disabled].active,\nfieldset[disabled] .btn-default.active {\n  background-color: #fff;\n  border-color: #ccc;\n}\n.btn-default .badge {\n  color: #fff;\n  background-color: #333;\n}\n.btn-primary {\n  color: #fff;\n  background-color: #337ab7;\n  border-color: #2e6da4;\n}\n.btn-primary:focus,\n.btn-primary.focus {\n  color: #fff;\n  background-color: #286090;\n  border-color: #122b40;\n}\n.btn-primary:hover {\n  color: #fff;\n  background-color: #286090;\n  border-color: #204d74;\n}\n.btn-primary:active,\n.btn-primary.active,\n.open > .dropdown-toggle.btn-primary {\n  color: #fff;\n  background-color: #286090;\n  border-color: #204d74;\n}\n.btn-primary:active:hover,\n.btn-primary.active:hover,\n.open > .dropdown-toggle.btn-primary:hover,\n.btn-primary:active:focus,\n.btn-primary.active:focus,\n.open > .dropdown-toggle.btn-primary:focus,\n.btn-primary:active.focus,\n.btn-primary.active.focus,\n.open > .dropdown-toggle.btn-primary.focus {\n  color: #fff;\n  background-color: #204d74;\n  border-color: #122b40;\n}\n.btn-primary:active,\n.btn-primary.active,\n.open > .dropdown-toggle.btn-primary {\n  background-image: none;\n}\n.btn-primary.disabled,\n.btn-primary[disabled],\nfieldset[disabled] .btn-primary,\n.btn-primary.disabled:hover,\n.btn-primary[disabled]:hover,\nfieldset[disabled] .btn-primary:hover,\n.btn-primary.disabled:focus,\n.btn-primary[disabled]:focus,\nfieldset[disabled] .btn-primary:focus,\n.btn-primary.disabled.focus,\n.btn-primary[disabled].focus,\nfieldset[disabled] .btn-primary.focus,\n.btn-primary.disabled:active,\n.btn-primary[disabled]:active,\nfieldset[disabled] .btn-primary:active,\n.btn-primary.disabled.active,\n.btn-primary[disabled].active,\nfieldset[disabled] .btn-primary.active {\n  background-color: #337ab7;\n  border-color: #2e6da4;\n}\n.btn-primary .badge {\n  color: #337ab7;\n  background-color: #fff;\n}\n.btn-success {\n  color: #fff;\n  background-color: #5cb85c;\n  border-color: #4cae4c;\n}\n.btn-success:focus,\n.btn-success.focus {\n  color: #fff;\n  background-color: #449d44;\n  border-color: #255625;\n}\n.btn-success:hover {\n  color: #fff;\n  background-color: #449d44;\n  border-color: #398439;\n}\n.btn-success:active,\n.btn-success.active,\n.open > .dropdown-toggle.btn-success {\n  color: #fff;\n  background-color: #449d44;\n  border-color: #398439;\n}\n.btn-success:active:hover,\n.btn-success.active:hover,\n.open > .dropdown-toggle.btn-success:hover,\n.btn-success:active:focus,\n.btn-success.active:focus,\n.open > .dropdown-toggle.btn-success:focus,\n.btn-success:active.focus,\n.btn-success.active.focus,\n.open > .dropdown-toggle.btn-success.focus {\n  color: #fff;\n  background-color: #398439;\n  border-color: #255625;\n}\n.btn-success:active,\n.btn-success.active,\n.open > .dropdown-toggle.btn-success {\n  background-image: none;\n}\n.btn-success.disabled,\n.btn-success[disabled],\nfieldset[disabled] .btn-success,\n.btn-success.disabled:hover,\n.btn-success[disabled]:hover,\nfieldset[disabled] .btn-success:hover,\n.btn-success.disabled:focus,\n.btn-success[disabled]:focus,\nfieldset[disabled] .btn-success:focus,\n.btn-success.disabled.focus,\n.btn-success[disabled].focus,\nfieldset[disabled] .btn-success.focus,\n.btn-success.disabled:active,\n.btn-success[disabled]:active,\nfieldset[disabled] .btn-success:active,\n.btn-success.disabled.active,\n.btn-success[disabled].active,\nfieldset[disabled] .btn-success.active {\n  background-color: #5cb85c;\n  border-color: #4cae4c;\n}\n.btn-success .badge {\n  color: #5cb85c;\n  background-color: #fff;\n}\n.btn-info {\n  color: #fff;\n  background-color: #5bc0de;\n  border-color: #46b8da;\n}\n.btn-info:focus,\n.btn-info.focus {\n  color: #fff;\n  background-color: #31b0d5;\n  border-color: #1b6d85;\n}\n.btn-info:hover {\n  color: #fff;\n  background-color: #31b0d5;\n  border-color: #269abc;\n}\n.btn-info:active,\n.btn-info.active,\n.open > .dropdown-toggle.btn-info {\n  color: #fff;\n  background-color: #31b0d5;\n  border-color: #269abc;\n}\n.btn-info:active:hover,\n.btn-info.active:hover,\n.open > .dropdown-toggle.btn-info:hover,\n.btn-info:active:focus,\n.btn-info.active:focus,\n.open > .dropdown-toggle.btn-info:focus,\n.btn-info:active.focus,\n.btn-info.active.focus,\n.open > .dropdown-toggle.btn-info.focus {\n  color: #fff;\n  background-color: #269abc;\n  border-color: #1b6d85;\n}\n.btn-info:active,\n.btn-info.active,\n.open > .dropdown-toggle.btn-info {\n  background-image: none;\n}\n.btn-info.disabled,\n.btn-info[disabled],\nfieldset[disabled] .btn-info,\n.btn-info.disabled:hover,\n.btn-info[disabled]:hover,\nfieldset[disabled] .btn-info:hover,\n.btn-info.disabled:focus,\n.btn-info[disabled]:focus,\nfieldset[disabled] .btn-info:focus,\n.btn-info.disabled.focus,\n.btn-info[disabled].focus,\nfieldset[disabled] .btn-info.focus,\n.btn-info.disabled:active,\n.btn-info[disabled]:active,\nfieldset[disabled] .btn-info:active,\n.btn-info.disabled.active,\n.btn-info[disabled].active,\nfieldset[disabled] .btn-info.active {\n  background-color: #5bc0de;\n  border-color: #46b8da;\n}\n.btn-info .badge {\n  color: #5bc0de;\n  background-color: #fff;\n}\n.btn-warning {\n  color: #fff;\n  background-color: #f0ad4e;\n  border-color: #eea236;\n}\n.btn-warning:focus,\n.btn-warning.focus {\n  color: #fff;\n  background-color: #ec971f;\n  border-color: #985f0d;\n}\n.btn-warning:hover {\n  color: #fff;\n  background-color: #ec971f;\n  border-color: #d58512;\n}\n.btn-warning:active,\n.btn-warning.active,\n.open > .dropdown-toggle.btn-warning {\n  color: #fff;\n  background-color: #ec971f;\n  border-color: #d58512;\n}\n.btn-warning:active:hover,\n.btn-warning.active:hover,\n.open > .dropdown-toggle.btn-warning:hover,\n.btn-warning:active:focus,\n.btn-warning.active:focus,\n.open > .dropdown-toggle.btn-warning:focus,\n.btn-warning:active.focus,\n.btn-warning.active.focus,\n.open > .dropdown-toggle.btn-warning.focus {\n  color: #fff;\n  background-color: #d58512;\n  border-color: #985f0d;\n}\n.btn-warning:active,\n.btn-warning.active,\n.open > .dropdown-toggle.btn-warning {\n  background-image: none;\n}\n.btn-warning.disabled,\n.btn-warning[disabled],\nfieldset[disabled] .btn-warning,\n.btn-warning.disabled:hover,\n.btn-warning[disabled]:hover,\nfieldset[disabled] .btn-warning:hover,\n.btn-warning.disabled:focus,\n.btn-warning[disabled]:focus,\nfieldset[disabled] .btn-warning:focus,\n.btn-warning.disabled.focus,\n.btn-warning[disabled].focus,\nfieldset[disabled] .btn-warning.focus,\n.btn-warning.disabled:active,\n.btn-warning[disabled]:active,\nfieldset[disabled] .btn-warning:active,\n.btn-warning.disabled.active,\n.btn-warning[disabled].active,\nfieldset[disabled] .btn-warning.active {\n  background-color: #f0ad4e;\n  border-color: #eea236;\n}\n.btn-warning .badge {\n  color: #f0ad4e;\n  background-color: #fff;\n}\n.btn-danger {\n  color: #fff;\n  background-color: #d9534f;\n  border-color: #d43f3a;\n}\n.btn-danger:focus,\n.btn-danger.focus {\n  color: #fff;\n  background-color: #c9302c;\n  border-color: #761c19;\n}\n.btn-danger:hover {\n  color: #fff;\n  background-color: #c9302c;\n  border-color: #ac2925;\n}\n.btn-danger:active,\n.btn-danger.active,\n.open > .dropdown-toggle.btn-danger {\n  color: #fff;\n  background-color: #c9302c;\n  border-color: #ac2925;\n}\n.btn-danger:active:hover,\n.btn-danger.active:hover,\n.open > .dropdown-toggle.btn-danger:hover,\n.btn-danger:active:focus,\n.btn-danger.active:focus,\n.open > .dropdown-toggle.btn-danger:focus,\n.btn-danger:active.focus,\n.btn-danger.active.focus,\n.open > .dropdown-toggle.btn-danger.focus {\n  color: #fff;\n  background-color: #ac2925;\n  border-color: #761c19;\n}\n.btn-danger:active,\n.btn-danger.active,\n.open > .dropdown-toggle.btn-danger {\n  background-image: none;\n}\n.btn-danger.disabled,\n.btn-danger[disabled],\nfieldset[disabled] .btn-danger,\n.btn-danger.disabled:hover,\n.btn-danger[disabled]:hover,\nfieldset[disabled] .btn-danger:hover,\n.btn-danger.disabled:focus,\n.btn-danger[disabled]:focus,\nfieldset[disabled] .btn-danger:focus,\n.btn-danger.disabled.focus,\n.btn-danger[disabled].focus,\nfieldset[disabled] .btn-danger.focus,\n.btn-danger.disabled:active,\n.btn-danger[disabled]:active,\nfieldset[disabled] .btn-danger:active,\n.btn-danger.disabled.active,\n.btn-danger[disabled].active,\nfieldset[disabled] .btn-danger.active {\n  background-color: #d9534f;\n  border-color: #d43f3a;\n}\n.btn-danger .badge {\n  color: #d9534f;\n  background-color: #fff;\n}\n.btn-link {\n  font-weight: normal;\n  color: #337ab7;\n  border-radius: 0;\n}\n.btn-link,\n.btn-link:active,\n.btn-link.active,\n.btn-link[disabled],\nfieldset[disabled] .btn-link {\n  background-color: transparent;\n  -webkit-box-shadow: none;\n          box-shadow: none;\n}\n.btn-link,\n.btn-link:hover,\n.btn-link:focus,\n.btn-link:active {\n  border-color: transparent;\n}\n.btn-link:hover,\n.btn-link:focus {\n  color: #23527c;\n  text-decoration: underline;\n  background-color: transparent;\n}\n.btn-link[disabled]:hover,\nfieldset[disabled] .btn-link:hover,\n.btn-link[disabled]:focus,\nfieldset[disabled] .btn-link:focus {\n  color: #777;\n  text-decoration: none;\n}\n.btn-lg,\n.btn-group-lg > .btn {\n  padding: 10px 16px;\n  font-size: 18px;\n  line-height: 1.3333333;\n  border-radius: 6px;\n}\n.btn-sm,\n.btn-group-sm > .btn {\n  padding: 5px 10px;\n  font-size: 12px;\n  line-height: 1.5;\n  border-radius: 3px;\n}\n.btn-xs,\n.btn-group-xs > .btn {\n  padding: 1px 5px;\n  font-size: 12px;\n  line-height: 1.5;\n  border-radius: 3px;\n}\n.btn-block {\n  display: block;\n  width: 100%;\n}\n.btn-block + .btn-block {\n  margin-top: 5px;\n}\ninput[type=\"submit\"].btn-block,\ninput[type=\"reset\"].btn-block,\ninput[type=\"button\"].btn-block {\n  width: 100%;\n}\n.fade {\n  opacity: 0;\n  -webkit-transition: opacity .15s linear;\n       -o-transition: opacity .15s linear;\n          transition: opacity .15s linear;\n}\n.fade.in {\n  opacity: 1;\n}\n.collapse {\n  display: none;\n}\n.collapse.in {\n  display: block;\n}\ntr.collapse.in {\n  display: table-row;\n}\ntbody.collapse.in {\n  display: table-row-group;\n}\n.collapsing {\n  position: relative;\n  height: 0;\n  overflow: hidden;\n  -webkit-transition-timing-function: ease;\n       -o-transition-timing-function: ease;\n          transition-timing-function: ease;\n  -webkit-transition-duration: .35s;\n       -o-transition-duration: .35s;\n          transition-duration: .35s;\n  -webkit-transition-property: height, visibility;\n       -o-transition-property: height, visibility;\n          transition-property: height, visibility;\n}\n.caret {\n  display: inline-block;\n  width: 0;\n  height: 0;\n  margin-left: 2px;\n  vertical-align: middle;\n  border-top: 4px dashed;\n  border-top: 4px solid \\9;\n  border-right: 4px solid transparent;\n  border-left: 4px solid transparent;\n}\n.dropup,\n.dropdown {\n  position: relative;\n}\n.dropdown-toggle:focus {\n  outline: 0;\n}\n.dropdown-menu {\n  position: absolute;\n  top: 100%;\n  left: 0;\n  z-index: 1000;\n  display: none;\n  float: left;\n  min-width: 160px;\n  padding: 5px 0;\n  margin: 2px 0 0;\n  font-size: 14px;\n  text-align: left;\n  list-style: none;\n  background-color: #fff;\n  -webkit-background-clip: padding-box;\n          background-clip: padding-box;\n  border: 1px solid #ccc;\n  border: 1px solid rgba(0, 0, 0, .15);\n  border-radius: 4px;\n  -webkit-box-shadow: 0 6px 12px rgba(0, 0, 0, .175);\n          box-shadow: 0 6px 12px rgba(0, 0, 0, .175);\n}\n.dropdown-menu.pull-right {\n  right: 0;\n  left: auto;\n}\n.dropdown-menu .divider {\n  height: 1px;\n  margin: 9px 0;\n  overflow: hidden;\n  background-color: #e5e5e5;\n}\n.dropdown-menu > li > a {\n  display: block;\n  padding: 3px 20px;\n  clear: both;\n  font-weight: normal;\n  line-height: 1.42857143;\n  color: #333;\n  white-space: nowrap;\n}\n.dropdown-menu > li > a:hover,\n.dropdown-menu > li > a:focus {\n  color: #262626;\n  text-decoration: none;\n  background-color: #f5f5f5;\n}\n.dropdown-menu > .active > a,\n.dropdown-menu > .active > a:hover,\n.dropdown-menu > .active > a:focus {\n  color: #fff;\n  text-decoration: none;\n  background-color: #337ab7;\n  outline: 0;\n}\n.dropdown-menu > .disabled > a,\n.dropdown-menu > .disabled > a:hover,\n.dropdown-menu > .disabled > a:focus {\n  color: #777;\n}\n.dropdown-menu > .disabled > a:hover,\n.dropdown-menu > .disabled > a:focus {\n  text-decoration: none;\n  cursor: not-allowed;\n  background-color: transparent;\n  background-image: none;\n  filter: progid:DXImageTransform.Microsoft.gradient(enabled = false);\n}\n.open > .dropdown-menu {\n  display: block;\n}\n.open > a {\n  outline: 0;\n}\n.dropdown-menu-right {\n  right: 0;\n  left: auto;\n}\n.dropdown-menu-left {\n  right: auto;\n  left: 0;\n}\n.dropdown-header {\n  display: block;\n  padding: 3px 20px;\n  font-size: 12px;\n  line-height: 1.42857143;\n  color: #777;\n  white-space: nowrap;\n}\n.dropdown-backdrop {\n  position: fixed;\n  top: 0;\n  right: 0;\n  bottom: 0;\n  left: 0;\n  z-index: 990;\n}\n.pull-right > .dropdown-menu {\n  right: 0;\n  left: auto;\n}\n.dropup .caret,\n.navbar-fixed-bottom .dropdown .caret {\n  content: \"\";\n  border-top: 0;\n  border-bottom: 4px dashed;\n  border-bottom: 4px solid \\9;\n}\n.dropup .dropdown-menu,\n.navbar-fixed-bottom .dropdown .dropdown-menu {\n  top: auto;\n  bottom: 100%;\n  margin-bottom: 2px;\n}\n@media (min-width: 768px) {\n  .navbar-right .dropdown-menu {\n    right: 0;\n    left: auto;\n  }\n  .navbar-right .dropdown-menu-left {\n    right: auto;\n    left: 0;\n  }\n}\n.btn-group,\n.btn-group-vertical {\n  position: relative;\n  display: inline-block;\n  vertical-align: middle;\n}\n.btn-group > .btn,\n.btn-group-vertical > .btn {\n  position: relative;\n  float: left;\n}\n.btn-group > .btn:hover,\n.btn-group-vertical > .btn:hover,\n.btn-group > .btn:focus,\n.btn-group-vertical > .btn:focus,\n.btn-group > .btn:active,\n.btn-group-vertical > .btn:active,\n.btn-group > .btn.active,\n.btn-group-vertical > .btn.active {\n  z-index: 2;\n}\n.btn-group .btn + .btn,\n.btn-group .btn + .btn-group,\n.btn-group .btn-group + .btn,\n.btn-group .btn-group + .btn-group {\n  margin-left: -1px;\n}\n.btn-toolbar {\n  margin-left: -5px;\n}\n.btn-toolbar .btn,\n.btn-toolbar .btn-group,\n.btn-toolbar .input-group {\n  float: left;\n}\n.btn-toolbar > .btn,\n.btn-toolbar > .btn-group,\n.btn-toolbar > .input-group {\n  margin-left: 5px;\n}\n.btn-group > .btn:not(:first-child):not(:last-child):not(.dropdown-toggle) {\n  border-radius: 0;\n}\n.btn-group > .btn:first-child {\n  margin-left: 0;\n}\n.btn-group > .btn:first-child:not(:last-child):not(.dropdown-toggle) {\n  border-top-right-radius: 0;\n  border-bottom-right-radius: 0;\n}\n.btn-group > .btn:last-child:not(:first-child),\n.btn-group > .dropdown-toggle:not(:first-child) {\n  border-top-left-radius: 0;\n  border-bottom-left-radius: 0;\n}\n.btn-group > .btn-group {\n  float: left;\n}\n.btn-group > .btn-group:not(:first-child):not(:last-child) > .btn {\n  border-radius: 0;\n}\n.btn-group > .btn-group:first-child:not(:last-child) > .btn:last-child,\n.btn-group > .btn-group:first-child:not(:last-child) > .dropdown-toggle {\n  border-top-right-radius: 0;\n  border-bottom-right-radius: 0;\n}\n.btn-group > .btn-group:last-child:not(:first-child) > .btn:first-child {\n  border-top-left-radius: 0;\n  border-bottom-left-radius: 0;\n}\n.btn-group .dropdown-toggle:active,\n.btn-group.open .dropdown-toggle {\n  outline: 0;\n}\n.btn-group > .btn + .dropdown-toggle {\n  padding-right: 8px;\n  padding-left: 8px;\n}\n.btn-group > .btn-lg + .dropdown-toggle {\n  padding-right: 12px;\n  padding-left: 12px;\n}\n.btn-group.open .dropdown-toggle {\n  -webkit-box-shadow: inset 0 3px 5px rgba(0, 0, 0, .125);\n          box-shadow: inset 0 3px 5px rgba(0, 0, 0, .125);\n}\n.btn-group.open .dropdown-toggle.btn-link {\n  -webkit-box-shadow: none;\n          box-shadow: none;\n}\n.btn .caret {\n  margin-left: 0;\n}\n.btn-lg .caret {\n  border-width: 5px 5px 0;\n  border-bottom-width: 0;\n}\n.dropup .btn-lg .caret {\n  border-width: 0 5px 5px;\n}\n.btn-group-vertical > .btn,\n.btn-group-vertical > .btn-group,\n.btn-group-vertical > .btn-group > .btn {\n  display: block;\n  float: none;\n  width: 100%;\n  max-width: 100%;\n}\n.btn-group-vertical > .btn-group > .btn {\n  float: none;\n}\n.btn-group-vertical > .btn + .btn,\n.btn-group-vertical > .btn + .btn-group,\n.btn-group-vertical > .btn-group + .btn,\n.btn-group-vertical > .btn-group + .btn-group {\n  margin-top: -1px;\n  margin-left: 0;\n}\n.btn-group-vertical > .btn:not(:first-child):not(:last-child) {\n  border-radius: 0;\n}\n.btn-group-vertical > .btn:first-child:not(:last-child) {\n  border-top-right-radius: 4px;\n  border-bottom-right-radius: 0;\n  border-bottom-left-radius: 0;\n}\n.btn-group-vertical > .btn:last-child:not(:first-child) {\n  border-top-left-radius: 0;\n  border-top-right-radius: 0;\n  border-bottom-left-radius: 4px;\n}\n.btn-group-vertical > .btn-group:not(:first-child):not(:last-child) > .btn {\n  border-radius: 0;\n}\n.btn-group-vertical > .btn-group:first-child:not(:last-child) > .btn:last-child,\n.btn-group-vertical > .btn-group:first-child:not(:last-child) > .dropdown-toggle {\n  border-bottom-right-radius: 0;\n  border-bottom-left-radius: 0;\n}\n.btn-group-vertical > .btn-group:last-child:not(:first-child) > .btn:first-child {\n  border-top-left-radius: 0;\n  border-top-right-radius: 0;\n}\n.btn-group-justified {\n  display: table;\n  width: 100%;\n  table-layout: fixed;\n  border-collapse: separate;\n}\n.btn-group-justified > .btn,\n.btn-group-justified > .btn-group {\n  display: table-cell;\n  float: none;\n  width: 1%;\n}\n.btn-group-justified > .btn-group .btn {\n  width: 100%;\n}\n.btn-group-justified > .btn-group .dropdown-menu {\n  left: auto;\n}\n[data-toggle=\"buttons\"] > .btn input[type=\"radio\"],\n[data-toggle=\"buttons\"] > .btn-group > .btn input[type=\"radio\"],\n[data-toggle=\"buttons\"] > .btn input[type=\"checkbox\"],\n[data-toggle=\"buttons\"] > .btn-group > .btn input[type=\"checkbox\"] {\n  position: absolute;\n  clip: rect(0, 0, 0, 0);\n  pointer-events: none;\n}\n.input-group {\n  position: relative;\n  display: table;\n  border-collapse: separate;\n}\n.input-group[class*=\"col-\"] {\n  float: none;\n  padding-right: 0;\n  padding-left: 0;\n}\n.input-group .form-control {\n  position: relative;\n  z-index: 2;\n  float: left;\n  width: 100%;\n  margin-bottom: 0;\n}\n.input-group-lg > .form-control,\n.input-group-lg > .input-group-addon,\n.input-group-lg > .input-group-btn > .btn {\n  height: 46px;\n  padding: 10px 16px;\n  font-size: 18px;\n  line-height: 1.3333333;\n  border-radius: 6px;\n}\nselect.input-group-lg > .form-control,\nselect.input-group-lg > .input-group-addon,\nselect.input-group-lg > .input-group-btn > .btn {\n  height: 46px;\n  line-height: 46px;\n}\ntextarea.input-group-lg > .form-control,\ntextarea.input-group-lg > .input-group-addon,\ntextarea.input-group-lg > .input-group-btn > .btn,\nselect[multiple].input-group-lg > .form-control,\nselect[multiple].input-group-lg > .input-group-addon,\nselect[multiple].input-group-lg > .input-group-btn > .btn {\n  height: auto;\n}\n.input-group-sm > .form-control,\n.input-group-sm > .input-group-addon,\n.input-group-sm > .input-group-btn > .btn {\n  height: 30px;\n  padding: 5px 10px;\n  font-size: 12px;\n  line-height: 1.5;\n  border-radius: 3px;\n}\nselect.input-group-sm > .form-control,\nselect.input-group-sm > .input-group-addon,\nselect.input-group-sm > .input-group-btn > .btn {\n  height: 30px;\n  line-height: 30px;\n}\ntextarea.input-group-sm > .form-control,\ntextarea.input-group-sm > .input-group-addon,\ntextarea.input-group-sm > .input-group-btn > .btn,\nselect[multiple].input-group-sm > .form-control,\nselect[multiple].input-group-sm > .input-group-addon,\nselect[multiple].input-group-sm > .input-group-btn > .btn {\n  height: auto;\n}\n.input-group-addon,\n.input-group-btn,\n.input-group .form-control {\n  display: table-cell;\n}\n.input-group-addon:not(:first-child):not(:last-child),\n.input-group-btn:not(:first-child):not(:last-child),\n.input-group .form-control:not(:first-child):not(:last-child) {\n  border-radius: 0;\n}\n.input-group-addon,\n.input-group-btn {\n  width: 1%;\n  white-space: nowrap;\n  vertical-align: middle;\n}\n.input-group-addon {\n  padding: 6px 12px;\n  font-size: 14px;\n  font-weight: normal;\n  line-height: 1;\n  color: #555;\n  text-align: center;\n  background-color: #eee;\n  border: 1px solid #ccc;\n  border-radius: 4px;\n}\n.input-group-addon.input-sm {\n  padding: 5px 10px;\n  font-size: 12px;\n  border-radius: 3px;\n}\n.input-group-addon.input-lg {\n  padding: 10px 16px;\n  font-size: 18px;\n  border-radius: 6px;\n}\n.input-group-addon input[type=\"radio\"],\n.input-group-addon input[type=\"checkbox\"] {\n  margin-top: 0;\n}\n.input-group .form-control:first-child,\n.input-group-addon:first-child,\n.input-group-btn:first-child > .btn,\n.input-group-btn:first-child > .btn-group > .btn,\n.input-group-btn:first-child > .dropdown-toggle,\n.input-group-btn:last-child > .btn:not(:last-child):not(.dropdown-toggle),\n.input-group-btn:last-child > .btn-group:not(:last-child) > .btn {\n  border-top-right-radius: 0;\n  border-bottom-right-radius: 0;\n}\n.input-group-addon:first-child {\n  border-right: 0;\n}\n.input-group .form-control:last-child,\n.input-group-addon:last-child,\n.input-group-btn:last-child > .btn,\n.input-group-btn:last-child > .btn-group > .btn,\n.input-group-btn:last-child > .dropdown-toggle,\n.input-group-btn:first-child > .btn:not(:first-child),\n.input-group-btn:first-child > .btn-group:not(:first-child) > .btn {\n  border-top-left-radius: 0;\n  border-bottom-left-radius: 0;\n}\n.input-group-addon:last-child {\n  border-left: 0;\n}\n.input-group-btn {\n  position: relative;\n  font-size: 0;\n  white-space: nowrap;\n}\n.input-group-btn > .btn {\n  position: relative;\n}\n.input-group-btn > .btn + .btn {\n  margin-left: -1px;\n}\n.input-group-btn > .btn:hover,\n.input-group-btn > .btn:focus,\n.input-group-btn > .btn:active {\n  z-index: 2;\n}\n.input-group-btn:first-child > .btn,\n.input-group-btn:first-child > .btn-group {\n  margin-right: -1px;\n}\n.input-group-btn:last-child > .btn,\n.input-group-btn:last-child > .btn-group {\n  z-index: 2;\n  margin-left: -1px;\n}\n.nav {\n  padding-left: 0;\n  margin-bottom: 0;\n  list-style: none;\n}\n.nav > li {\n  position: relative;\n  display: block;\n}\n.nav > li > a {\n  position: relative;\n  display: block;\n  padding: 10px 15px;\n}\n.nav > li > a:hover,\n.nav > li > a:focus {\n  text-decoration: none;\n  background-color: #eee;\n}\n.nav > li.disabled > a {\n  color: #777;\n}\n.nav > li.disabled > a:hover,\n.nav > li.disabled > a:focus {\n  color: #777;\n  text-decoration: none;\n  cursor: not-allowed;\n  background-color: transparent;\n}\n.nav .open > a,\n.nav .open > a:hover,\n.nav .open > a:focus {\n  background-color: #eee;\n  border-color: #337ab7;\n}\n.nav .nav-divider {\n  height: 1px;\n  margin: 9px 0;\n  overflow: hidden;\n  background-color: #e5e5e5;\n}\n.nav > li > a > img {\n  max-width: none;\n}\n.nav-tabs {\n  border-bottom: 1px solid #ddd;\n}\n.nav-tabs > li {\n  float: left;\n  margin-bottom: -1px;\n}\n.nav-tabs > li > a {\n  margin-right: 2px;\n  line-height: 1.42857143;\n  border: 1px solid transparent;\n  border-radius: 4px 4px 0 0;\n}\n.nav-tabs > li > a:hover {\n  border-color: #eee #eee #ddd;\n}\n.nav-tabs > li.active > a,\n.nav-tabs > li.active > a:hover,\n.nav-tabs > li.active > a:focus {\n  color: #555;\n  cursor: default;\n  background-color: #fff;\n  border: 1px solid #ddd;\n  border-bottom-color: transparent;\n}\n.nav-tabs.nav-justified {\n  width: 100%;\n  border-bottom: 0;\n}\n.nav-tabs.nav-justified > li {\n  float: none;\n}\n.nav-tabs.nav-justified > li > a {\n  margin-bottom: 5px;\n  text-align: center;\n}\n.nav-tabs.nav-justified > .dropdown .dropdown-menu {\n  top: auto;\n  left: auto;\n}\n@media (min-width: 768px) {\n  .nav-tabs.nav-justified > li {\n    display: table-cell;\n    width: 1%;\n  }\n  .nav-tabs.nav-justified > li > a {\n    margin-bottom: 0;\n  }\n}\n.nav-tabs.nav-justified > li > a {\n  margin-right: 0;\n  border-radius: 4px;\n}\n.nav-tabs.nav-justified > .active > a,\n.nav-tabs.nav-justified > .active > a:hover,\n.nav-tabs.nav-justified > .active > a:focus {\n  border: 1px solid #ddd;\n}\n@media (min-width: 768px) {\n  .nav-tabs.nav-justified > li > a {\n    border-bottom: 1px solid #ddd;\n    border-radius: 4px 4px 0 0;\n  }\n  .nav-tabs.nav-justified > .active > a,\n  .nav-tabs.nav-justified > .active > a:hover,\n  .nav-tabs.nav-justified > .active > a:focus {\n    border-bottom-color: #fff;\n  }\n}\n.nav-pills > li {\n  float: left;\n}\n.nav-pills > li > a {\n  border-radius: 4px;\n}\n.nav-pills > li + li {\n  margin-left: 2px;\n}\n.nav-pills > li.active > a,\n.nav-pills > li.active > a:hover,\n.nav-pills > li.active > a:focus {\n  color: #fff;\n  background-color: #337ab7;\n}\n.nav-stacked > li {\n  float: none;\n}\n.nav-stacked > li + li {\n  margin-top: 2px;\n  margin-left: 0;\n}\n.nav-justified {\n  width: 100%;\n}\n.nav-justified > li {\n  float: none;\n}\n.nav-justified > li > a {\n  margin-bottom: 5px;\n  text-align: center;\n}\n.nav-justified > .dropdown .dropdown-menu {\n  top: auto;\n  left: auto;\n}\n@media (min-width: 768px) {\n  .nav-justified > li {\n    display: table-cell;\n    width: 1%;\n  }\n  .nav-justified > li > a {\n    margin-bottom: 0;\n  }\n}\n.nav-tabs-justified {\n  border-bottom: 0;\n}\n.nav-tabs-justified > li > a {\n  margin-right: 0;\n  border-radius: 4px;\n}\n.nav-tabs-justified > .active > a,\n.nav-tabs-justified > .active > a:hover,\n.nav-tabs-justified > .active > a:focus {\n  border: 1px solid #ddd;\n}\n@media (min-width: 768px) {\n  .nav-tabs-justified > li > a {\n    border-bottom: 1px solid #ddd;\n    border-radius: 4px 4px 0 0;\n  }\n  .nav-tabs-justified > .active > a,\n  .nav-tabs-justified > .active > a:hover,\n  .nav-tabs-justified > .active > a:focus {\n    border-bottom-color: #fff;\n  }\n}\n.tab-content > .tab-pane {\n  display: none;\n}\n.tab-content > .active {\n  display: block;\n}\n.nav-tabs .dropdown-menu {\n  margin-top: -1px;\n  border-top-left-radius: 0;\n  border-top-right-radius: 0;\n}\n.navbar {\n  position: relative;\n  min-height: 50px;\n  margin-bottom: 20px;\n  border: 1px solid transparent;\n}\n@media (min-width: 768px) {\n  .navbar {\n    border-radius: 4px;\n  }\n}\n@media (min-width: 768px) {\n  .navbar-header {\n    float: left;\n  }\n}\n.navbar-collapse {\n  padding-right: 15px;\n  padding-left: 15px;\n  overflow-x: visible;\n  -webkit-overflow-scrolling: touch;\n  border-top: 1px solid transparent;\n  -webkit-box-shadow: inset 0 1px 0 rgba(255, 255, 255, .1);\n          box-shadow: inset 0 1px 0 rgba(255, 255, 255, .1);\n}\n.navbar-collapse.in {\n  overflow-y: auto;\n}\n@media (min-width: 768px) {\n  .navbar-collapse {\n    width: auto;\n    border-top: 0;\n    -webkit-box-shadow: none;\n            box-shadow: none;\n  }\n  .navbar-collapse.collapse {\n    display: block !important;\n    height: auto !important;\n    padding-bottom: 0;\n    overflow: visible !important;\n  }\n  .navbar-collapse.in {\n    overflow-y: visible;\n  }\n  .navbar-fixed-top .navbar-collapse,\n  .navbar-static-top .navbar-collapse,\n  .navbar-fixed-bottom .navbar-collapse {\n    padding-right: 0;\n    padding-left: 0;\n  }\n}\n.navbar-fixed-top .navbar-collapse,\n.navbar-fixed-bottom .navbar-collapse {\n  max-height: 340px;\n}\n@media (max-device-width: 480px) and (orientation: landscape) {\n  .navbar-fixed-top .navbar-collapse,\n  .navbar-fixed-bottom .navbar-collapse {\n    max-height: 200px;\n  }\n}\n.container > .navbar-header,\n.container-fluid > .navbar-header,\n.container > .navbar-collapse,\n.container-fluid > .navbar-collapse {\n  margin-right: -15px;\n  margin-left: -15px;\n}\n@media (min-width: 768px) {\n  .container > .navbar-header,\n  .container-fluid > .navbar-header,\n  .container > .navbar-collapse,\n  .container-fluid > .navbar-collapse {\n    margin-right: 0;\n    margin-left: 0;\n  }\n}\n.navbar-static-top {\n  z-index: 1000;\n  border-width: 0 0 1px;\n}\n@media (min-width: 768px) {\n  .navbar-static-top {\n    border-radius: 0;\n  }\n}\n.navbar-fixed-top,\n.navbar-fixed-bottom {\n  position: fixed;\n  right: 0;\n  left: 0;\n  z-index: 1030;\n}\n@media (min-width: 768px) {\n  .navbar-fixed-top,\n  .navbar-fixed-bottom {\n    border-radius: 0;\n  }\n}\n.navbar-fixed-top {\n  top: 0;\n  border-width: 0 0 1px;\n}\n.navbar-fixed-bottom {\n  bottom: 0;\n  margin-bottom: 0;\n  border-width: 1px 0 0;\n}\n.navbar-brand {\n  float: left;\n  height: 50px;\n  padding: 15px 15px;\n  font-size: 18px;\n  line-height: 20px;\n}\n.navbar-brand:hover,\n.navbar-brand:focus {\n  text-decoration: none;\n}\n.navbar-brand > img {\n  display: block;\n}\n@media (min-width: 768px) {\n  .navbar > .container .navbar-brand,\n  .navbar > .container-fluid .navbar-brand {\n    margin-left: -15px;\n  }\n}\n.navbar-toggle {\n  position: relative;\n  float: right;\n  padding: 9px 10px;\n  margin-top: 8px;\n  margin-right: 15px;\n  margin-bottom: 8px;\n  background-color: transparent;\n  background-image: none;\n  border: 1px solid transparent;\n  border-radius: 4px;\n}\n.navbar-toggle:focus {\n  outline: 0;\n}\n.navbar-toggle .icon-bar {\n  display: block;\n  width: 22px;\n  height: 2px;\n  border-radius: 1px;\n}\n.navbar-toggle .icon-bar + .icon-bar {\n  margin-top: 4px;\n}\n@media (min-width: 768px) {\n  .navbar-toggle {\n    display: none;\n  }\n}\n.navbar-nav {\n  margin: 7.5px -15px;\n}\n.navbar-nav > li > a {\n  padding-top: 10px;\n  padding-bottom: 10px;\n  line-height: 20px;\n}\n@media (max-width: 767px) {\n  .navbar-nav .open .dropdown-menu {\n    position: static;\n    float: none;\n    width: auto;\n    margin-top: 0;\n    background-color: transparent;\n    border: 0;\n    -webkit-box-shadow: none;\n            box-shadow: none;\n  }\n  .navbar-nav .open .dropdown-menu > li > a,\n  .navbar-nav .open .dropdown-menu .dropdown-header {\n    padding: 5px 15px 5px 25px;\n  }\n  .navbar-nav .open .dropdown-menu > li > a {\n    line-height: 20px;\n  }\n  .navbar-nav .open .dropdown-menu > li > a:hover,\n  .navbar-nav .open .dropdown-menu > li > a:focus {\n    background-image: none;\n  }\n}\n@media (min-width: 768px) {\n  .navbar-nav {\n    float: left;\n    margin: 0;\n  }\n  .navbar-nav > li {\n    float: left;\n  }\n  .navbar-nav > li > a {\n    padding-top: 15px;\n    padding-bottom: 15px;\n  }\n}\n.navbar-form {\n  padding: 10px 15px;\n  margin-top: 8px;\n  margin-right: -15px;\n  margin-bottom: 8px;\n  margin-left: -15px;\n  border-top: 1px solid transparent;\n  border-bottom: 1px solid transparent;\n  -webkit-box-shadow: inset 0 1px 0 rgba(255, 255, 255, .1), 0 1px 0 rgba(255, 255, 255, .1);\n          box-shadow: inset 0 1px 0 rgba(255, 255, 255, .1), 0 1px 0 rgba(255, 255, 255, .1);\n}\n@media (min-width: 768px) {\n  .navbar-form .form-group {\n    display: inline-block;\n    margin-bottom: 0;\n    vertical-align: middle;\n  }\n  .navbar-form .form-control {\n    display: inline-block;\n    width: auto;\n    vertical-align: middle;\n  }\n  .navbar-form .form-control-static {\n    display: inline-block;\n  }\n  .navbar-form .input-group {\n    display: inline-table;\n    vertical-align: middle;\n  }\n  .navbar-form .input-group .input-group-addon,\n  .navbar-form .input-group .input-group-btn,\n  .navbar-form .input-group .form-control {\n    width: auto;\n  }\n  .navbar-form .input-group > .form-control {\n    width: 100%;\n  }\n  .navbar-form .control-label {\n    margin-bottom: 0;\n    vertical-align: middle;\n  }\n  .navbar-form .radio,\n  .navbar-form .checkbox {\n    display: inline-block;\n    margin-top: 0;\n    margin-bottom: 0;\n    vertical-align: middle;\n  }\n  .navbar-form .radio label,\n  .navbar-form .checkbox label {\n    padding-left: 0;\n  }\n  .navbar-form .radio input[type=\"radio\"],\n  .navbar-form .checkbox input[type=\"checkbox\"] {\n    position: relative;\n    margin-left: 0;\n  }\n  .navbar-form .has-feedback .form-control-feedback {\n    top: 0;\n  }\n}\n@media (max-width: 767px) {\n  .navbar-form .form-group {\n    margin-bottom: 5px;\n  }\n  .navbar-form .form-group:last-child {\n    margin-bottom: 0;\n  }\n}\n@media (min-width: 768px) {\n  .navbar-form {\n    width: auto;\n    padding-top: 0;\n    padding-bottom: 0;\n    margin-right: 0;\n    margin-left: 0;\n    border: 0;\n    -webkit-box-shadow: none;\n            box-shadow: none;\n  }\n}\n.navbar-nav > li > .dropdown-menu {\n  margin-top: 0;\n  border-top-left-radius: 0;\n  border-top-right-radius: 0;\n}\n.navbar-fixed-bottom .navbar-nav > li > .dropdown-menu {\n  margin-bottom: 0;\n  border-top-left-radius: 4px;\n  border-top-right-radius: 4px;\n  border-bottom-right-radius: 0;\n  border-bottom-left-radius: 0;\n}\n.navbar-btn {\n  margin-top: 8px;\n  margin-bottom: 8px;\n}\n.navbar-btn.btn-sm {\n  margin-top: 10px;\n  margin-bottom: 10px;\n}\n.navbar-btn.btn-xs {\n  margin-top: 14px;\n  margin-bottom: 14px;\n}\n.navbar-text {\n  margin-top: 15px;\n  margin-bottom: 15px;\n}\n@media (min-width: 768px) {\n  .navbar-text {\n    float: left;\n    margin-right: 15px;\n    margin-left: 15px;\n  }\n}\n@media (min-width: 768px) {\n  .navbar-left {\n    float: left !important;\n  }\n  .navbar-right {\n    float: right !important;\n    margin-right: -15px;\n  }\n  .navbar-right ~ .navbar-right {\n    margin-right: 0;\n  }\n}\n.navbar-default {\n  background-color: #f8f8f8;\n  border-color: #e7e7e7;\n}\n.navbar-default .navbar-brand {\n  color: #777;\n}\n.navbar-default .navbar-brand:hover,\n.navbar-default .navbar-brand:focus {\n  color: #5e5e5e;\n  background-color: transparent;\n}\n.navbar-default .navbar-text {\n  color: #777;\n}\n.navbar-default .navbar-nav > li > a {\n  color: #777;\n}\n.navbar-default .navbar-nav > li > a:hover,\n.navbar-default .navbar-nav > li > a:focus {\n  color: #333;\n  background-color: transparent;\n}\n.navbar-default .navbar-nav > .active > a,\n.navbar-default .navbar-nav > .active > a:hover,\n.navbar-default .navbar-nav > .active > a:focus {\n  color: #555;\n  background-color: #e7e7e7;\n}\n.navbar-default .navbar-nav > .disabled > a,\n.navbar-default .navbar-nav > .disabled > a:hover,\n.navbar-default .navbar-nav > .disabled > a:focus {\n  color: #ccc;\n  background-color: transparent;\n}\n.navbar-default .navbar-toggle {\n  border-color: #ddd;\n}\n.navbar-default .navbar-toggle:hover,\n.navbar-default .navbar-toggle:focus {\n  background-color: #ddd;\n}\n.navbar-default .navbar-toggle .icon-bar {\n  background-color: #888;\n}\n.navbar-default .navbar-collapse,\n.navbar-default .navbar-form {\n  border-color: #e7e7e7;\n}\n.navbar-default .navbar-nav > .open > a,\n.navbar-default .navbar-nav > .open > a:hover,\n.navbar-default .navbar-nav > .open > a:focus {\n  color: #555;\n  background-color: #e7e7e7;\n}\n@media (max-width: 767px) {\n  .navbar-default .navbar-nav .open .dropdown-menu > li > a {\n    color: #777;\n  }\n  .navbar-default .navbar-nav .open .dropdown-menu > li > a:hover,\n  .navbar-default .navbar-nav .open .dropdown-menu > li > a:focus {\n    color: #333;\n    background-color: transparent;\n  }\n  .navbar-default .navbar-nav .open .dropdown-menu > .active > a,\n  .navbar-default .navbar-nav .open .dropdown-menu > .active > a:hover,\n  .navbar-default .navbar-nav .open .dropdown-menu > .active > a:focus {\n    color: #555;\n    background-color: #e7e7e7;\n  }\n  .navbar-default .navbar-nav .open .dropdown-menu > .disabled > a,\n  .navbar-default .navbar-nav .open .dropdown-menu > .disabled > a:hover,\n  .navbar-default .navbar-nav .open .dropdown-menu > .disabled > a:focus {\n    color: #ccc;\n    background-color: transparent;\n  }\n}\n.navbar-default .navbar-link {\n  color: #777;\n}\n.navbar-default .navbar-link:hover {\n  color: #333;\n}\n.navbar-default .btn-link {\n  color: #777;\n}\n.navbar-default .btn-link:hover,\n.navbar-default .btn-link:focus {\n  color: #333;\n}\n.navbar-default .btn-link[disabled]:hover,\nfieldset[disabled] .navbar-default .btn-link:hover,\n.navbar-default .btn-link[disabled]:focus,\nfieldset[disabled] .navbar-default .btn-link:focus {\n  color: #ccc;\n}\n.navbar-inverse {\n  background-color: #222;\n  border-color: #080808;\n}\n.navbar-inverse .navbar-brand {\n  color: #9d9d9d;\n}\n.navbar-inverse .navbar-brand:hover,\n.navbar-inverse .navbar-brand:focus {\n  color: #fff;\n  background-color: transparent;\n}\n.navbar-inverse .navbar-text {\n  color: #9d9d9d;\n}\n.navbar-inverse .navbar-nav > li > a {\n  color: #9d9d9d;\n}\n.navbar-inverse .navbar-nav > li > a:hover,\n.navbar-inverse .navbar-nav > li > a:focus {\n  color: #fff;\n  background-color: transparent;\n}\n.navbar-inverse .navbar-nav > .active > a,\n.navbar-inverse .navbar-nav > .active > a:hover,\n.navbar-inverse .navbar-nav > .active > a:focus {\n  color: #fff;\n  background-color: #080808;\n}\n.navbar-inverse .navbar-nav > .disabled > a,\n.navbar-inverse .navbar-nav > .disabled > a:hover,\n.navbar-inverse .navbar-nav > .disabled > a:focus {\n  color: #444;\n  background-color: transparent;\n}\n.navbar-inverse .navbar-toggle {\n  border-color: #333;\n}\n.navbar-inverse .navbar-toggle:hover,\n.navbar-inverse .navbar-toggle:focus {\n  background-color: #333;\n}\n.navbar-inverse .navbar-toggle .icon-bar {\n  background-color: #fff;\n}\n.navbar-inverse .navbar-collapse,\n.navbar-inverse .navbar-form {\n  border-color: #101010;\n}\n.navbar-inverse .navbar-nav > .open > a,\n.navbar-inverse .navbar-nav > .open > a:hover,\n.navbar-inverse .navbar-nav > .open > a:focus {\n  color: #fff;\n  background-color: #080808;\n}\n@media (max-width: 767px) {\n  .navbar-inverse .navbar-nav .open .dropdown-menu > .dropdown-header {\n    border-color: #080808;\n  }\n  .navbar-inverse .navbar-nav .open .dropdown-menu .divider {\n    background-color: #080808;\n  }\n  .navbar-inverse .navbar-nav .open .dropdown-menu > li > a {\n    color: #9d9d9d;\n  }\n  .navbar-inverse .navbar-nav .open .dropdown-menu > li > a:hover,\n  .navbar-inverse .navbar-nav .open .dropdown-menu > li > a:focus {\n    color: #fff;\n    background-color: transparent;\n  }\n  .navbar-inverse .navbar-nav .open .dropdown-menu > .active > a,\n  .navbar-inverse .navbar-nav .open .dropdown-menu > .active > a:hover,\n  .navbar-inverse .navbar-nav .open .dropdown-menu > .active > a:focus {\n    color: #fff;\n    background-color: #080808;\n  }\n  .navbar-inverse .navbar-nav .open .dropdown-menu > .disabled > a,\n  .navbar-inverse .navbar-nav .open .dropdown-menu > .disabled > a:hover,\n  .navbar-inverse .navbar-nav .open .dropdown-menu > .disabled > a:focus {\n    color: #444;\n    background-color: transparent;\n  }\n}\n.navbar-inverse .navbar-link {\n  color: #9d9d9d;\n}\n.navbar-inverse .navbar-link:hover {\n  color: #fff;\n}\n.navbar-inverse .btn-link {\n  color: #9d9d9d;\n}\n.navbar-inverse .btn-link:hover,\n.navbar-inverse .btn-link:focus {\n  color: #fff;\n}\n.navbar-inverse .btn-link[disabled]:hover,\nfieldset[disabled] .navbar-inverse .btn-link:hover,\n.navbar-inverse .btn-link[disabled]:focus,\nfieldset[disabled] .navbar-inverse .btn-link:focus {\n  color: #444;\n}\n.breadcrumb {\n  padding: 8px 15px;\n  margin-bottom: 20px;\n  list-style: none;\n  background-color: #f5f5f5;\n  border-radius: 4px;\n}\n.breadcrumb > li {\n  display: inline-block;\n}\n.breadcrumb > li + li:before {\n  padding: 0 5px;\n  color: #ccc;\n  content: \"/\\A0\";\n}\n.breadcrumb > .active {\n  color: #777;\n}\n.pagination {\n  display: inline-block;\n  padding-left: 0;\n  margin: 20px 0;\n  border-radius: 4px;\n}\n.pagination > li {\n  display: inline;\n}\n.pagination > li > a,\n.pagination > li > span {\n  position: relative;\n  float: left;\n  padding: 6px 12px;\n  margin-left: -1px;\n  line-height: 1.42857143;\n  color: #337ab7;\n  text-decoration: none;\n  background-color: #fff;\n  border: 1px solid #ddd;\n}\n.pagination > li:first-child > a,\n.pagination > li:first-child > span {\n  margin-left: 0;\n  border-top-left-radius: 4px;\n  border-bottom-left-radius: 4px;\n}\n.pagination > li:last-child > a,\n.pagination > li:last-child > span {\n  border-top-right-radius: 4px;\n  border-bottom-right-radius: 4px;\n}\n.pagination > li > a:hover,\n.pagination > li > span:hover,\n.pagination > li > a:focus,\n.pagination > li > span:focus {\n  z-index: 3;\n  color: #23527c;\n  background-color: #eee;\n  border-color: #ddd;\n}\n.pagination > .active > a,\n.pagination > .active > span,\n.pagination > .active > a:hover,\n.pagination > .active > span:hover,\n.pagination > .active > a:focus,\n.pagination > .active > span:focus {\n  z-index: 2;\n  color: #fff;\n  cursor: default;\n  background-color: #337ab7;\n  border-color: #337ab7;\n}\n.pagination > .disabled > span,\n.pagination > .disabled > span:hover,\n.pagination > .disabled > span:focus,\n.pagination > .disabled > a,\n.pagination > .disabled > a:hover,\n.pagination > .disabled > a:focus {\n  color: #777;\n  cursor: not-allowed;\n  background-color: #fff;\n  border-color: #ddd;\n}\n.pagination-lg > li > a,\n.pagination-lg > li > span {\n  padding: 10px 16px;\n  font-size: 18px;\n  line-height: 1.3333333;\n}\n.pagination-lg > li:first-child > a,\n.pagination-lg > li:first-child > span {\n  border-top-left-radius: 6px;\n  border-bottom-left-radius: 6px;\n}\n.pagination-lg > li:last-child > a,\n.pagination-lg > li:last-child > span {\n  border-top-right-radius: 6px;\n  border-bottom-right-radius: 6px;\n}\n.pagination-sm > li > a,\n.pagination-sm > li > span {\n  padding: 5px 10px;\n  font-size: 12px;\n  line-height: 1.5;\n}\n.pagination-sm > li:first-child > a,\n.pagination-sm > li:first-child > span {\n  border-top-left-radius: 3px;\n  border-bottom-left-radius: 3px;\n}\n.pagination-sm > li:last-child > a,\n.pagination-sm > li:last-child > span {\n  border-top-right-radius: 3px;\n  border-bottom-right-radius: 3px;\n}\n.pager {\n  padding-left: 0;\n  margin: 20px 0;\n  text-align: center;\n  list-style: none;\n}\n.pager li {\n  display: inline;\n}\n.pager li > a,\n.pager li > span {\n  display: inline-block;\n  padding: 5px 14px;\n  background-color: #fff;\n  border: 1px solid #ddd;\n  border-radius: 15px;\n}\n.pager li > a:hover,\n.pager li > a:focus {\n  text-decoration: none;\n  background-color: #eee;\n}\n.pager .next > a,\n.pager .next > span {\n  float: right;\n}\n.pager .previous > a,\n.pager .previous > span {\n  float: left;\n}\n.pager .disabled > a,\n.pager .disabled > a:hover,\n.pager .disabled > a:focus,\n.pager .disabled > span {\n  color: #777;\n  cursor: not-allowed;\n  background-color: #fff;\n}\n.label {\n  display: inline;\n  padding: .2em .6em .3em;\n  font-size: 75%;\n  font-weight: bold;\n  line-height: 1;\n  color: #fff;\n  text-align: center;\n  white-space: nowrap;\n  vertical-align: baseline;\n  border-radius: .25em;\n}\na.label:hover,\na.label:focus {\n  color: #fff;\n  text-decoration: none;\n  cursor: pointer;\n}\n.label:empty {\n  display: none;\n}\n.btn .label {\n  position: relative;\n  top: -1px;\n}\n.label-default {\n  background-color: #777;\n}\n.label-default[href]:hover,\n.label-default[href]:focus {\n  background-color: #5e5e5e;\n}\n.label-primary {\n  background-color: #337ab7;\n}\n.label-primary[href]:hover,\n.label-primary[href]:focus {\n  background-color: #286090;\n}\n.label-success {\n  background-color: #5cb85c;\n}\n.label-success[href]:hover,\n.label-success[href]:focus {\n  background-color: #449d44;\n}\n.label-info {\n  background-color: #5bc0de;\n}\n.label-info[href]:hover,\n.label-info[href]:focus {\n  background-color: #31b0d5;\n}\n.label-warning {\n  background-color: #f0ad4e;\n}\n.label-warning[href]:hover,\n.label-warning[href]:focus {\n  background-color: #ec971f;\n}\n.label-danger {\n  background-color: #d9534f;\n}\n.label-danger[href]:hover,\n.label-danger[href]:focus {\n  background-color: #c9302c;\n}\n.badge {\n  display: inline-block;\n  min-width: 10px;\n  padding: 3px 7px;\n  font-size: 12px;\n  font-weight: bold;\n  line-height: 1;\n  color: #fff;\n  text-align: center;\n  white-space: nowrap;\n  vertical-align: middle;\n  background-color: #777;\n  border-radius: 10px;\n}\n.badge:empty {\n  display: none;\n}\n.btn .badge {\n  position: relative;\n  top: -1px;\n}\n.btn-xs .badge,\n.btn-group-xs > .btn .badge {\n  top: 0;\n  padding: 1px 5px;\n}\na.badge:hover,\na.badge:focus {\n  color: #fff;\n  text-decoration: none;\n  cursor: pointer;\n}\n.list-group-item.active > .badge,\n.nav-pills > .active > a > .badge {\n  color: #337ab7;\n  background-color: #fff;\n}\n.list-group-item > .badge {\n  float: right;\n}\n.list-group-item > .badge + .badge {\n  margin-right: 5px;\n}\n.nav-pills > li > a > .badge {\n  margin-left: 3px;\n}\n.jumbotron {\n  padding-top: 30px;\n  padding-bottom: 30px;\n  margin-bottom: 30px;\n  color: inherit;\n  background-color: #eee;\n}\n.jumbotron h1,\n.jumbotron .h1 {\n  color: inherit;\n}\n.jumbotron p {\n  margin-bottom: 15px;\n  font-size: 21px;\n  font-weight: 200;\n}\n.jumbotron > hr {\n  border-top-color: #d5d5d5;\n}\n.container .jumbotron,\n.container-fluid .jumbotron {\n  border-radius: 6px;\n}\n.jumbotron .container {\n  max-width: 100%;\n}\n@media screen and (min-width: 768px) {\n  .jumbotron {\n    padding-top: 48px;\n    padding-bottom: 48px;\n  }\n  .container .jumbotron,\n  .container-fluid .jumbotron {\n    padding-right: 60px;\n    padding-left: 60px;\n  }\n  .jumbotron h1,\n  .jumbotron .h1 {\n    font-size: 63px;\n  }\n}\n.thumbnail {\n  display: block;\n  padding: 4px;\n  margin-bottom: 20px;\n  line-height: 1.42857143;\n  background-color: #fff;\n  border: 1px solid #ddd;\n  border-radius: 4px;\n  -webkit-transition: border .2s ease-in-out;\n       -o-transition: border .2s ease-in-out;\n          transition: border .2s ease-in-out;\n}\n.thumbnail > img,\n.thumbnail a > img {\n  margin-right: auto;\n  margin-left: auto;\n}\na.thumbnail:hover,\na.thumbnail:focus,\na.thumbnail.active {\n  border-color: #337ab7;\n}\n.thumbnail .caption {\n  padding: 9px;\n  color: #333;\n}\n.alert {\n  padding: 15px;\n  margin-bottom: 20px;\n  border: 1px solid transparent;\n  border-radius: 4px;\n}\n.alert h4 {\n  margin-top: 0;\n  color: inherit;\n}\n.alert .alert-link {\n  font-weight: bold;\n}\n.alert > p,\n.alert > ul {\n  margin-bottom: 0;\n}\n.alert > p + p {\n  margin-top: 5px;\n}\n.alert-dismissable,\n.alert-dismissible {\n  padding-right: 35px;\n}\n.alert-dismissable .close,\n.alert-dismissible .close {\n  position: relative;\n  top: -2px;\n  right: -21px;\n  color: inherit;\n}\n.alert-success {\n  color: #3c763d;\n  background-color: #dff0d8;\n  border-color: #d6e9c6;\n}\n.alert-success hr {\n  border-top-color: #c9e2b3;\n}\n.alert-success .alert-link {\n  color: #2b542c;\n}\n.alert-info {\n  color: #31708f;\n  background-color: #d9edf7;\n  border-color: #bce8f1;\n}\n.alert-info hr {\n  border-top-color: #a6e1ec;\n}\n.alert-info .alert-link {\n  color: #245269;\n}\n.alert-warning {\n  color: #8a6d3b;\n  background-color: #fcf8e3;\n  border-color: #faebcc;\n}\n.alert-warning hr {\n  border-top-color: #f7e1b5;\n}\n.alert-warning .alert-link {\n  color: #66512c;\n}\n.alert-danger {\n  color: #a94442;\n  background-color: #f2dede;\n  border-color: #ebccd1;\n}\n.alert-danger hr {\n  border-top-color: #e4b9c0;\n}\n.alert-danger .alert-link {\n  color: #843534;\n}\n@-webkit-keyframes progress-bar-stripes {\n  from {\n    background-position: 40px 0;\n  }\n  to {\n    background-position: 0 0;\n  }\n}\n@-o-keyframes progress-bar-stripes {\n  from {\n    background-position: 40px 0;\n  }\n  to {\n    background-position: 0 0;\n  }\n}\n@keyframes progress-bar-stripes {\n  from {\n    background-position: 40px 0;\n  }\n  to {\n    background-position: 0 0;\n  }\n}\n.progress {\n  height: 20px;\n  margin-bottom: 20px;\n  overflow: hidden;\n  background-color: #f5f5f5;\n  border-radius: 4px;\n  -webkit-box-shadow: inset 0 1px 2px rgba(0, 0, 0, .1);\n          box-shadow: inset 0 1px 2px rgba(0, 0, 0, .1);\n}\n.progress-bar {\n  float: left;\n  width: 0;\n  height: 100%;\n  font-size: 12px;\n  line-height: 20px;\n  color: #fff;\n  text-align: center;\n  background-color: #337ab7;\n  -webkit-box-shadow: inset 0 -1px 0 rgba(0, 0, 0, .15);\n          box-shadow: inset 0 -1px 0 rgba(0, 0, 0, .15);\n  -webkit-transition: width .6s ease;\n       -o-transition: width .6s ease;\n          transition: width .6s ease;\n}\n.progress-striped .progress-bar,\n.progress-bar-striped {\n  background-image: -webkit-linear-gradient(45deg, rgba(255, 255, 255, .15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, .15) 50%, rgba(255, 255, 255, .15) 75%, transparent 75%, transparent);\n  background-image:      -o-linear-gradient(45deg, rgba(255, 255, 255, .15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, .15) 50%, rgba(255, 255, 255, .15) 75%, transparent 75%, transparent);\n  background-image:         linear-gradient(45deg, rgba(255, 255, 255, .15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, .15) 50%, rgba(255, 255, 255, .15) 75%, transparent 75%, transparent);\n  -webkit-background-size: 40px 40px;\n          background-size: 40px 40px;\n}\n.progress.active .progress-bar,\n.progress-bar.active {\n  -webkit-animation: progress-bar-stripes 2s linear infinite;\n       -o-animation: progress-bar-stripes 2s linear infinite;\n          animation: progress-bar-stripes 2s linear infinite;\n}\n.progress-bar-success {\n  background-color: #5cb85c;\n}\n.progress-striped .progress-bar-success {\n  background-image: -webkit-linear-gradient(45deg, rgba(255, 255, 255, .15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, .15) 50%, rgba(255, 255, 255, .15) 75%, transparent 75%, transparent);\n  background-image:      -o-linear-gradient(45deg, rgba(255, 255, 255, .15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, .15) 50%, rgba(255, 255, 255, .15) 75%, transparent 75%, transparent);\n  background-image:         linear-gradient(45deg, rgba(255, 255, 255, .15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, .15) 50%, rgba(255, 255, 255, .15) 75%, transparent 75%, transparent);\n}\n.progress-bar-info {\n  background-color: #5bc0de;\n}\n.progress-striped .progress-bar-info {\n  background-image: -webkit-linear-gradient(45deg, rgba(255, 255, 255, .15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, .15) 50%, rgba(255, 255, 255, .15) 75%, transparent 75%, transparent);\n  background-image:      -o-linear-gradient(45deg, rgba(255, 255, 255, .15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, .15) 50%, rgba(255, 255, 255, .15) 75%, transparent 75%, transparent);\n  background-image:         linear-gradient(45deg, rgba(255, 255, 255, .15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, .15) 50%, rgba(255, 255, 255, .15) 75%, transparent 75%, transparent);\n}\n.progress-bar-warning {\n  background-color: #f0ad4e;\n}\n.progress-striped .progress-bar-warning {\n  background-image: -webkit-linear-gradient(45deg, rgba(255, 255, 255, .15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, .15) 50%, rgba(255, 255, 255, .15) 75%, transparent 75%, transparent);\n  background-image:      -o-linear-gradient(45deg, rgba(255, 255, 255, .15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, .15) 50%, rgba(255, 255, 255, .15) 75%, transparent 75%, transparent);\n  background-image:         linear-gradient(45deg, rgba(255, 255, 255, .15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, .15) 50%, rgba(255, 255, 255, .15) 75%, transparent 75%, transparent);\n}\n.progress-bar-danger {\n  background-color: #d9534f;\n}\n.progress-striped .progress-bar-danger {\n  background-image: -webkit-linear-gradient(45deg, rgba(255, 255, 255, .15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, .15) 50%, rgba(255, 255, 255, .15) 75%, transparent 75%, transparent);\n  background-image:      -o-linear-gradient(45deg, rgba(255, 255, 255, .15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, .15) 50%, rgba(255, 255, 255, .15) 75%, transparent 75%, transparent);\n  background-image:         linear-gradient(45deg, rgba(255, 255, 255, .15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, .15) 50%, rgba(255, 255, 255, .15) 75%, transparent 75%, transparent);\n}\n.media {\n  margin-top: 15px;\n}\n.media:first-child {\n  margin-top: 0;\n}\n.media,\n.media-body {\n  overflow: hidden;\n  zoom: 1;\n}\n.media-body {\n  width: 10000px;\n}\n.media-object {\n  display: block;\n}\n.media-object.img-thumbnail {\n  max-width: none;\n}\n.media-right,\n.media > .pull-right {\n  padding-left: 10px;\n}\n.media-left,\n.media > .pull-left {\n  padding-right: 10px;\n}\n.media-left,\n.media-right,\n.media-body {\n  display: table-cell;\n  vertical-align: top;\n}\n.media-middle {\n  vertical-align: middle;\n}\n.media-bottom {\n  vertical-align: bottom;\n}\n.media-heading {\n  margin-top: 0;\n  margin-bottom: 5px;\n}\n.media-list {\n  padding-left: 0;\n  list-style: none;\n}\n.list-group {\n  padding-left: 0;\n  margin-bottom: 20px;\n}\n.list-group-item {\n  position: relative;\n  display: block;\n  padding: 10px 15px;\n  margin-bottom: -1px;\n  background-color: #fff;\n  border: 1px solid #ddd;\n}\n.list-group-item:first-child {\n  border-top-left-radius: 4px;\n  border-top-right-radius: 4px;\n}\n.list-group-item:last-child {\n  margin-bottom: 0;\n  border-bottom-right-radius: 4px;\n  border-bottom-left-radius: 4px;\n}\na.list-group-item,\nbutton.list-group-item {\n  color: #555;\n}\na.list-group-item .list-group-item-heading,\nbutton.list-group-item .list-group-item-heading {\n  color: #333;\n}\na.list-group-item:hover,\nbutton.list-group-item:hover,\na.list-group-item:focus,\nbutton.list-group-item:focus {\n  color: #555;\n  text-decoration: none;\n  background-color: #f5f5f5;\n}\nbutton.list-group-item {\n  width: 100%;\n  text-align: left;\n}\n.list-group-item.disabled,\n.list-group-item.disabled:hover,\n.list-group-item.disabled:focus {\n  color: #777;\n  cursor: not-allowed;\n  background-color: #eee;\n}\n.list-group-item.disabled .list-group-item-heading,\n.list-group-item.disabled:hover .list-group-item-heading,\n.list-group-item.disabled:focus .list-group-item-heading {\n  color: inherit;\n}\n.list-group-item.disabled .list-group-item-text,\n.list-group-item.disabled:hover .list-group-item-text,\n.list-group-item.disabled:focus .list-group-item-text {\n  color: #777;\n}\n.list-group-item.active,\n.list-group-item.active:hover,\n.list-group-item.active:focus {\n  z-index: 2;\n  color: #fff;\n  background-color: #337ab7;\n  border-color: #337ab7;\n}\n.list-group-item.active .list-group-item-heading,\n.list-group-item.active:hover .list-group-item-heading,\n.list-group-item.active:focus .list-group-item-heading,\n.list-group-item.active .list-group-item-heading > small,\n.list-group-item.active:hover .list-group-item-heading > small,\n.list-group-item.active:focus .list-group-item-heading > small,\n.list-group-item.active .list-group-item-heading > .small,\n.list-group-item.active:hover .list-group-item-heading > .small,\n.list-group-item.active:focus .list-group-item-heading > .small {\n  color: inherit;\n}\n.list-group-item.active .list-group-item-text,\n.list-group-item.active:hover .list-group-item-text,\n.list-group-item.active:focus .list-group-item-text {\n  color: #c7ddef;\n}\n.list-group-item-success {\n  color: #3c763d;\n  background-color: #dff0d8;\n}\na.list-group-item-success,\nbutton.list-group-item-success {\n  color: #3c763d;\n}\na.list-group-item-success .list-group-item-heading,\nbutton.list-group-item-success .list-group-item-heading {\n  color: inherit;\n}\na.list-group-item-success:hover,\nbutton.list-group-item-success:hover,\na.list-group-item-success:focus,\nbutton.list-group-item-success:focus {\n  color: #3c763d;\n  background-color: #d0e9c6;\n}\na.list-group-item-success.active,\nbutton.list-group-item-success.active,\na.list-group-item-success.active:hover,\nbutton.list-group-item-success.active:hover,\na.list-group-item-success.active:focus,\nbutton.list-group-item-success.active:focus {\n  color: #fff;\n  background-color: #3c763d;\n  border-color: #3c763d;\n}\n.list-group-item-info {\n  color: #31708f;\n  background-color: #d9edf7;\n}\na.list-group-item-info,\nbutton.list-group-item-info {\n  color: #31708f;\n}\na.list-group-item-info .list-group-item-heading,\nbutton.list-group-item-info .list-group-item-heading {\n  color: inherit;\n}\na.list-group-item-info:hover,\nbutton.list-group-item-info:hover,\na.list-group-item-info:focus,\nbutton.list-group-item-info:focus {\n  color: #31708f;\n  background-color: #c4e3f3;\n}\na.list-group-item-info.active,\nbutton.list-group-item-info.active,\na.list-group-item-info.active:hover,\nbutton.list-group-item-info.active:hover,\na.list-group-item-info.active:focus,\nbutton.list-group-item-info.active:focus {\n  color: #fff;\n  background-color: #31708f;\n  border-color: #31708f;\n}\n.list-group-item-warning {\n  color: #8a6d3b;\n  background-color: #fcf8e3;\n}\na.list-group-item-warning,\nbutton.list-group-item-warning {\n  color: #8a6d3b;\n}\na.list-group-item-warning .list-group-item-heading,\nbutton.list-group-item-warning .list-group-item-heading {\n  color: inherit;\n}\na.list-group-item-warning:hover,\nbutton.list-group-item-warning:hover,\na.list-group-item-warning:focus,\nbutton.list-group-item-warning:focus {\n  color: #8a6d3b;\n  background-color: #faf2cc;\n}\na.list-group-item-warning.active,\nbutton.list-group-item-warning.active,\na.list-group-item-warning.active:hover,\nbutton.list-group-item-warning.active:hover,\na.list-group-item-warning.active:focus,\nbutton.list-group-item-warning.active:focus {\n  color: #fff;\n  background-color: #8a6d3b;\n  border-color: #8a6d3b;\n}\n.list-group-item-danger {\n  color: #a94442;\n  background-color: #f2dede;\n}\na.list-group-item-danger,\nbutton.list-group-item-danger {\n  color: #a94442;\n}\na.list-group-item-danger .list-group-item-heading,\nbutton.list-group-item-danger .list-group-item-heading {\n  color: inherit;\n}\na.list-group-item-danger:hover,\nbutton.list-group-item-danger:hover,\na.list-group-item-danger:focus,\nbutton.list-group-item-danger:focus {\n  color: #a94442;\n  background-color: #ebcccc;\n}\na.list-group-item-danger.active,\nbutton.list-group-item-danger.active,\na.list-group-item-danger.active:hover,\nbutton.list-group-item-danger.active:hover,\na.list-group-item-danger.active:focus,\nbutton.list-group-item-danger.active:focus {\n  color: #fff;\n  background-color: #a94442;\n  border-color: #a94442;\n}\n.list-group-item-heading {\n  margin-top: 0;\n  margin-bottom: 5px;\n}\n.list-group-item-text {\n  margin-bottom: 0;\n  line-height: 1.3;\n}\n.panel {\n  margin-bottom: 20px;\n  background-color: #fff;\n  border: 1px solid transparent;\n  border-radius: 4px;\n  -webkit-box-shadow: 0 1px 1px rgba(0, 0, 0, .05);\n          box-shadow: 0 1px 1px rgba(0, 0, 0, .05);\n}\n.panel-body {\n  padding: 15px;\n}\n.panel-heading {\n  padding: 10px 15px;\n  border-bottom: 1px solid transparent;\n  border-top-left-radius: 3px;\n  border-top-right-radius: 3px;\n}\n.panel-heading > .dropdown .dropdown-toggle {\n  color: inherit;\n}\n.panel-title {\n  margin-top: 0;\n  margin-bottom: 0;\n  font-size: 16px;\n  color: inherit;\n}\n.panel-title > a,\n.panel-title > small,\n.panel-title > .small,\n.panel-title > small > a,\n.panel-title > .small > a {\n  color: inherit;\n}\n.panel-footer {\n  padding: 10px 15px;\n  background-color: #f5f5f5;\n  border-top: 1px solid #ddd;\n  border-bottom-right-radius: 3px;\n  border-bottom-left-radius: 3px;\n}\n.panel > .list-group,\n.panel > .panel-collapse > .list-group {\n  margin-bottom: 0;\n}\n.panel > .list-group .list-group-item,\n.panel > .panel-collapse > .list-group .list-group-item {\n  border-width: 1px 0;\n  border-radius: 0;\n}\n.panel > .list-group:first-child .list-group-item:first-child,\n.panel > .panel-collapse > .list-group:first-child .list-group-item:first-child {\n  border-top: 0;\n  border-top-left-radius: 3px;\n  border-top-right-radius: 3px;\n}\n.panel > .list-group:last-child .list-group-item:last-child,\n.panel > .panel-collapse > .list-group:last-child .list-group-item:last-child {\n  border-bottom: 0;\n  border-bottom-right-radius: 3px;\n  border-bottom-left-radius: 3px;\n}\n.panel > .panel-heading + .panel-collapse > .list-group .list-group-item:first-child {\n  border-top-left-radius: 0;\n  border-top-right-radius: 0;\n}\n.panel-heading + .list-group .list-group-item:first-child {\n  border-top-width: 0;\n}\n.list-group + .panel-footer {\n  border-top-width: 0;\n}\n.panel > .table,\n.panel > .table-responsive > .table,\n.panel > .panel-collapse > .table {\n  margin-bottom: 0;\n}\n.panel > .table caption,\n.panel > .table-responsive > .table caption,\n.panel > .panel-collapse > .table caption {\n  padding-right: 15px;\n  padding-left: 15px;\n}\n.panel > .table:first-child,\n.panel > .table-responsive:first-child > .table:first-child {\n  border-top-left-radius: 3px;\n  border-top-right-radius: 3px;\n}\n.panel > .table:first-child > thead:first-child > tr:first-child,\n.panel > .table-responsive:first-child > .table:first-child > thead:first-child > tr:first-child,\n.panel > .table:first-child > tbody:first-child > tr:first-child,\n.panel > .table-responsive:first-child > .table:first-child > tbody:first-child > tr:first-child {\n  border-top-left-radius: 3px;\n  border-top-right-radius: 3px;\n}\n.panel > .table:first-child > thead:first-child > tr:first-child td:first-child,\n.panel > .table-responsive:first-child > .table:first-child > thead:first-child > tr:first-child td:first-child,\n.panel > .table:first-child > tbody:first-child > tr:first-child td:first-child,\n.panel > .table-responsive:first-child > .table:first-child > tbody:first-child > tr:first-child td:first-child,\n.panel > .table:first-child > thead:first-child > tr:first-child th:first-child,\n.panel > .table-responsive:first-child > .table:first-child > thead:first-child > tr:first-child th:first-child,\n.panel > .table:first-child > tbody:first-child > tr:first-child th:first-child,\n.panel > .table-responsive:first-child > .table:first-child > tbody:first-child > tr:first-child th:first-child {\n  border-top-left-radius: 3px;\n}\n.panel > .table:first-child > thead:first-child > tr:first-child td:last-child,\n.panel > .table-responsive:first-child > .table:first-child > thead:first-child > tr:first-child td:last-child,\n.panel > .table:first-child > tbody:first-child > tr:first-child td:last-child,\n.panel > .table-responsive:first-child > .table:first-child > tbody:first-child > tr:first-child td:last-child,\n.panel > .table:first-child > thead:first-child > tr:first-child th:last-child,\n.panel > .table-responsive:first-child > .table:first-child > thead:first-child > tr:first-child th:last-child,\n.panel > .table:first-child > tbody:first-child > tr:first-child th:last-child,\n.panel > .table-responsive:first-child > .table:first-child > tbody:first-child > tr:first-child th:last-child {\n  border-top-right-radius: 3px;\n}\n.panel > .table:last-child,\n.panel > .table-responsive:last-child > .table:last-child {\n  border-bottom-right-radius: 3px;\n  border-bottom-left-radius: 3px;\n}\n.panel > .table:last-child > tbody:last-child > tr:last-child,\n.panel > .table-responsive:last-child > .table:last-child > tbody:last-child > tr:last-child,\n.panel > .table:last-child > tfoot:last-child > tr:last-child,\n.panel > .table-responsive:last-child > .table:last-child > tfoot:last-child > tr:last-child {\n  border-bottom-right-radius: 3px;\n  border-bottom-left-radius: 3px;\n}\n.panel > .table:last-child > tbody:last-child > tr:last-child td:first-child,\n.panel > .table-responsive:last-child > .table:last-child > tbody:last-child > tr:last-child td:first-child,\n.panel > .table:last-child > tfoot:last-child > tr:last-child td:first-child,\n.panel > .table-responsive:last-child > .table:last-child > tfoot:last-child > tr:last-child td:first-child,\n.panel > .table:last-child > tbody:last-child > tr:last-child th:first-child,\n.panel > .table-responsive:last-child > .table:last-child > tbody:last-child > tr:last-child th:first-child,\n.panel > .table:last-child > tfoot:last-child > tr:last-child th:first-child,\n.panel > .table-responsive:last-child > .table:last-child > tfoot:last-child > tr:last-child th:first-child {\n  border-bottom-left-radius: 3px;\n}\n.panel > .table:last-child > tbody:last-child > tr:last-child td:last-child,\n.panel > .table-responsive:last-child > .table:last-child > tbody:last-child > tr:last-child td:last-child,\n.panel > .table:last-child > tfoot:last-child > tr:last-child td:last-child,\n.panel > .table-responsive:last-child > .table:last-child > tfoot:last-child > tr:last-child td:last-child,\n.panel > .table:last-child > tbody:last-child > tr:last-child th:last-child,\n.panel > .table-responsive:last-child > .table:last-child > tbody:last-child > tr:last-child th:last-child,\n.panel > .table:last-child > tfoot:last-child > tr:last-child th:last-child,\n.panel > .table-responsive:last-child > .table:last-child > tfoot:last-child > tr:last-child th:last-child {\n  border-bottom-right-radius: 3px;\n}\n.panel > .panel-body + .table,\n.panel > .panel-body + .table-responsive,\n.panel > .table + .panel-body,\n.panel > .table-responsive + .panel-body {\n  border-top: 1px solid #ddd;\n}\n.panel > .table > tbody:first-child > tr:first-child th,\n.panel > .table > tbody:first-child > tr:first-child td {\n  border-top: 0;\n}\n.panel > .table-bordered,\n.panel > .table-responsive > .table-bordered {\n  border: 0;\n}\n.panel > .table-bordered > thead > tr > th:first-child,\n.panel > .table-responsive > .table-bordered > thead > tr > th:first-child,\n.panel > .table-bordered > tbody > tr > th:first-child,\n.panel > .table-responsive > .table-bordered > tbody > tr > th:first-child,\n.panel > .table-bordered > tfoot > tr > th:first-child,\n.panel > .table-responsive > .table-bordered > tfoot > tr > th:first-child,\n.panel > .table-bordered > thead > tr > td:first-child,\n.panel > .table-responsive > .table-bordered > thead > tr > td:first-child,\n.panel > .table-bordered > tbody > tr > td:first-child,\n.panel > .table-responsive > .table-bordered > tbody > tr > td:first-child,\n.panel > .table-bordered > tfoot > tr > td:first-child,\n.panel > .table-responsive > .table-bordered > tfoot > tr > td:first-child {\n  border-left: 0;\n}\n.panel > .table-bordered > thead > tr > th:last-child,\n.panel > .table-responsive > .table-bordered > thead > tr > th:last-child,\n.panel > .table-bordered > tbody > tr > th:last-child,\n.panel > .table-responsive > .table-bordered > tbody > tr > th:last-child,\n.panel > .table-bordered > tfoot > tr > th:last-child,\n.panel > .table-responsive > .table-bordered > tfoot > tr > th:last-child,\n.panel > .table-bordered > thead > tr > td:last-child,\n.panel > .table-responsive > .table-bordered > thead > tr > td:last-child,\n.panel > .table-bordered > tbody > tr > td:last-child,\n.panel > .table-responsive > .table-bordered > tbody > tr > td:last-child,\n.panel > .table-bordered > tfoot > tr > td:last-child,\n.panel > .table-responsive > .table-bordered > tfoot > tr > td:last-child {\n  border-right: 0;\n}\n.panel > .table-bordered > thead > tr:first-child > td,\n.panel > .table-responsive > .table-bordered > thead > tr:first-child > td,\n.panel > .table-bordered > tbody > tr:first-child > td,\n.panel > .table-responsive > .table-bordered > tbody > tr:first-child > td,\n.panel > .table-bordered > thead > tr:first-child > th,\n.panel > .table-responsive > .table-bordered > thead > tr:first-child > th,\n.panel > .table-bordered > tbody > tr:first-child > th,\n.panel > .table-responsive > .table-bordered > tbody > tr:first-child > th {\n  border-bottom: 0;\n}\n.panel > .table-bordered > tbody > tr:last-child > td,\n.panel > .table-responsive > .table-bordered > tbody > tr:last-child > td,\n.panel > .table-bordered > tfoot > tr:last-child > td,\n.panel > .table-responsive > .table-bordered > tfoot > tr:last-child > td,\n.panel > .table-bordered > tbody > tr:last-child > th,\n.panel > .table-responsive > .table-bordered > tbody > tr:last-child > th,\n.panel > .table-bordered > tfoot > tr:last-child > th,\n.panel > .table-responsive > .table-bordered > tfoot > tr:last-child > th {\n  border-bottom: 0;\n}\n.panel > .table-responsive {\n  margin-bottom: 0;\n  border: 0;\n}\n.panel-group {\n  margin-bottom: 20px;\n}\n.panel-group .panel {\n  margin-bottom: 0;\n  border-radius: 4px;\n}\n.panel-group .panel + .panel {\n  margin-top: 5px;\n}\n.panel-group .panel-heading {\n  border-bottom: 0;\n}\n.panel-group .panel-heading + .panel-collapse > .panel-body,\n.panel-group .panel-heading + .panel-collapse > .list-group {\n  border-top: 1px solid #ddd;\n}\n.panel-group .panel-footer {\n  border-top: 0;\n}\n.panel-group .panel-footer + .panel-collapse .panel-body {\n  border-bottom: 1px solid #ddd;\n}\n.panel-default {\n  border-color: #ddd;\n}\n.panel-default > .panel-heading {\n  color: #333;\n  background-color: #f5f5f5;\n  border-color: #ddd;\n}\n.panel-default > .panel-heading + .panel-collapse > .panel-body {\n  border-top-color: #ddd;\n}\n.panel-default > .panel-heading .badge {\n  color: #f5f5f5;\n  background-color: #333;\n}\n.panel-default > .panel-footer + .panel-collapse > .panel-body {\n  border-bottom-color: #ddd;\n}\n.panel-primary {\n  border-color: #337ab7;\n}\n.panel-primary > .panel-heading {\n  color: #fff;\n  background-color: #337ab7;\n  border-color: #337ab7;\n}\n.panel-primary > .panel-heading + .panel-collapse > .panel-body {\n  border-top-color: #337ab7;\n}\n.panel-primary > .panel-heading .badge {\n  color: #337ab7;\n  background-color: #fff;\n}\n.panel-primary > .panel-footer + .panel-collapse > .panel-body {\n  border-bottom-color: #337ab7;\n}\n.panel-success {\n  border-color: #d6e9c6;\n}\n.panel-success > .panel-heading {\n  color: #3c763d;\n  background-color: #dff0d8;\n  border-color: #d6e9c6;\n}\n.panel-success > .panel-heading + .panel-collapse > .panel-body {\n  border-top-color: #d6e9c6;\n}\n.panel-success > .panel-heading .badge {\n  color: #dff0d8;\n  background-color: #3c763d;\n}\n.panel-success > .panel-footer + .panel-collapse > .panel-body {\n  border-bottom-color: #d6e9c6;\n}\n.panel-info {\n  border-color: #bce8f1;\n}\n.panel-info > .panel-heading {\n  color: #31708f;\n  background-color: #d9edf7;\n  border-color: #bce8f1;\n}\n.panel-info > .panel-heading + .panel-collapse > .panel-body {\n  border-top-color: #bce8f1;\n}\n.panel-info > .panel-heading .badge {\n  color: #d9edf7;\n  background-color: #31708f;\n}\n.panel-info > .panel-footer + .panel-collapse > .panel-body {\n  border-bottom-color: #bce8f1;\n}\n.panel-warning {\n  border-color: #faebcc;\n}\n.panel-warning > .panel-heading {\n  color: #8a6d3b;\n  background-color: #fcf8e3;\n  border-color: #faebcc;\n}\n.panel-warning > .panel-heading + .panel-collapse > .panel-body {\n  border-top-color: #faebcc;\n}\n.panel-warning > .panel-heading .badge {\n  color: #fcf8e3;\n  background-color: #8a6d3b;\n}\n.panel-warning > .panel-footer + .panel-collapse > .panel-body {\n  border-bottom-color: #faebcc;\n}\n.panel-danger {\n  border-color: #ebccd1;\n}\n.panel-danger > .panel-heading {\n  color: #a94442;\n  background-color: #f2dede;\n  border-color: #ebccd1;\n}\n.panel-danger > .panel-heading + .panel-collapse > .panel-body {\n  border-top-color: #ebccd1;\n}\n.panel-danger > .panel-heading .badge {\n  color: #f2dede;\n  background-color: #a94442;\n}\n.panel-danger > .panel-footer + .panel-collapse > .panel-body {\n  border-bottom-color: #ebccd1;\n}\n.embed-responsive {\n  position: relative;\n  display: block;\n  height: 0;\n  padding: 0;\n  overflow: hidden;\n}\n.embed-responsive .embed-responsive-item,\n.embed-responsive iframe,\n.embed-responsive embed,\n.embed-responsive object,\n.embed-responsive video {\n  position: absolute;\n  top: 0;\n  bottom: 0;\n  left: 0;\n  width: 100%;\n  height: 100%;\n  border: 0;\n}\n.embed-responsive-16by9 {\n  padding-bottom: 56.25%;\n}\n.embed-responsive-4by3 {\n  padding-bottom: 75%;\n}\n.well {\n  min-height: 20px;\n  padding: 19px;\n  margin-bottom: 20px;\n  background-color: #f5f5f5;\n  border: 1px solid #e3e3e3;\n  border-radius: 4px;\n  -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .05);\n          box-shadow: inset 0 1px 1px rgba(0, 0, 0, .05);\n}\n.well blockquote {\n  border-color: #ddd;\n  border-color: rgba(0, 0, 0, .15);\n}\n.well-lg {\n  padding: 24px;\n  border-radius: 6px;\n}\n.well-sm {\n  padding: 9px;\n  border-radius: 3px;\n}\n.close {\n  float: right;\n  font-size: 21px;\n  font-weight: bold;\n  line-height: 1;\n  color: #000;\n  text-shadow: 0 1px 0 #fff;\n  filter: alpha(opacity=20);\n  opacity: .2;\n}\n.close:hover,\n.close:focus {\n  color: #000;\n  text-decoration: none;\n  cursor: pointer;\n  filter: alpha(opacity=50);\n  opacity: .5;\n}\nbutton.close {\n  -webkit-appearance: none;\n  padding: 0;\n  cursor: pointer;\n  background: transparent;\n  border: 0;\n}\n.modal-open {\n  overflow: hidden;\n}\n.modal {\n  position: fixed;\n  top: 0;\n  right: 0;\n  bottom: 0;\n  left: 0;\n  z-index: 1050;\n  display: none;\n  overflow: hidden;\n  -webkit-overflow-scrolling: touch;\n  outline: 0;\n}\n.modal.fade .modal-dialog {\n  -webkit-transition: -webkit-transform .3s ease-out;\n       -o-transition:      -o-transform .3s ease-out;\n          transition:         transform .3s ease-out;\n  -webkit-transform: translate(0, -25%);\n      -ms-transform: translate(0, -25%);\n       -o-transform: translate(0, -25%);\n          transform: translate(0, -25%);\n}\n.modal.in .modal-dialog {\n  -webkit-transform: translate(0, 0);\n      -ms-transform: translate(0, 0);\n       -o-transform: translate(0, 0);\n          transform: translate(0, 0);\n}\n.modal-open .modal {\n  overflow-x: hidden;\n  overflow-y: auto;\n}\n.modal-dialog {\n  position: relative;\n  width: auto;\n  margin: 10px;\n}\n.modal-content {\n  position: relative;\n  background-color: #fff;\n  -webkit-background-clip: padding-box;\n          background-clip: padding-box;\n  border: 1px solid #999;\n  border: 1px solid rgba(0, 0, 0, .2);\n  border-radius: 6px;\n  outline: 0;\n  -webkit-box-shadow: 0 3px 9px rgba(0, 0, 0, .5);\n          box-shadow: 0 3px 9px rgba(0, 0, 0, .5);\n}\n.modal-backdrop {\n  position: fixed;\n  top: 0;\n  right: 0;\n  bottom: 0;\n  left: 0;\n  z-index: 1040;\n  background-color: #000;\n}\n.modal-backdrop.fade {\n  filter: alpha(opacity=0);\n  opacity: 0;\n}\n.modal-backdrop.in {\n  filter: alpha(opacity=50);\n  opacity: .5;\n}\n.modal-header {\n  min-height: 16.42857143px;\n  padding: 15px;\n  border-bottom: 1px solid #e5e5e5;\n}\n.modal-header .close {\n  margin-top: -2px;\n}\n.modal-title {\n  margin: 0;\n  line-height: 1.42857143;\n}\n.modal-body {\n  position: relative;\n  padding: 15px;\n}\n.modal-footer {\n  padding: 15px;\n  text-align: right;\n  border-top: 1px solid #e5e5e5;\n}\n.modal-footer .btn + .btn {\n  margin-bottom: 0;\n  margin-left: 5px;\n}\n.modal-footer .btn-group .btn + .btn {\n  margin-left: -1px;\n}\n.modal-footer .btn-block + .btn-block {\n  margin-left: 0;\n}\n.modal-scrollbar-measure {\n  position: absolute;\n  top: -9999px;\n  width: 50px;\n  height: 50px;\n  overflow: scroll;\n}\n@media (min-width: 768px) {\n  .modal-dialog {\n    width: 600px;\n    margin: 30px auto;\n  }\n  .modal-content {\n    -webkit-box-shadow: 0 5px 15px rgba(0, 0, 0, .5);\n            box-shadow: 0 5px 15px rgba(0, 0, 0, .5);\n  }\n  .modal-sm {\n    width: 300px;\n  }\n}\n@media (min-width: 992px) {\n  .modal-lg {\n    width: 900px;\n  }\n}\n.tooltip {\n  position: absolute;\n  z-index: 1070;\n  display: block;\n  font-family: \"Helvetica Neue\", Helvetica, Arial, sans-serif;\n  font-size: 12px;\n  font-style: normal;\n  font-weight: normal;\n  line-height: 1.42857143;\n  text-align: left;\n  text-align: start;\n  text-decoration: none;\n  text-shadow: none;\n  text-transform: none;\n  letter-spacing: normal;\n  word-break: normal;\n  word-spacing: normal;\n  word-wrap: normal;\n  white-space: normal;\n  filter: alpha(opacity=0);\n  opacity: 0;\n\n  line-break: auto;\n}\n.tooltip.in {\n  filter: alpha(opacity=90);\n  opacity: .9;\n}\n.tooltip.top {\n  padding: 5px 0;\n  margin-top: -3px;\n}\n.tooltip.right {\n  padding: 0 5px;\n  margin-left: 3px;\n}\n.tooltip.bottom {\n  padding: 5px 0;\n  margin-top: 3px;\n}\n.tooltip.left {\n  padding: 0 5px;\n  margin-left: -3px;\n}\n.tooltip-inner {\n  max-width: 200px;\n  padding: 3px 8px;\n  color: #fff;\n  text-align: center;\n  background-color: #000;\n  border-radius: 4px;\n}\n.tooltip-arrow {\n  position: absolute;\n  width: 0;\n  height: 0;\n  border-color: transparent;\n  border-style: solid;\n}\n.tooltip.top .tooltip-arrow {\n  bottom: 0;\n  left: 50%;\n  margin-left: -5px;\n  border-width: 5px 5px 0;\n  border-top-color: #000;\n}\n.tooltip.top-left .tooltip-arrow {\n  right: 5px;\n  bottom: 0;\n  margin-bottom: -5px;\n  border-width: 5px 5px 0;\n  border-top-color: #000;\n}\n.tooltip.top-right .tooltip-arrow {\n  bottom: 0;\n  left: 5px;\n  margin-bottom: -5px;\n  border-width: 5px 5px 0;\n  border-top-color: #000;\n}\n.tooltip.right .tooltip-arrow {\n  top: 50%;\n  left: 0;\n  margin-top: -5px;\n  border-width: 5px 5px 5px 0;\n  border-right-color: #000;\n}\n.tooltip.left .tooltip-arrow {\n  top: 50%;\n  right: 0;\n  margin-top: -5px;\n  border-width: 5px 0 5px 5px;\n  border-left-color: #000;\n}\n.tooltip.bottom .tooltip-arrow {\n  top: 0;\n  left: 50%;\n  margin-left: -5px;\n  border-width: 0 5px 5px;\n  border-bottom-color: #000;\n}\n.tooltip.bottom-left .tooltip-arrow {\n  top: 0;\n  right: 5px;\n  margin-top: -5px;\n  border-width: 0 5px 5px;\n  border-bottom-color: #000;\n}\n.tooltip.bottom-right .tooltip-arrow {\n  top: 0;\n  left: 5px;\n  margin-top: -5px;\n  border-width: 0 5px 5px;\n  border-bottom-color: #000;\n}\n.popover {\n  position: absolute;\n  top: 0;\n  left: 0;\n  z-index: 1060;\n  display: none;\n  max-width: 276px;\n  padding: 1px;\n  font-family: \"Helvetica Neue\", Helvetica, Arial, sans-serif;\n  font-size: 14px;\n  font-style: normal;\n  font-weight: normal;\n  line-height: 1.42857143;\n  text-align: left;\n  text-align: start;\n  text-decoration: none;\n  text-shadow: none;\n  text-transform: none;\n  letter-spacing: normal;\n  word-break: normal;\n  word-spacing: normal;\n  word-wrap: normal;\n  white-space: normal;\n  background-color: #fff;\n  -webkit-background-clip: padding-box;\n          background-clip: padding-box;\n  border: 1px solid #ccc;\n  border: 1px solid rgba(0, 0, 0, .2);\n  border-radius: 6px;\n  -webkit-box-shadow: 0 5px 10px rgba(0, 0, 0, .2);\n          box-shadow: 0 5px 10px rgba(0, 0, 0, .2);\n\n  line-break: auto;\n}\n.popover.top {\n  margin-top: -10px;\n}\n.popover.right {\n  margin-left: 10px;\n}\n.popover.bottom {\n  margin-top: 10px;\n}\n.popover.left {\n  margin-left: -10px;\n}\n.popover-title {\n  padding: 8px 14px;\n  margin: 0;\n  font-size: 14px;\n  background-color: #f7f7f7;\n  border-bottom: 1px solid #ebebeb;\n  border-radius: 5px 5px 0 0;\n}\n.popover-content {\n  padding: 9px 14px;\n}\n.popover > .arrow,\n.popover > .arrow:after {\n  position: absolute;\n  display: block;\n  width: 0;\n  height: 0;\n  border-color: transparent;\n  border-style: solid;\n}\n.popover > .arrow {\n  border-width: 11px;\n}\n.popover > .arrow:after {\n  content: \"\";\n  border-width: 10px;\n}\n.popover.top > .arrow {\n  bottom: -11px;\n  left: 50%;\n  margin-left: -11px;\n  border-top-color: #999;\n  border-top-color: rgba(0, 0, 0, .25);\n  border-bottom-width: 0;\n}\n.popover.top > .arrow:after {\n  bottom: 1px;\n  margin-left: -10px;\n  content: \" \";\n  border-top-color: #fff;\n  border-bottom-width: 0;\n}\n.popover.right > .arrow {\n  top: 50%;\n  left: -11px;\n  margin-top: -11px;\n  border-right-color: #999;\n  border-right-color: rgba(0, 0, 0, .25);\n  border-left-width: 0;\n}\n.popover.right > .arrow:after {\n  bottom: -10px;\n  left: 1px;\n  content: \" \";\n  border-right-color: #fff;\n  border-left-width: 0;\n}\n.popover.bottom > .arrow {\n  top: -11px;\n  left: 50%;\n  margin-left: -11px;\n  border-top-width: 0;\n  border-bottom-color: #999;\n  border-bottom-color: rgba(0, 0, 0, .25);\n}\n.popover.bottom > .arrow:after {\n  top: 1px;\n  margin-left: -10px;\n  content: \" \";\n  border-top-width: 0;\n  border-bottom-color: #fff;\n}\n.popover.left > .arrow {\n  top: 50%;\n  right: -11px;\n  margin-top: -11px;\n  border-right-width: 0;\n  border-left-color: #999;\n  border-left-color: rgba(0, 0, 0, .25);\n}\n.popover.left > .arrow:after {\n  right: 1px;\n  bottom: -10px;\n  content: \" \";\n  border-right-width: 0;\n  border-left-color: #fff;\n}\n.carousel {\n  position: relative;\n}\n.carousel-inner {\n  position: relative;\n  width: 100%;\n  overflow: hidden;\n}\n.carousel-inner > .item {\n  position: relative;\n  display: none;\n  -webkit-transition: .6s ease-in-out left;\n       -o-transition: .6s ease-in-out left;\n          transition: .6s ease-in-out left;\n}\n.carousel-inner > .item > img,\n.carousel-inner > .item > a > img {\n  line-height: 1;\n}\n@media all and (transform-3d), (-webkit-transform-3d) {\n  .carousel-inner > .item {\n    -webkit-transition: -webkit-transform .6s ease-in-out;\n         -o-transition:      -o-transform .6s ease-in-out;\n            transition:         transform .6s ease-in-out;\n\n    -webkit-backface-visibility: hidden;\n            backface-visibility: hidden;\n    -webkit-perspective: 1000px;\n            perspective: 1000px;\n  }\n  .carousel-inner > .item.next,\n  .carousel-inner > .item.active.right {\n    left: 0;\n    -webkit-transform: translate3d(100%, 0, 0);\n            transform: translate3d(100%, 0, 0);\n  }\n  .carousel-inner > .item.prev,\n  .carousel-inner > .item.active.left {\n    left: 0;\n    -webkit-transform: translate3d(-100%, 0, 0);\n            transform: translate3d(-100%, 0, 0);\n  }\n  .carousel-inner > .item.next.left,\n  .carousel-inner > .item.prev.right,\n  .carousel-inner > .item.active {\n    left: 0;\n    -webkit-transform: translate3d(0, 0, 0);\n            transform: translate3d(0, 0, 0);\n  }\n}\n.carousel-inner > .active,\n.carousel-inner > .next,\n.carousel-inner > .prev {\n  display: block;\n}\n.carousel-inner > .active {\n  left: 0;\n}\n.carousel-inner > .next,\n.carousel-inner > .prev {\n  position: absolute;\n  top: 0;\n  width: 100%;\n}\n.carousel-inner > .next {\n  left: 100%;\n}\n.carousel-inner > .prev {\n  left: -100%;\n}\n.carousel-inner > .next.left,\n.carousel-inner > .prev.right {\n  left: 0;\n}\n.carousel-inner > .active.left {\n  left: -100%;\n}\n.carousel-inner > .active.right {\n  left: 100%;\n}\n.carousel-control {\n  position: absolute;\n  top: 0;\n  bottom: 0;\n  left: 0;\n  width: 15%;\n  font-size: 20px;\n  color: #fff;\n  text-align: center;\n  text-shadow: 0 1px 2px rgba(0, 0, 0, .6);\n  filter: alpha(opacity=50);\n  opacity: .5;\n}\n.carousel-control.left {\n  background-image: -webkit-linear-gradient(left, rgba(0, 0, 0, .5) 0%, rgba(0, 0, 0, .0001) 100%);\n  background-image:      -o-linear-gradient(left, rgba(0, 0, 0, .5) 0%, rgba(0, 0, 0, .0001) 100%);\n  background-image: -webkit-gradient(linear, left top, right top, from(rgba(0, 0, 0, .5)), to(rgba(0, 0, 0, .0001)));\n  background-image:         linear-gradient(to right, rgba(0, 0, 0, .5) 0%, rgba(0, 0, 0, .0001) 100%);\n  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#80000000', endColorstr='#00000000', GradientType=1);\n  background-repeat: repeat-x;\n}\n.carousel-control.right {\n  right: 0;\n  left: auto;\n  background-image: -webkit-linear-gradient(left, rgba(0, 0, 0, .0001) 0%, rgba(0, 0, 0, .5) 100%);\n  background-image:      -o-linear-gradient(left, rgba(0, 0, 0, .0001) 0%, rgba(0, 0, 0, .5) 100%);\n  background-image: -webkit-gradient(linear, left top, right top, from(rgba(0, 0, 0, .0001)), to(rgba(0, 0, 0, .5)));\n  background-image:         linear-gradient(to right, rgba(0, 0, 0, .0001) 0%, rgba(0, 0, 0, .5) 100%);\n  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#00000000', endColorstr='#80000000', GradientType=1);\n  background-repeat: repeat-x;\n}\n.carousel-control:hover,\n.carousel-control:focus {\n  color: #fff;\n  text-decoration: none;\n  filter: alpha(opacity=90);\n  outline: 0;\n  opacity: .9;\n}\n.carousel-control .icon-prev,\n.carousel-control .icon-next,\n.carousel-control .glyphicon-chevron-left,\n.carousel-control .glyphicon-chevron-right {\n  position: absolute;\n  top: 50%;\n  z-index: 5;\n  display: inline-block;\n  margin-top: -10px;\n}\n.carousel-control .icon-prev,\n.carousel-control .glyphicon-chevron-left {\n  left: 50%;\n  margin-left: -10px;\n}\n.carousel-control .icon-next,\n.carousel-control .glyphicon-chevron-right {\n  right: 50%;\n  margin-right: -10px;\n}\n.carousel-control .icon-prev,\n.carousel-control .icon-next {\n  width: 20px;\n  height: 20px;\n  font-family: serif;\n  line-height: 1;\n}\n.carousel-control .icon-prev:before {\n  content: '\\2039';\n}\n.carousel-control .icon-next:before {\n  content: '\\203A';\n}\n.carousel-indicators {\n  position: absolute;\n  bottom: 10px;\n  left: 50%;\n  z-index: 15;\n  width: 60%;\n  padding-left: 0;\n  margin-left: -30%;\n  text-align: center;\n  list-style: none;\n}\n.carousel-indicators li {\n  display: inline-block;\n  width: 10px;\n  height: 10px;\n  margin: 1px;\n  text-indent: -999px;\n  cursor: pointer;\n  background-color: #000 \\9;\n  background-color: rgba(0, 0, 0, 0);\n  border: 1px solid #fff;\n  border-radius: 10px;\n}\n.carousel-indicators .active {\n  width: 12px;\n  height: 12px;\n  margin: 0;\n  background-color: #fff;\n}\n.carousel-caption {\n  position: absolute;\n  right: 15%;\n  bottom: 20px;\n  left: 15%;\n  z-index: 10;\n  padding-top: 20px;\n  padding-bottom: 20px;\n  color: #fff;\n  text-align: center;\n  text-shadow: 0 1px 2px rgba(0, 0, 0, .6);\n}\n.carousel-caption .btn {\n  text-shadow: none;\n}\n@media screen and (min-width: 768px) {\n  .carousel-control .glyphicon-chevron-left,\n  .carousel-control .glyphicon-chevron-right,\n  .carousel-control .icon-prev,\n  .carousel-control .icon-next {\n    width: 30px;\n    height: 30px;\n    margin-top: -15px;\n    font-size: 30px;\n  }\n  .carousel-control .glyphicon-chevron-left,\n  .carousel-control .icon-prev {\n    margin-left: -15px;\n  }\n  .carousel-control .glyphicon-chevron-right,\n  .carousel-control .icon-next {\n    margin-right: -15px;\n  }\n  .carousel-caption {\n    right: 20%;\n    left: 20%;\n    padding-bottom: 30px;\n  }\n  .carousel-indicators {\n    bottom: 20px;\n  }\n}\n.clearfix:before,\n.clearfix:after,\n.dl-horizontal dd:before,\n.dl-horizontal dd:after,\n.container:before,\n.container:after,\n.container-fluid:before,\n.container-fluid:after,\n.row:before,\n.row:after,\n.form-horizontal .form-group:before,\n.form-horizontal .form-group:after,\n.btn-toolbar:before,\n.btn-toolbar:after,\n.btn-group-vertical > .btn-group:before,\n.btn-group-vertical > .btn-group:after,\n.nav:before,\n.nav:after,\n.navbar:before,\n.navbar:after,\n.navbar-header:before,\n.navbar-header:after,\n.navbar-collapse:before,\n.navbar-collapse:after,\n.pager:before,\n.pager:after,\n.panel-body:before,\n.panel-body:after,\n.modal-footer:before,\n.modal-footer:after {\n  display: table;\n  content: \" \";\n}\n.clearfix:after,\n.dl-horizontal dd:after,\n.container:after,\n.container-fluid:after,\n.row:after,\n.form-horizontal .form-group:after,\n.btn-toolbar:after,\n.btn-group-vertical > .btn-group:after,\n.nav:after,\n.navbar:after,\n.navbar-header:after,\n.navbar-collapse:after,\n.pager:after,\n.panel-body:after,\n.modal-footer:after {\n  clear: both;\n}\n.center-block {\n  display: block;\n  margin-right: auto;\n  margin-left: auto;\n}\n.pull-right {\n  float: right !important;\n}\n.pull-left {\n  float: left !important;\n}\n.hide {\n  display: none !important;\n}\n.show {\n  display: block !important;\n}\n.invisible {\n  visibility: hidden;\n}\n.text-hide {\n  font: 0/0 a;\n  color: transparent;\n  text-shadow: none;\n  background-color: transparent;\n  border: 0;\n}\n.hidden {\n  display: none !important;\n}\n.affix {\n  position: fixed;\n}\n@-ms-viewport {\n  width: device-width;\n}\n.visible-xs,\n.visible-sm,\n.visible-md,\n.visible-lg {\n  display: none !important;\n}\n.visible-xs-block,\n.visible-xs-inline,\n.visible-xs-inline-block,\n.visible-sm-block,\n.visible-sm-inline,\n.visible-sm-inline-block,\n.visible-md-block,\n.visible-md-inline,\n.visible-md-inline-block,\n.visible-lg-block,\n.visible-lg-inline,\n.visible-lg-inline-block {\n  display: none !important;\n}\n@media (max-width: 767px) {\n  .visible-xs {\n    display: block !important;\n  }\n  table.visible-xs {\n    display: table !important;\n  }\n  tr.visible-xs {\n    display: table-row !important;\n  }\n  th.visible-xs,\n  td.visible-xs {\n    display: table-cell !important;\n  }\n}\n@media (max-width: 767px) {\n  .visible-xs-block {\n    display: block !important;\n  }\n}\n@media (max-width: 767px) {\n  .visible-xs-inline {\n    display: inline !important;\n  }\n}\n@media (max-width: 767px) {\n  .visible-xs-inline-block {\n    display: inline-block !important;\n  }\n}\n@media (min-width: 768px) and (max-width: 991px) {\n  .visible-sm {\n    display: block !important;\n  }\n  table.visible-sm {\n    display: table !important;\n  }\n  tr.visible-sm {\n    display: table-row !important;\n  }\n  th.visible-sm,\n  td.visible-sm {\n    display: table-cell !important;\n  }\n}\n@media (min-width: 768px) and (max-width: 991px) {\n  .visible-sm-block {\n    display: block !important;\n  }\n}\n@media (min-width: 768px) and (max-width: 991px) {\n  .visible-sm-inline {\n    display: inline !important;\n  }\n}\n@media (min-width: 768px) and (max-width: 991px) {\n  .visible-sm-inline-block {\n    display: inline-block !important;\n  }\n}\n@media (min-width: 992px) and (max-width: 1199px) {\n  .visible-md {\n    display: block !important;\n  }\n  table.visible-md {\n    display: table !important;\n  }\n  tr.visible-md {\n    display: table-row !important;\n  }\n  th.visible-md,\n  td.visible-md {\n    display: table-cell !important;\n  }\n}\n@media (min-width: 992px) and (max-width: 1199px) {\n  .visible-md-block {\n    display: block !important;\n  }\n}\n@media (min-width: 992px) and (max-width: 1199px) {\n  .visible-md-inline {\n    display: inline !important;\n  }\n}\n@media (min-width: 992px) and (max-width: 1199px) {\n  .visible-md-inline-block {\n    display: inline-block !important;\n  }\n}\n@media (min-width: 1200px) {\n  .visible-lg {\n    display: block !important;\n  }\n  table.visible-lg {\n    display: table !important;\n  }\n  tr.visible-lg {\n    display: table-row !important;\n  }\n  th.visible-lg,\n  td.visible-lg {\n    display: table-cell !important;\n  }\n}\n@media (min-width: 1200px) {\n  .visible-lg-block {\n    display: block !important;\n  }\n}\n@media (min-width: 1200px) {\n  .visible-lg-inline {\n    display: inline !important;\n  }\n}\n@media (min-width: 1200px) {\n  .visible-lg-inline-block {\n    display: inline-block !important;\n  }\n}\n@media (max-width: 767px) {\n  .hidden-xs {\n    display: none !important;\n  }\n}\n@media (min-width: 768px) and (max-width: 991px) {\n  .hidden-sm {\n    display: none !important;\n  }\n}\n@media (min-width: 992px) and (max-width: 1199px) {\n  .hidden-md {\n    display: none !important;\n  }\n}\n@media (min-width: 1200px) {\n  .hidden-lg {\n    display: none !important;\n  }\n}\n.visible-print {\n  display: none !important;\n}\n@media print {\n  .visible-print {\n    display: block !important;\n  }\n  table.visible-print {\n    display: table !important;\n  }\n  tr.visible-print {\n    display: table-row !important;\n  }\n  th.visible-print,\n  td.visible-print {\n    display: table-cell !important;\n  }\n}\n.visible-print-block {\n  display: none !important;\n}\n@media print {\n  .visible-print-block {\n    display: block !important;\n  }\n}\n.visible-print-inline {\n  display: none !important;\n}\n@media print {\n  .visible-print-inline {\n    display: inline !important;\n  }\n}\n.visible-print-inline-block {\n  display: none !important;\n}\n@media print {\n  .visible-print-inline-block {\n    display: inline-block !important;\n  }\n}\n@media print {\n  .hidden-print {\n    display: none !important;\n  }\n}\n/*# sourceMappingURL=bootstrap.css.map */\n", ""]);
-
+	exports.push([module.id, "/*!\n * Bootstrap v3.3.5 (http://getbootstrap.com)\n * Copyright 2011-2015 Twitter, Inc.\n * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)\n */\n/*! normalize.css v3.0.3 | MIT License | github.com/necolas/normalize.css */\nhtml {\n  font-family: sans-serif;\n  -webkit-text-size-adjust: 100%;\n      -ms-text-size-adjust: 100%;\n}\nbody {\n  margin: 0;\n}\narticle,\naside,\ndetails,\nfigcaption,\nfigure,\nfooter,\nheader,\nhgroup,\nmain,\nmenu,\nnav,\nsection,\nsummary {\n  display: block;\n}\naudio,\ncanvas,\nprogress,\nvideo {\n  display: inline-block;\n  vertical-align: baseline;\n}\naudio:not([controls]) {\n  display: none;\n  height: 0;\n}\n[hidden],\ntemplate {\n  display: none;\n}\na {\n  background-color: transparent;\n}\na:active,\na:hover {\n  outline: 0;\n}\nabbr[title] {\n  border-bottom: 1px dotted;\n}\nb,\nstrong {\n  font-weight: bold;\n}\ndfn {\n  font-style: italic;\n}\nh1 {\n  margin: .67em 0;\n  font-size: 2em;\n}\nmark {\n  color: #000;\n  background: #ff0;\n}\nsmall {\n  font-size: 80%;\n}\nsub,\nsup {\n  position: relative;\n  font-size: 75%;\n  line-height: 0;\n  vertical-align: baseline;\n}\nsup {\n  top: -.5em;\n}\nsub {\n  bottom: -.25em;\n}\nimg {\n  border: 0;\n}\nsvg:not(:root) {\n  overflow: hidden;\n}\nfigure {\n  margin: 1em 40px;\n}\nhr {\n  height: 0;\n  -webkit-box-sizing: content-box;\n     -moz-box-sizing: content-box;\n          box-sizing: content-box;\n}\npre {\n  overflow: auto;\n}\ncode,\nkbd,\npre,\nsamp {\n  font-family: monospace, monospace;\n  font-size: 1em;\n}\nbutton,\ninput,\noptgroup,\nselect,\ntextarea {\n  margin: 0;\n  font: inherit;\n  color: inherit;\n}\nbutton {\n  overflow: visible;\n}\nbutton,\nselect {\n  text-transform: none;\n}\nbutton,\nhtml input[type=\"button\"],\ninput[type=\"reset\"],\ninput[type=\"submit\"] {\n  -webkit-appearance: button;\n  cursor: pointer;\n}\nbutton[disabled],\nhtml input[disabled] {\n  cursor: default;\n}\nbutton::-moz-focus-inner,\ninput::-moz-focus-inner {\n  padding: 0;\n  border: 0;\n}\ninput {\n  line-height: normal;\n}\ninput[type=\"checkbox\"],\ninput[type=\"radio\"] {\n  -webkit-box-sizing: border-box;\n     -moz-box-sizing: border-box;\n          box-sizing: border-box;\n  padding: 0;\n}\ninput[type=\"number\"]::-webkit-inner-spin-button,\ninput[type=\"number\"]::-webkit-outer-spin-button {\n  height: auto;\n}\ninput[type=\"search\"] {\n  -webkit-box-sizing: content-box;\n     -moz-box-sizing: content-box;\n          box-sizing: content-box;\n  -webkit-appearance: textfield;\n}\ninput[type=\"search\"]::-webkit-search-cancel-button,\ninput[type=\"search\"]::-webkit-search-decoration {\n  -webkit-appearance: none;\n}\nfieldset {\n  padding: .35em .625em .75em;\n  margin: 0 2px;\n  border: 1px solid #c0c0c0;\n}\nlegend {\n  padding: 0;\n  border: 0;\n}\ntextarea {\n  overflow: auto;\n}\noptgroup {\n  font-weight: bold;\n}\ntable {\n  border-spacing: 0;\n  border-collapse: collapse;\n}\ntd,\nth {\n  padding: 0;\n}\n/*! Source: https://github.com/h5bp/html5-boilerplate/blob/master/src/css/main.css */\n@media print {\n  *,\n  *:before,\n  *:after {\n    color: #000 !important;\n    text-shadow: none !important;\n    background: transparent !important;\n    -webkit-box-shadow: none !important;\n            box-shadow: none !important;\n  }\n  a,\n  a:visited {\n    text-decoration: underline;\n  }\n  a[href]:after {\n    content: \" (\" attr(href) \")\";\n  }\n  abbr[title]:after {\n    content: \" (\" attr(title) \")\";\n  }\n  a[href^=\"#\"]:after,\n  a[href^=\"javascript:\"]:after {\n    content: \"\";\n  }\n  pre,\n  blockquote {\n    border: 1px solid #999;\n\n    page-break-inside: avoid;\n  }\n  thead {\n    display: table-header-group;\n  }\n  tr,\n  img {\n    page-break-inside: avoid;\n  }\n  img {\n    max-width: 100% !important;\n  }\n  p,\n  h2,\n  h3 {\n    orphans: 3;\n    widows: 3;\n  }\n  h2,\n  h3 {\n    page-break-after: avoid;\n  }\n  .navbar {\n    display: none;\n  }\n  .btn > .caret,\n  .dropup > .btn > .caret {\n    border-top-color: #000 !important;\n  }\n  .label {\n    border: 1px solid #000;\n  }\n  .table {\n    border-collapse: collapse !important;\n  }\n  .table td,\n  .table th {\n    background-color: #fff !important;\n  }\n  .table-bordered th,\n  .table-bordered td {\n    border: 1px solid #ddd !important;\n  }\n}\n@font-face {\n  font-family: 'Glyphicons Halflings';\n\n  src: url(" + __webpack_require__(/*! ../fonts/glyphicons-halflings-regular.eot */ 7) + ");\n  src: url(" + __webpack_require__(/*! ../fonts/glyphicons-halflings-regular.eot */ 7) + "?#iefix) format('embedded-opentype'), url(" + __webpack_require__(/*! ../fonts/glyphicons-halflings-regular.woff2 */ 8) + ") format('woff2'), url(" + __webpack_require__(/*! ../fonts/glyphicons-halflings-regular.woff */ 9) + ") format('woff'), url(" + __webpack_require__(/*! ../fonts/glyphicons-halflings-regular.ttf */ 10) + ") format('truetype'), url(" + __webpack_require__(/*! ../fonts/glyphicons-halflings-regular.svg */ 11) + "#glyphicons_halflingsregular) format('svg');\n}\n.glyphicon {\n  position: relative;\n  top: 1px;\n  display: inline-block;\n  font-family: 'Glyphicons Halflings';\n  font-style: normal;\n  font-weight: normal;\n  line-height: 1;\n\n  -webkit-font-smoothing: antialiased;\n  -moz-osx-font-smoothing: grayscale;\n}\n.glyphicon-asterisk:before {\n  content: \"*\";\n}\n.glyphicon-plus:before {\n  content: \"+\";\n}\n.glyphicon-euro:before,\n.glyphicon-eur:before {\n  content: \"\\20AC\";\n}\n.glyphicon-minus:before {\n  content: \"\\2212\";\n}\n.glyphicon-cloud:before {\n  content: \"\\2601\";\n}\n.glyphicon-envelope:before {\n  content: \"\\2709\";\n}\n.glyphicon-pencil:before {\n  content: \"\\270F\";\n}\n.glyphicon-glass:before {\n  content: \"\\E001\";\n}\n.glyphicon-music:before {\n  content: \"\\E002\";\n}\n.glyphicon-search:before {\n  content: \"\\E003\";\n}\n.glyphicon-heart:before {\n  content: \"\\E005\";\n}\n.glyphicon-star:before {\n  content: \"\\E006\";\n}\n.glyphicon-star-empty:before {\n  content: \"\\E007\";\n}\n.glyphicon-user:before {\n  content: \"\\E008\";\n}\n.glyphicon-film:before {\n  content: \"\\E009\";\n}\n.glyphicon-th-large:before {\n  content: \"\\E010\";\n}\n.glyphicon-th:before {\n  content: \"\\E011\";\n}\n.glyphicon-th-list:before {\n  content: \"\\E012\";\n}\n.glyphicon-ok:before {\n  content: \"\\E013\";\n}\n.glyphicon-remove:before {\n  content: \"\\E014\";\n}\n.glyphicon-zoom-in:before {\n  content: \"\\E015\";\n}\n.glyphicon-zoom-out:before {\n  content: \"\\E016\";\n}\n.glyphicon-off:before {\n  content: \"\\E017\";\n}\n.glyphicon-signal:before {\n  content: \"\\E018\";\n}\n.glyphicon-cog:before {\n  content: \"\\E019\";\n}\n.glyphicon-trash:before {\n  content: \"\\E020\";\n}\n.glyphicon-home:before {\n  content: \"\\E021\";\n}\n.glyphicon-file:before {\n  content: \"\\E022\";\n}\n.glyphicon-time:before {\n  content: \"\\E023\";\n}\n.glyphicon-road:before {\n  content: \"\\E024\";\n}\n.glyphicon-download-alt:before {\n  content: \"\\E025\";\n}\n.glyphicon-download:before {\n  content: \"\\E026\";\n}\n.glyphicon-upload:before {\n  content: \"\\E027\";\n}\n.glyphicon-inbox:before {\n  content: \"\\E028\";\n}\n.glyphicon-play-circle:before {\n  content: \"\\E029\";\n}\n.glyphicon-repeat:before {\n  content: \"\\E030\";\n}\n.glyphicon-refresh:before {\n  content: \"\\E031\";\n}\n.glyphicon-list-alt:before {\n  content: \"\\E032\";\n}\n.glyphicon-lock:before {\n  content: \"\\E033\";\n}\n.glyphicon-flag:before {\n  content: \"\\E034\";\n}\n.glyphicon-headphones:before {\n  content: \"\\E035\";\n}\n.glyphicon-volume-off:before {\n  content: \"\\E036\";\n}\n.glyphicon-volume-down:before {\n  content: \"\\E037\";\n}\n.glyphicon-volume-up:before {\n  content: \"\\E038\";\n}\n.glyphicon-qrcode:before {\n  content: \"\\E039\";\n}\n.glyphicon-barcode:before {\n  content: \"\\E040\";\n}\n.glyphicon-tag:before {\n  content: \"\\E041\";\n}\n.glyphicon-tags:before {\n  content: \"\\E042\";\n}\n.glyphicon-book:before {\n  content: \"\\E043\";\n}\n.glyphicon-bookmark:before {\n  content: \"\\E044\";\n}\n.glyphicon-print:before {\n  content: \"\\E045\";\n}\n.glyphicon-camera:before {\n  content: \"\\E046\";\n}\n.glyphicon-font:before {\n  content: \"\\E047\";\n}\n.glyphicon-bold:before {\n  content: \"\\E048\";\n}\n.glyphicon-italic:before {\n  content: \"\\E049\";\n}\n.glyphicon-text-height:before {\n  content: \"\\E050\";\n}\n.glyphicon-text-width:before {\n  content: \"\\E051\";\n}\n.glyphicon-align-left:before {\n  content: \"\\E052\";\n}\n.glyphicon-align-center:before {\n  content: \"\\E053\";\n}\n.glyphicon-align-right:before {\n  content: \"\\E054\";\n}\n.glyphicon-align-justify:before {\n  content: \"\\E055\";\n}\n.glyphicon-list:before {\n  content: \"\\E056\";\n}\n.glyphicon-indent-left:before {\n  content: \"\\E057\";\n}\n.glyphicon-indent-right:before {\n  content: \"\\E058\";\n}\n.glyphicon-facetime-video:before {\n  content: \"\\E059\";\n}\n.glyphicon-picture:before {\n  content: \"\\E060\";\n}\n.glyphicon-map-marker:before {\n  content: \"\\E062\";\n}\n.glyphicon-adjust:before {\n  content: \"\\E063\";\n}\n.glyphicon-tint:before {\n  content: \"\\E064\";\n}\n.glyphicon-edit:before {\n  content: \"\\E065\";\n}\n.glyphicon-share:before {\n  content: \"\\E066\";\n}\n.glyphicon-check:before {\n  content: \"\\E067\";\n}\n.glyphicon-move:before {\n  content: \"\\E068\";\n}\n.glyphicon-step-backward:before {\n  content: \"\\E069\";\n}\n.glyphicon-fast-backward:before {\n  content: \"\\E070\";\n}\n.glyphicon-backward:before {\n  content: \"\\E071\";\n}\n.glyphicon-play:before {\n  content: \"\\E072\";\n}\n.glyphicon-pause:before {\n  content: \"\\E073\";\n}\n.glyphicon-stop:before {\n  content: \"\\E074\";\n}\n.glyphicon-forward:before {\n  content: \"\\E075\";\n}\n.glyphicon-fast-forward:before {\n  content: \"\\E076\";\n}\n.glyphicon-step-forward:before {\n  content: \"\\E077\";\n}\n.glyphicon-eject:before {\n  content: \"\\E078\";\n}\n.glyphicon-chevron-left:before {\n  content: \"\\E079\";\n}\n.glyphicon-chevron-right:before {\n  content: \"\\E080\";\n}\n.glyphicon-plus-sign:before {\n  content: \"\\E081\";\n}\n.glyphicon-minus-sign:before {\n  content: \"\\E082\";\n}\n.glyphicon-remove-sign:before {\n  content: \"\\E083\";\n}\n.glyphicon-ok-sign:before {\n  content: \"\\E084\";\n}\n.glyphicon-question-sign:before {\n  content: \"\\E085\";\n}\n.glyphicon-info-sign:before {\n  content: \"\\E086\";\n}\n.glyphicon-screenshot:before {\n  content: \"\\E087\";\n}\n.glyphicon-remove-circle:before {\n  content: \"\\E088\";\n}\n.glyphicon-ok-circle:before {\n  content: \"\\E089\";\n}\n.glyphicon-ban-circle:before {\n  content: \"\\E090\";\n}\n.glyphicon-arrow-left:before {\n  content: \"\\E091\";\n}\n.glyphicon-arrow-right:before {\n  content: \"\\E092\";\n}\n.glyphicon-arrow-up:before {\n  content: \"\\E093\";\n}\n.glyphicon-arrow-down:before {\n  content: \"\\E094\";\n}\n.glyphicon-share-alt:before {\n  content: \"\\E095\";\n}\n.glyphicon-resize-full:before {\n  content: \"\\E096\";\n}\n.glyphicon-resize-small:before {\n  content: \"\\E097\";\n}\n.glyphicon-exclamation-sign:before {\n  content: \"\\E101\";\n}\n.glyphicon-gift:before {\n  content: \"\\E102\";\n}\n.glyphicon-leaf:before {\n  content: \"\\E103\";\n}\n.glyphicon-fire:before {\n  content: \"\\E104\";\n}\n.glyphicon-eye-open:before {\n  content: \"\\E105\";\n}\n.glyphicon-eye-close:before {\n  content: \"\\E106\";\n}\n.glyphicon-warning-sign:before {\n  content: \"\\E107\";\n}\n.glyphicon-plane:before {\n  content: \"\\E108\";\n}\n.glyphicon-calendar:before {\n  content: \"\\E109\";\n}\n.glyphicon-random:before {\n  content: \"\\E110\";\n}\n.glyphicon-comment:before {\n  content: \"\\E111\";\n}\n.glyphicon-magnet:before {\n  content: \"\\E112\";\n}\n.glyphicon-chevron-up:before {\n  content: \"\\E113\";\n}\n.glyphicon-chevron-down:before {\n  content: \"\\E114\";\n}\n.glyphicon-retweet:before {\n  content: \"\\E115\";\n}\n.glyphicon-shopping-cart:before {\n  content: \"\\E116\";\n}\n.glyphicon-folder-close:before {\n  content: \"\\E117\";\n}\n.glyphicon-folder-open:before {\n  content: \"\\E118\";\n}\n.glyphicon-resize-vertical:before {\n  content: \"\\E119\";\n}\n.glyphicon-resize-horizontal:before {\n  content: \"\\E120\";\n}\n.glyphicon-hdd:before {\n  content: \"\\E121\";\n}\n.glyphicon-bullhorn:before {\n  content: \"\\E122\";\n}\n.glyphicon-bell:before {\n  content: \"\\E123\";\n}\n.glyphicon-certificate:before {\n  content: \"\\E124\";\n}\n.glyphicon-thumbs-up:before {\n  content: \"\\E125\";\n}\n.glyphicon-thumbs-down:before {\n  content: \"\\E126\";\n}\n.glyphicon-hand-right:before {\n  content: \"\\E127\";\n}\n.glyphicon-hand-left:before {\n  content: \"\\E128\";\n}\n.glyphicon-hand-up:before {\n  content: \"\\E129\";\n}\n.glyphicon-hand-down:before {\n  content: \"\\E130\";\n}\n.glyphicon-circle-arrow-right:before {\n  content: \"\\E131\";\n}\n.glyphicon-circle-arrow-left:before {\n  content: \"\\E132\";\n}\n.glyphicon-circle-arrow-up:before {\n  content: \"\\E133\";\n}\n.glyphicon-circle-arrow-down:before {\n  content: \"\\E134\";\n}\n.glyphicon-globe:before {\n  content: \"\\E135\";\n}\n.glyphicon-wrench:before {\n  content: \"\\E136\";\n}\n.glyphicon-tasks:before {\n  content: \"\\E137\";\n}\n.glyphicon-filter:before {\n  content: \"\\E138\";\n}\n.glyphicon-briefcase:before {\n  content: \"\\E139\";\n}\n.glyphicon-fullscreen:before {\n  content: \"\\E140\";\n}\n.glyphicon-dashboard:before {\n  content: \"\\E141\";\n}\n.glyphicon-paperclip:before {\n  content: \"\\E142\";\n}\n.glyphicon-heart-empty:before {\n  content: \"\\E143\";\n}\n.glyphicon-link:before {\n  content: \"\\E144\";\n}\n.glyphicon-phone:before {\n  content: \"\\E145\";\n}\n.glyphicon-pushpin:before {\n  content: \"\\E146\";\n}\n.glyphicon-usd:before {\n  content: \"\\E148\";\n}\n.glyphicon-gbp:before {\n  content: \"\\E149\";\n}\n.glyphicon-sort:before {\n  content: \"\\E150\";\n}\n.glyphicon-sort-by-alphabet:before {\n  content: \"\\E151\";\n}\n.glyphicon-sort-by-alphabet-alt:before {\n  content: \"\\E152\";\n}\n.glyphicon-sort-by-order:before {\n  content: \"\\E153\";\n}\n.glyphicon-sort-by-order-alt:before {\n  content: \"\\E154\";\n}\n.glyphicon-sort-by-attributes:before {\n  content: \"\\E155\";\n}\n.glyphicon-sort-by-attributes-alt:before {\n  content: \"\\E156\";\n}\n.glyphicon-unchecked:before {\n  content: \"\\E157\";\n}\n.glyphicon-expand:before {\n  content: \"\\E158\";\n}\n.glyphicon-collapse-down:before {\n  content: \"\\E159\";\n}\n.glyphicon-collapse-up:before {\n  content: \"\\E160\";\n}\n.glyphicon-log-in:before {\n  content: \"\\E161\";\n}\n.glyphicon-flash:before {\n  content: \"\\E162\";\n}\n.glyphicon-log-out:before {\n  content: \"\\E163\";\n}\n.glyphicon-new-window:before {\n  content: \"\\E164\";\n}\n.glyphicon-record:before {\n  content: \"\\E165\";\n}\n.glyphicon-save:before {\n  content: \"\\E166\";\n}\n.glyphicon-open:before {\n  content: \"\\E167\";\n}\n.glyphicon-saved:before {\n  content: \"\\E168\";\n}\n.glyphicon-import:before {\n  content: \"\\E169\";\n}\n.glyphicon-export:before {\n  content: \"\\E170\";\n}\n.glyphicon-send:before {\n  content: \"\\E171\";\n}\n.glyphicon-floppy-disk:before {\n  content: \"\\E172\";\n}\n.glyphicon-floppy-saved:before {\n  content: \"\\E173\";\n}\n.glyphicon-floppy-remove:before {\n  content: \"\\E174\";\n}\n.glyphicon-floppy-save:before {\n  content: \"\\E175\";\n}\n.glyphicon-floppy-open:before {\n  content: \"\\E176\";\n}\n.glyphicon-credit-card:before {\n  content: \"\\E177\";\n}\n.glyphicon-transfer:before {\n  content: \"\\E178\";\n}\n.glyphicon-cutlery:before {\n  content: \"\\E179\";\n}\n.glyphicon-header:before {\n  content: \"\\E180\";\n}\n.glyphicon-compressed:before {\n  content: \"\\E181\";\n}\n.glyphicon-earphone:before {\n  content: \"\\E182\";\n}\n.glyphicon-phone-alt:before {\n  content: \"\\E183\";\n}\n.glyphicon-tower:before {\n  content: \"\\E184\";\n}\n.glyphicon-stats:before {\n  content: \"\\E185\";\n}\n.glyphicon-sd-video:before {\n  content: \"\\E186\";\n}\n.glyphicon-hd-video:before {\n  content: \"\\E187\";\n}\n.glyphicon-subtitles:before {\n  content: \"\\E188\";\n}\n.glyphicon-sound-stereo:before {\n  content: \"\\E189\";\n}\n.glyphicon-sound-dolby:before {\n  content: \"\\E190\";\n}\n.glyphicon-sound-5-1:before {\n  content: \"\\E191\";\n}\n.glyphicon-sound-6-1:before {\n  content: \"\\E192\";\n}\n.glyphicon-sound-7-1:before {\n  content: \"\\E193\";\n}\n.glyphicon-copyright-mark:before {\n  content: \"\\E194\";\n}\n.glyphicon-registration-mark:before {\n  content: \"\\E195\";\n}\n.glyphicon-cloud-download:before {\n  content: \"\\E197\";\n}\n.glyphicon-cloud-upload:before {\n  content: \"\\E198\";\n}\n.glyphicon-tree-conifer:before {\n  content: \"\\E199\";\n}\n.glyphicon-tree-deciduous:before {\n  content: \"\\E200\";\n}\n.glyphicon-cd:before {\n  content: \"\\E201\";\n}\n.glyphicon-save-file:before {\n  content: \"\\E202\";\n}\n.glyphicon-open-file:before {\n  content: \"\\E203\";\n}\n.glyphicon-level-up:before {\n  content: \"\\E204\";\n}\n.glyphicon-copy:before {\n  content: \"\\E205\";\n}\n.glyphicon-paste:before {\n  content: \"\\E206\";\n}\n.glyphicon-alert:before {\n  content: \"\\E209\";\n}\n.glyphicon-equalizer:before {\n  content: \"\\E210\";\n}\n.glyphicon-king:before {\n  content: \"\\E211\";\n}\n.glyphicon-queen:before {\n  content: \"\\E212\";\n}\n.glyphicon-pawn:before {\n  content: \"\\E213\";\n}\n.glyphicon-bishop:before {\n  content: \"\\E214\";\n}\n.glyphicon-knight:before {\n  content: \"\\E215\";\n}\n.glyphicon-baby-formula:before {\n  content: \"\\E216\";\n}\n.glyphicon-tent:before {\n  content: \"\\26FA\";\n}\n.glyphicon-blackboard:before {\n  content: \"\\E218\";\n}\n.glyphicon-bed:before {\n  content: \"\\E219\";\n}\n.glyphicon-apple:before {\n  content: \"\\F8FF\";\n}\n.glyphicon-erase:before {\n  content: \"\\E221\";\n}\n.glyphicon-hourglass:before {\n  content: \"\\231B\";\n}\n.glyphicon-lamp:before {\n  content: \"\\E223\";\n}\n.glyphicon-duplicate:before {\n  content: \"\\E224\";\n}\n.glyphicon-piggy-bank:before {\n  content: \"\\E225\";\n}\n.glyphicon-scissors:before {\n  content: \"\\E226\";\n}\n.glyphicon-bitcoin:before {\n  content: \"\\E227\";\n}\n.glyphicon-btc:before {\n  content: \"\\E227\";\n}\n.glyphicon-xbt:before {\n  content: \"\\E227\";\n}\n.glyphicon-yen:before {\n  content: \"\\A5\";\n}\n.glyphicon-jpy:before {\n  content: \"\\A5\";\n}\n.glyphicon-ruble:before {\n  content: \"\\20BD\";\n}\n.glyphicon-rub:before {\n  content: \"\\20BD\";\n}\n.glyphicon-scale:before {\n  content: \"\\E230\";\n}\n.glyphicon-ice-lolly:before {\n  content: \"\\E231\";\n}\n.glyphicon-ice-lolly-tasted:before {\n  content: \"\\E232\";\n}\n.glyphicon-education:before {\n  content: \"\\E233\";\n}\n.glyphicon-option-horizontal:before {\n  content: \"\\E234\";\n}\n.glyphicon-option-vertical:before {\n  content: \"\\E235\";\n}\n.glyphicon-menu-hamburger:before {\n  content: \"\\E236\";\n}\n.glyphicon-modal-window:before {\n  content: \"\\E237\";\n}\n.glyphicon-oil:before {\n  content: \"\\E238\";\n}\n.glyphicon-grain:before {\n  content: \"\\E239\";\n}\n.glyphicon-sunglasses:before {\n  content: \"\\E240\";\n}\n.glyphicon-text-size:before {\n  content: \"\\E241\";\n}\n.glyphicon-text-color:before {\n  content: \"\\E242\";\n}\n.glyphicon-text-background:before {\n  content: \"\\E243\";\n}\n.glyphicon-object-align-top:before {\n  content: \"\\E244\";\n}\n.glyphicon-object-align-bottom:before {\n  content: \"\\E245\";\n}\n.glyphicon-object-align-horizontal:before {\n  content: \"\\E246\";\n}\n.glyphicon-object-align-left:before {\n  content: \"\\E247\";\n}\n.glyphicon-object-align-vertical:before {\n  content: \"\\E248\";\n}\n.glyphicon-object-align-right:before {\n  content: \"\\E249\";\n}\n.glyphicon-triangle-right:before {\n  content: \"\\E250\";\n}\n.glyphicon-triangle-left:before {\n  content: \"\\E251\";\n}\n.glyphicon-triangle-bottom:before {\n  content: \"\\E252\";\n}\n.glyphicon-triangle-top:before {\n  content: \"\\E253\";\n}\n.glyphicon-console:before {\n  content: \"\\E254\";\n}\n.glyphicon-superscript:before {\n  content: \"\\E255\";\n}\n.glyphicon-subscript:before {\n  content: \"\\E256\";\n}\n.glyphicon-menu-left:before {\n  content: \"\\E257\";\n}\n.glyphicon-menu-right:before {\n  content: \"\\E258\";\n}\n.glyphicon-menu-down:before {\n  content: \"\\E259\";\n}\n.glyphicon-menu-up:before {\n  content: \"\\E260\";\n}\n* {\n  -webkit-box-sizing: border-box;\n     -moz-box-sizing: border-box;\n          box-sizing: border-box;\n}\n*:before,\n*:after {\n  -webkit-box-sizing: border-box;\n     -moz-box-sizing: border-box;\n          box-sizing: border-box;\n}\nhtml {\n  font-size: 10px;\n\n  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);\n}\nbody {\n  font-family: \"Helvetica Neue\", Helvetica, Arial, sans-serif;\n  font-size: 14px;\n  line-height: 1.42857143;\n  color: #333;\n  background-color: #fff;\n}\ninput,\nbutton,\nselect,\ntextarea {\n  font-family: inherit;\n  font-size: inherit;\n  line-height: inherit;\n}\na {\n  color: #337ab7;\n  text-decoration: none;\n}\na:hover,\na:focus {\n  color: #23527c;\n  text-decoration: underline;\n}\na:focus {\n  outline: thin dotted;\n  outline: 5px auto -webkit-focus-ring-color;\n  outline-offset: -2px;\n}\nfigure {\n  margin: 0;\n}\nimg {\n  vertical-align: middle;\n}\n.img-responsive,\n.thumbnail > img,\n.thumbnail a > img,\n.carousel-inner > .item > img,\n.carousel-inner > .item > a > img {\n  display: block;\n  max-width: 100%;\n  height: auto;\n}\n.img-rounded {\n  border-radius: 6px;\n}\n.img-thumbnail {\n  display: inline-block;\n  max-width: 100%;\n  height: auto;\n  padding: 4px;\n  line-height: 1.42857143;\n  background-color: #fff;\n  border: 1px solid #ddd;\n  border-radius: 4px;\n  -webkit-transition: all .2s ease-in-out;\n       -o-transition: all .2s ease-in-out;\n          transition: all .2s ease-in-out;\n}\n.img-circle {\n  border-radius: 50%;\n}\nhr {\n  margin-top: 20px;\n  margin-bottom: 20px;\n  border: 0;\n  border-top: 1px solid #eee;\n}\n.sr-only {\n  position: absolute;\n  width: 1px;\n  height: 1px;\n  padding: 0;\n  margin: -1px;\n  overflow: hidden;\n  clip: rect(0, 0, 0, 0);\n  border: 0;\n}\n.sr-only-focusable:active,\n.sr-only-focusable:focus {\n  position: static;\n  width: auto;\n  height: auto;\n  margin: 0;\n  overflow: visible;\n  clip: auto;\n}\n[role=\"button\"] {\n  cursor: pointer;\n}\nh1,\nh2,\nh3,\nh4,\nh5,\nh6,\n.h1,\n.h2,\n.h3,\n.h4,\n.h5,\n.h6 {\n  font-family: inherit;\n  font-weight: 500;\n  line-height: 1.1;\n  color: inherit;\n}\nh1 small,\nh2 small,\nh3 small,\nh4 small,\nh5 small,\nh6 small,\n.h1 small,\n.h2 small,\n.h3 small,\n.h4 small,\n.h5 small,\n.h6 small,\nh1 .small,\nh2 .small,\nh3 .small,\nh4 .small,\nh5 .small,\nh6 .small,\n.h1 .small,\n.h2 .small,\n.h3 .small,\n.h4 .small,\n.h5 .small,\n.h6 .small {\n  font-weight: normal;\n  line-height: 1;\n  color: #777;\n}\nh1,\n.h1,\nh2,\n.h2,\nh3,\n.h3 {\n  margin-top: 20px;\n  margin-bottom: 10px;\n}\nh1 small,\n.h1 small,\nh2 small,\n.h2 small,\nh3 small,\n.h3 small,\nh1 .small,\n.h1 .small,\nh2 .small,\n.h2 .small,\nh3 .small,\n.h3 .small {\n  font-size: 65%;\n}\nh4,\n.h4,\nh5,\n.h5,\nh6,\n.h6 {\n  margin-top: 10px;\n  margin-bottom: 10px;\n}\nh4 small,\n.h4 small,\nh5 small,\n.h5 small,\nh6 small,\n.h6 small,\nh4 .small,\n.h4 .small,\nh5 .small,\n.h5 .small,\nh6 .small,\n.h6 .small {\n  font-size: 75%;\n}\nh1,\n.h1 {\n  font-size: 36px;\n}\nh2,\n.h2 {\n  font-size: 30px;\n}\nh3,\n.h3 {\n  font-size: 24px;\n}\nh4,\n.h4 {\n  font-size: 18px;\n}\nh5,\n.h5 {\n  font-size: 14px;\n}\nh6,\n.h6 {\n  font-size: 12px;\n}\np {\n  margin: 0 0 10px;\n}\n.lead {\n  margin-bottom: 20px;\n  font-size: 16px;\n  font-weight: 300;\n  line-height: 1.4;\n}\n@media (min-width: 768px) {\n  .lead {\n    font-size: 21px;\n  }\n}\nsmall,\n.small {\n  font-size: 85%;\n}\nmark,\n.mark {\n  padding: .2em;\n  background-color: #fcf8e3;\n}\n.text-left {\n  text-align: left;\n}\n.text-right {\n  text-align: right;\n}\n.text-center {\n  text-align: center;\n}\n.text-justify {\n  text-align: justify;\n}\n.text-nowrap {\n  white-space: nowrap;\n}\n.text-lowercase {\n  text-transform: lowercase;\n}\n.text-uppercase {\n  text-transform: uppercase;\n}\n.text-capitalize {\n  text-transform: capitalize;\n}\n.text-muted {\n  color: #777;\n}\n.text-primary {\n  color: #337ab7;\n}\na.text-primary:hover,\na.text-primary:focus {\n  color: #286090;\n}\n.text-success {\n  color: #3c763d;\n}\na.text-success:hover,\na.text-success:focus {\n  color: #2b542c;\n}\n.text-info {\n  color: #31708f;\n}\na.text-info:hover,\na.text-info:focus {\n  color: #245269;\n}\n.text-warning {\n  color: #8a6d3b;\n}\na.text-warning:hover,\na.text-warning:focus {\n  color: #66512c;\n}\n.text-danger {\n  color: #a94442;\n}\na.text-danger:hover,\na.text-danger:focus {\n  color: #843534;\n}\n.bg-primary {\n  color: #fff;\n  background-color: #337ab7;\n}\na.bg-primary:hover,\na.bg-primary:focus {\n  background-color: #286090;\n}\n.bg-success {\n  background-color: #dff0d8;\n}\na.bg-success:hover,\na.bg-success:focus {\n  background-color: #c1e2b3;\n}\n.bg-info {\n  background-color: #d9edf7;\n}\na.bg-info:hover,\na.bg-info:focus {\n  background-color: #afd9ee;\n}\n.bg-warning {\n  background-color: #fcf8e3;\n}\na.bg-warning:hover,\na.bg-warning:focus {\n  background-color: #f7ecb5;\n}\n.bg-danger {\n  background-color: #f2dede;\n}\na.bg-danger:hover,\na.bg-danger:focus {\n  background-color: #e4b9b9;\n}\n.page-header {\n  padding-bottom: 9px;\n  margin: 40px 0 20px;\n  border-bottom: 1px solid #eee;\n}\nul,\nol {\n  margin-top: 0;\n  margin-bottom: 10px;\n}\nul ul,\nol ul,\nul ol,\nol ol {\n  margin-bottom: 0;\n}\n.list-unstyled {\n  padding-left: 0;\n  list-style: none;\n}\n.list-inline {\n  padding-left: 0;\n  margin-left: -5px;\n  list-style: none;\n}\n.list-inline > li {\n  display: inline-block;\n  padding-right: 5px;\n  padding-left: 5px;\n}\ndl {\n  margin-top: 0;\n  margin-bottom: 20px;\n}\ndt,\ndd {\n  line-height: 1.42857143;\n}\ndt {\n  font-weight: bold;\n}\ndd {\n  margin-left: 0;\n}\n@media (min-width: 768px) {\n  .dl-horizontal dt {\n    float: left;\n    width: 160px;\n    overflow: hidden;\n    clear: left;\n    text-align: right;\n    text-overflow: ellipsis;\n    white-space: nowrap;\n  }\n  .dl-horizontal dd {\n    margin-left: 180px;\n  }\n}\nabbr[title],\nabbr[data-original-title] {\n  cursor: help;\n  border-bottom: 1px dotted #777;\n}\n.initialism {\n  font-size: 90%;\n  text-transform: uppercase;\n}\nblockquote {\n  padding: 10px 20px;\n  margin: 0 0 20px;\n  font-size: 17.5px;\n  border-left: 5px solid #eee;\n}\nblockquote p:last-child,\nblockquote ul:last-child,\nblockquote ol:last-child {\n  margin-bottom: 0;\n}\nblockquote footer,\nblockquote small,\nblockquote .small {\n  display: block;\n  font-size: 80%;\n  line-height: 1.42857143;\n  color: #777;\n}\nblockquote footer:before,\nblockquote small:before,\nblockquote .small:before {\n  content: '\\2014   \\A0';\n}\n.blockquote-reverse,\nblockquote.pull-right {\n  padding-right: 15px;\n  padding-left: 0;\n  text-align: right;\n  border-right: 5px solid #eee;\n  border-left: 0;\n}\n.blockquote-reverse footer:before,\nblockquote.pull-right footer:before,\n.blockquote-reverse small:before,\nblockquote.pull-right small:before,\n.blockquote-reverse .small:before,\nblockquote.pull-right .small:before {\n  content: '';\n}\n.blockquote-reverse footer:after,\nblockquote.pull-right footer:after,\n.blockquote-reverse small:after,\nblockquote.pull-right small:after,\n.blockquote-reverse .small:after,\nblockquote.pull-right .small:after {\n  content: '\\A0   \\2014';\n}\naddress {\n  margin-bottom: 20px;\n  font-style: normal;\n  line-height: 1.42857143;\n}\ncode,\nkbd,\npre,\nsamp {\n  font-family: Menlo, Monaco, Consolas, \"Courier New\", monospace;\n}\ncode {\n  padding: 2px 4px;\n  font-size: 90%;\n  color: #c7254e;\n  background-color: #f9f2f4;\n  border-radius: 4px;\n}\nkbd {\n  padding: 2px 4px;\n  font-size: 90%;\n  color: #fff;\n  background-color: #333;\n  border-radius: 3px;\n  -webkit-box-shadow: inset 0 -1px 0 rgba(0, 0, 0, .25);\n          box-shadow: inset 0 -1px 0 rgba(0, 0, 0, .25);\n}\nkbd kbd {\n  padding: 0;\n  font-size: 100%;\n  font-weight: bold;\n  -webkit-box-shadow: none;\n          box-shadow: none;\n}\npre {\n  display: block;\n  padding: 9.5px;\n  margin: 0 0 10px;\n  font-size: 13px;\n  line-height: 1.42857143;\n  color: #333;\n  word-break: break-all;\n  word-wrap: break-word;\n  background-color: #f5f5f5;\n  border: 1px solid #ccc;\n  border-radius: 4px;\n}\npre code {\n  padding: 0;\n  font-size: inherit;\n  color: inherit;\n  white-space: pre-wrap;\n  background-color: transparent;\n  border-radius: 0;\n}\n.pre-scrollable {\n  max-height: 340px;\n  overflow-y: scroll;\n}\n.container {\n  padding-right: 15px;\n  padding-left: 15px;\n  margin-right: auto;\n  margin-left: auto;\n}\n@media (min-width: 768px) {\n  .container {\n    width: 750px;\n  }\n}\n@media (min-width: 992px) {\n  .container {\n    width: 970px;\n  }\n}\n@media (min-width: 1200px) {\n  .container {\n    width: 1170px;\n  }\n}\n.container-fluid {\n  padding-right: 15px;\n  padding-left: 15px;\n  margin-right: auto;\n  margin-left: auto;\n}\n.row {\n  margin-right: -15px;\n  margin-left: -15px;\n}\n.col-xs-1, .col-sm-1, .col-md-1, .col-lg-1, .col-xs-2, .col-sm-2, .col-md-2, .col-lg-2, .col-xs-3, .col-sm-3, .col-md-3, .col-lg-3, .col-xs-4, .col-sm-4, .col-md-4, .col-lg-4, .col-xs-5, .col-sm-5, .col-md-5, .col-lg-5, .col-xs-6, .col-sm-6, .col-md-6, .col-lg-6, .col-xs-7, .col-sm-7, .col-md-7, .col-lg-7, .col-xs-8, .col-sm-8, .col-md-8, .col-lg-8, .col-xs-9, .col-sm-9, .col-md-9, .col-lg-9, .col-xs-10, .col-sm-10, .col-md-10, .col-lg-10, .col-xs-11, .col-sm-11, .col-md-11, .col-lg-11, .col-xs-12, .col-sm-12, .col-md-12, .col-lg-12 {\n  position: relative;\n  min-height: 1px;\n  padding-right: 15px;\n  padding-left: 15px;\n}\n.col-xs-1, .col-xs-2, .col-xs-3, .col-xs-4, .col-xs-5, .col-xs-6, .col-xs-7, .col-xs-8, .col-xs-9, .col-xs-10, .col-xs-11, .col-xs-12 {\n  float: left;\n}\n.col-xs-12 {\n  width: 100%;\n}\n.col-xs-11 {\n  width: 91.66666667%;\n}\n.col-xs-10 {\n  width: 83.33333333%;\n}\n.col-xs-9 {\n  width: 75%;\n}\n.col-xs-8 {\n  width: 66.66666667%;\n}\n.col-xs-7 {\n  width: 58.33333333%;\n}\n.col-xs-6 {\n  width: 50%;\n}\n.col-xs-5 {\n  width: 41.66666667%;\n}\n.col-xs-4 {\n  width: 33.33333333%;\n}\n.col-xs-3 {\n  width: 25%;\n}\n.col-xs-2 {\n  width: 16.66666667%;\n}\n.col-xs-1 {\n  width: 8.33333333%;\n}\n.col-xs-pull-12 {\n  right: 100%;\n}\n.col-xs-pull-11 {\n  right: 91.66666667%;\n}\n.col-xs-pull-10 {\n  right: 83.33333333%;\n}\n.col-xs-pull-9 {\n  right: 75%;\n}\n.col-xs-pull-8 {\n  right: 66.66666667%;\n}\n.col-xs-pull-7 {\n  right: 58.33333333%;\n}\n.col-xs-pull-6 {\n  right: 50%;\n}\n.col-xs-pull-5 {\n  right: 41.66666667%;\n}\n.col-xs-pull-4 {\n  right: 33.33333333%;\n}\n.col-xs-pull-3 {\n  right: 25%;\n}\n.col-xs-pull-2 {\n  right: 16.66666667%;\n}\n.col-xs-pull-1 {\n  right: 8.33333333%;\n}\n.col-xs-pull-0 {\n  right: auto;\n}\n.col-xs-push-12 {\n  left: 100%;\n}\n.col-xs-push-11 {\n  left: 91.66666667%;\n}\n.col-xs-push-10 {\n  left: 83.33333333%;\n}\n.col-xs-push-9 {\n  left: 75%;\n}\n.col-xs-push-8 {\n  left: 66.66666667%;\n}\n.col-xs-push-7 {\n  left: 58.33333333%;\n}\n.col-xs-push-6 {\n  left: 50%;\n}\n.col-xs-push-5 {\n  left: 41.66666667%;\n}\n.col-xs-push-4 {\n  left: 33.33333333%;\n}\n.col-xs-push-3 {\n  left: 25%;\n}\n.col-xs-push-2 {\n  left: 16.66666667%;\n}\n.col-xs-push-1 {\n  left: 8.33333333%;\n}\n.col-xs-push-0 {\n  left: auto;\n}\n.col-xs-offset-12 {\n  margin-left: 100%;\n}\n.col-xs-offset-11 {\n  margin-left: 91.66666667%;\n}\n.col-xs-offset-10 {\n  margin-left: 83.33333333%;\n}\n.col-xs-offset-9 {\n  margin-left: 75%;\n}\n.col-xs-offset-8 {\n  margin-left: 66.66666667%;\n}\n.col-xs-offset-7 {\n  margin-left: 58.33333333%;\n}\n.col-xs-offset-6 {\n  margin-left: 50%;\n}\n.col-xs-offset-5 {\n  margin-left: 41.66666667%;\n}\n.col-xs-offset-4 {\n  margin-left: 33.33333333%;\n}\n.col-xs-offset-3 {\n  margin-left: 25%;\n}\n.col-xs-offset-2 {\n  margin-left: 16.66666667%;\n}\n.col-xs-offset-1 {\n  margin-left: 8.33333333%;\n}\n.col-xs-offset-0 {\n  margin-left: 0;\n}\n@media (min-width: 768px) {\n  .col-sm-1, .col-sm-2, .col-sm-3, .col-sm-4, .col-sm-5, .col-sm-6, .col-sm-7, .col-sm-8, .col-sm-9, .col-sm-10, .col-sm-11, .col-sm-12 {\n    float: left;\n  }\n  .col-sm-12 {\n    width: 100%;\n  }\n  .col-sm-11 {\n    width: 91.66666667%;\n  }\n  .col-sm-10 {\n    width: 83.33333333%;\n  }\n  .col-sm-9 {\n    width: 75%;\n  }\n  .col-sm-8 {\n    width: 66.66666667%;\n  }\n  .col-sm-7 {\n    width: 58.33333333%;\n  }\n  .col-sm-6 {\n    width: 50%;\n  }\n  .col-sm-5 {\n    width: 41.66666667%;\n  }\n  .col-sm-4 {\n    width: 33.33333333%;\n  }\n  .col-sm-3 {\n    width: 25%;\n  }\n  .col-sm-2 {\n    width: 16.66666667%;\n  }\n  .col-sm-1 {\n    width: 8.33333333%;\n  }\n  .col-sm-pull-12 {\n    right: 100%;\n  }\n  .col-sm-pull-11 {\n    right: 91.66666667%;\n  }\n  .col-sm-pull-10 {\n    right: 83.33333333%;\n  }\n  .col-sm-pull-9 {\n    right: 75%;\n  }\n  .col-sm-pull-8 {\n    right: 66.66666667%;\n  }\n  .col-sm-pull-7 {\n    right: 58.33333333%;\n  }\n  .col-sm-pull-6 {\n    right: 50%;\n  }\n  .col-sm-pull-5 {\n    right: 41.66666667%;\n  }\n  .col-sm-pull-4 {\n    right: 33.33333333%;\n  }\n  .col-sm-pull-3 {\n    right: 25%;\n  }\n  .col-sm-pull-2 {\n    right: 16.66666667%;\n  }\n  .col-sm-pull-1 {\n    right: 8.33333333%;\n  }\n  .col-sm-pull-0 {\n    right: auto;\n  }\n  .col-sm-push-12 {\n    left: 100%;\n  }\n  .col-sm-push-11 {\n    left: 91.66666667%;\n  }\n  .col-sm-push-10 {\n    left: 83.33333333%;\n  }\n  .col-sm-push-9 {\n    left: 75%;\n  }\n  .col-sm-push-8 {\n    left: 66.66666667%;\n  }\n  .col-sm-push-7 {\n    left: 58.33333333%;\n  }\n  .col-sm-push-6 {\n    left: 50%;\n  }\n  .col-sm-push-5 {\n    left: 41.66666667%;\n  }\n  .col-sm-push-4 {\n    left: 33.33333333%;\n  }\n  .col-sm-push-3 {\n    left: 25%;\n  }\n  .col-sm-push-2 {\n    left: 16.66666667%;\n  }\n  .col-sm-push-1 {\n    left: 8.33333333%;\n  }\n  .col-sm-push-0 {\n    left: auto;\n  }\n  .col-sm-offset-12 {\n    margin-left: 100%;\n  }\n  .col-sm-offset-11 {\n    margin-left: 91.66666667%;\n  }\n  .col-sm-offset-10 {\n    margin-left: 83.33333333%;\n  }\n  .col-sm-offset-9 {\n    margin-left: 75%;\n  }\n  .col-sm-offset-8 {\n    margin-left: 66.66666667%;\n  }\n  .col-sm-offset-7 {\n    margin-left: 58.33333333%;\n  }\n  .col-sm-offset-6 {\n    margin-left: 50%;\n  }\n  .col-sm-offset-5 {\n    margin-left: 41.66666667%;\n  }\n  .col-sm-offset-4 {\n    margin-left: 33.33333333%;\n  }\n  .col-sm-offset-3 {\n    margin-left: 25%;\n  }\n  .col-sm-offset-2 {\n    margin-left: 16.66666667%;\n  }\n  .col-sm-offset-1 {\n    margin-left: 8.33333333%;\n  }\n  .col-sm-offset-0 {\n    margin-left: 0;\n  }\n}\n@media (min-width: 992px) {\n  .col-md-1, .col-md-2, .col-md-3, .col-md-4, .col-md-5, .col-md-6, .col-md-7, .col-md-8, .col-md-9, .col-md-10, .col-md-11, .col-md-12 {\n    float: left;\n  }\n  .col-md-12 {\n    width: 100%;\n  }\n  .col-md-11 {\n    width: 91.66666667%;\n  }\n  .col-md-10 {\n    width: 83.33333333%;\n  }\n  .col-md-9 {\n    width: 75%;\n  }\n  .col-md-8 {\n    width: 66.66666667%;\n  }\n  .col-md-7 {\n    width: 58.33333333%;\n  }\n  .col-md-6 {\n    width: 50%;\n  }\n  .col-md-5 {\n    width: 41.66666667%;\n  }\n  .col-md-4 {\n    width: 33.33333333%;\n  }\n  .col-md-3 {\n    width: 25%;\n  }\n  .col-md-2 {\n    width: 16.66666667%;\n  }\n  .col-md-1 {\n    width: 8.33333333%;\n  }\n  .col-md-pull-12 {\n    right: 100%;\n  }\n  .col-md-pull-11 {\n    right: 91.66666667%;\n  }\n  .col-md-pull-10 {\n    right: 83.33333333%;\n  }\n  .col-md-pull-9 {\n    right: 75%;\n  }\n  .col-md-pull-8 {\n    right: 66.66666667%;\n  }\n  .col-md-pull-7 {\n    right: 58.33333333%;\n  }\n  .col-md-pull-6 {\n    right: 50%;\n  }\n  .col-md-pull-5 {\n    right: 41.66666667%;\n  }\n  .col-md-pull-4 {\n    right: 33.33333333%;\n  }\n  .col-md-pull-3 {\n    right: 25%;\n  }\n  .col-md-pull-2 {\n    right: 16.66666667%;\n  }\n  .col-md-pull-1 {\n    right: 8.33333333%;\n  }\n  .col-md-pull-0 {\n    right: auto;\n  }\n  .col-md-push-12 {\n    left: 100%;\n  }\n  .col-md-push-11 {\n    left: 91.66666667%;\n  }\n  .col-md-push-10 {\n    left: 83.33333333%;\n  }\n  .col-md-push-9 {\n    left: 75%;\n  }\n  .col-md-push-8 {\n    left: 66.66666667%;\n  }\n  .col-md-push-7 {\n    left: 58.33333333%;\n  }\n  .col-md-push-6 {\n    left: 50%;\n  }\n  .col-md-push-5 {\n    left: 41.66666667%;\n  }\n  .col-md-push-4 {\n    left: 33.33333333%;\n  }\n  .col-md-push-3 {\n    left: 25%;\n  }\n  .col-md-push-2 {\n    left: 16.66666667%;\n  }\n  .col-md-push-1 {\n    left: 8.33333333%;\n  }\n  .col-md-push-0 {\n    left: auto;\n  }\n  .col-md-offset-12 {\n    margin-left: 100%;\n  }\n  .col-md-offset-11 {\n    margin-left: 91.66666667%;\n  }\n  .col-md-offset-10 {\n    margin-left: 83.33333333%;\n  }\n  .col-md-offset-9 {\n    margin-left: 75%;\n  }\n  .col-md-offset-8 {\n    margin-left: 66.66666667%;\n  }\n  .col-md-offset-7 {\n    margin-left: 58.33333333%;\n  }\n  .col-md-offset-6 {\n    margin-left: 50%;\n  }\n  .col-md-offset-5 {\n    margin-left: 41.66666667%;\n  }\n  .col-md-offset-4 {\n    margin-left: 33.33333333%;\n  }\n  .col-md-offset-3 {\n    margin-left: 25%;\n  }\n  .col-md-offset-2 {\n    margin-left: 16.66666667%;\n  }\n  .col-md-offset-1 {\n    margin-left: 8.33333333%;\n  }\n  .col-md-offset-0 {\n    margin-left: 0;\n  }\n}\n@media (min-width: 1200px) {\n  .col-lg-1, .col-lg-2, .col-lg-3, .col-lg-4, .col-lg-5, .col-lg-6, .col-lg-7, .col-lg-8, .col-lg-9, .col-lg-10, .col-lg-11, .col-lg-12 {\n    float: left;\n  }\n  .col-lg-12 {\n    width: 100%;\n  }\n  .col-lg-11 {\n    width: 91.66666667%;\n  }\n  .col-lg-10 {\n    width: 83.33333333%;\n  }\n  .col-lg-9 {\n    width: 75%;\n  }\n  .col-lg-8 {\n    width: 66.66666667%;\n  }\n  .col-lg-7 {\n    width: 58.33333333%;\n  }\n  .col-lg-6 {\n    width: 50%;\n  }\n  .col-lg-5 {\n    width: 41.66666667%;\n  }\n  .col-lg-4 {\n    width: 33.33333333%;\n  }\n  .col-lg-3 {\n    width: 25%;\n  }\n  .col-lg-2 {\n    width: 16.66666667%;\n  }\n  .col-lg-1 {\n    width: 8.33333333%;\n  }\n  .col-lg-pull-12 {\n    right: 100%;\n  }\n  .col-lg-pull-11 {\n    right: 91.66666667%;\n  }\n  .col-lg-pull-10 {\n    right: 83.33333333%;\n  }\n  .col-lg-pull-9 {\n    right: 75%;\n  }\n  .col-lg-pull-8 {\n    right: 66.66666667%;\n  }\n  .col-lg-pull-7 {\n    right: 58.33333333%;\n  }\n  .col-lg-pull-6 {\n    right: 50%;\n  }\n  .col-lg-pull-5 {\n    right: 41.66666667%;\n  }\n  .col-lg-pull-4 {\n    right: 33.33333333%;\n  }\n  .col-lg-pull-3 {\n    right: 25%;\n  }\n  .col-lg-pull-2 {\n    right: 16.66666667%;\n  }\n  .col-lg-pull-1 {\n    right: 8.33333333%;\n  }\n  .col-lg-pull-0 {\n    right: auto;\n  }\n  .col-lg-push-12 {\n    left: 100%;\n  }\n  .col-lg-push-11 {\n    left: 91.66666667%;\n  }\n  .col-lg-push-10 {\n    left: 83.33333333%;\n  }\n  .col-lg-push-9 {\n    left: 75%;\n  }\n  .col-lg-push-8 {\n    left: 66.66666667%;\n  }\n  .col-lg-push-7 {\n    left: 58.33333333%;\n  }\n  .col-lg-push-6 {\n    left: 50%;\n  }\n  .col-lg-push-5 {\n    left: 41.66666667%;\n  }\n  .col-lg-push-4 {\n    left: 33.33333333%;\n  }\n  .col-lg-push-3 {\n    left: 25%;\n  }\n  .col-lg-push-2 {\n    left: 16.66666667%;\n  }\n  .col-lg-push-1 {\n    left: 8.33333333%;\n  }\n  .col-lg-push-0 {\n    left: auto;\n  }\n  .col-lg-offset-12 {\n    margin-left: 100%;\n  }\n  .col-lg-offset-11 {\n    margin-left: 91.66666667%;\n  }\n  .col-lg-offset-10 {\n    margin-left: 83.33333333%;\n  }\n  .col-lg-offset-9 {\n    margin-left: 75%;\n  }\n  .col-lg-offset-8 {\n    margin-left: 66.66666667%;\n  }\n  .col-lg-offset-7 {\n    margin-left: 58.33333333%;\n  }\n  .col-lg-offset-6 {\n    margin-left: 50%;\n  }\n  .col-lg-offset-5 {\n    margin-left: 41.66666667%;\n  }\n  .col-lg-offset-4 {\n    margin-left: 33.33333333%;\n  }\n  .col-lg-offset-3 {\n    margin-left: 25%;\n  }\n  .col-lg-offset-2 {\n    margin-left: 16.66666667%;\n  }\n  .col-lg-offset-1 {\n    margin-left: 8.33333333%;\n  }\n  .col-lg-offset-0 {\n    margin-left: 0;\n  }\n}\ntable {\n  background-color: transparent;\n}\ncaption {\n  padding-top: 8px;\n  padding-bottom: 8px;\n  color: #777;\n  text-align: left;\n}\nth {\n  text-align: left;\n}\n.table {\n  width: 100%;\n  max-width: 100%;\n  margin-bottom: 20px;\n}\n.table > thead > tr > th,\n.table > tbody > tr > th,\n.table > tfoot > tr > th,\n.table > thead > tr > td,\n.table > tbody > tr > td,\n.table > tfoot > tr > td {\n  padding: 8px;\n  line-height: 1.42857143;\n  vertical-align: top;\n  border-top: 1px solid #ddd;\n}\n.table > thead > tr > th {\n  vertical-align: bottom;\n  border-bottom: 2px solid #ddd;\n}\n.table > caption + thead > tr:first-child > th,\n.table > colgroup + thead > tr:first-child > th,\n.table > thead:first-child > tr:first-child > th,\n.table > caption + thead > tr:first-child > td,\n.table > colgroup + thead > tr:first-child > td,\n.table > thead:first-child > tr:first-child > td {\n  border-top: 0;\n}\n.table > tbody + tbody {\n  border-top: 2px solid #ddd;\n}\n.table .table {\n  background-color: #fff;\n}\n.table-condensed > thead > tr > th,\n.table-condensed > tbody > tr > th,\n.table-condensed > tfoot > tr > th,\n.table-condensed > thead > tr > td,\n.table-condensed > tbody > tr > td,\n.table-condensed > tfoot > tr > td {\n  padding: 5px;\n}\n.table-bordered {\n  border: 1px solid #ddd;\n}\n.table-bordered > thead > tr > th,\n.table-bordered > tbody > tr > th,\n.table-bordered > tfoot > tr > th,\n.table-bordered > thead > tr > td,\n.table-bordered > tbody > tr > td,\n.table-bordered > tfoot > tr > td {\n  border: 1px solid #ddd;\n}\n.table-bordered > thead > tr > th,\n.table-bordered > thead > tr > td {\n  border-bottom-width: 2px;\n}\n.table-striped > tbody > tr:nth-of-type(odd) {\n  background-color: #f9f9f9;\n}\n.table-hover > tbody > tr:hover {\n  background-color: #f5f5f5;\n}\ntable col[class*=\"col-\"] {\n  position: static;\n  display: table-column;\n  float: none;\n}\ntable td[class*=\"col-\"],\ntable th[class*=\"col-\"] {\n  position: static;\n  display: table-cell;\n  float: none;\n}\n.table > thead > tr > td.active,\n.table > tbody > tr > td.active,\n.table > tfoot > tr > td.active,\n.table > thead > tr > th.active,\n.table > tbody > tr > th.active,\n.table > tfoot > tr > th.active,\n.table > thead > tr.active > td,\n.table > tbody > tr.active > td,\n.table > tfoot > tr.active > td,\n.table > thead > tr.active > th,\n.table > tbody > tr.active > th,\n.table > tfoot > tr.active > th {\n  background-color: #f5f5f5;\n}\n.table-hover > tbody > tr > td.active:hover,\n.table-hover > tbody > tr > th.active:hover,\n.table-hover > tbody > tr.active:hover > td,\n.table-hover > tbody > tr:hover > .active,\n.table-hover > tbody > tr.active:hover > th {\n  background-color: #e8e8e8;\n}\n.table > thead > tr > td.success,\n.table > tbody > tr > td.success,\n.table > tfoot > tr > td.success,\n.table > thead > tr > th.success,\n.table > tbody > tr > th.success,\n.table > tfoot > tr > th.success,\n.table > thead > tr.success > td,\n.table > tbody > tr.success > td,\n.table > tfoot > tr.success > td,\n.table > thead > tr.success > th,\n.table > tbody > tr.success > th,\n.table > tfoot > tr.success > th {\n  background-color: #dff0d8;\n}\n.table-hover > tbody > tr > td.success:hover,\n.table-hover > tbody > tr > th.success:hover,\n.table-hover > tbody > tr.success:hover > td,\n.table-hover > tbody > tr:hover > .success,\n.table-hover > tbody > tr.success:hover > th {\n  background-color: #d0e9c6;\n}\n.table > thead > tr > td.info,\n.table > tbody > tr > td.info,\n.table > tfoot > tr > td.info,\n.table > thead > tr > th.info,\n.table > tbody > tr > th.info,\n.table > tfoot > tr > th.info,\n.table > thead > tr.info > td,\n.table > tbody > tr.info > td,\n.table > tfoot > tr.info > td,\n.table > thead > tr.info > th,\n.table > tbody > tr.info > th,\n.table > tfoot > tr.info > th {\n  background-color: #d9edf7;\n}\n.table-hover > tbody > tr > td.info:hover,\n.table-hover > tbody > tr > th.info:hover,\n.table-hover > tbody > tr.info:hover > td,\n.table-hover > tbody > tr:hover > .info,\n.table-hover > tbody > tr.info:hover > th {\n  background-color: #c4e3f3;\n}\n.table > thead > tr > td.warning,\n.table > tbody > tr > td.warning,\n.table > tfoot > tr > td.warning,\n.table > thead > tr > th.warning,\n.table > tbody > tr > th.warning,\n.table > tfoot > tr > th.warning,\n.table > thead > tr.warning > td,\n.table > tbody > tr.warning > td,\n.table > tfoot > tr.warning > td,\n.table > thead > tr.warning > th,\n.table > tbody > tr.warning > th,\n.table > tfoot > tr.warning > th {\n  background-color: #fcf8e3;\n}\n.table-hover > tbody > tr > td.warning:hover,\n.table-hover > tbody > tr > th.warning:hover,\n.table-hover > tbody > tr.warning:hover > td,\n.table-hover > tbody > tr:hover > .warning,\n.table-hover > tbody > tr.warning:hover > th {\n  background-color: #faf2cc;\n}\n.table > thead > tr > td.danger,\n.table > tbody > tr > td.danger,\n.table > tfoot > tr > td.danger,\n.table > thead > tr > th.danger,\n.table > tbody > tr > th.danger,\n.table > tfoot > tr > th.danger,\n.table > thead > tr.danger > td,\n.table > tbody > tr.danger > td,\n.table > tfoot > tr.danger > td,\n.table > thead > tr.danger > th,\n.table > tbody > tr.danger > th,\n.table > tfoot > tr.danger > th {\n  background-color: #f2dede;\n}\n.table-hover > tbody > tr > td.danger:hover,\n.table-hover > tbody > tr > th.danger:hover,\n.table-hover > tbody > tr.danger:hover > td,\n.table-hover > tbody > tr:hover > .danger,\n.table-hover > tbody > tr.danger:hover > th {\n  background-color: #ebcccc;\n}\n.table-responsive {\n  min-height: .01%;\n  overflow-x: auto;\n}\n@media screen and (max-width: 767px) {\n  .table-responsive {\n    width: 100%;\n    margin-bottom: 15px;\n    overflow-y: hidden;\n    -ms-overflow-style: -ms-autohiding-scrollbar;\n    border: 1px solid #ddd;\n  }\n  .table-responsive > .table {\n    margin-bottom: 0;\n  }\n  .table-responsive > .table > thead > tr > th,\n  .table-responsive > .table > tbody > tr > th,\n  .table-responsive > .table > tfoot > tr > th,\n  .table-responsive > .table > thead > tr > td,\n  .table-responsive > .table > tbody > tr > td,\n  .table-responsive > .table > tfoot > tr > td {\n    white-space: nowrap;\n  }\n  .table-responsive > .table-bordered {\n    border: 0;\n  }\n  .table-responsive > .table-bordered > thead > tr > th:first-child,\n  .table-responsive > .table-bordered > tbody > tr > th:first-child,\n  .table-responsive > .table-bordered > tfoot > tr > th:first-child,\n  .table-responsive > .table-bordered > thead > tr > td:first-child,\n  .table-responsive > .table-bordered > tbody > tr > td:first-child,\n  .table-responsive > .table-bordered > tfoot > tr > td:first-child {\n    border-left: 0;\n  }\n  .table-responsive > .table-bordered > thead > tr > th:last-child,\n  .table-responsive > .table-bordered > tbody > tr > th:last-child,\n  .table-responsive > .table-bordered > tfoot > tr > th:last-child,\n  .table-responsive > .table-bordered > thead > tr > td:last-child,\n  .table-responsive > .table-bordered > tbody > tr > td:last-child,\n  .table-responsive > .table-bordered > tfoot > tr > td:last-child {\n    border-right: 0;\n  }\n  .table-responsive > .table-bordered > tbody > tr:last-child > th,\n  .table-responsive > .table-bordered > tfoot > tr:last-child > th,\n  .table-responsive > .table-bordered > tbody > tr:last-child > td,\n  .table-responsive > .table-bordered > tfoot > tr:last-child > td {\n    border-bottom: 0;\n  }\n}\nfieldset {\n  min-width: 0;\n  padding: 0;\n  margin: 0;\n  border: 0;\n}\nlegend {\n  display: block;\n  width: 100%;\n  padding: 0;\n  margin-bottom: 20px;\n  font-size: 21px;\n  line-height: inherit;\n  color: #333;\n  border: 0;\n  border-bottom: 1px solid #e5e5e5;\n}\nlabel {\n  display: inline-block;\n  max-width: 100%;\n  margin-bottom: 5px;\n  font-weight: bold;\n}\ninput[type=\"search\"] {\n  -webkit-box-sizing: border-box;\n     -moz-box-sizing: border-box;\n          box-sizing: border-box;\n}\ninput[type=\"radio\"],\ninput[type=\"checkbox\"] {\n  margin: 4px 0 0;\n  margin-top: 1px \\9;\n  line-height: normal;\n}\ninput[type=\"file\"] {\n  display: block;\n}\ninput[type=\"range\"] {\n  display: block;\n  width: 100%;\n}\nselect[multiple],\nselect[size] {\n  height: auto;\n}\ninput[type=\"file\"]:focus,\ninput[type=\"radio\"]:focus,\ninput[type=\"checkbox\"]:focus {\n  outline: thin dotted;\n  outline: 5px auto -webkit-focus-ring-color;\n  outline-offset: -2px;\n}\noutput {\n  display: block;\n  padding-top: 7px;\n  font-size: 14px;\n  line-height: 1.42857143;\n  color: #555;\n}\n.form-control {\n  display: block;\n  width: 100%;\n  height: 34px;\n  padding: 6px 12px;\n  font-size: 14px;\n  line-height: 1.42857143;\n  color: #555;\n  background-color: #fff;\n  background-image: none;\n  border: 1px solid #ccc;\n  border-radius: 4px;\n  -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);\n          box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);\n  -webkit-transition: border-color ease-in-out .15s, -webkit-box-shadow ease-in-out .15s;\n       -o-transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;\n          transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;\n}\n.form-control:focus {\n  border-color: #66afe9;\n  outline: 0;\n  -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px rgba(102, 175, 233, .6);\n          box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px rgba(102, 175, 233, .6);\n}\n.form-control::-moz-placeholder {\n  color: #999;\n  opacity: 1;\n}\n.form-control:-ms-input-placeholder {\n  color: #999;\n}\n.form-control::-webkit-input-placeholder {\n  color: #999;\n}\n.form-control[disabled],\n.form-control[readonly],\nfieldset[disabled] .form-control {\n  background-color: #eee;\n  opacity: 1;\n}\n.form-control[disabled],\nfieldset[disabled] .form-control {\n  cursor: not-allowed;\n}\ntextarea.form-control {\n  height: auto;\n}\ninput[type=\"search\"] {\n  -webkit-appearance: none;\n}\n@media screen and (-webkit-min-device-pixel-ratio: 0) {\n  input[type=\"date\"].form-control,\n  input[type=\"time\"].form-control,\n  input[type=\"datetime-local\"].form-control,\n  input[type=\"month\"].form-control {\n    line-height: 34px;\n  }\n  input[type=\"date\"].input-sm,\n  input[type=\"time\"].input-sm,\n  input[type=\"datetime-local\"].input-sm,\n  input[type=\"month\"].input-sm,\n  .input-group-sm input[type=\"date\"],\n  .input-group-sm input[type=\"time\"],\n  .input-group-sm input[type=\"datetime-local\"],\n  .input-group-sm input[type=\"month\"] {\n    line-height: 30px;\n  }\n  input[type=\"date\"].input-lg,\n  input[type=\"time\"].input-lg,\n  input[type=\"datetime-local\"].input-lg,\n  input[type=\"month\"].input-lg,\n  .input-group-lg input[type=\"date\"],\n  .input-group-lg input[type=\"time\"],\n  .input-group-lg input[type=\"datetime-local\"],\n  .input-group-lg input[type=\"month\"] {\n    line-height: 46px;\n  }\n}\n.form-group {\n  margin-bottom: 15px;\n}\n.radio,\n.checkbox {\n  position: relative;\n  display: block;\n  margin-top: 10px;\n  margin-bottom: 10px;\n}\n.radio label,\n.checkbox label {\n  min-height: 20px;\n  padding-left: 20px;\n  margin-bottom: 0;\n  font-weight: normal;\n  cursor: pointer;\n}\n.radio input[type=\"radio\"],\n.radio-inline input[type=\"radio\"],\n.checkbox input[type=\"checkbox\"],\n.checkbox-inline input[type=\"checkbox\"] {\n  position: absolute;\n  margin-top: 4px \\9;\n  margin-left: -20px;\n}\n.radio + .radio,\n.checkbox + .checkbox {\n  margin-top: -5px;\n}\n.radio-inline,\n.checkbox-inline {\n  position: relative;\n  display: inline-block;\n  padding-left: 20px;\n  margin-bottom: 0;\n  font-weight: normal;\n  vertical-align: middle;\n  cursor: pointer;\n}\n.radio-inline + .radio-inline,\n.checkbox-inline + .checkbox-inline {\n  margin-top: 0;\n  margin-left: 10px;\n}\ninput[type=\"radio\"][disabled],\ninput[type=\"checkbox\"][disabled],\ninput[type=\"radio\"].disabled,\ninput[type=\"checkbox\"].disabled,\nfieldset[disabled] input[type=\"radio\"],\nfieldset[disabled] input[type=\"checkbox\"] {\n  cursor: not-allowed;\n}\n.radio-inline.disabled,\n.checkbox-inline.disabled,\nfieldset[disabled] .radio-inline,\nfieldset[disabled] .checkbox-inline {\n  cursor: not-allowed;\n}\n.radio.disabled label,\n.checkbox.disabled label,\nfieldset[disabled] .radio label,\nfieldset[disabled] .checkbox label {\n  cursor: not-allowed;\n}\n.form-control-static {\n  min-height: 34px;\n  padding-top: 7px;\n  padding-bottom: 7px;\n  margin-bottom: 0;\n}\n.form-control-static.input-lg,\n.form-control-static.input-sm {\n  padding-right: 0;\n  padding-left: 0;\n}\n.input-sm {\n  height: 30px;\n  padding: 5px 10px;\n  font-size: 12px;\n  line-height: 1.5;\n  border-radius: 3px;\n}\nselect.input-sm {\n  height: 30px;\n  line-height: 30px;\n}\ntextarea.input-sm,\nselect[multiple].input-sm {\n  height: auto;\n}\n.form-group-sm .form-control {\n  height: 30px;\n  padding: 5px 10px;\n  font-size: 12px;\n  line-height: 1.5;\n  border-radius: 3px;\n}\n.form-group-sm select.form-control {\n  height: 30px;\n  line-height: 30px;\n}\n.form-group-sm textarea.form-control,\n.form-group-sm select[multiple].form-control {\n  height: auto;\n}\n.form-group-sm .form-control-static {\n  height: 30px;\n  min-height: 32px;\n  padding: 6px 10px;\n  font-size: 12px;\n  line-height: 1.5;\n}\n.input-lg {\n  height: 46px;\n  padding: 10px 16px;\n  font-size: 18px;\n  line-height: 1.3333333;\n  border-radius: 6px;\n}\nselect.input-lg {\n  height: 46px;\n  line-height: 46px;\n}\ntextarea.input-lg,\nselect[multiple].input-lg {\n  height: auto;\n}\n.form-group-lg .form-control {\n  height: 46px;\n  padding: 10px 16px;\n  font-size: 18px;\n  line-height: 1.3333333;\n  border-radius: 6px;\n}\n.form-group-lg select.form-control {\n  height: 46px;\n  line-height: 46px;\n}\n.form-group-lg textarea.form-control,\n.form-group-lg select[multiple].form-control {\n  height: auto;\n}\n.form-group-lg .form-control-static {\n  height: 46px;\n  min-height: 38px;\n  padding: 11px 16px;\n  font-size: 18px;\n  line-height: 1.3333333;\n}\n.has-feedback {\n  position: relative;\n}\n.has-feedback .form-control {\n  padding-right: 42.5px;\n}\n.form-control-feedback {\n  position: absolute;\n  top: 0;\n  right: 0;\n  z-index: 2;\n  display: block;\n  width: 34px;\n  height: 34px;\n  line-height: 34px;\n  text-align: center;\n  pointer-events: none;\n}\n.input-lg + .form-control-feedback,\n.input-group-lg + .form-control-feedback,\n.form-group-lg .form-control + .form-control-feedback {\n  width: 46px;\n  height: 46px;\n  line-height: 46px;\n}\n.input-sm + .form-control-feedback,\n.input-group-sm + .form-control-feedback,\n.form-group-sm .form-control + .form-control-feedback {\n  width: 30px;\n  height: 30px;\n  line-height: 30px;\n}\n.has-success .help-block,\n.has-success .control-label,\n.has-success .radio,\n.has-success .checkbox,\n.has-success .radio-inline,\n.has-success .checkbox-inline,\n.has-success.radio label,\n.has-success.checkbox label,\n.has-success.radio-inline label,\n.has-success.checkbox-inline label {\n  color: #3c763d;\n}\n.has-success .form-control {\n  border-color: #3c763d;\n  -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);\n          box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);\n}\n.has-success .form-control:focus {\n  border-color: #2b542c;\n  -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075), 0 0 6px #67b168;\n          box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075), 0 0 6px #67b168;\n}\n.has-success .input-group-addon {\n  color: #3c763d;\n  background-color: #dff0d8;\n  border-color: #3c763d;\n}\n.has-success .form-control-feedback {\n  color: #3c763d;\n}\n.has-warning .help-block,\n.has-warning .control-label,\n.has-warning .radio,\n.has-warning .checkbox,\n.has-warning .radio-inline,\n.has-warning .checkbox-inline,\n.has-warning.radio label,\n.has-warning.checkbox label,\n.has-warning.radio-inline label,\n.has-warning.checkbox-inline label {\n  color: #8a6d3b;\n}\n.has-warning .form-control {\n  border-color: #8a6d3b;\n  -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);\n          box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);\n}\n.has-warning .form-control:focus {\n  border-color: #66512c;\n  -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075), 0 0 6px #c0a16b;\n          box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075), 0 0 6px #c0a16b;\n}\n.has-warning .input-group-addon {\n  color: #8a6d3b;\n  background-color: #fcf8e3;\n  border-color: #8a6d3b;\n}\n.has-warning .form-control-feedback {\n  color: #8a6d3b;\n}\n.has-error .help-block,\n.has-error .control-label,\n.has-error .radio,\n.has-error .checkbox,\n.has-error .radio-inline,\n.has-error .checkbox-inline,\n.has-error.radio label,\n.has-error.checkbox label,\n.has-error.radio-inline label,\n.has-error.checkbox-inline label {\n  color: #a94442;\n}\n.has-error .form-control {\n  border-color: #a94442;\n  -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);\n          box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);\n}\n.has-error .form-control:focus {\n  border-color: #843534;\n  -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075), 0 0 6px #ce8483;\n          box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075), 0 0 6px #ce8483;\n}\n.has-error .input-group-addon {\n  color: #a94442;\n  background-color: #f2dede;\n  border-color: #a94442;\n}\n.has-error .form-control-feedback {\n  color: #a94442;\n}\n.has-feedback label ~ .form-control-feedback {\n  top: 25px;\n}\n.has-feedback label.sr-only ~ .form-control-feedback {\n  top: 0;\n}\n.help-block {\n  display: block;\n  margin-top: 5px;\n  margin-bottom: 10px;\n  color: #737373;\n}\n@media (min-width: 768px) {\n  .form-inline .form-group {\n    display: inline-block;\n    margin-bottom: 0;\n    vertical-align: middle;\n  }\n  .form-inline .form-control {\n    display: inline-block;\n    width: auto;\n    vertical-align: middle;\n  }\n  .form-inline .form-control-static {\n    display: inline-block;\n  }\n  .form-inline .input-group {\n    display: inline-table;\n    vertical-align: middle;\n  }\n  .form-inline .input-group .input-group-addon,\n  .form-inline .input-group .input-group-btn,\n  .form-inline .input-group .form-control {\n    width: auto;\n  }\n  .form-inline .input-group > .form-control {\n    width: 100%;\n  }\n  .form-inline .control-label {\n    margin-bottom: 0;\n    vertical-align: middle;\n  }\n  .form-inline .radio,\n  .form-inline .checkbox {\n    display: inline-block;\n    margin-top: 0;\n    margin-bottom: 0;\n    vertical-align: middle;\n  }\n  .form-inline .radio label,\n  .form-inline .checkbox label {\n    padding-left: 0;\n  }\n  .form-inline .radio input[type=\"radio\"],\n  .form-inline .checkbox input[type=\"checkbox\"] {\n    position: relative;\n    margin-left: 0;\n  }\n  .form-inline .has-feedback .form-control-feedback {\n    top: 0;\n  }\n}\n.form-horizontal .radio,\n.form-horizontal .checkbox,\n.form-horizontal .radio-inline,\n.form-horizontal .checkbox-inline {\n  padding-top: 7px;\n  margin-top: 0;\n  margin-bottom: 0;\n}\n.form-horizontal .radio,\n.form-horizontal .checkbox {\n  min-height: 27px;\n}\n.form-horizontal .form-group {\n  margin-right: -15px;\n  margin-left: -15px;\n}\n@media (min-width: 768px) {\n  .form-horizontal .control-label {\n    padding-top: 7px;\n    margin-bottom: 0;\n    text-align: right;\n  }\n}\n.form-horizontal .has-feedback .form-control-feedback {\n  right: 15px;\n}\n@media (min-width: 768px) {\n  .form-horizontal .form-group-lg .control-label {\n    padding-top: 14.333333px;\n    font-size: 18px;\n  }\n}\n@media (min-width: 768px) {\n  .form-horizontal .form-group-sm .control-label {\n    padding-top: 6px;\n    font-size: 12px;\n  }\n}\n.btn {\n  display: inline-block;\n  padding: 6px 12px;\n  margin-bottom: 0;\n  font-size: 14px;\n  font-weight: normal;\n  line-height: 1.42857143;\n  text-align: center;\n  white-space: nowrap;\n  vertical-align: middle;\n  -ms-touch-action: manipulation;\n      touch-action: manipulation;\n  cursor: pointer;\n  -webkit-user-select: none;\n     -moz-user-select: none;\n      -ms-user-select: none;\n          user-select: none;\n  background-image: none;\n  border: 1px solid transparent;\n  border-radius: 4px;\n}\n.btn:focus,\n.btn:active:focus,\n.btn.active:focus,\n.btn.focus,\n.btn:active.focus,\n.btn.active.focus {\n  outline: thin dotted;\n  outline: 5px auto -webkit-focus-ring-color;\n  outline-offset: -2px;\n}\n.btn:hover,\n.btn:focus,\n.btn.focus {\n  color: #333;\n  text-decoration: none;\n}\n.btn:active,\n.btn.active {\n  background-image: none;\n  outline: 0;\n  -webkit-box-shadow: inset 0 3px 5px rgba(0, 0, 0, .125);\n          box-shadow: inset 0 3px 5px rgba(0, 0, 0, .125);\n}\n.btn.disabled,\n.btn[disabled],\nfieldset[disabled] .btn {\n  cursor: not-allowed;\n  filter: alpha(opacity=65);\n  -webkit-box-shadow: none;\n          box-shadow: none;\n  opacity: .65;\n}\na.btn.disabled,\nfieldset[disabled] a.btn {\n  pointer-events: none;\n}\n.btn-default {\n  color: #333;\n  background-color: #fff;\n  border-color: #ccc;\n}\n.btn-default:focus,\n.btn-default.focus {\n  color: #333;\n  background-color: #e6e6e6;\n  border-color: #8c8c8c;\n}\n.btn-default:hover {\n  color: #333;\n  background-color: #e6e6e6;\n  border-color: #adadad;\n}\n.btn-default:active,\n.btn-default.active,\n.open > .dropdown-toggle.btn-default {\n  color: #333;\n  background-color: #e6e6e6;\n  border-color: #adadad;\n}\n.btn-default:active:hover,\n.btn-default.active:hover,\n.open > .dropdown-toggle.btn-default:hover,\n.btn-default:active:focus,\n.btn-default.active:focus,\n.open > .dropdown-toggle.btn-default:focus,\n.btn-default:active.focus,\n.btn-default.active.focus,\n.open > .dropdown-toggle.btn-default.focus {\n  color: #333;\n  background-color: #d4d4d4;\n  border-color: #8c8c8c;\n}\n.btn-default:active,\n.btn-default.active,\n.open > .dropdown-toggle.btn-default {\n  background-image: none;\n}\n.btn-default.disabled,\n.btn-default[disabled],\nfieldset[disabled] .btn-default,\n.btn-default.disabled:hover,\n.btn-default[disabled]:hover,\nfieldset[disabled] .btn-default:hover,\n.btn-default.disabled:focus,\n.btn-default[disabled]:focus,\nfieldset[disabled] .btn-default:focus,\n.btn-default.disabled.focus,\n.btn-default[disabled].focus,\nfieldset[disabled] .btn-default.focus,\n.btn-default.disabled:active,\n.btn-default[disabled]:active,\nfieldset[disabled] .btn-default:active,\n.btn-default.disabled.active,\n.btn-default[disabled].active,\nfieldset[disabled] .btn-default.active {\n  background-color: #fff;\n  border-color: #ccc;\n}\n.btn-default .badge {\n  color: #fff;\n  background-color: #333;\n}\n.btn-primary {\n  color: #fff;\n  background-color: #337ab7;\n  border-color: #2e6da4;\n}\n.btn-primary:focus,\n.btn-primary.focus {\n  color: #fff;\n  background-color: #286090;\n  border-color: #122b40;\n}\n.btn-primary:hover {\n  color: #fff;\n  background-color: #286090;\n  border-color: #204d74;\n}\n.btn-primary:active,\n.btn-primary.active,\n.open > .dropdown-toggle.btn-primary {\n  color: #fff;\n  background-color: #286090;\n  border-color: #204d74;\n}\n.btn-primary:active:hover,\n.btn-primary.active:hover,\n.open > .dropdown-toggle.btn-primary:hover,\n.btn-primary:active:focus,\n.btn-primary.active:focus,\n.open > .dropdown-toggle.btn-primary:focus,\n.btn-primary:active.focus,\n.btn-primary.active.focus,\n.open > .dropdown-toggle.btn-primary.focus {\n  color: #fff;\n  background-color: #204d74;\n  border-color: #122b40;\n}\n.btn-primary:active,\n.btn-primary.active,\n.open > .dropdown-toggle.btn-primary {\n  background-image: none;\n}\n.btn-primary.disabled,\n.btn-primary[disabled],\nfieldset[disabled] .btn-primary,\n.btn-primary.disabled:hover,\n.btn-primary[disabled]:hover,\nfieldset[disabled] .btn-primary:hover,\n.btn-primary.disabled:focus,\n.btn-primary[disabled]:focus,\nfieldset[disabled] .btn-primary:focus,\n.btn-primary.disabled.focus,\n.btn-primary[disabled].focus,\nfieldset[disabled] .btn-primary.focus,\n.btn-primary.disabled:active,\n.btn-primary[disabled]:active,\nfieldset[disabled] .btn-primary:active,\n.btn-primary.disabled.active,\n.btn-primary[disabled].active,\nfieldset[disabled] .btn-primary.active {\n  background-color: #337ab7;\n  border-color: #2e6da4;\n}\n.btn-primary .badge {\n  color: #337ab7;\n  background-color: #fff;\n}\n.btn-success {\n  color: #fff;\n  background-color: #5cb85c;\n  border-color: #4cae4c;\n}\n.btn-success:focus,\n.btn-success.focus {\n  color: #fff;\n  background-color: #449d44;\n  border-color: #255625;\n}\n.btn-success:hover {\n  color: #fff;\n  background-color: #449d44;\n  border-color: #398439;\n}\n.btn-success:active,\n.btn-success.active,\n.open > .dropdown-toggle.btn-success {\n  color: #fff;\n  background-color: #449d44;\n  border-color: #398439;\n}\n.btn-success:active:hover,\n.btn-success.active:hover,\n.open > .dropdown-toggle.btn-success:hover,\n.btn-success:active:focus,\n.btn-success.active:focus,\n.open > .dropdown-toggle.btn-success:focus,\n.btn-success:active.focus,\n.btn-success.active.focus,\n.open > .dropdown-toggle.btn-success.focus {\n  color: #fff;\n  background-color: #398439;\n  border-color: #255625;\n}\n.btn-success:active,\n.btn-success.active,\n.open > .dropdown-toggle.btn-success {\n  background-image: none;\n}\n.btn-success.disabled,\n.btn-success[disabled],\nfieldset[disabled] .btn-success,\n.btn-success.disabled:hover,\n.btn-success[disabled]:hover,\nfieldset[disabled] .btn-success:hover,\n.btn-success.disabled:focus,\n.btn-success[disabled]:focus,\nfieldset[disabled] .btn-success:focus,\n.btn-success.disabled.focus,\n.btn-success[disabled].focus,\nfieldset[disabled] .btn-success.focus,\n.btn-success.disabled:active,\n.btn-success[disabled]:active,\nfieldset[disabled] .btn-success:active,\n.btn-success.disabled.active,\n.btn-success[disabled].active,\nfieldset[disabled] .btn-success.active {\n  background-color: #5cb85c;\n  border-color: #4cae4c;\n}\n.btn-success .badge {\n  color: #5cb85c;\n  background-color: #fff;\n}\n.btn-info {\n  color: #fff;\n  background-color: #5bc0de;\n  border-color: #46b8da;\n}\n.btn-info:focus,\n.btn-info.focus {\n  color: #fff;\n  background-color: #31b0d5;\n  border-color: #1b6d85;\n}\n.btn-info:hover {\n  color: #fff;\n  background-color: #31b0d5;\n  border-color: #269abc;\n}\n.btn-info:active,\n.btn-info.active,\n.open > .dropdown-toggle.btn-info {\n  color: #fff;\n  background-color: #31b0d5;\n  border-color: #269abc;\n}\n.btn-info:active:hover,\n.btn-info.active:hover,\n.open > .dropdown-toggle.btn-info:hover,\n.btn-info:active:focus,\n.btn-info.active:focus,\n.open > .dropdown-toggle.btn-info:focus,\n.btn-info:active.focus,\n.btn-info.active.focus,\n.open > .dropdown-toggle.btn-info.focus {\n  color: #fff;\n  background-color: #269abc;\n  border-color: #1b6d85;\n}\n.btn-info:active,\n.btn-info.active,\n.open > .dropdown-toggle.btn-info {\n  background-image: none;\n}\n.btn-info.disabled,\n.btn-info[disabled],\nfieldset[disabled] .btn-info,\n.btn-info.disabled:hover,\n.btn-info[disabled]:hover,\nfieldset[disabled] .btn-info:hover,\n.btn-info.disabled:focus,\n.btn-info[disabled]:focus,\nfieldset[disabled] .btn-info:focus,\n.btn-info.disabled.focus,\n.btn-info[disabled].focus,\nfieldset[disabled] .btn-info.focus,\n.btn-info.disabled:active,\n.btn-info[disabled]:active,\nfieldset[disabled] .btn-info:active,\n.btn-info.disabled.active,\n.btn-info[disabled].active,\nfieldset[disabled] .btn-info.active {\n  background-color: #5bc0de;\n  border-color: #46b8da;\n}\n.btn-info .badge {\n  color: #5bc0de;\n  background-color: #fff;\n}\n.btn-warning {\n  color: #fff;\n  background-color: #f0ad4e;\n  border-color: #eea236;\n}\n.btn-warning:focus,\n.btn-warning.focus {\n  color: #fff;\n  background-color: #ec971f;\n  border-color: #985f0d;\n}\n.btn-warning:hover {\n  color: #fff;\n  background-color: #ec971f;\n  border-color: #d58512;\n}\n.btn-warning:active,\n.btn-warning.active,\n.open > .dropdown-toggle.btn-warning {\n  color: #fff;\n  background-color: #ec971f;\n  border-color: #d58512;\n}\n.btn-warning:active:hover,\n.btn-warning.active:hover,\n.open > .dropdown-toggle.btn-warning:hover,\n.btn-warning:active:focus,\n.btn-warning.active:focus,\n.open > .dropdown-toggle.btn-warning:focus,\n.btn-warning:active.focus,\n.btn-warning.active.focus,\n.open > .dropdown-toggle.btn-warning.focus {\n  color: #fff;\n  background-color: #d58512;\n  border-color: #985f0d;\n}\n.btn-warning:active,\n.btn-warning.active,\n.open > .dropdown-toggle.btn-warning {\n  background-image: none;\n}\n.btn-warning.disabled,\n.btn-warning[disabled],\nfieldset[disabled] .btn-warning,\n.btn-warning.disabled:hover,\n.btn-warning[disabled]:hover,\nfieldset[disabled] .btn-warning:hover,\n.btn-warning.disabled:focus,\n.btn-warning[disabled]:focus,\nfieldset[disabled] .btn-warning:focus,\n.btn-warning.disabled.focus,\n.btn-warning[disabled].focus,\nfieldset[disabled] .btn-warning.focus,\n.btn-warning.disabled:active,\n.btn-warning[disabled]:active,\nfieldset[disabled] .btn-warning:active,\n.btn-warning.disabled.active,\n.btn-warning[disabled].active,\nfieldset[disabled] .btn-warning.active {\n  background-color: #f0ad4e;\n  border-color: #eea236;\n}\n.btn-warning .badge {\n  color: #f0ad4e;\n  background-color: #fff;\n}\n.btn-danger {\n  color: #fff;\n  background-color: #d9534f;\n  border-color: #d43f3a;\n}\n.btn-danger:focus,\n.btn-danger.focus {\n  color: #fff;\n  background-color: #c9302c;\n  border-color: #761c19;\n}\n.btn-danger:hover {\n  color: #fff;\n  background-color: #c9302c;\n  border-color: #ac2925;\n}\n.btn-danger:active,\n.btn-danger.active,\n.open > .dropdown-toggle.btn-danger {\n  color: #fff;\n  background-color: #c9302c;\n  border-color: #ac2925;\n}\n.btn-danger:active:hover,\n.btn-danger.active:hover,\n.open > .dropdown-toggle.btn-danger:hover,\n.btn-danger:active:focus,\n.btn-danger.active:focus,\n.open > .dropdown-toggle.btn-danger:focus,\n.btn-danger:active.focus,\n.btn-danger.active.focus,\n.open > .dropdown-toggle.btn-danger.focus {\n  color: #fff;\n  background-color: #ac2925;\n  border-color: #761c19;\n}\n.btn-danger:active,\n.btn-danger.active,\n.open > .dropdown-toggle.btn-danger {\n  background-image: none;\n}\n.btn-danger.disabled,\n.btn-danger[disabled],\nfieldset[disabled] .btn-danger,\n.btn-danger.disabled:hover,\n.btn-danger[disabled]:hover,\nfieldset[disabled] .btn-danger:hover,\n.btn-danger.disabled:focus,\n.btn-danger[disabled]:focus,\nfieldset[disabled] .btn-danger:focus,\n.btn-danger.disabled.focus,\n.btn-danger[disabled].focus,\nfieldset[disabled] .btn-danger.focus,\n.btn-danger.disabled:active,\n.btn-danger[disabled]:active,\nfieldset[disabled] .btn-danger:active,\n.btn-danger.disabled.active,\n.btn-danger[disabled].active,\nfieldset[disabled] .btn-danger.active {\n  background-color: #d9534f;\n  border-color: #d43f3a;\n}\n.btn-danger .badge {\n  color: #d9534f;\n  background-color: #fff;\n}\n.btn-link {\n  font-weight: normal;\n  color: #337ab7;\n  border-radius: 0;\n}\n.btn-link,\n.btn-link:active,\n.btn-link.active,\n.btn-link[disabled],\nfieldset[disabled] .btn-link {\n  background-color: transparent;\n  -webkit-box-shadow: none;\n          box-shadow: none;\n}\n.btn-link,\n.btn-link:hover,\n.btn-link:focus,\n.btn-link:active {\n  border-color: transparent;\n}\n.btn-link:hover,\n.btn-link:focus {\n  color: #23527c;\n  text-decoration: underline;\n  background-color: transparent;\n}\n.btn-link[disabled]:hover,\nfieldset[disabled] .btn-link:hover,\n.btn-link[disabled]:focus,\nfieldset[disabled] .btn-link:focus {\n  color: #777;\n  text-decoration: none;\n}\n.btn-lg,\n.btn-group-lg > .btn {\n  padding: 10px 16px;\n  font-size: 18px;\n  line-height: 1.3333333;\n  border-radius: 6px;\n}\n.btn-sm,\n.btn-group-sm > .btn {\n  padding: 5px 10px;\n  font-size: 12px;\n  line-height: 1.5;\n  border-radius: 3px;\n}\n.btn-xs,\n.btn-group-xs > .btn {\n  padding: 1px 5px;\n  font-size: 12px;\n  line-height: 1.5;\n  border-radius: 3px;\n}\n.btn-block {\n  display: block;\n  width: 100%;\n}\n.btn-block + .btn-block {\n  margin-top: 5px;\n}\ninput[type=\"submit\"].btn-block,\ninput[type=\"reset\"].btn-block,\ninput[type=\"button\"].btn-block {\n  width: 100%;\n}\n.fade {\n  opacity: 0;\n  -webkit-transition: opacity .15s linear;\n       -o-transition: opacity .15s linear;\n          transition: opacity .15s linear;\n}\n.fade.in {\n  opacity: 1;\n}\n.collapse {\n  display: none;\n}\n.collapse.in {\n  display: block;\n}\ntr.collapse.in {\n  display: table-row;\n}\ntbody.collapse.in {\n  display: table-row-group;\n}\n.collapsing {\n  position: relative;\n  height: 0;\n  overflow: hidden;\n  -webkit-transition-timing-function: ease;\n       -o-transition-timing-function: ease;\n          transition-timing-function: ease;\n  -webkit-transition-duration: .35s;\n       -o-transition-duration: .35s;\n          transition-duration: .35s;\n  -webkit-transition-property: height, visibility;\n       -o-transition-property: height, visibility;\n          transition-property: height, visibility;\n}\n.caret {\n  display: inline-block;\n  width: 0;\n  height: 0;\n  margin-left: 2px;\n  vertical-align: middle;\n  border-top: 4px dashed;\n  border-top: 4px solid \\9;\n  border-right: 4px solid transparent;\n  border-left: 4px solid transparent;\n}\n.dropup,\n.dropdown {\n  position: relative;\n}\n.dropdown-toggle:focus {\n  outline: 0;\n}\n.dropdown-menu {\n  position: absolute;\n  top: 100%;\n  left: 0;\n  z-index: 1000;\n  display: none;\n  float: left;\n  min-width: 160px;\n  padding: 5px 0;\n  margin: 2px 0 0;\n  font-size: 14px;\n  text-align: left;\n  list-style: none;\n  background-color: #fff;\n  -webkit-background-clip: padding-box;\n          background-clip: padding-box;\n  border: 1px solid #ccc;\n  border: 1px solid rgba(0, 0, 0, .15);\n  border-radius: 4px;\n  -webkit-box-shadow: 0 6px 12px rgba(0, 0, 0, .175);\n          box-shadow: 0 6px 12px rgba(0, 0, 0, .175);\n}\n.dropdown-menu.pull-right {\n  right: 0;\n  left: auto;\n}\n.dropdown-menu .divider {\n  height: 1px;\n  margin: 9px 0;\n  overflow: hidden;\n  background-color: #e5e5e5;\n}\n.dropdown-menu > li > a {\n  display: block;\n  padding: 3px 20px;\n  clear: both;\n  font-weight: normal;\n  line-height: 1.42857143;\n  color: #333;\n  white-space: nowrap;\n}\n.dropdown-menu > li > a:hover,\n.dropdown-menu > li > a:focus {\n  color: #262626;\n  text-decoration: none;\n  background-color: #f5f5f5;\n}\n.dropdown-menu > .active > a,\n.dropdown-menu > .active > a:hover,\n.dropdown-menu > .active > a:focus {\n  color: #fff;\n  text-decoration: none;\n  background-color: #337ab7;\n  outline: 0;\n}\n.dropdown-menu > .disabled > a,\n.dropdown-menu > .disabled > a:hover,\n.dropdown-menu > .disabled > a:focus {\n  color: #777;\n}\n.dropdown-menu > .disabled > a:hover,\n.dropdown-menu > .disabled > a:focus {\n  text-decoration: none;\n  cursor: not-allowed;\n  background-color: transparent;\n  background-image: none;\n  filter: progid:DXImageTransform.Microsoft.gradient(enabled = false);\n}\n.open > .dropdown-menu {\n  display: block;\n}\n.open > a {\n  outline: 0;\n}\n.dropdown-menu-right {\n  right: 0;\n  left: auto;\n}\n.dropdown-menu-left {\n  right: auto;\n  left: 0;\n}\n.dropdown-header {\n  display: block;\n  padding: 3px 20px;\n  font-size: 12px;\n  line-height: 1.42857143;\n  color: #777;\n  white-space: nowrap;\n}\n.dropdown-backdrop {\n  position: fixed;\n  top: 0;\n  right: 0;\n  bottom: 0;\n  left: 0;\n  z-index: 990;\n}\n.pull-right > .dropdown-menu {\n  right: 0;\n  left: auto;\n}\n.dropup .caret,\n.navbar-fixed-bottom .dropdown .caret {\n  content: \"\";\n  border-top: 0;\n  border-bottom: 4px dashed;\n  border-bottom: 4px solid \\9;\n}\n.dropup .dropdown-menu,\n.navbar-fixed-bottom .dropdown .dropdown-menu {\n  top: auto;\n  bottom: 100%;\n  margin-bottom: 2px;\n}\n@media (min-width: 768px) {\n  .navbar-right .dropdown-menu {\n    right: 0;\n    left: auto;\n  }\n  .navbar-right .dropdown-menu-left {\n    right: auto;\n    left: 0;\n  }\n}\n.btn-group,\n.btn-group-vertical {\n  position: relative;\n  display: inline-block;\n  vertical-align: middle;\n}\n.btn-group > .btn,\n.btn-group-vertical > .btn {\n  position: relative;\n  float: left;\n}\n.btn-group > .btn:hover,\n.btn-group-vertical > .btn:hover,\n.btn-group > .btn:focus,\n.btn-group-vertical > .btn:focus,\n.btn-group > .btn:active,\n.btn-group-vertical > .btn:active,\n.btn-group > .btn.active,\n.btn-group-vertical > .btn.active {\n  z-index: 2;\n}\n.btn-group .btn + .btn,\n.btn-group .btn + .btn-group,\n.btn-group .btn-group + .btn,\n.btn-group .btn-group + .btn-group {\n  margin-left: -1px;\n}\n.btn-toolbar {\n  margin-left: -5px;\n}\n.btn-toolbar .btn,\n.btn-toolbar .btn-group,\n.btn-toolbar .input-group {\n  float: left;\n}\n.btn-toolbar > .btn,\n.btn-toolbar > .btn-group,\n.btn-toolbar > .input-group {\n  margin-left: 5px;\n}\n.btn-group > .btn:not(:first-child):not(:last-child):not(.dropdown-toggle) {\n  border-radius: 0;\n}\n.btn-group > .btn:first-child {\n  margin-left: 0;\n}\n.btn-group > .btn:first-child:not(:last-child):not(.dropdown-toggle) {\n  border-top-right-radius: 0;\n  border-bottom-right-radius: 0;\n}\n.btn-group > .btn:last-child:not(:first-child),\n.btn-group > .dropdown-toggle:not(:first-child) {\n  border-top-left-radius: 0;\n  border-bottom-left-radius: 0;\n}\n.btn-group > .btn-group {\n  float: left;\n}\n.btn-group > .btn-group:not(:first-child):not(:last-child) > .btn {\n  border-radius: 0;\n}\n.btn-group > .btn-group:first-child:not(:last-child) > .btn:last-child,\n.btn-group > .btn-group:first-child:not(:last-child) > .dropdown-toggle {\n  border-top-right-radius: 0;\n  border-bottom-right-radius: 0;\n}\n.btn-group > .btn-group:last-child:not(:first-child) > .btn:first-child {\n  border-top-left-radius: 0;\n  border-bottom-left-radius: 0;\n}\n.btn-group .dropdown-toggle:active,\n.btn-group.open .dropdown-toggle {\n  outline: 0;\n}\n.btn-group > .btn + .dropdown-toggle {\n  padding-right: 8px;\n  padding-left: 8px;\n}\n.btn-group > .btn-lg + .dropdown-toggle {\n  padding-right: 12px;\n  padding-left: 12px;\n}\n.btn-group.open .dropdown-toggle {\n  -webkit-box-shadow: inset 0 3px 5px rgba(0, 0, 0, .125);\n          box-shadow: inset 0 3px 5px rgba(0, 0, 0, .125);\n}\n.btn-group.open .dropdown-toggle.btn-link {\n  -webkit-box-shadow: none;\n          box-shadow: none;\n}\n.btn .caret {\n  margin-left: 0;\n}\n.btn-lg .caret {\n  border-width: 5px 5px 0;\n  border-bottom-width: 0;\n}\n.dropup .btn-lg .caret {\n  border-width: 0 5px 5px;\n}\n.btn-group-vertical > .btn,\n.btn-group-vertical > .btn-group,\n.btn-group-vertical > .btn-group > .btn {\n  display: block;\n  float: none;\n  width: 100%;\n  max-width: 100%;\n}\n.btn-group-vertical > .btn-group > .btn {\n  float: none;\n}\n.btn-group-vertical > .btn + .btn,\n.btn-group-vertical > .btn + .btn-group,\n.btn-group-vertical > .btn-group + .btn,\n.btn-group-vertical > .btn-group + .btn-group {\n  margin-top: -1px;\n  margin-left: 0;\n}\n.btn-group-vertical > .btn:not(:first-child):not(:last-child) {\n  border-radius: 0;\n}\n.btn-group-vertical > .btn:first-child:not(:last-child) {\n  border-top-right-radius: 4px;\n  border-bottom-right-radius: 0;\n  border-bottom-left-radius: 0;\n}\n.btn-group-vertical > .btn:last-child:not(:first-child) {\n  border-top-left-radius: 0;\n  border-top-right-radius: 0;\n  border-bottom-left-radius: 4px;\n}\n.btn-group-vertical > .btn-group:not(:first-child):not(:last-child) > .btn {\n  border-radius: 0;\n}\n.btn-group-vertical > .btn-group:first-child:not(:last-child) > .btn:last-child,\n.btn-group-vertical > .btn-group:first-child:not(:last-child) > .dropdown-toggle {\n  border-bottom-right-radius: 0;\n  border-bottom-left-radius: 0;\n}\n.btn-group-vertical > .btn-group:last-child:not(:first-child) > .btn:first-child {\n  border-top-left-radius: 0;\n  border-top-right-radius: 0;\n}\n.btn-group-justified {\n  display: table;\n  width: 100%;\n  table-layout: fixed;\n  border-collapse: separate;\n}\n.btn-group-justified > .btn,\n.btn-group-justified > .btn-group {\n  display: table-cell;\n  float: none;\n  width: 1%;\n}\n.btn-group-justified > .btn-group .btn {\n  width: 100%;\n}\n.btn-group-justified > .btn-group .dropdown-menu {\n  left: auto;\n}\n[data-toggle=\"buttons\"] > .btn input[type=\"radio\"],\n[data-toggle=\"buttons\"] > .btn-group > .btn input[type=\"radio\"],\n[data-toggle=\"buttons\"] > .btn input[type=\"checkbox\"],\n[data-toggle=\"buttons\"] > .btn-group > .btn input[type=\"checkbox\"] {\n  position: absolute;\n  clip: rect(0, 0, 0, 0);\n  pointer-events: none;\n}\n.input-group {\n  position: relative;\n  display: table;\n  border-collapse: separate;\n}\n.input-group[class*=\"col-\"] {\n  float: none;\n  padding-right: 0;\n  padding-left: 0;\n}\n.input-group .form-control {\n  position: relative;\n  z-index: 2;\n  float: left;\n  width: 100%;\n  margin-bottom: 0;\n}\n.input-group-lg > .form-control,\n.input-group-lg > .input-group-addon,\n.input-group-lg > .input-group-btn > .btn {\n  height: 46px;\n  padding: 10px 16px;\n  font-size: 18px;\n  line-height: 1.3333333;\n  border-radius: 6px;\n}\nselect.input-group-lg > .form-control,\nselect.input-group-lg > .input-group-addon,\nselect.input-group-lg > .input-group-btn > .btn {\n  height: 46px;\n  line-height: 46px;\n}\ntextarea.input-group-lg > .form-control,\ntextarea.input-group-lg > .input-group-addon,\ntextarea.input-group-lg > .input-group-btn > .btn,\nselect[multiple].input-group-lg > .form-control,\nselect[multiple].input-group-lg > .input-group-addon,\nselect[multiple].input-group-lg > .input-group-btn > .btn {\n  height: auto;\n}\n.input-group-sm > .form-control,\n.input-group-sm > .input-group-addon,\n.input-group-sm > .input-group-btn > .btn {\n  height: 30px;\n  padding: 5px 10px;\n  font-size: 12px;\n  line-height: 1.5;\n  border-radius: 3px;\n}\nselect.input-group-sm > .form-control,\nselect.input-group-sm > .input-group-addon,\nselect.input-group-sm > .input-group-btn > .btn {\n  height: 30px;\n  line-height: 30px;\n}\ntextarea.input-group-sm > .form-control,\ntextarea.input-group-sm > .input-group-addon,\ntextarea.input-group-sm > .input-group-btn > .btn,\nselect[multiple].input-group-sm > .form-control,\nselect[multiple].input-group-sm > .input-group-addon,\nselect[multiple].input-group-sm > .input-group-btn > .btn {\n  height: auto;\n}\n.input-group-addon,\n.input-group-btn,\n.input-group .form-control {\n  display: table-cell;\n}\n.input-group-addon:not(:first-child):not(:last-child),\n.input-group-btn:not(:first-child):not(:last-child),\n.input-group .form-control:not(:first-child):not(:last-child) {\n  border-radius: 0;\n}\n.input-group-addon,\n.input-group-btn {\n  width: 1%;\n  white-space: nowrap;\n  vertical-align: middle;\n}\n.input-group-addon {\n  padding: 6px 12px;\n  font-size: 14px;\n  font-weight: normal;\n  line-height: 1;\n  color: #555;\n  text-align: center;\n  background-color: #eee;\n  border: 1px solid #ccc;\n  border-radius: 4px;\n}\n.input-group-addon.input-sm {\n  padding: 5px 10px;\n  font-size: 12px;\n  border-radius: 3px;\n}\n.input-group-addon.input-lg {\n  padding: 10px 16px;\n  font-size: 18px;\n  border-radius: 6px;\n}\n.input-group-addon input[type=\"radio\"],\n.input-group-addon input[type=\"checkbox\"] {\n  margin-top: 0;\n}\n.input-group .form-control:first-child,\n.input-group-addon:first-child,\n.input-group-btn:first-child > .btn,\n.input-group-btn:first-child > .btn-group > .btn,\n.input-group-btn:first-child > .dropdown-toggle,\n.input-group-btn:last-child > .btn:not(:last-child):not(.dropdown-toggle),\n.input-group-btn:last-child > .btn-group:not(:last-child) > .btn {\n  border-top-right-radius: 0;\n  border-bottom-right-radius: 0;\n}\n.input-group-addon:first-child {\n  border-right: 0;\n}\n.input-group .form-control:last-child,\n.input-group-addon:last-child,\n.input-group-btn:last-child > .btn,\n.input-group-btn:last-child > .btn-group > .btn,\n.input-group-btn:last-child > .dropdown-toggle,\n.input-group-btn:first-child > .btn:not(:first-child),\n.input-group-btn:first-child > .btn-group:not(:first-child) > .btn {\n  border-top-left-radius: 0;\n  border-bottom-left-radius: 0;\n}\n.input-group-addon:last-child {\n  border-left: 0;\n}\n.input-group-btn {\n  position: relative;\n  font-size: 0;\n  white-space: nowrap;\n}\n.input-group-btn > .btn {\n  position: relative;\n}\n.input-group-btn > .btn + .btn {\n  margin-left: -1px;\n}\n.input-group-btn > .btn:hover,\n.input-group-btn > .btn:focus,\n.input-group-btn > .btn:active {\n  z-index: 2;\n}\n.input-group-btn:first-child > .btn,\n.input-group-btn:first-child > .btn-group {\n  margin-right: -1px;\n}\n.input-group-btn:last-child > .btn,\n.input-group-btn:last-child > .btn-group {\n  z-index: 2;\n  margin-left: -1px;\n}\n.nav {\n  padding-left: 0;\n  margin-bottom: 0;\n  list-style: none;\n}\n.nav > li {\n  position: relative;\n  display: block;\n}\n.nav > li > a {\n  position: relative;\n  display: block;\n  padding: 10px 15px;\n}\n.nav > li > a:hover,\n.nav > li > a:focus {\n  text-decoration: none;\n  background-color: #eee;\n}\n.nav > li.disabled > a {\n  color: #777;\n}\n.nav > li.disabled > a:hover,\n.nav > li.disabled > a:focus {\n  color: #777;\n  text-decoration: none;\n  cursor: not-allowed;\n  background-color: transparent;\n}\n.nav .open > a,\n.nav .open > a:hover,\n.nav .open > a:focus {\n  background-color: #eee;\n  border-color: #337ab7;\n}\n.nav .nav-divider {\n  height: 1px;\n  margin: 9px 0;\n  overflow: hidden;\n  background-color: #e5e5e5;\n}\n.nav > li > a > img {\n  max-width: none;\n}\n.nav-tabs {\n  border-bottom: 1px solid #ddd;\n}\n.nav-tabs > li {\n  float: left;\n  margin-bottom: -1px;\n}\n.nav-tabs > li > a {\n  margin-right: 2px;\n  line-height: 1.42857143;\n  border: 1px solid transparent;\n  border-radius: 4px 4px 0 0;\n}\n.nav-tabs > li > a:hover {\n  border-color: #eee #eee #ddd;\n}\n.nav-tabs > li.active > a,\n.nav-tabs > li.active > a:hover,\n.nav-tabs > li.active > a:focus {\n  color: #555;\n  cursor: default;\n  background-color: #fff;\n  border: 1px solid #ddd;\n  border-bottom-color: transparent;\n}\n.nav-tabs.nav-justified {\n  width: 100%;\n  border-bottom: 0;\n}\n.nav-tabs.nav-justified > li {\n  float: none;\n}\n.nav-tabs.nav-justified > li > a {\n  margin-bottom: 5px;\n  text-align: center;\n}\n.nav-tabs.nav-justified > .dropdown .dropdown-menu {\n  top: auto;\n  left: auto;\n}\n@media (min-width: 768px) {\n  .nav-tabs.nav-justified > li {\n    display: table-cell;\n    width: 1%;\n  }\n  .nav-tabs.nav-justified > li > a {\n    margin-bottom: 0;\n  }\n}\n.nav-tabs.nav-justified > li > a {\n  margin-right: 0;\n  border-radius: 4px;\n}\n.nav-tabs.nav-justified > .active > a,\n.nav-tabs.nav-justified > .active > a:hover,\n.nav-tabs.nav-justified > .active > a:focus {\n  border: 1px solid #ddd;\n}\n@media (min-width: 768px) {\n  .nav-tabs.nav-justified > li > a {\n    border-bottom: 1px solid #ddd;\n    border-radius: 4px 4px 0 0;\n  }\n  .nav-tabs.nav-justified > .active > a,\n  .nav-tabs.nav-justified > .active > a:hover,\n  .nav-tabs.nav-justified > .active > a:focus {\n    border-bottom-color: #fff;\n  }\n}\n.nav-pills > li {\n  float: left;\n}\n.nav-pills > li > a {\n  border-radius: 4px;\n}\n.nav-pills > li + li {\n  margin-left: 2px;\n}\n.nav-pills > li.active > a,\n.nav-pills > li.active > a:hover,\n.nav-pills > li.active > a:focus {\n  color: #fff;\n  background-color: #337ab7;\n}\n.nav-stacked > li {\n  float: none;\n}\n.nav-stacked > li + li {\n  margin-top: 2px;\n  margin-left: 0;\n}\n.nav-justified {\n  width: 100%;\n}\n.nav-justified > li {\n  float: none;\n}\n.nav-justified > li > a {\n  margin-bottom: 5px;\n  text-align: center;\n}\n.nav-justified > .dropdown .dropdown-menu {\n  top: auto;\n  left: auto;\n}\n@media (min-width: 768px) {\n  .nav-justified > li {\n    display: table-cell;\n    width: 1%;\n  }\n  .nav-justified > li > a {\n    margin-bottom: 0;\n  }\n}\n.nav-tabs-justified {\n  border-bottom: 0;\n}\n.nav-tabs-justified > li > a {\n  margin-right: 0;\n  border-radius: 4px;\n}\n.nav-tabs-justified > .active > a,\n.nav-tabs-justified > .active > a:hover,\n.nav-tabs-justified > .active > a:focus {\n  border: 1px solid #ddd;\n}\n@media (min-width: 768px) {\n  .nav-tabs-justified > li > a {\n    border-bottom: 1px solid #ddd;\n    border-radius: 4px 4px 0 0;\n  }\n  .nav-tabs-justified > .active > a,\n  .nav-tabs-justified > .active > a:hover,\n  .nav-tabs-justified > .active > a:focus {\n    border-bottom-color: #fff;\n  }\n}\n.tab-content > .tab-pane {\n  display: none;\n}\n.tab-content > .active {\n  display: block;\n}\n.nav-tabs .dropdown-menu {\n  margin-top: -1px;\n  border-top-left-radius: 0;\n  border-top-right-radius: 0;\n}\n.navbar {\n  position: relative;\n  min-height: 50px;\n  margin-bottom: 20px;\n  border: 1px solid transparent;\n}\n@media (min-width: 768px) {\n  .navbar {\n    border-radius: 4px;\n  }\n}\n@media (min-width: 768px) {\n  .navbar-header {\n    float: left;\n  }\n}\n.navbar-collapse {\n  padding-right: 15px;\n  padding-left: 15px;\n  overflow-x: visible;\n  -webkit-overflow-scrolling: touch;\n  border-top: 1px solid transparent;\n  -webkit-box-shadow: inset 0 1px 0 rgba(255, 255, 255, .1);\n          box-shadow: inset 0 1px 0 rgba(255, 255, 255, .1);\n}\n.navbar-collapse.in {\n  overflow-y: auto;\n}\n@media (min-width: 768px) {\n  .navbar-collapse {\n    width: auto;\n    border-top: 0;\n    -webkit-box-shadow: none;\n            box-shadow: none;\n  }\n  .navbar-collapse.collapse {\n    display: block !important;\n    height: auto !important;\n    padding-bottom: 0;\n    overflow: visible !important;\n  }\n  .navbar-collapse.in {\n    overflow-y: visible;\n  }\n  .navbar-fixed-top .navbar-collapse,\n  .navbar-static-top .navbar-collapse,\n  .navbar-fixed-bottom .navbar-collapse {\n    padding-right: 0;\n    padding-left: 0;\n  }\n}\n.navbar-fixed-top .navbar-collapse,\n.navbar-fixed-bottom .navbar-collapse {\n  max-height: 340px;\n}\n@media (max-device-width: 480px) and (orientation: landscape) {\n  .navbar-fixed-top .navbar-collapse,\n  .navbar-fixed-bottom .navbar-collapse {\n    max-height: 200px;\n  }\n}\n.container > .navbar-header,\n.container-fluid > .navbar-header,\n.container > .navbar-collapse,\n.container-fluid > .navbar-collapse {\n  margin-right: -15px;\n  margin-left: -15px;\n}\n@media (min-width: 768px) {\n  .container > .navbar-header,\n  .container-fluid > .navbar-header,\n  .container > .navbar-collapse,\n  .container-fluid > .navbar-collapse {\n    margin-right: 0;\n    margin-left: 0;\n  }\n}\n.navbar-static-top {\n  z-index: 1000;\n  border-width: 0 0 1px;\n}\n@media (min-width: 768px) {\n  .navbar-static-top {\n    border-radius: 0;\n  }\n}\n.navbar-fixed-top,\n.navbar-fixed-bottom {\n  position: fixed;\n  right: 0;\n  left: 0;\n  z-index: 1030;\n}\n@media (min-width: 768px) {\n  .navbar-fixed-top,\n  .navbar-fixed-bottom {\n    border-radius: 0;\n  }\n}\n.navbar-fixed-top {\n  top: 0;\n  border-width: 0 0 1px;\n}\n.navbar-fixed-bottom {\n  bottom: 0;\n  margin-bottom: 0;\n  border-width: 1px 0 0;\n}\n.navbar-brand {\n  float: left;\n  height: 50px;\n  padding: 15px 15px;\n  font-size: 18px;\n  line-height: 20px;\n}\n.navbar-brand:hover,\n.navbar-brand:focus {\n  text-decoration: none;\n}\n.navbar-brand > img {\n  display: block;\n}\n@media (min-width: 768px) {\n  .navbar > .container .navbar-brand,\n  .navbar > .container-fluid .navbar-brand {\n    margin-left: -15px;\n  }\n}\n.navbar-toggle {\n  position: relative;\n  float: right;\n  padding: 9px 10px;\n  margin-top: 8px;\n  margin-right: 15px;\n  margin-bottom: 8px;\n  background-color: transparent;\n  background-image: none;\n  border: 1px solid transparent;\n  border-radius: 4px;\n}\n.navbar-toggle:focus {\n  outline: 0;\n}\n.navbar-toggle .icon-bar {\n  display: block;\n  width: 22px;\n  height: 2px;\n  border-radius: 1px;\n}\n.navbar-toggle .icon-bar + .icon-bar {\n  margin-top: 4px;\n}\n@media (min-width: 768px) {\n  .navbar-toggle {\n    display: none;\n  }\n}\n.navbar-nav {\n  margin: 7.5px -15px;\n}\n.navbar-nav > li > a {\n  padding-top: 10px;\n  padding-bottom: 10px;\n  line-height: 20px;\n}\n@media (max-width: 767px) {\n  .navbar-nav .open .dropdown-menu {\n    position: static;\n    float: none;\n    width: auto;\n    margin-top: 0;\n    background-color: transparent;\n    border: 0;\n    -webkit-box-shadow: none;\n            box-shadow: none;\n  }\n  .navbar-nav .open .dropdown-menu > li > a,\n  .navbar-nav .open .dropdown-menu .dropdown-header {\n    padding: 5px 15px 5px 25px;\n  }\n  .navbar-nav .open .dropdown-menu > li > a {\n    line-height: 20px;\n  }\n  .navbar-nav .open .dropdown-menu > li > a:hover,\n  .navbar-nav .open .dropdown-menu > li > a:focus {\n    background-image: none;\n  }\n}\n@media (min-width: 768px) {\n  .navbar-nav {\n    float: left;\n    margin: 0;\n  }\n  .navbar-nav > li {\n    float: left;\n  }\n  .navbar-nav > li > a {\n    padding-top: 15px;\n    padding-bottom: 15px;\n  }\n}\n.navbar-form {\n  padding: 10px 15px;\n  margin-top: 8px;\n  margin-right: -15px;\n  margin-bottom: 8px;\n  margin-left: -15px;\n  border-top: 1px solid transparent;\n  border-bottom: 1px solid transparent;\n  -webkit-box-shadow: inset 0 1px 0 rgba(255, 255, 255, .1), 0 1px 0 rgba(255, 255, 255, .1);\n          box-shadow: inset 0 1px 0 rgba(255, 255, 255, .1), 0 1px 0 rgba(255, 255, 255, .1);\n}\n@media (min-width: 768px) {\n  .navbar-form .form-group {\n    display: inline-block;\n    margin-bottom: 0;\n    vertical-align: middle;\n  }\n  .navbar-form .form-control {\n    display: inline-block;\n    width: auto;\n    vertical-align: middle;\n  }\n  .navbar-form .form-control-static {\n    display: inline-block;\n  }\n  .navbar-form .input-group {\n    display: inline-table;\n    vertical-align: middle;\n  }\n  .navbar-form .input-group .input-group-addon,\n  .navbar-form .input-group .input-group-btn,\n  .navbar-form .input-group .form-control {\n    width: auto;\n  }\n  .navbar-form .input-group > .form-control {\n    width: 100%;\n  }\n  .navbar-form .control-label {\n    margin-bottom: 0;\n    vertical-align: middle;\n  }\n  .navbar-form .radio,\n  .navbar-form .checkbox {\n    display: inline-block;\n    margin-top: 0;\n    margin-bottom: 0;\n    vertical-align: middle;\n  }\n  .navbar-form .radio label,\n  .navbar-form .checkbox label {\n    padding-left: 0;\n  }\n  .navbar-form .radio input[type=\"radio\"],\n  .navbar-form .checkbox input[type=\"checkbox\"] {\n    position: relative;\n    margin-left: 0;\n  }\n  .navbar-form .has-feedback .form-control-feedback {\n    top: 0;\n  }\n}\n@media (max-width: 767px) {\n  .navbar-form .form-group {\n    margin-bottom: 5px;\n  }\n  .navbar-form .form-group:last-child {\n    margin-bottom: 0;\n  }\n}\n@media (min-width: 768px) {\n  .navbar-form {\n    width: auto;\n    padding-top: 0;\n    padding-bottom: 0;\n    margin-right: 0;\n    margin-left: 0;\n    border: 0;\n    -webkit-box-shadow: none;\n            box-shadow: none;\n  }\n}\n.navbar-nav > li > .dropdown-menu {\n  margin-top: 0;\n  border-top-left-radius: 0;\n  border-top-right-radius: 0;\n}\n.navbar-fixed-bottom .navbar-nav > li > .dropdown-menu {\n  margin-bottom: 0;\n  border-top-left-radius: 4px;\n  border-top-right-radius: 4px;\n  border-bottom-right-radius: 0;\n  border-bottom-left-radius: 0;\n}\n.navbar-btn {\n  margin-top: 8px;\n  margin-bottom: 8px;\n}\n.navbar-btn.btn-sm {\n  margin-top: 10px;\n  margin-bottom: 10px;\n}\n.navbar-btn.btn-xs {\n  margin-top: 14px;\n  margin-bottom: 14px;\n}\n.navbar-text {\n  margin-top: 15px;\n  margin-bottom: 15px;\n}\n@media (min-width: 768px) {\n  .navbar-text {\n    float: left;\n    margin-right: 15px;\n    margin-left: 15px;\n  }\n}\n@media (min-width: 768px) {\n  .navbar-left {\n    float: left !important;\n  }\n  .navbar-right {\n    float: right !important;\n    margin-right: -15px;\n  }\n  .navbar-right ~ .navbar-right {\n    margin-right: 0;\n  }\n}\n.navbar-default {\n  background-color: #f8f8f8;\n  border-color: #e7e7e7;\n}\n.navbar-default .navbar-brand {\n  color: #777;\n}\n.navbar-default .navbar-brand:hover,\n.navbar-default .navbar-brand:focus {\n  color: #5e5e5e;\n  background-color: transparent;\n}\n.navbar-default .navbar-text {\n  color: #777;\n}\n.navbar-default .navbar-nav > li > a {\n  color: #777;\n}\n.navbar-default .navbar-nav > li > a:hover,\n.navbar-default .navbar-nav > li > a:focus {\n  color: #333;\n  background-color: transparent;\n}\n.navbar-default .navbar-nav > .active > a,\n.navbar-default .navbar-nav > .active > a:hover,\n.navbar-default .navbar-nav > .active > a:focus {\n  color: #555;\n  background-color: #e7e7e7;\n}\n.navbar-default .navbar-nav > .disabled > a,\n.navbar-default .navbar-nav > .disabled > a:hover,\n.navbar-default .navbar-nav > .disabled > a:focus {\n  color: #ccc;\n  background-color: transparent;\n}\n.navbar-default .navbar-toggle {\n  border-color: #ddd;\n}\n.navbar-default .navbar-toggle:hover,\n.navbar-default .navbar-toggle:focus {\n  background-color: #ddd;\n}\n.navbar-default .navbar-toggle .icon-bar {\n  background-color: #888;\n}\n.navbar-default .navbar-collapse,\n.navbar-default .navbar-form {\n  border-color: #e7e7e7;\n}\n.navbar-default .navbar-nav > .open > a,\n.navbar-default .navbar-nav > .open > a:hover,\n.navbar-default .navbar-nav > .open > a:focus {\n  color: #555;\n  background-color: #e7e7e7;\n}\n@media (max-width: 767px) {\n  .navbar-default .navbar-nav .open .dropdown-menu > li > a {\n    color: #777;\n  }\n  .navbar-default .navbar-nav .open .dropdown-menu > li > a:hover,\n  .navbar-default .navbar-nav .open .dropdown-menu > li > a:focus {\n    color: #333;\n    background-color: transparent;\n  }\n  .navbar-default .navbar-nav .open .dropdown-menu > .active > a,\n  .navbar-default .navbar-nav .open .dropdown-menu > .active > a:hover,\n  .navbar-default .navbar-nav .open .dropdown-menu > .active > a:focus {\n    color: #555;\n    background-color: #e7e7e7;\n  }\n  .navbar-default .navbar-nav .open .dropdown-menu > .disabled > a,\n  .navbar-default .navbar-nav .open .dropdown-menu > .disabled > a:hover,\n  .navbar-default .navbar-nav .open .dropdown-menu > .disabled > a:focus {\n    color: #ccc;\n    background-color: transparent;\n  }\n}\n.navbar-default .navbar-link {\n  color: #777;\n}\n.navbar-default .navbar-link:hover {\n  color: #333;\n}\n.navbar-default .btn-link {\n  color: #777;\n}\n.navbar-default .btn-link:hover,\n.navbar-default .btn-link:focus {\n  color: #333;\n}\n.navbar-default .btn-link[disabled]:hover,\nfieldset[disabled] .navbar-default .btn-link:hover,\n.navbar-default .btn-link[disabled]:focus,\nfieldset[disabled] .navbar-default .btn-link:focus {\n  color: #ccc;\n}\n.navbar-inverse {\n  background-color: #222;\n  border-color: #080808;\n}\n.navbar-inverse .navbar-brand {\n  color: #9d9d9d;\n}\n.navbar-inverse .navbar-brand:hover,\n.navbar-inverse .navbar-brand:focus {\n  color: #fff;\n  background-color: transparent;\n}\n.navbar-inverse .navbar-text {\n  color: #9d9d9d;\n}\n.navbar-inverse .navbar-nav > li > a {\n  color: #9d9d9d;\n}\n.navbar-inverse .navbar-nav > li > a:hover,\n.navbar-inverse .navbar-nav > li > a:focus {\n  color: #fff;\n  background-color: transparent;\n}\n.navbar-inverse .navbar-nav > .active > a,\n.navbar-inverse .navbar-nav > .active > a:hover,\n.navbar-inverse .navbar-nav > .active > a:focus {\n  color: #fff;\n  background-color: #080808;\n}\n.navbar-inverse .navbar-nav > .disabled > a,\n.navbar-inverse .navbar-nav > .disabled > a:hover,\n.navbar-inverse .navbar-nav > .disabled > a:focus {\n  color: #444;\n  background-color: transparent;\n}\n.navbar-inverse .navbar-toggle {\n  border-color: #333;\n}\n.navbar-inverse .navbar-toggle:hover,\n.navbar-inverse .navbar-toggle:focus {\n  background-color: #333;\n}\n.navbar-inverse .navbar-toggle .icon-bar {\n  background-color: #fff;\n}\n.navbar-inverse .navbar-collapse,\n.navbar-inverse .navbar-form {\n  border-color: #101010;\n}\n.navbar-inverse .navbar-nav > .open > a,\n.navbar-inverse .navbar-nav > .open > a:hover,\n.navbar-inverse .navbar-nav > .open > a:focus {\n  color: #fff;\n  background-color: #080808;\n}\n@media (max-width: 767px) {\n  .navbar-inverse .navbar-nav .open .dropdown-menu > .dropdown-header {\n    border-color: #080808;\n  }\n  .navbar-inverse .navbar-nav .open .dropdown-menu .divider {\n    background-color: #080808;\n  }\n  .navbar-inverse .navbar-nav .open .dropdown-menu > li > a {\n    color: #9d9d9d;\n  }\n  .navbar-inverse .navbar-nav .open .dropdown-menu > li > a:hover,\n  .navbar-inverse .navbar-nav .open .dropdown-menu > li > a:focus {\n    color: #fff;\n    background-color: transparent;\n  }\n  .navbar-inverse .navbar-nav .open .dropdown-menu > .active > a,\n  .navbar-inverse .navbar-nav .open .dropdown-menu > .active > a:hover,\n  .navbar-inverse .navbar-nav .open .dropdown-menu > .active > a:focus {\n    color: #fff;\n    background-color: #080808;\n  }\n  .navbar-inverse .navbar-nav .open .dropdown-menu > .disabled > a,\n  .navbar-inverse .navbar-nav .open .dropdown-menu > .disabled > a:hover,\n  .navbar-inverse .navbar-nav .open .dropdown-menu > .disabled > a:focus {\n    color: #444;\n    background-color: transparent;\n  }\n}\n.navbar-inverse .navbar-link {\n  color: #9d9d9d;\n}\n.navbar-inverse .navbar-link:hover {\n  color: #fff;\n}\n.navbar-inverse .btn-link {\n  color: #9d9d9d;\n}\n.navbar-inverse .btn-link:hover,\n.navbar-inverse .btn-link:focus {\n  color: #fff;\n}\n.navbar-inverse .btn-link[disabled]:hover,\nfieldset[disabled] .navbar-inverse .btn-link:hover,\n.navbar-inverse .btn-link[disabled]:focus,\nfieldset[disabled] .navbar-inverse .btn-link:focus {\n  color: #444;\n}\n.breadcrumb {\n  padding: 8px 15px;\n  margin-bottom: 20px;\n  list-style: none;\n  background-color: #f5f5f5;\n  border-radius: 4px;\n}\n.breadcrumb > li {\n  display: inline-block;\n}\n.breadcrumb > li + li:before {\n  padding: 0 5px;\n  color: #ccc;\n  content: \"/\\A0\";\n}\n.breadcrumb > .active {\n  color: #777;\n}\n.pagination {\n  display: inline-block;\n  padding-left: 0;\n  margin: 20px 0;\n  border-radius: 4px;\n}\n.pagination > li {\n  display: inline;\n}\n.pagination > li > a,\n.pagination > li > span {\n  position: relative;\n  float: left;\n  padding: 6px 12px;\n  margin-left: -1px;\n  line-height: 1.42857143;\n  color: #337ab7;\n  text-decoration: none;\n  background-color: #fff;\n  border: 1px solid #ddd;\n}\n.pagination > li:first-child > a,\n.pagination > li:first-child > span {\n  margin-left: 0;\n  border-top-left-radius: 4px;\n  border-bottom-left-radius: 4px;\n}\n.pagination > li:last-child > a,\n.pagination > li:last-child > span {\n  border-top-right-radius: 4px;\n  border-bottom-right-radius: 4px;\n}\n.pagination > li > a:hover,\n.pagination > li > span:hover,\n.pagination > li > a:focus,\n.pagination > li > span:focus {\n  z-index: 3;\n  color: #23527c;\n  background-color: #eee;\n  border-color: #ddd;\n}\n.pagination > .active > a,\n.pagination > .active > span,\n.pagination > .active > a:hover,\n.pagination > .active > span:hover,\n.pagination > .active > a:focus,\n.pagination > .active > span:focus {\n  z-index: 2;\n  color: #fff;\n  cursor: default;\n  background-color: #337ab7;\n  border-color: #337ab7;\n}\n.pagination > .disabled > span,\n.pagination > .disabled > span:hover,\n.pagination > .disabled > span:focus,\n.pagination > .disabled > a,\n.pagination > .disabled > a:hover,\n.pagination > .disabled > a:focus {\n  color: #777;\n  cursor: not-allowed;\n  background-color: #fff;\n  border-color: #ddd;\n}\n.pagination-lg > li > a,\n.pagination-lg > li > span {\n  padding: 10px 16px;\n  font-size: 18px;\n  line-height: 1.3333333;\n}\n.pagination-lg > li:first-child > a,\n.pagination-lg > li:first-child > span {\n  border-top-left-radius: 6px;\n  border-bottom-left-radius: 6px;\n}\n.pagination-lg > li:last-child > a,\n.pagination-lg > li:last-child > span {\n  border-top-right-radius: 6px;\n  border-bottom-right-radius: 6px;\n}\n.pagination-sm > li > a,\n.pagination-sm > li > span {\n  padding: 5px 10px;\n  font-size: 12px;\n  line-height: 1.5;\n}\n.pagination-sm > li:first-child > a,\n.pagination-sm > li:first-child > span {\n  border-top-left-radius: 3px;\n  border-bottom-left-radius: 3px;\n}\n.pagination-sm > li:last-child > a,\n.pagination-sm > li:last-child > span {\n  border-top-right-radius: 3px;\n  border-bottom-right-radius: 3px;\n}\n.pager {\n  padding-left: 0;\n  margin: 20px 0;\n  text-align: center;\n  list-style: none;\n}\n.pager li {\n  display: inline;\n}\n.pager li > a,\n.pager li > span {\n  display: inline-block;\n  padding: 5px 14px;\n  background-color: #fff;\n  border: 1px solid #ddd;\n  border-radius: 15px;\n}\n.pager li > a:hover,\n.pager li > a:focus {\n  text-decoration: none;\n  background-color: #eee;\n}\n.pager .next > a,\n.pager .next > span {\n  float: right;\n}\n.pager .previous > a,\n.pager .previous > span {\n  float: left;\n}\n.pager .disabled > a,\n.pager .disabled > a:hover,\n.pager .disabled > a:focus,\n.pager .disabled > span {\n  color: #777;\n  cursor: not-allowed;\n  background-color: #fff;\n}\n.label {\n  display: inline;\n  padding: .2em .6em .3em;\n  font-size: 75%;\n  font-weight: bold;\n  line-height: 1;\n  color: #fff;\n  text-align: center;\n  white-space: nowrap;\n  vertical-align: baseline;\n  border-radius: .25em;\n}\na.label:hover,\na.label:focus {\n  color: #fff;\n  text-decoration: none;\n  cursor: pointer;\n}\n.label:empty {\n  display: none;\n}\n.btn .label {\n  position: relative;\n  top: -1px;\n}\n.label-default {\n  background-color: #777;\n}\n.label-default[href]:hover,\n.label-default[href]:focus {\n  background-color: #5e5e5e;\n}\n.label-primary {\n  background-color: #337ab7;\n}\n.label-primary[href]:hover,\n.label-primary[href]:focus {\n  background-color: #286090;\n}\n.label-success {\n  background-color: #5cb85c;\n}\n.label-success[href]:hover,\n.label-success[href]:focus {\n  background-color: #449d44;\n}\n.label-info {\n  background-color: #5bc0de;\n}\n.label-info[href]:hover,\n.label-info[href]:focus {\n  background-color: #31b0d5;\n}\n.label-warning {\n  background-color: #f0ad4e;\n}\n.label-warning[href]:hover,\n.label-warning[href]:focus {\n  background-color: #ec971f;\n}\n.label-danger {\n  background-color: #d9534f;\n}\n.label-danger[href]:hover,\n.label-danger[href]:focus {\n  background-color: #c9302c;\n}\n.badge {\n  display: inline-block;\n  min-width: 10px;\n  padding: 3px 7px;\n  font-size: 12px;\n  font-weight: bold;\n  line-height: 1;\n  color: #fff;\n  text-align: center;\n  white-space: nowrap;\n  vertical-align: middle;\n  background-color: #777;\n  border-radius: 10px;\n}\n.badge:empty {\n  display: none;\n}\n.btn .badge {\n  position: relative;\n  top: -1px;\n}\n.btn-xs .badge,\n.btn-group-xs > .btn .badge {\n  top: 0;\n  padding: 1px 5px;\n}\na.badge:hover,\na.badge:focus {\n  color: #fff;\n  text-decoration: none;\n  cursor: pointer;\n}\n.list-group-item.active > .badge,\n.nav-pills > .active > a > .badge {\n  color: #337ab7;\n  background-color: #fff;\n}\n.list-group-item > .badge {\n  float: right;\n}\n.list-group-item > .badge + .badge {\n  margin-right: 5px;\n}\n.nav-pills > li > a > .badge {\n  margin-left: 3px;\n}\n.jumbotron {\n  padding-top: 30px;\n  padding-bottom: 30px;\n  margin-bottom: 30px;\n  color: inherit;\n  background-color: #eee;\n}\n.jumbotron h1,\n.jumbotron .h1 {\n  color: inherit;\n}\n.jumbotron p {\n  margin-bottom: 15px;\n  font-size: 21px;\n  font-weight: 200;\n}\n.jumbotron > hr {\n  border-top-color: #d5d5d5;\n}\n.container .jumbotron,\n.container-fluid .jumbotron {\n  border-radius: 6px;\n}\n.jumbotron .container {\n  max-width: 100%;\n}\n@media screen and (min-width: 768px) {\n  .jumbotron {\n    padding-top: 48px;\n    padding-bottom: 48px;\n  }\n  .container .jumbotron,\n  .container-fluid .jumbotron {\n    padding-right: 60px;\n    padding-left: 60px;\n  }\n  .jumbotron h1,\n  .jumbotron .h1 {\n    font-size: 63px;\n  }\n}\n.thumbnail {\n  display: block;\n  padding: 4px;\n  margin-bottom: 20px;\n  line-height: 1.42857143;\n  background-color: #fff;\n  border: 1px solid #ddd;\n  border-radius: 4px;\n  -webkit-transition: border .2s ease-in-out;\n       -o-transition: border .2s ease-in-out;\n          transition: border .2s ease-in-out;\n}\n.thumbnail > img,\n.thumbnail a > img {\n  margin-right: auto;\n  margin-left: auto;\n}\na.thumbnail:hover,\na.thumbnail:focus,\na.thumbnail.active {\n  border-color: #337ab7;\n}\n.thumbnail .caption {\n  padding: 9px;\n  color: #333;\n}\n.alert {\n  padding: 15px;\n  margin-bottom: 20px;\n  border: 1px solid transparent;\n  border-radius: 4px;\n}\n.alert h4 {\n  margin-top: 0;\n  color: inherit;\n}\n.alert .alert-link {\n  font-weight: bold;\n}\n.alert > p,\n.alert > ul {\n  margin-bottom: 0;\n}\n.alert > p + p {\n  margin-top: 5px;\n}\n.alert-dismissable,\n.alert-dismissible {\n  padding-right: 35px;\n}\n.alert-dismissable .close,\n.alert-dismissible .close {\n  position: relative;\n  top: -2px;\n  right: -21px;\n  color: inherit;\n}\n.alert-success {\n  color: #3c763d;\n  background-color: #dff0d8;\n  border-color: #d6e9c6;\n}\n.alert-success hr {\n  border-top-color: #c9e2b3;\n}\n.alert-success .alert-link {\n  color: #2b542c;\n}\n.alert-info {\n  color: #31708f;\n  background-color: #d9edf7;\n  border-color: #bce8f1;\n}\n.alert-info hr {\n  border-top-color: #a6e1ec;\n}\n.alert-info .alert-link {\n  color: #245269;\n}\n.alert-warning {\n  color: #8a6d3b;\n  background-color: #fcf8e3;\n  border-color: #faebcc;\n}\n.alert-warning hr {\n  border-top-color: #f7e1b5;\n}\n.alert-warning .alert-link {\n  color: #66512c;\n}\n.alert-danger {\n  color: #a94442;\n  background-color: #f2dede;\n  border-color: #ebccd1;\n}\n.alert-danger hr {\n  border-top-color: #e4b9c0;\n}\n.alert-danger .alert-link {\n  color: #843534;\n}\n@-webkit-keyframes progress-bar-stripes {\n  from {\n    background-position: 40px 0;\n  }\n  to {\n    background-position: 0 0;\n  }\n}\n@-o-keyframes progress-bar-stripes {\n  from {\n    background-position: 40px 0;\n  }\n  to {\n    background-position: 0 0;\n  }\n}\n@keyframes progress-bar-stripes {\n  from {\n    background-position: 40px 0;\n  }\n  to {\n    background-position: 0 0;\n  }\n}\n.progress {\n  height: 20px;\n  margin-bottom: 20px;\n  overflow: hidden;\n  background-color: #f5f5f5;\n  border-radius: 4px;\n  -webkit-box-shadow: inset 0 1px 2px rgba(0, 0, 0, .1);\n          box-shadow: inset 0 1px 2px rgba(0, 0, 0, .1);\n}\n.progress-bar {\n  float: left;\n  width: 0;\n  height: 100%;\n  font-size: 12px;\n  line-height: 20px;\n  color: #fff;\n  text-align: center;\n  background-color: #337ab7;\n  -webkit-box-shadow: inset 0 -1px 0 rgba(0, 0, 0, .15);\n          box-shadow: inset 0 -1px 0 rgba(0, 0, 0, .15);\n  -webkit-transition: width .6s ease;\n       -o-transition: width .6s ease;\n          transition: width .6s ease;\n}\n.progress-striped .progress-bar,\n.progress-bar-striped {\n  background-image: -webkit-linear-gradient(45deg, rgba(255, 255, 255, .15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, .15) 50%, rgba(255, 255, 255, .15) 75%, transparent 75%, transparent);\n  background-image:      -o-linear-gradient(45deg, rgba(255, 255, 255, .15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, .15) 50%, rgba(255, 255, 255, .15) 75%, transparent 75%, transparent);\n  background-image:         linear-gradient(45deg, rgba(255, 255, 255, .15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, .15) 50%, rgba(255, 255, 255, .15) 75%, transparent 75%, transparent);\n  -webkit-background-size: 40px 40px;\n          background-size: 40px 40px;\n}\n.progress.active .progress-bar,\n.progress-bar.active {\n  -webkit-animation: progress-bar-stripes 2s linear infinite;\n       -o-animation: progress-bar-stripes 2s linear infinite;\n          animation: progress-bar-stripes 2s linear infinite;\n}\n.progress-bar-success {\n  background-color: #5cb85c;\n}\n.progress-striped .progress-bar-success {\n  background-image: -webkit-linear-gradient(45deg, rgba(255, 255, 255, .15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, .15) 50%, rgba(255, 255, 255, .15) 75%, transparent 75%, transparent);\n  background-image:      -o-linear-gradient(45deg, rgba(255, 255, 255, .15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, .15) 50%, rgba(255, 255, 255, .15) 75%, transparent 75%, transparent);\n  background-image:         linear-gradient(45deg, rgba(255, 255, 255, .15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, .15) 50%, rgba(255, 255, 255, .15) 75%, transparent 75%, transparent);\n}\n.progress-bar-info {\n  background-color: #5bc0de;\n}\n.progress-striped .progress-bar-info {\n  background-image: -webkit-linear-gradient(45deg, rgba(255, 255, 255, .15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, .15) 50%, rgba(255, 255, 255, .15) 75%, transparent 75%, transparent);\n  background-image:      -o-linear-gradient(45deg, rgba(255, 255, 255, .15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, .15) 50%, rgba(255, 255, 255, .15) 75%, transparent 75%, transparent);\n  background-image:         linear-gradient(45deg, rgba(255, 255, 255, .15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, .15) 50%, rgba(255, 255, 255, .15) 75%, transparent 75%, transparent);\n}\n.progress-bar-warning {\n  background-color: #f0ad4e;\n}\n.progress-striped .progress-bar-warning {\n  background-image: -webkit-linear-gradient(45deg, rgba(255, 255, 255, .15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, .15) 50%, rgba(255, 255, 255, .15) 75%, transparent 75%, transparent);\n  background-image:      -o-linear-gradient(45deg, rgba(255, 255, 255, .15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, .15) 50%, rgba(255, 255, 255, .15) 75%, transparent 75%, transparent);\n  background-image:         linear-gradient(45deg, rgba(255, 255, 255, .15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, .15) 50%, rgba(255, 255, 255, .15) 75%, transparent 75%, transparent);\n}\n.progress-bar-danger {\n  background-color: #d9534f;\n}\n.progress-striped .progress-bar-danger {\n  background-image: -webkit-linear-gradient(45deg, rgba(255, 255, 255, .15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, .15) 50%, rgba(255, 255, 255, .15) 75%, transparent 75%, transparent);\n  background-image:      -o-linear-gradient(45deg, rgba(255, 255, 255, .15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, .15) 50%, rgba(255, 255, 255, .15) 75%, transparent 75%, transparent);\n  background-image:         linear-gradient(45deg, rgba(255, 255, 255, .15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, .15) 50%, rgba(255, 255, 255, .15) 75%, transparent 75%, transparent);\n}\n.media {\n  margin-top: 15px;\n}\n.media:first-child {\n  margin-top: 0;\n}\n.media,\n.media-body {\n  overflow: hidden;\n  zoom: 1;\n}\n.media-body {\n  width: 10000px;\n}\n.media-object {\n  display: block;\n}\n.media-object.img-thumbnail {\n  max-width: none;\n}\n.media-right,\n.media > .pull-right {\n  padding-left: 10px;\n}\n.media-left,\n.media > .pull-left {\n  padding-right: 10px;\n}\n.media-left,\n.media-right,\n.media-body {\n  display: table-cell;\n  vertical-align: top;\n}\n.media-middle {\n  vertical-align: middle;\n}\n.media-bottom {\n  vertical-align: bottom;\n}\n.media-heading {\n  margin-top: 0;\n  margin-bottom: 5px;\n}\n.media-list {\n  padding-left: 0;\n  list-style: none;\n}\n.list-group {\n  padding-left: 0;\n  margin-bottom: 20px;\n}\n.list-group-item {\n  position: relative;\n  display: block;\n  padding: 10px 15px;\n  margin-bottom: -1px;\n  background-color: #fff;\n  border: 1px solid #ddd;\n}\n.list-group-item:first-child {\n  border-top-left-radius: 4px;\n  border-top-right-radius: 4px;\n}\n.list-group-item:last-child {\n  margin-bottom: 0;\n  border-bottom-right-radius: 4px;\n  border-bottom-left-radius: 4px;\n}\na.list-group-item,\nbutton.list-group-item {\n  color: #555;\n}\na.list-group-item .list-group-item-heading,\nbutton.list-group-item .list-group-item-heading {\n  color: #333;\n}\na.list-group-item:hover,\nbutton.list-group-item:hover,\na.list-group-item:focus,\nbutton.list-group-item:focus {\n  color: #555;\n  text-decoration: none;\n  background-color: #f5f5f5;\n}\nbutton.list-group-item {\n  width: 100%;\n  text-align: left;\n}\n.list-group-item.disabled,\n.list-group-item.disabled:hover,\n.list-group-item.disabled:focus {\n  color: #777;\n  cursor: not-allowed;\n  background-color: #eee;\n}\n.list-group-item.disabled .list-group-item-heading,\n.list-group-item.disabled:hover .list-group-item-heading,\n.list-group-item.disabled:focus .list-group-item-heading {\n  color: inherit;\n}\n.list-group-item.disabled .list-group-item-text,\n.list-group-item.disabled:hover .list-group-item-text,\n.list-group-item.disabled:focus .list-group-item-text {\n  color: #777;\n}\n.list-group-item.active,\n.list-group-item.active:hover,\n.list-group-item.active:focus {\n  z-index: 2;\n  color: #fff;\n  background-color: #337ab7;\n  border-color: #337ab7;\n}\n.list-group-item.active .list-group-item-heading,\n.list-group-item.active:hover .list-group-item-heading,\n.list-group-item.active:focus .list-group-item-heading,\n.list-group-item.active .list-group-item-heading > small,\n.list-group-item.active:hover .list-group-item-heading > small,\n.list-group-item.active:focus .list-group-item-heading > small,\n.list-group-item.active .list-group-item-heading > .small,\n.list-group-item.active:hover .list-group-item-heading > .small,\n.list-group-item.active:focus .list-group-item-heading > .small {\n  color: inherit;\n}\n.list-group-item.active .list-group-item-text,\n.list-group-item.active:hover .list-group-item-text,\n.list-group-item.active:focus .list-group-item-text {\n  color: #c7ddef;\n}\n.list-group-item-success {\n  color: #3c763d;\n  background-color: #dff0d8;\n}\na.list-group-item-success,\nbutton.list-group-item-success {\n  color: #3c763d;\n}\na.list-group-item-success .list-group-item-heading,\nbutton.list-group-item-success .list-group-item-heading {\n  color: inherit;\n}\na.list-group-item-success:hover,\nbutton.list-group-item-success:hover,\na.list-group-item-success:focus,\nbutton.list-group-item-success:focus {\n  color: #3c763d;\n  background-color: #d0e9c6;\n}\na.list-group-item-success.active,\nbutton.list-group-item-success.active,\na.list-group-item-success.active:hover,\nbutton.list-group-item-success.active:hover,\na.list-group-item-success.active:focus,\nbutton.list-group-item-success.active:focus {\n  color: #fff;\n  background-color: #3c763d;\n  border-color: #3c763d;\n}\n.list-group-item-info {\n  color: #31708f;\n  background-color: #d9edf7;\n}\na.list-group-item-info,\nbutton.list-group-item-info {\n  color: #31708f;\n}\na.list-group-item-info .list-group-item-heading,\nbutton.list-group-item-info .list-group-item-heading {\n  color: inherit;\n}\na.list-group-item-info:hover,\nbutton.list-group-item-info:hover,\na.list-group-item-info:focus,\nbutton.list-group-item-info:focus {\n  color: #31708f;\n  background-color: #c4e3f3;\n}\na.list-group-item-info.active,\nbutton.list-group-item-info.active,\na.list-group-item-info.active:hover,\nbutton.list-group-item-info.active:hover,\na.list-group-item-info.active:focus,\nbutton.list-group-item-info.active:focus {\n  color: #fff;\n  background-color: #31708f;\n  border-color: #31708f;\n}\n.list-group-item-warning {\n  color: #8a6d3b;\n  background-color: #fcf8e3;\n}\na.list-group-item-warning,\nbutton.list-group-item-warning {\n  color: #8a6d3b;\n}\na.list-group-item-warning .list-group-item-heading,\nbutton.list-group-item-warning .list-group-item-heading {\n  color: inherit;\n}\na.list-group-item-warning:hover,\nbutton.list-group-item-warning:hover,\na.list-group-item-warning:focus,\nbutton.list-group-item-warning:focus {\n  color: #8a6d3b;\n  background-color: #faf2cc;\n}\na.list-group-item-warning.active,\nbutton.list-group-item-warning.active,\na.list-group-item-warning.active:hover,\nbutton.list-group-item-warning.active:hover,\na.list-group-item-warning.active:focus,\nbutton.list-group-item-warning.active:focus {\n  color: #fff;\n  background-color: #8a6d3b;\n  border-color: #8a6d3b;\n}\n.list-group-item-danger {\n  color: #a94442;\n  background-color: #f2dede;\n}\na.list-group-item-danger,\nbutton.list-group-item-danger {\n  color: #a94442;\n}\na.list-group-item-danger .list-group-item-heading,\nbutton.list-group-item-danger .list-group-item-heading {\n  color: inherit;\n}\na.list-group-item-danger:hover,\nbutton.list-group-item-danger:hover,\na.list-group-item-danger:focus,\nbutton.list-group-item-danger:focus {\n  color: #a94442;\n  background-color: #ebcccc;\n}\na.list-group-item-danger.active,\nbutton.list-group-item-danger.active,\na.list-group-item-danger.active:hover,\nbutton.list-group-item-danger.active:hover,\na.list-group-item-danger.active:focus,\nbutton.list-group-item-danger.active:focus {\n  color: #fff;\n  background-color: #a94442;\n  border-color: #a94442;\n}\n.list-group-item-heading {\n  margin-top: 0;\n  margin-bottom: 5px;\n}\n.list-group-item-text {\n  margin-bottom: 0;\n  line-height: 1.3;\n}\n.panel {\n  margin-bottom: 20px;\n  background-color: #fff;\n  border: 1px solid transparent;\n  border-radius: 4px;\n  -webkit-box-shadow: 0 1px 1px rgba(0, 0, 0, .05);\n          box-shadow: 0 1px 1px rgba(0, 0, 0, .05);\n}\n.panel-body {\n  padding: 15px;\n}\n.panel-heading {\n  padding: 10px 15px;\n  border-bottom: 1px solid transparent;\n  border-top-left-radius: 3px;\n  border-top-right-radius: 3px;\n}\n.panel-heading > .dropdown .dropdown-toggle {\n  color: inherit;\n}\n.panel-title {\n  margin-top: 0;\n  margin-bottom: 0;\n  font-size: 16px;\n  color: inherit;\n}\n.panel-title > a,\n.panel-title > small,\n.panel-title > .small,\n.panel-title > small > a,\n.panel-title > .small > a {\n  color: inherit;\n}\n.panel-footer {\n  padding: 10px 15px;\n  background-color: #f5f5f5;\n  border-top: 1px solid #ddd;\n  border-bottom-right-radius: 3px;\n  border-bottom-left-radius: 3px;\n}\n.panel > .list-group,\n.panel > .panel-collapse > .list-group {\n  margin-bottom: 0;\n}\n.panel > .list-group .list-group-item,\n.panel > .panel-collapse > .list-group .list-group-item {\n  border-width: 1px 0;\n  border-radius: 0;\n}\n.panel > .list-group:first-child .list-group-item:first-child,\n.panel > .panel-collapse > .list-group:first-child .list-group-item:first-child {\n  border-top: 0;\n  border-top-left-radius: 3px;\n  border-top-right-radius: 3px;\n}\n.panel > .list-group:last-child .list-group-item:last-child,\n.panel > .panel-collapse > .list-group:last-child .list-group-item:last-child {\n  border-bottom: 0;\n  border-bottom-right-radius: 3px;\n  border-bottom-left-radius: 3px;\n}\n.panel > .panel-heading + .panel-collapse > .list-group .list-group-item:first-child {\n  border-top-left-radius: 0;\n  border-top-right-radius: 0;\n}\n.panel-heading + .list-group .list-group-item:first-child {\n  border-top-width: 0;\n}\n.list-group + .panel-footer {\n  border-top-width: 0;\n}\n.panel > .table,\n.panel > .table-responsive > .table,\n.panel > .panel-collapse > .table {\n  margin-bottom: 0;\n}\n.panel > .table caption,\n.panel > .table-responsive > .table caption,\n.panel > .panel-collapse > .table caption {\n  padding-right: 15px;\n  padding-left: 15px;\n}\n.panel > .table:first-child,\n.panel > .table-responsive:first-child > .table:first-child {\n  border-top-left-radius: 3px;\n  border-top-right-radius: 3px;\n}\n.panel > .table:first-child > thead:first-child > tr:first-child,\n.panel > .table-responsive:first-child > .table:first-child > thead:first-child > tr:first-child,\n.panel > .table:first-child > tbody:first-child > tr:first-child,\n.panel > .table-responsive:first-child > .table:first-child > tbody:first-child > tr:first-child {\n  border-top-left-radius: 3px;\n  border-top-right-radius: 3px;\n}\n.panel > .table:first-child > thead:first-child > tr:first-child td:first-child,\n.panel > .table-responsive:first-child > .table:first-child > thead:first-child > tr:first-child td:first-child,\n.panel > .table:first-child > tbody:first-child > tr:first-child td:first-child,\n.panel > .table-responsive:first-child > .table:first-child > tbody:first-child > tr:first-child td:first-child,\n.panel > .table:first-child > thead:first-child > tr:first-child th:first-child,\n.panel > .table-responsive:first-child > .table:first-child > thead:first-child > tr:first-child th:first-child,\n.panel > .table:first-child > tbody:first-child > tr:first-child th:first-child,\n.panel > .table-responsive:first-child > .table:first-child > tbody:first-child > tr:first-child th:first-child {\n  border-top-left-radius: 3px;\n}\n.panel > .table:first-child > thead:first-child > tr:first-child td:last-child,\n.panel > .table-responsive:first-child > .table:first-child > thead:first-child > tr:first-child td:last-child,\n.panel > .table:first-child > tbody:first-child > tr:first-child td:last-child,\n.panel > .table-responsive:first-child > .table:first-child > tbody:first-child > tr:first-child td:last-child,\n.panel > .table:first-child > thead:first-child > tr:first-child th:last-child,\n.panel > .table-responsive:first-child > .table:first-child > thead:first-child > tr:first-child th:last-child,\n.panel > .table:first-child > tbody:first-child > tr:first-child th:last-child,\n.panel > .table-responsive:first-child > .table:first-child > tbody:first-child > tr:first-child th:last-child {\n  border-top-right-radius: 3px;\n}\n.panel > .table:last-child,\n.panel > .table-responsive:last-child > .table:last-child {\n  border-bottom-right-radius: 3px;\n  border-bottom-left-radius: 3px;\n}\n.panel > .table:last-child > tbody:last-child > tr:last-child,\n.panel > .table-responsive:last-child > .table:last-child > tbody:last-child > tr:last-child,\n.panel > .table:last-child > tfoot:last-child > tr:last-child,\n.panel > .table-responsive:last-child > .table:last-child > tfoot:last-child > tr:last-child {\n  border-bottom-right-radius: 3px;\n  border-bottom-left-radius: 3px;\n}\n.panel > .table:last-child > tbody:last-child > tr:last-child td:first-child,\n.panel > .table-responsive:last-child > .table:last-child > tbody:last-child > tr:last-child td:first-child,\n.panel > .table:last-child > tfoot:last-child > tr:last-child td:first-child,\n.panel > .table-responsive:last-child > .table:last-child > tfoot:last-child > tr:last-child td:first-child,\n.panel > .table:last-child > tbody:last-child > tr:last-child th:first-child,\n.panel > .table-responsive:last-child > .table:last-child > tbody:last-child > tr:last-child th:first-child,\n.panel > .table:last-child > tfoot:last-child > tr:last-child th:first-child,\n.panel > .table-responsive:last-child > .table:last-child > tfoot:last-child > tr:last-child th:first-child {\n  border-bottom-left-radius: 3px;\n}\n.panel > .table:last-child > tbody:last-child > tr:last-child td:last-child,\n.panel > .table-responsive:last-child > .table:last-child > tbody:last-child > tr:last-child td:last-child,\n.panel > .table:last-child > tfoot:last-child > tr:last-child td:last-child,\n.panel > .table-responsive:last-child > .table:last-child > tfoot:last-child > tr:last-child td:last-child,\n.panel > .table:last-child > tbody:last-child > tr:last-child th:last-child,\n.panel > .table-responsive:last-child > .table:last-child > tbody:last-child > tr:last-child th:last-child,\n.panel > .table:last-child > tfoot:last-child > tr:last-child th:last-child,\n.panel > .table-responsive:last-child > .table:last-child > tfoot:last-child > tr:last-child th:last-child {\n  border-bottom-right-radius: 3px;\n}\n.panel > .panel-body + .table,\n.panel > .panel-body + .table-responsive,\n.panel > .table + .panel-body,\n.panel > .table-responsive + .panel-body {\n  border-top: 1px solid #ddd;\n}\n.panel > .table > tbody:first-child > tr:first-child th,\n.panel > .table > tbody:first-child > tr:first-child td {\n  border-top: 0;\n}\n.panel > .table-bordered,\n.panel > .table-responsive > .table-bordered {\n  border: 0;\n}\n.panel > .table-bordered > thead > tr > th:first-child,\n.panel > .table-responsive > .table-bordered > thead > tr > th:first-child,\n.panel > .table-bordered > tbody > tr > th:first-child,\n.panel > .table-responsive > .table-bordered > tbody > tr > th:first-child,\n.panel > .table-bordered > tfoot > tr > th:first-child,\n.panel > .table-responsive > .table-bordered > tfoot > tr > th:first-child,\n.panel > .table-bordered > thead > tr > td:first-child,\n.panel > .table-responsive > .table-bordered > thead > tr > td:first-child,\n.panel > .table-bordered > tbody > tr > td:first-child,\n.panel > .table-responsive > .table-bordered > tbody > tr > td:first-child,\n.panel > .table-bordered > tfoot > tr > td:first-child,\n.panel > .table-responsive > .table-bordered > tfoot > tr > td:first-child {\n  border-left: 0;\n}\n.panel > .table-bordered > thead > tr > th:last-child,\n.panel > .table-responsive > .table-bordered > thead > tr > th:last-child,\n.panel > .table-bordered > tbody > tr > th:last-child,\n.panel > .table-responsive > .table-bordered > tbody > tr > th:last-child,\n.panel > .table-bordered > tfoot > tr > th:last-child,\n.panel > .table-responsive > .table-bordered > tfoot > tr > th:last-child,\n.panel > .table-bordered > thead > tr > td:last-child,\n.panel > .table-responsive > .table-bordered > thead > tr > td:last-child,\n.panel > .table-bordered > tbody > tr > td:last-child,\n.panel > .table-responsive > .table-bordered > tbody > tr > td:last-child,\n.panel > .table-bordered > tfoot > tr > td:last-child,\n.panel > .table-responsive > .table-bordered > tfoot > tr > td:last-child {\n  border-right: 0;\n}\n.panel > .table-bordered > thead > tr:first-child > td,\n.panel > .table-responsive > .table-bordered > thead > tr:first-child > td,\n.panel > .table-bordered > tbody > tr:first-child > td,\n.panel > .table-responsive > .table-bordered > tbody > tr:first-child > td,\n.panel > .table-bordered > thead > tr:first-child > th,\n.panel > .table-responsive > .table-bordered > thead > tr:first-child > th,\n.panel > .table-bordered > tbody > tr:first-child > th,\n.panel > .table-responsive > .table-bordered > tbody > tr:first-child > th {\n  border-bottom: 0;\n}\n.panel > .table-bordered > tbody > tr:last-child > td,\n.panel > .table-responsive > .table-bordered > tbody > tr:last-child > td,\n.panel > .table-bordered > tfoot > tr:last-child > td,\n.panel > .table-responsive > .table-bordered > tfoot > tr:last-child > td,\n.panel > .table-bordered > tbody > tr:last-child > th,\n.panel > .table-responsive > .table-bordered > tbody > tr:last-child > th,\n.panel > .table-bordered > tfoot > tr:last-child > th,\n.panel > .table-responsive > .table-bordered > tfoot > tr:last-child > th {\n  border-bottom: 0;\n}\n.panel > .table-responsive {\n  margin-bottom: 0;\n  border: 0;\n}\n.panel-group {\n  margin-bottom: 20px;\n}\n.panel-group .panel {\n  margin-bottom: 0;\n  border-radius: 4px;\n}\n.panel-group .panel + .panel {\n  margin-top: 5px;\n}\n.panel-group .panel-heading {\n  border-bottom: 0;\n}\n.panel-group .panel-heading + .panel-collapse > .panel-body,\n.panel-group .panel-heading + .panel-collapse > .list-group {\n  border-top: 1px solid #ddd;\n}\n.panel-group .panel-footer {\n  border-top: 0;\n}\n.panel-group .panel-footer + .panel-collapse .panel-body {\n  border-bottom: 1px solid #ddd;\n}\n.panel-default {\n  border-color: #ddd;\n}\n.panel-default > .panel-heading {\n  color: #333;\n  background-color: #f5f5f5;\n  border-color: #ddd;\n}\n.panel-default > .panel-heading + .panel-collapse > .panel-body {\n  border-top-color: #ddd;\n}\n.panel-default > .panel-heading .badge {\n  color: #f5f5f5;\n  background-color: #333;\n}\n.panel-default > .panel-footer + .panel-collapse > .panel-body {\n  border-bottom-color: #ddd;\n}\n.panel-primary {\n  border-color: #337ab7;\n}\n.panel-primary > .panel-heading {\n  color: #fff;\n  background-color: #337ab7;\n  border-color: #337ab7;\n}\n.panel-primary > .panel-heading + .panel-collapse > .panel-body {\n  border-top-color: #337ab7;\n}\n.panel-primary > .panel-heading .badge {\n  color: #337ab7;\n  background-color: #fff;\n}\n.panel-primary > .panel-footer + .panel-collapse > .panel-body {\n  border-bottom-color: #337ab7;\n}\n.panel-success {\n  border-color: #d6e9c6;\n}\n.panel-success > .panel-heading {\n  color: #3c763d;\n  background-color: #dff0d8;\n  border-color: #d6e9c6;\n}\n.panel-success > .panel-heading + .panel-collapse > .panel-body {\n  border-top-color: #d6e9c6;\n}\n.panel-success > .panel-heading .badge {\n  color: #dff0d8;\n  background-color: #3c763d;\n}\n.panel-success > .panel-footer + .panel-collapse > .panel-body {\n  border-bottom-color: #d6e9c6;\n}\n.panel-info {\n  border-color: #bce8f1;\n}\n.panel-info > .panel-heading {\n  color: #31708f;\n  background-color: #d9edf7;\n  border-color: #bce8f1;\n}\n.panel-info > .panel-heading + .panel-collapse > .panel-body {\n  border-top-color: #bce8f1;\n}\n.panel-info > .panel-heading .badge {\n  color: #d9edf7;\n  background-color: #31708f;\n}\n.panel-info > .panel-footer + .panel-collapse > .panel-body {\n  border-bottom-color: #bce8f1;\n}\n.panel-warning {\n  border-color: #faebcc;\n}\n.panel-warning > .panel-heading {\n  color: #8a6d3b;\n  background-color: #fcf8e3;\n  border-color: #faebcc;\n}\n.panel-warning > .panel-heading + .panel-collapse > .panel-body {\n  border-top-color: #faebcc;\n}\n.panel-warning > .panel-heading .badge {\n  color: #fcf8e3;\n  background-color: #8a6d3b;\n}\n.panel-warning > .panel-footer + .panel-collapse > .panel-body {\n  border-bottom-color: #faebcc;\n}\n.panel-danger {\n  border-color: #ebccd1;\n}\n.panel-danger > .panel-heading {\n  color: #a94442;\n  background-color: #f2dede;\n  border-color: #ebccd1;\n}\n.panel-danger > .panel-heading + .panel-collapse > .panel-body {\n  border-top-color: #ebccd1;\n}\n.panel-danger > .panel-heading .badge {\n  color: #f2dede;\n  background-color: #a94442;\n}\n.panel-danger > .panel-footer + .panel-collapse > .panel-body {\n  border-bottom-color: #ebccd1;\n}\n.embed-responsive {\n  position: relative;\n  display: block;\n  height: 0;\n  padding: 0;\n  overflow: hidden;\n}\n.embed-responsive .embed-responsive-item,\n.embed-responsive iframe,\n.embed-responsive embed,\n.embed-responsive object,\n.embed-responsive video {\n  position: absolute;\n  top: 0;\n  bottom: 0;\n  left: 0;\n  width: 100%;\n  height: 100%;\n  border: 0;\n}\n.embed-responsive-16by9 {\n  padding-bottom: 56.25%;\n}\n.embed-responsive-4by3 {\n  padding-bottom: 75%;\n}\n.well {\n  min-height: 20px;\n  padding: 19px;\n  margin-bottom: 20px;\n  background-color: #f5f5f5;\n  border: 1px solid #e3e3e3;\n  border-radius: 4px;\n  -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .05);\n          box-shadow: inset 0 1px 1px rgba(0, 0, 0, .05);\n}\n.well blockquote {\n  border-color: #ddd;\n  border-color: rgba(0, 0, 0, .15);\n}\n.well-lg {\n  padding: 24px;\n  border-radius: 6px;\n}\n.well-sm {\n  padding: 9px;\n  border-radius: 3px;\n}\n.close {\n  float: right;\n  font-size: 21px;\n  font-weight: bold;\n  line-height: 1;\n  color: #000;\n  text-shadow: 0 1px 0 #fff;\n  filter: alpha(opacity=20);\n  opacity: .2;\n}\n.close:hover,\n.close:focus {\n  color: #000;\n  text-decoration: none;\n  cursor: pointer;\n  filter: alpha(opacity=50);\n  opacity: .5;\n}\nbutton.close {\n  -webkit-appearance: none;\n  padding: 0;\n  cursor: pointer;\n  background: transparent;\n  border: 0;\n}\n.modal-open {\n  overflow: hidden;\n}\n.modal {\n  position: fixed;\n  top: 0;\n  right: 0;\n  bottom: 0;\n  left: 0;\n  z-index: 1050;\n  display: none;\n  overflow: hidden;\n  -webkit-overflow-scrolling: touch;\n  outline: 0;\n}\n.modal.fade .modal-dialog {\n  -webkit-transition: -webkit-transform .3s ease-out;\n       -o-transition:      -o-transform .3s ease-out;\n          transition:         transform .3s ease-out;\n  -webkit-transform: translate(0, -25%);\n      -ms-transform: translate(0, -25%);\n       -o-transform: translate(0, -25%);\n          transform: translate(0, -25%);\n}\n.modal.in .modal-dialog {\n  -webkit-transform: translate(0, 0);\n      -ms-transform: translate(0, 0);\n       -o-transform: translate(0, 0);\n          transform: translate(0, 0);\n}\n.modal-open .modal {\n  overflow-x: hidden;\n  overflow-y: auto;\n}\n.modal-dialog {\n  position: relative;\n  width: auto;\n  margin: 10px;\n}\n.modal-content {\n  position: relative;\n  background-color: #fff;\n  -webkit-background-clip: padding-box;\n          background-clip: padding-box;\n  border: 1px solid #999;\n  border: 1px solid rgba(0, 0, 0, .2);\n  border-radius: 6px;\n  outline: 0;\n  -webkit-box-shadow: 0 3px 9px rgba(0, 0, 0, .5);\n          box-shadow: 0 3px 9px rgba(0, 0, 0, .5);\n}\n.modal-backdrop {\n  position: fixed;\n  top: 0;\n  right: 0;\n  bottom: 0;\n  left: 0;\n  z-index: 1040;\n  background-color: #000;\n}\n.modal-backdrop.fade {\n  filter: alpha(opacity=0);\n  opacity: 0;\n}\n.modal-backdrop.in {\n  filter: alpha(opacity=50);\n  opacity: .5;\n}\n.modal-header {\n  min-height: 16.42857143px;\n  padding: 15px;\n  border-bottom: 1px solid #e5e5e5;\n}\n.modal-header .close {\n  margin-top: -2px;\n}\n.modal-title {\n  margin: 0;\n  line-height: 1.42857143;\n}\n.modal-body {\n  position: relative;\n  padding: 15px;\n}\n.modal-footer {\n  padding: 15px;\n  text-align: right;\n  border-top: 1px solid #e5e5e5;\n}\n.modal-footer .btn + .btn {\n  margin-bottom: 0;\n  margin-left: 5px;\n}\n.modal-footer .btn-group .btn + .btn {\n  margin-left: -1px;\n}\n.modal-footer .btn-block + .btn-block {\n  margin-left: 0;\n}\n.modal-scrollbar-measure {\n  position: absolute;\n  top: -9999px;\n  width: 50px;\n  height: 50px;\n  overflow: scroll;\n}\n@media (min-width: 768px) {\n  .modal-dialog {\n    width: 600px;\n    margin: 30px auto;\n  }\n  .modal-content {\n    -webkit-box-shadow: 0 5px 15px rgba(0, 0, 0, .5);\n            box-shadow: 0 5px 15px rgba(0, 0, 0, .5);\n  }\n  .modal-sm {\n    width: 300px;\n  }\n}\n@media (min-width: 992px) {\n  .modal-lg {\n    width: 900px;\n  }\n}\n.tooltip {\n  position: absolute;\n  z-index: 1070;\n  display: block;\n  font-family: \"Helvetica Neue\", Helvetica, Arial, sans-serif;\n  font-size: 12px;\n  font-style: normal;\n  font-weight: normal;\n  line-height: 1.42857143;\n  text-align: left;\n  text-align: start;\n  text-decoration: none;\n  text-shadow: none;\n  text-transform: none;\n  letter-spacing: normal;\n  word-break: normal;\n  word-spacing: normal;\n  word-wrap: normal;\n  white-space: normal;\n  filter: alpha(opacity=0);\n  opacity: 0;\n\n  line-break: auto;\n}\n.tooltip.in {\n  filter: alpha(opacity=90);\n  opacity: .9;\n}\n.tooltip.top {\n  padding: 5px 0;\n  margin-top: -3px;\n}\n.tooltip.right {\n  padding: 0 5px;\n  margin-left: 3px;\n}\n.tooltip.bottom {\n  padding: 5px 0;\n  margin-top: 3px;\n}\n.tooltip.left {\n  padding: 0 5px;\n  margin-left: -3px;\n}\n.tooltip-inner {\n  max-width: 200px;\n  padding: 3px 8px;\n  color: #fff;\n  text-align: center;\n  background-color: #000;\n  border-radius: 4px;\n}\n.tooltip-arrow {\n  position: absolute;\n  width: 0;\n  height: 0;\n  border-color: transparent;\n  border-style: solid;\n}\n.tooltip.top .tooltip-arrow {\n  bottom: 0;\n  left: 50%;\n  margin-left: -5px;\n  border-width: 5px 5px 0;\n  border-top-color: #000;\n}\n.tooltip.top-left .tooltip-arrow {\n  right: 5px;\n  bottom: 0;\n  margin-bottom: -5px;\n  border-width: 5px 5px 0;\n  border-top-color: #000;\n}\n.tooltip.top-right .tooltip-arrow {\n  bottom: 0;\n  left: 5px;\n  margin-bottom: -5px;\n  border-width: 5px 5px 0;\n  border-top-color: #000;\n}\n.tooltip.right .tooltip-arrow {\n  top: 50%;\n  left: 0;\n  margin-top: -5px;\n  border-width: 5px 5px 5px 0;\n  border-right-color: #000;\n}\n.tooltip.left .tooltip-arrow {\n  top: 50%;\n  right: 0;\n  margin-top: -5px;\n  border-width: 5px 0 5px 5px;\n  border-left-color: #000;\n}\n.tooltip.bottom .tooltip-arrow {\n  top: 0;\n  left: 50%;\n  margin-left: -5px;\n  border-width: 0 5px 5px;\n  border-bottom-color: #000;\n}\n.tooltip.bottom-left .tooltip-arrow {\n  top: 0;\n  right: 5px;\n  margin-top: -5px;\n  border-width: 0 5px 5px;\n  border-bottom-color: #000;\n}\n.tooltip.bottom-right .tooltip-arrow {\n  top: 0;\n  left: 5px;\n  margin-top: -5px;\n  border-width: 0 5px 5px;\n  border-bottom-color: #000;\n}\n.popover {\n  position: absolute;\n  top: 0;\n  left: 0;\n  z-index: 1060;\n  display: none;\n  max-width: 276px;\n  padding: 1px;\n  font-family: \"Helvetica Neue\", Helvetica, Arial, sans-serif;\n  font-size: 14px;\n  font-style: normal;\n  font-weight: normal;\n  line-height: 1.42857143;\n  text-align: left;\n  text-align: start;\n  text-decoration: none;\n  text-shadow: none;\n  text-transform: none;\n  letter-spacing: normal;\n  word-break: normal;\n  word-spacing: normal;\n  word-wrap: normal;\n  white-space: normal;\n  background-color: #fff;\n  -webkit-background-clip: padding-box;\n          background-clip: padding-box;\n  border: 1px solid #ccc;\n  border: 1px solid rgba(0, 0, 0, .2);\n  border-radius: 6px;\n  -webkit-box-shadow: 0 5px 10px rgba(0, 0, 0, .2);\n          box-shadow: 0 5px 10px rgba(0, 0, 0, .2);\n\n  line-break: auto;\n}\n.popover.top {\n  margin-top: -10px;\n}\n.popover.right {\n  margin-left: 10px;\n}\n.popover.bottom {\n  margin-top: 10px;\n}\n.popover.left {\n  margin-left: -10px;\n}\n.popover-title {\n  padding: 8px 14px;\n  margin: 0;\n  font-size: 14px;\n  background-color: #f7f7f7;\n  border-bottom: 1px solid #ebebeb;\n  border-radius: 5px 5px 0 0;\n}\n.popover-content {\n  padding: 9px 14px;\n}\n.popover > .arrow,\n.popover > .arrow:after {\n  position: absolute;\n  display: block;\n  width: 0;\n  height: 0;\n  border-color: transparent;\n  border-style: solid;\n}\n.popover > .arrow {\n  border-width: 11px;\n}\n.popover > .arrow:after {\n  content: \"\";\n  border-width: 10px;\n}\n.popover.top > .arrow {\n  bottom: -11px;\n  left: 50%;\n  margin-left: -11px;\n  border-top-color: #999;\n  border-top-color: rgba(0, 0, 0, .25);\n  border-bottom-width: 0;\n}\n.popover.top > .arrow:after {\n  bottom: 1px;\n  margin-left: -10px;\n  content: \" \";\n  border-top-color: #fff;\n  border-bottom-width: 0;\n}\n.popover.right > .arrow {\n  top: 50%;\n  left: -11px;\n  margin-top: -11px;\n  border-right-color: #999;\n  border-right-color: rgba(0, 0, 0, .25);\n  border-left-width: 0;\n}\n.popover.right > .arrow:after {\n  bottom: -10px;\n  left: 1px;\n  content: \" \";\n  border-right-color: #fff;\n  border-left-width: 0;\n}\n.popover.bottom > .arrow {\n  top: -11px;\n  left: 50%;\n  margin-left: -11px;\n  border-top-width: 0;\n  border-bottom-color: #999;\n  border-bottom-color: rgba(0, 0, 0, .25);\n}\n.popover.bottom > .arrow:after {\n  top: 1px;\n  margin-left: -10px;\n  content: \" \";\n  border-top-width: 0;\n  border-bottom-color: #fff;\n}\n.popover.left > .arrow {\n  top: 50%;\n  right: -11px;\n  margin-top: -11px;\n  border-right-width: 0;\n  border-left-color: #999;\n  border-left-color: rgba(0, 0, 0, .25);\n}\n.popover.left > .arrow:after {\n  right: 1px;\n  bottom: -10px;\n  content: \" \";\n  border-right-width: 0;\n  border-left-color: #fff;\n}\n.carousel {\n  position: relative;\n}\n.carousel-inner {\n  position: relative;\n  width: 100%;\n  overflow: hidden;\n}\n.carousel-inner > .item {\n  position: relative;\n  display: none;\n  -webkit-transition: .6s ease-in-out left;\n       -o-transition: .6s ease-in-out left;\n          transition: .6s ease-in-out left;\n}\n.carousel-inner > .item > img,\n.carousel-inner > .item > a > img {\n  line-height: 1;\n}\n@media all and (transform-3d), (-webkit-transform-3d) {\n  .carousel-inner > .item {\n    -webkit-transition: -webkit-transform .6s ease-in-out;\n         -o-transition:      -o-transform .6s ease-in-out;\n            transition:         transform .6s ease-in-out;\n\n    -webkit-backface-visibility: hidden;\n            backface-visibility: hidden;\n    -webkit-perspective: 1000px;\n            perspective: 1000px;\n  }\n  .carousel-inner > .item.next,\n  .carousel-inner > .item.active.right {\n    left: 0;\n    -webkit-transform: translate3d(100%, 0, 0);\n            transform: translate3d(100%, 0, 0);\n  }\n  .carousel-inner > .item.prev,\n  .carousel-inner > .item.active.left {\n    left: 0;\n    -webkit-transform: translate3d(-100%, 0, 0);\n            transform: translate3d(-100%, 0, 0);\n  }\n  .carousel-inner > .item.next.left,\n  .carousel-inner > .item.prev.right,\n  .carousel-inner > .item.active {\n    left: 0;\n    -webkit-transform: translate3d(0, 0, 0);\n            transform: translate3d(0, 0, 0);\n  }\n}\n.carousel-inner > .active,\n.carousel-inner > .next,\n.carousel-inner > .prev {\n  display: block;\n}\n.carousel-inner > .active {\n  left: 0;\n}\n.carousel-inner > .next,\n.carousel-inner > .prev {\n  position: absolute;\n  top: 0;\n  width: 100%;\n}\n.carousel-inner > .next {\n  left: 100%;\n}\n.carousel-inner > .prev {\n  left: -100%;\n}\n.carousel-inner > .next.left,\n.carousel-inner > .prev.right {\n  left: 0;\n}\n.carousel-inner > .active.left {\n  left: -100%;\n}\n.carousel-inner > .active.right {\n  left: 100%;\n}\n.carousel-control {\n  position: absolute;\n  top: 0;\n  bottom: 0;\n  left: 0;\n  width: 15%;\n  font-size: 20px;\n  color: #fff;\n  text-align: center;\n  text-shadow: 0 1px 2px rgba(0, 0, 0, .6);\n  filter: alpha(opacity=50);\n  opacity: .5;\n}\n.carousel-control.left {\n  background-image: -webkit-linear-gradient(left, rgba(0, 0, 0, .5) 0%, rgba(0, 0, 0, .0001) 100%);\n  background-image:      -o-linear-gradient(left, rgba(0, 0, 0, .5) 0%, rgba(0, 0, 0, .0001) 100%);\n  background-image: -webkit-gradient(linear, left top, right top, from(rgba(0, 0, 0, .5)), to(rgba(0, 0, 0, .0001)));\n  background-image:         linear-gradient(to right, rgba(0, 0, 0, .5) 0%, rgba(0, 0, 0, .0001) 100%);\n  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#80000000', endColorstr='#00000000', GradientType=1);\n  background-repeat: repeat-x;\n}\n.carousel-control.right {\n  right: 0;\n  left: auto;\n  background-image: -webkit-linear-gradient(left, rgba(0, 0, 0, .0001) 0%, rgba(0, 0, 0, .5) 100%);\n  background-image:      -o-linear-gradient(left, rgba(0, 0, 0, .0001) 0%, rgba(0, 0, 0, .5) 100%);\n  background-image: -webkit-gradient(linear, left top, right top, from(rgba(0, 0, 0, .0001)), to(rgba(0, 0, 0, .5)));\n  background-image:         linear-gradient(to right, rgba(0, 0, 0, .0001) 0%, rgba(0, 0, 0, .5) 100%);\n  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#00000000', endColorstr='#80000000', GradientType=1);\n  background-repeat: repeat-x;\n}\n.carousel-control:hover,\n.carousel-control:focus {\n  color: #fff;\n  text-decoration: none;\n  filter: alpha(opacity=90);\n  outline: 0;\n  opacity: .9;\n}\n.carousel-control .icon-prev,\n.carousel-control .icon-next,\n.carousel-control .glyphicon-chevron-left,\n.carousel-control .glyphicon-chevron-right {\n  position: absolute;\n  top: 50%;\n  z-index: 5;\n  display: inline-block;\n  margin-top: -10px;\n}\n.carousel-control .icon-prev,\n.carousel-control .glyphicon-chevron-left {\n  left: 50%;\n  margin-left: -10px;\n}\n.carousel-control .icon-next,\n.carousel-control .glyphicon-chevron-right {\n  right: 50%;\n  margin-right: -10px;\n}\n.carousel-control .icon-prev,\n.carousel-control .icon-next {\n  width: 20px;\n  height: 20px;\n  font-family: serif;\n  line-height: 1;\n}\n.carousel-control .icon-prev:before {\n  content: '\\2039';\n}\n.carousel-control .icon-next:before {\n  content: '\\203A';\n}\n.carousel-indicators {\n  position: absolute;\n  bottom: 10px;\n  left: 50%;\n  z-index: 15;\n  width: 60%;\n  padding-left: 0;\n  margin-left: -30%;\n  text-align: center;\n  list-style: none;\n}\n.carousel-indicators li {\n  display: inline-block;\n  width: 10px;\n  height: 10px;\n  margin: 1px;\n  text-indent: -999px;\n  cursor: pointer;\n  background-color: #000 \\9;\n  background-color: rgba(0, 0, 0, 0);\n  border: 1px solid #fff;\n  border-radius: 10px;\n}\n.carousel-indicators .active {\n  width: 12px;\n  height: 12px;\n  margin: 0;\n  background-color: #fff;\n}\n.carousel-caption {\n  position: absolute;\n  right: 15%;\n  bottom: 20px;\n  left: 15%;\n  z-index: 10;\n  padding-top: 20px;\n  padding-bottom: 20px;\n  color: #fff;\n  text-align: center;\n  text-shadow: 0 1px 2px rgba(0, 0, 0, .6);\n}\n.carousel-caption .btn {\n  text-shadow: none;\n}\n@media screen and (min-width: 768px) {\n  .carousel-control .glyphicon-chevron-left,\n  .carousel-control .glyphicon-chevron-right,\n  .carousel-control .icon-prev,\n  .carousel-control .icon-next {\n    width: 30px;\n    height: 30px;\n    margin-top: -15px;\n    font-size: 30px;\n  }\n  .carousel-control .glyphicon-chevron-left,\n  .carousel-control .icon-prev {\n    margin-left: -15px;\n  }\n  .carousel-control .glyphicon-chevron-right,\n  .carousel-control .icon-next {\n    margin-right: -15px;\n  }\n  .carousel-caption {\n    right: 20%;\n    left: 20%;\n    padding-bottom: 30px;\n  }\n  .carousel-indicators {\n    bottom: 20px;\n  }\n}\n.clearfix:before,\n.clearfix:after,\n.dl-horizontal dd:before,\n.dl-horizontal dd:after,\n.container:before,\n.container:after,\n.container-fluid:before,\n.container-fluid:after,\n.row:before,\n.row:after,\n.form-horizontal .form-group:before,\n.form-horizontal .form-group:after,\n.btn-toolbar:before,\n.btn-toolbar:after,\n.btn-group-vertical > .btn-group:before,\n.btn-group-vertical > .btn-group:after,\n.nav:before,\n.nav:after,\n.navbar:before,\n.navbar:after,\n.navbar-header:before,\n.navbar-header:after,\n.navbar-collapse:before,\n.navbar-collapse:after,\n.pager:before,\n.pager:after,\n.panel-body:before,\n.panel-body:after,\n.modal-footer:before,\n.modal-footer:after {\n  display: table;\n  content: \" \";\n}\n.clearfix:after,\n.dl-horizontal dd:after,\n.container:after,\n.container-fluid:after,\n.row:after,\n.form-horizontal .form-group:after,\n.btn-toolbar:after,\n.btn-group-vertical > .btn-group:after,\n.nav:after,\n.navbar:after,\n.navbar-header:after,\n.navbar-collapse:after,\n.pager:after,\n.panel-body:after,\n.modal-footer:after {\n  clear: both;\n}\n.center-block {\n  display: block;\n  margin-right: auto;\n  margin-left: auto;\n}\n.pull-right {\n  float: right !important;\n}\n.pull-left {\n  float: left !important;\n}\n.hide {\n  display: none !important;\n}\n.show {\n  display: block !important;\n}\n.invisible {\n  visibility: hidden;\n}\n.text-hide {\n  font: 0/0 a;\n  color: transparent;\n  text-shadow: none;\n  background-color: transparent;\n  border: 0;\n}\n.hidden {\n  display: none !important;\n}\n.affix {\n  position: fixed;\n}\n@-ms-viewport {\n  width: device-width;\n}\n.visible-xs,\n.visible-sm,\n.visible-md,\n.visible-lg {\n  display: none !important;\n}\n.visible-xs-block,\n.visible-xs-inline,\n.visible-xs-inline-block,\n.visible-sm-block,\n.visible-sm-inline,\n.visible-sm-inline-block,\n.visible-md-block,\n.visible-md-inline,\n.visible-md-inline-block,\n.visible-lg-block,\n.visible-lg-inline,\n.visible-lg-inline-block {\n  display: none !important;\n}\n@media (max-width: 767px) {\n  .visible-xs {\n    display: block !important;\n  }\n  table.visible-xs {\n    display: table !important;\n  }\n  tr.visible-xs {\n    display: table-row !important;\n  }\n  th.visible-xs,\n  td.visible-xs {\n    display: table-cell !important;\n  }\n}\n@media (max-width: 767px) {\n  .visible-xs-block {\n    display: block !important;\n  }\n}\n@media (max-width: 767px) {\n  .visible-xs-inline {\n    display: inline !important;\n  }\n}\n@media (max-width: 767px) {\n  .visible-xs-inline-block {\n    display: inline-block !important;\n  }\n}\n@media (min-width: 768px) and (max-width: 991px) {\n  .visible-sm {\n    display: block !important;\n  }\n  table.visible-sm {\n    display: table !important;\n  }\n  tr.visible-sm {\n    display: table-row !important;\n  }\n  th.visible-sm,\n  td.visible-sm {\n    display: table-cell !important;\n  }\n}\n@media (min-width: 768px) and (max-width: 991px) {\n  .visible-sm-block {\n    display: block !important;\n  }\n}\n@media (min-width: 768px) and (max-width: 991px) {\n  .visible-sm-inline {\n    display: inline !important;\n  }\n}\n@media (min-width: 768px) and (max-width: 991px) {\n  .visible-sm-inline-block {\n    display: inline-block !important;\n  }\n}\n@media (min-width: 992px) and (max-width: 1199px) {\n  .visible-md {\n    display: block !important;\n  }\n  table.visible-md {\n    display: table !important;\n  }\n  tr.visible-md {\n    display: table-row !important;\n  }\n  th.visible-md,\n  td.visible-md {\n    display: table-cell !important;\n  }\n}\n@media (min-width: 992px) and (max-width: 1199px) {\n  .visible-md-block {\n    display: block !important;\n  }\n}\n@media (min-width: 992px) and (max-width: 1199px) {\n  .visible-md-inline {\n    display: inline !important;\n  }\n}\n@media (min-width: 992px) and (max-width: 1199px) {\n  .visible-md-inline-block {\n    display: inline-block !important;\n  }\n}\n@media (min-width: 1200px) {\n  .visible-lg {\n    display: block !important;\n  }\n  table.visible-lg {\n    display: table !important;\n  }\n  tr.visible-lg {\n    display: table-row !important;\n  }\n  th.visible-lg,\n  td.visible-lg {\n    display: table-cell !important;\n  }\n}\n@media (min-width: 1200px) {\n  .visible-lg-block {\n    display: block !important;\n  }\n}\n@media (min-width: 1200px) {\n  .visible-lg-inline {\n    display: inline !important;\n  }\n}\n@media (min-width: 1200px) {\n  .visible-lg-inline-block {\n    display: inline-block !important;\n  }\n}\n@media (max-width: 767px) {\n  .hidden-xs {\n    display: none !important;\n  }\n}\n@media (min-width: 768px) and (max-width: 991px) {\n  .hidden-sm {\n    display: none !important;\n  }\n}\n@media (min-width: 992px) and (max-width: 1199px) {\n  .hidden-md {\n    display: none !important;\n  }\n}\n@media (min-width: 1200px) {\n  .hidden-lg {\n    display: none !important;\n  }\n}\n.visible-print {\n  display: none !important;\n}\n@media print {\n  .visible-print {\n    display: block !important;\n  }\n  table.visible-print {\n    display: table !important;\n  }\n  tr.visible-print {\n    display: table-row !important;\n  }\n  th.visible-print,\n  td.visible-print {\n    display: table-cell !important;\n  }\n}\n.visible-print-block {\n  display: none !important;\n}\n@media print {\n  .visible-print-block {\n    display: block !important;\n  }\n}\n.visible-print-inline {\n  display: none !important;\n}\n@media print {\n  .visible-print-inline {\n    display: inline !important;\n  }\n}\n.visible-print-inline-block {\n  display: none !important;\n}\n@media print {\n  .visible-print-inline-block {\n    display: inline-block !important;\n  }\n}\n@media print {\n  .hidden-print {\n    display: none !important;\n  }\n}\n/*# sourceMappingURL=bootstrap.css.map */\n", ""]);
+	
 	// exports
 
 
 /***/ },
 /* 6 */
+/*!**************************************!*\
+  !*** ./~/css-loader/lib/css-base.js ***!
+  \**************************************/
 /***/ function(module, exports) {
 
 	/*
@@ -182,7 +196,7 @@ webpackJsonp([0],[
 	// css base code, injected by the css-loader
 	module.exports = function() {
 		var list = [];
-
+	
 		// return the list of modules as css string
 		list.toString = function toString() {
 			var result = [];
@@ -196,7 +210,7 @@ webpackJsonp([0],[
 			}
 			return result.join("");
 		};
-
+	
 		// import a list of modules into the list
 		list.i = function(modules, mediaQuery) {
 			if(typeof modules === "string")
@@ -229,36 +243,54 @@ webpackJsonp([0],[
 
 /***/ },
 /* 7 */
+/*!********************************************************************************!*\
+  !*** ./bower_components/bootstrap/dist/fonts/glyphicons-halflings-regular.eot ***!
+  \********************************************************************************/
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__.p + "f4769f9bdb7466be65088239c12046d1.eot"
+	module.exports = __webpack_require__.p + "f4769f9bdb7466be65088239c12046d1.eot";
 
 /***/ },
 /* 8 */
+/*!**********************************************************************************!*\
+  !*** ./bower_components/bootstrap/dist/fonts/glyphicons-halflings-regular.woff2 ***!
+  \**********************************************************************************/
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__.p + "448c34a56d699c29117adc64c43affeb.woff2"
+	module.exports = __webpack_require__.p + "448c34a56d699c29117adc64c43affeb.woff2";
 
 /***/ },
 /* 9 */
+/*!*********************************************************************************!*\
+  !*** ./bower_components/bootstrap/dist/fonts/glyphicons-halflings-regular.woff ***!
+  \*********************************************************************************/
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__.p + "fa2772327f55d8198301fdb8bcfc8158.woff"
+	module.exports = __webpack_require__.p + "fa2772327f55d8198301fdb8bcfc8158.woff";
 
 /***/ },
 /* 10 */
+/*!********************************************************************************!*\
+  !*** ./bower_components/bootstrap/dist/fonts/glyphicons-halflings-regular.ttf ***!
+  \********************************************************************************/
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__.p + "e18bbf611f2a2e43afc071aa2f4e1512.ttf"
+	module.exports = __webpack_require__.p + "e18bbf611f2a2e43afc071aa2f4e1512.ttf";
 
 /***/ },
 /* 11 */
+/*!********************************************************************************!*\
+  !*** ./bower_components/bootstrap/dist/fonts/glyphicons-halflings-regular.svg ***!
+  \********************************************************************************/
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__.p + "89889688147bd7575d6327160d64e760.svg"
+	module.exports = __webpack_require__.p + "89889688147bd7575d6327160d64e760.svg";
 
 /***/ },
 /* 12 */
+/*!*************************************!*\
+  !*** ./~/style-loader/addStyles.js ***!
+  \*************************************/
 /***/ function(module, exports, __webpack_require__) {
 
 	/*
@@ -280,21 +312,25 @@ webpackJsonp([0],[
 			return document.head || document.getElementsByTagName("head")[0];
 		}),
 		singletonElement = null,
-		singletonCounter = 0;
-
+		singletonCounter = 0,
+		styleElementsInsertedAtTop = [];
+	
 	module.exports = function(list, options) {
-		if(false) {
+		if(true) {
 			if(typeof document !== "object") throw new Error("The style-loader cannot be used in a non-browser environment");
 		}
-
+	
 		options = options || {};
 		// Force single-tag solution on IE6-9, which has a hard limit on the # of <style>
 		// tags it will allow on a page
 		if (typeof options.singleton === "undefined") options.singleton = isOldIE();
-
+	
+		// By default, add <style> tags to the bottom of <head>.
+		if (typeof options.insertAt === "undefined") options.insertAt = "bottom";
+	
 		var styles = listToStyles(list);
 		addStylesToDom(styles, options);
-
+	
 		return function update(newList) {
 			var mayRemove = [];
 			for(var i = 0; i < styles.length; i++) {
@@ -317,7 +353,7 @@ webpackJsonp([0],[
 			}
 		};
 	}
-
+	
 	function addStylesToDom(styles, options) {
 		for(var i = 0; i < styles.length; i++) {
 			var item = styles[i];
@@ -339,7 +375,7 @@ webpackJsonp([0],[
 			}
 		}
 	}
-
+	
 	function listToStyles(list) {
 		var styles = [];
 		var newStyles = {};
@@ -357,29 +393,54 @@ webpackJsonp([0],[
 		}
 		return styles;
 	}
-
-	function createStyleElement() {
-		var styleElement = document.createElement("style");
+	
+	function insertStyleElement(options, styleElement) {
 		var head = getHeadElement();
+		var lastStyleElementInsertedAtTop = styleElementsInsertedAtTop[styleElementsInsertedAtTop.length - 1];
+		if (options.insertAt === "top") {
+			if(!lastStyleElementInsertedAtTop) {
+				head.insertBefore(styleElement, head.firstChild);
+			} else if(lastStyleElementInsertedAtTop.nextSibling) {
+				head.insertBefore(styleElement, lastStyleElementInsertedAtTop.nextSibling);
+			} else {
+				head.appendChild(styleElement);
+			}
+			styleElementsInsertedAtTop.push(styleElement);
+		} else if (options.insertAt === "bottom") {
+			head.appendChild(styleElement);
+		} else {
+			throw new Error("Invalid value for parameter 'insertAt'. Must be 'top' or 'bottom'.");
+		}
+	}
+	
+	function removeStyleElement(styleElement) {
+		styleElement.parentNode.removeChild(styleElement);
+		var idx = styleElementsInsertedAtTop.indexOf(styleElement);
+		if(idx >= 0) {
+			styleElementsInsertedAtTop.splice(idx, 1);
+		}
+	}
+	
+	function createStyleElement(options) {
+		var styleElement = document.createElement("style");
 		styleElement.type = "text/css";
-		head.appendChild(styleElement);
+		insertStyleElement(options, styleElement);
 		return styleElement;
 	}
-
-	function createLinkElement() {
+	
+	function createLinkElement(options) {
 		var linkElement = document.createElement("link");
-		var head = getHeadElement();
 		linkElement.rel = "stylesheet";
-		head.appendChild(linkElement);
+		insertStyleElement(options, linkElement);
 		return linkElement;
 	}
-
+	
 	function addStyle(obj, options) {
 		var styleElement, update, remove;
-
+	
 		if (options.singleton) {
 			var styleIndex = singletonCounter++;
-			styleElement = singletonElement || (singletonElement = createStyleElement());
+			styleElement = singletonElement || (singletonElement = createStyleElement(options));
 			update = applyToSingletonTag.bind(null, styleElement, styleIndex, false);
 			remove = applyToSingletonTag.bind(null, styleElement, styleIndex, true);
 		} else if(obj.sourceMap &&
@@ -388,23 +449,23 @@ webpackJsonp([0],[
 			typeof URL.revokeObjectURL === "function" &&
 			typeof Blob === "function" &&
 			typeof btoa === "function") {
-			styleElement = createLinkElement();
+			styleElement = createLinkElement(options);
 			update = updateLink.bind(null, styleElement);
 			remove = function() {
-				styleElement.parentNode.removeChild(styleElement);
+				removeStyleElement(styleElement);
 				if(styleElement.href)
 					URL.revokeObjectURL(styleElement.href);
 			};
 		} else {
-			styleElement = createStyleElement();
+			styleElement = createStyleElement(options);
 			update = applyToTag.bind(null, styleElement);
 			remove = function() {
-				styleElement.parentNode.removeChild(styleElement);
+				removeStyleElement(styleElement);
 			};
 		}
-
+	
 		update(obj);
-
+	
 		return function updateStyle(newObj) {
 			if(newObj) {
 				if(newObj.css === obj.css && newObj.media === obj.media && newObj.sourceMap === obj.sourceMap)
@@ -415,19 +476,19 @@ webpackJsonp([0],[
 			}
 		};
 	}
-
+	
 	var replaceText = (function () {
 		var textStore = [];
-
+	
 		return function (index, replacement) {
 			textStore[index] = replacement;
 			return textStore.filter(Boolean).join('\n');
 		};
 	})();
-
+	
 	function applyToSingletonTag(styleElement, index, remove, obj) {
 		var css = remove ? "" : obj.css;
-
+	
 		if (styleElement.styleSheet) {
 			styleElement.styleSheet.cssText = replaceText(index, css);
 		} else {
@@ -441,16 +502,16 @@ webpackJsonp([0],[
 			}
 		}
 	}
-
+	
 	function applyToTag(styleElement, obj) {
 		var css = obj.css;
 		var media = obj.media;
 		var sourceMap = obj.sourceMap;
-
+	
 		if(media) {
 			styleElement.setAttribute("media", media)
 		}
-
+	
 		if(styleElement.styleSheet) {
 			styleElement.styleSheet.cssText = css;
 		} else {
@@ -460,23 +521,23 @@ webpackJsonp([0],[
 			styleElement.appendChild(document.createTextNode(css));
 		}
 	}
-
+	
 	function updateLink(linkElement, obj) {
 		var css = obj.css;
 		var media = obj.media;
 		var sourceMap = obj.sourceMap;
-
+	
 		if(sourceMap) {
 			// http://stackoverflow.com/a/26603875
 			css += "\n/*# sourceMappingURL=data:application/json;base64," + btoa(unescape(encodeURIComponent(JSON.stringify(sourceMap)))) + " */";
 		}
-
+	
 		var blob = new Blob([css], { type: "text/css" });
-
+	
 		var oldSrc = linkElement.href;
-
+	
 		linkElement.href = URL.createObjectURL(blob);
-
+	
 		if(oldSrc)
 			URL.revokeObjectURL(oldSrc);
 	}
@@ -485,81 +546,84 @@ webpackJsonp([0],[
 /***/ },
 /* 13 */,
 /* 14 */
+/*!**********************************************************!*\
+  !*** ./bower_components/Flot/jquery.flot.fillbetween.js ***!
+  \**********************************************************/
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(jQuery) {/* Flot plugin for computing bottoms for filled line and bar charts.
-
+	
 	Copyright (c) 2007-2014 IOLA and Ole Laursen.
 	Licensed under the MIT license.
-
+	
 	The case: you've got two series that you want to fill the area between. In Flot
 	terms, you need to use one as the fill bottom of the other. You can specify the
 	bottom of each data point as the third coordinate manually, or you can use this
 	plugin to compute it for you.
-
+	
 	In order to name the other series, you need to give it an id, like this:
-
+	
 		var dataset = [
 			{ data: [ ... ], id: "foo" } ,         // use default bottom
 			{ data: [ ... ], fillBetween: "foo" }, // use first dataset as bottom
 		];
-
+	
 		$.plot($("#placeholder"), dataset, { lines: { show: true, fill: true }});
-
+	
 	As a convenience, if the id given is a number that doesn't appear as an id in
 	the series, it is interpreted as the index in the array instead (so fillBetween:
 	0 can also mean the first series).
-
+	
 	Internally, the plugin modifies the datapoints in each series. For line series,
 	extra data points might be inserted through interpolation. Note that at points
 	where the bottom line is not defined (due to a null point or start/end of line),
 	the current line will show a gap too. The algorithm comes from the
 	jquery.flot.stack.js plugin, possibly some code could be shared.
-
+	
 	*/
-
+	
 	(function ( $ ) {
-
+	
 		var options = {
 			series: {
 				fillBetween: null	// or number
 			}
 		};
-
+	
 		function init( plot ) {
-
+	
 			function findBottomSeries( s, allseries ) {
-
+	
 				var i;
-
+	
 				for ( i = 0; i < allseries.length; ++i ) {
 					if ( allseries[ i ].id === s.fillBetween ) {
 						return allseries[ i ];
 					}
 				}
-
+	
 				if ( typeof s.fillBetween === "number" ) {
 					if ( s.fillBetween < 0 || s.fillBetween >= allseries.length ) {
 						return null;
 					}
 					return allseries[ s.fillBetween ];
 				}
-
+	
 				return null;
 			}
-
+	
 			function computeFillBottoms( plot, s, datapoints ) {
-
+	
 				if ( s.fillBetween == null ) {
 					return;
 				}
-
+	
 				var other = findBottomSeries( s, plot.getData() );
-
+	
 				if ( !other ) {
 					return;
 				}
-
+	
 				var ps = datapoints.pointsize,
 					points = datapoints.points,
 					otherps = other.datapoints.pointsize,
@@ -573,75 +637,75 @@ webpackJsonp([0],[
 					i = 0,
 					j = 0,
 					l, m;
-
+	
 				while ( true ) {
-
+	
 					if ( i >= points.length ) {
 						break;
 					}
-
+	
 					l = newpoints.length;
-
+	
 					if ( points[ i ] == null ) {
-
+	
 						// copy gaps
-
+	
 						for ( m = 0; m < ps; ++m ) {
 							newpoints.push( points[ i + m ] );
 						}
-
+	
 						i += ps;
-
+	
 					} else if ( j >= otherpoints.length ) {
-
+	
 						// for lines, we can't use the rest of the points
-
+	
 						if ( !withlines ) {
 							for ( m = 0; m < ps; ++m ) {
 								newpoints.push( points[ i + m ] );
 							}
 						}
-
+	
 						i += ps;
-
+	
 					} else if ( otherpoints[ j ] == null ) {
-
+	
 						// oops, got a gap
-
+	
 						for ( m = 0; m < ps; ++m ) {
 							newpoints.push( null );
 						}
-
+	
 						fromgap = true;
 						j += otherps;
-
+	
 					} else {
-
+	
 						// cases where we actually got two points
-
+	
 						px = points[ i ];
 						py = points[ i + 1 ];
 						qx = otherpoints[ j ];
 						qy = otherpoints[ j + 1 ];
 						bottom = 0;
-
+	
 						if ( px === qx ) {
-
+	
 							for ( m = 0; m < ps; ++m ) {
 								newpoints.push( points[ i + m ] );
 							}
-
+	
 							//newpoints[ l + 1 ] += qy;
 							bottom = qy;
-
+	
 							i += ps;
 							j += otherps;
-
+	
 						} else if ( px > qx ) {
-
+	
 							// we got past point below, might need to
 							// insert interpolated extra point
-
+	
 							if ( withlines && i > 0 && points[ i - ps ] != null ) {
 								intery = py + ( points[ i - ps + 1 ] - py ) * ( qx - px ) / ( points[ i - ps ] - px );
 								newpoints.push( qx );
@@ -651,43 +715,43 @@ webpackJsonp([0],[
 								}
 								bottom = qy;
 							}
-
+	
 							j += otherps;
-
+	
 						} else { // px < qx
-
+	
 							// if we come from a gap, we just skip this point
-
+	
 							if ( fromgap && withlines ) {
 								i += ps;
 								continue;
 							}
-
+	
 							for ( m = 0; m < ps; ++m ) {
 								newpoints.push( points[ i + m ] );
 							}
-
+	
 							// we might be able to interpolate a point below,
 							// this can give us a better y
-
+	
 							if ( withlines && j > 0 && otherpoints[ j - otherps ] != null ) {
 								bottom = qy + ( otherpoints[ j - otherps + 1 ] - qy ) * ( px - qx ) / ( otherpoints[ j - otherps ] - qx );
 							}
-
+	
 							//newpoints[l + 1] += bottom;
-
+	
 							i += ps;
 						}
-
+	
 						fromgap = false;
-
+	
 						if ( l !== newpoints.length && withbottom ) {
 							newpoints[ l + 2 ] = bottom;
 						}
 					}
-
+	
 					// maintain the line steps invariant
-
+	
 					if ( withsteps && l !== newpoints.length && l > 0 &&
 						newpoints[ l ] !== null &&
 						newpoints[ l ] !== newpoints[ l - ps ] &&
@@ -698,40 +762,43 @@ webpackJsonp([0],[
 						newpoints[ l + 1 ] = newpoints[ l - ps + 1 ];
 					}
 				}
-
+	
 				datapoints.points = newpoints;
 			}
-
+	
 			plot.hooks.processDatapoints.push( computeFillBottoms );
 		}
-
+	
 		$.plot.plugins.push({
 			init: init,
 			options: options,
 			name: "fillbetween",
 			version: "1.0"
 		});
-
+	
 	})(jQuery);
-
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2)))
+	
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(/*! jquery */ 2)))
 
 /***/ },
 /* 15 */
+/*!***************************************************!*\
+  !*** ./bower_components/Flot/jquery.flot.time.js ***!
+  \***************************************************/
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(jQuery) {/* Pretty handling of time axes.
-
+	
 	Copyright (c) 2007-2014 IOLA and Ole Laursen.
 	Licensed under the MIT license.
-
+	
 	Set axis.mode to "time" to enable. See the section "Time series data" in
 	API.txt for details.
-
+	
 	*/
-
+	
 	(function($) {
-
+	
 		var options = {
 			xaxis: {
 				timezone: null,		// "browser" for local to the client or timezone for timezone-js
@@ -740,43 +807,43 @@ webpackJsonp([0],[
 				monthNames: null	// list of names of months
 			}
 		};
-
+	
 		// round to nearby lower multiple of base
-
+	
 		function floorInBase(n, base) {
 			return base * Math.floor(n / base);
 		}
-
+	
 		// Returns a string with the date d formatted according to fmt.
 		// A subset of the Open Group's strftime format is supported.
-
+	
 		function formatDate(d, fmt, monthNames, dayNames) {
-
+	
 			if (typeof d.strftime == "function") {
 				return d.strftime(fmt);
 			}
-
+	
 			var leftPad = function(n, pad) {
 				n = "" + n;
 				pad = "" + (pad == null ? "0" : pad);
 				return n.length == 1 ? pad + n : n;
 			};
-
+	
 			var r = [];
 			var escape = false;
 			var hours = d.getHours();
 			var isAM = hours < 12;
-
+	
 			if (monthNames == null) {
 				monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 			}
-
+	
 			if (dayNames == null) {
 				dayNames = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 			}
-
+	
 			var hours12;
-
+	
 			if (hours > 12) {
 				hours12 = hours - 12;
 			} else if (hours == 0) {
@@ -784,11 +851,11 @@ webpackJsonp([0],[
 			} else {
 				hours12 = hours;
 			}
-
+	
 			for (var i = 0; i < fmt.length; ++i) {
-
+	
 				var c = fmt.charAt(i);
-
+	
 				if (escape) {
 					switch (c) {
 						case 'a': c = "" + dayNames[d.getDay()]; break;
@@ -821,49 +888,49 @@ webpackJsonp([0],[
 					}
 				}
 			}
-
+	
 			return r.join("");
 		}
-
+	
 		// To have a consistent view of time-based data independent of which time
 		// zone the client happens to be in we need a date-like object independent
 		// of time zones.  This is done through a wrapper that only calls the UTC
 		// versions of the accessor methods.
-
+	
 		function makeUtcWrapper(d) {
-
+	
 			function addProxyMethod(sourceObj, sourceMethod, targetObj, targetMethod) {
 				sourceObj[sourceMethod] = function() {
 					return targetObj[targetMethod].apply(targetObj, arguments);
 				};
 			};
-
+	
 			var utc = {
 				date: d
 			};
-
+	
 			// support strftime, if found
-
+	
 			if (d.strftime != undefined) {
 				addProxyMethod(utc, "strftime", d, "strftime");
 			}
-
+	
 			addProxyMethod(utc, "getTime", d, "getTime");
 			addProxyMethod(utc, "setTime", d, "setTime");
-
+	
 			var props = ["Date", "Day", "FullYear", "Hours", "Milliseconds", "Minutes", "Month", "Seconds"];
-
+	
 			for (var p = 0; p < props.length; p++) {
 				addProxyMethod(utc, "get" + props[p], d, "getUTC" + props[p]);
 				addProxyMethod(utc, "set" + props[p], d, "setUTC" + props[p]);
 			}
-
+	
 			return utc;
 		};
-
+	
 		// select time zone strategy.  This returns a date-like object tied to the
 		// desired timezone
-
+	
 		function dateGenerator(ts, opts) {
 			if (opts.timezone == "browser") {
 				return new Date(ts);
@@ -880,9 +947,9 @@ webpackJsonp([0],[
 				return makeUtcWrapper(new Date(ts));
 			}
 		}
-
+		
 		// map of app. size of time units in milliseconds
-
+	
 		var timeUnitSize = {
 			"second": 1000,
 			"minute": 60 * 1000,
@@ -892,51 +959,51 @@ webpackJsonp([0],[
 			"quarter": 3 * 30 * 24 * 60 * 60 * 1000,
 			"year": 365.2425 * 24 * 60 * 60 * 1000
 		};
-
+	
 		// the allowed tick sizes, after 1 year we use
 		// an integer algorithm
-
+	
 		var baseSpec = [
 			[1, "second"], [2, "second"], [5, "second"], [10, "second"],
-			[30, "second"],
+			[30, "second"], 
 			[1, "minute"], [2, "minute"], [5, "minute"], [10, "minute"],
-			[30, "minute"],
+			[30, "minute"], 
 			[1, "hour"], [2, "hour"], [4, "hour"],
 			[8, "hour"], [12, "hour"],
 			[1, "day"], [2, "day"], [3, "day"],
 			[0.25, "month"], [0.5, "month"], [1, "month"],
 			[2, "month"]
 		];
-
+	
 		// we don't know which variant(s) we'll need yet, but generating both is
 		// cheap
-
+	
 		var specMonths = baseSpec.concat([[3, "month"], [6, "month"],
 			[1, "year"]]);
 		var specQuarters = baseSpec.concat([[1, "quarter"], [2, "quarter"],
 			[1, "year"]]);
-
+	
 		function init(plot) {
 			plot.hooks.processOptions.push(function (plot, options) {
 				$.each(plot.getAxes(), function(axisName, axis) {
-
+	
 					var opts = axis.options;
-
+	
 					if (opts.mode == "time") {
 						axis.tickGenerator = function(axis) {
-
+	
 							var ticks = [];
 							var d = dateGenerator(axis.min, opts);
 							var minSize = 0;
-
+	
 							// make quarter use a possibility if quarters are
 							// mentioned in either of these options
-
+	
 							var spec = (opts.tickSize && opts.tickSize[1] ===
 								"quarter") ||
 								(opts.minTickSize && opts.minTickSize[1] ===
 								"quarter") ? specQuarters : specMonths;
-
+	
 							if (opts.minTickSize != null) {
 								if (typeof opts.tickSize == "number") {
 									minSize = opts.tickSize;
@@ -944,7 +1011,7 @@ webpackJsonp([0],[
 									minSize = opts.minTickSize[0] * timeUnitSize[opts.minTickSize[1]];
 								}
 							}
-
+	
 							for (var i = 0; i < spec.length - 1; ++i) {
 								if (axis.delta < (spec[i][0] * timeUnitSize[spec[i][1]]
 												  + spec[i + 1][0] * timeUnitSize[spec[i + 1][1]]) / 2
@@ -952,24 +1019,24 @@ webpackJsonp([0],[
 									break;
 								}
 							}
-
+	
 							var size = spec[i][0];
 							var unit = spec[i][1];
-
+	
 							// special-case the possibility of several years
-
+	
 							if (unit == "year") {
-
+	
 								// if given a minTickSize in years, just use it,
 								// ensuring that it's an integer
-
+	
 								if (opts.minTickSize != null && opts.minTickSize[1] == "year") {
 									size = Math.floor(opts.minTickSize[0]);
 								} else {
-
+	
 									var magn = Math.pow(10, Math.floor(Math.log(axis.delta / timeUnitSize.year) / Math.LN10));
 									var norm = (axis.delta / timeUnitSize.year) / magn;
-
+	
 									if (norm < 1.5) {
 										size = 1;
 									} else if (norm < 3) {
@@ -979,23 +1046,23 @@ webpackJsonp([0],[
 									} else {
 										size = 10;
 									}
-
+	
 									size *= magn;
 								}
-
+	
 								// minimum size for years is 1
-
+	
 								if (size < 1) {
 									size = 1;
 								}
 							}
-
+	
 							axis.tickSize = opts.tickSize || [size, unit];
 							var tickSize = axis.tickSize[0];
 							unit = axis.tickSize[1];
-
+	
 							var step = tickSize * timeUnitSize[unit];
-
+	
 							if (unit == "second") {
 								d.setSeconds(floorInBase(d.getSeconds(), tickSize));
 							} else if (unit == "minute") {
@@ -1010,11 +1077,11 @@ webpackJsonp([0],[
 							} else if (unit == "year") {
 								d.setFullYear(floorInBase(d.getFullYear(), tickSize));
 							}
-
+	
 							// reset smaller components
-
+	
 							d.setMilliseconds(0);
-
+	
 							if (step >= timeUnitSize.minute) {
 								d.setSeconds(0);
 							}
@@ -1036,25 +1103,25 @@ webpackJsonp([0],[
 							if (step >= timeUnitSize.year) {
 								d.setMonth(0);
 							}
-
+	
 							var carry = 0;
 							var v = Number.NaN;
 							var prev;
-
+	
 							do {
-
+	
 								prev = v;
 								v = d.getTime();
 								ticks.push(v);
-
+	
 								if (unit == "month" || unit == "quarter") {
 									if (tickSize < 1) {
-
+	
 										// a bit complicated - we'll divide the
 										// month/quarter up but we need to take
 										// care of fractions so we don't end up in
 										// the middle of a day
-
+	
 										d.setDate(1);
 										var start = d.getTime();
 										d.setMonth(d.getMonth() +
@@ -1073,34 +1140,34 @@ webpackJsonp([0],[
 									d.setTime(v + step);
 								}
 							} while (v < axis.max && v != prev);
-
+	
 							return ticks;
 						};
-
+	
 						axis.tickFormatter = function (v, axis) {
-
+	
 							var d = dateGenerator(v, axis.options);
-
+	
 							// first check global format
-
+	
 							if (opts.timeformat != null) {
 								return formatDate(d, opts.timeformat, opts.monthNames, opts.dayNames);
 							}
-
+	
 							// possibly use quarters if quarters are mentioned in
 							// any of these places
-
+	
 							var useQuarters = (axis.options.tickSize &&
 									axis.options.tickSize[1] == "quarter") ||
 								(axis.options.minTickSize &&
 									axis.options.minTickSize[1] == "quarter");
-
+	
 							var t = axis.tickSize[0] * timeUnitSize[axis.tickSize[1]];
 							var span = axis.max - axis.min;
 							var suffix = (opts.twelveHourClock) ? " %p" : "";
 							var hourCode = (opts.twelveHourClock) ? "%I" : "%H";
 							var fmt;
-
+	
 							if (t < timeUnitSize.minute) {
 								fmt = hourCode + ":%M:%S" + suffix;
 							} else if (t < timeUnitSize.day) {
@@ -1127,89 +1194,94 @@ webpackJsonp([0],[
 							} else {
 								fmt = "%Y";
 							}
-
+	
 							var rt = formatDate(d, fmt, opts.monthNames, opts.dayNames);
-
+	
 							return rt;
 						};
 					}
 				});
 			});
 		}
-
+	
 		$.plot.plugins.push({
 			init: init,
 			options: options,
 			name: 'time',
 			version: '1.0'
 		});
-
+	
 		// Time-axis support used to be in Flot core, which exposed the
 		// formatDate function on the plot object.  Various plugins depend
 		// on the function, so we need to re-expose it here.
-
+	
 		$.plot.formatDate = formatDate;
 		$.plot.dateGenerator = dateGenerator;
-
+	
 	})(jQuery);
-
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2)))
+	
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(/*! jquery */ 2)))
 
 /***/ },
 /* 16 */
+/*!***********************!*\
+  !*** ./app/graph.jsx ***!
+  \***********************/
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function($, _) {'use strict';
-
-	Object.defineProperty(exports, '__esModule', {
+	
+	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
-
-	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
-
-	var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
-
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
-
-	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-	var _react = __webpack_require__(3);
-
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	var _react = __webpack_require__(/*! react */ 3);
+	
 	var _react2 = _interopRequireDefault(_react);
-
-	__webpack_require__(17);
-
-	var _graph_flotJsx = __webpack_require__(1);
-
-	var _graph_flotJsx2 = _interopRequireDefault(_graph_flotJsx);
-
-	var _call_tracerJsx = __webpack_require__(18);
-
-	var _call_tracerJsx2 = _interopRequireDefault(_call_tracerJsx);
-
+	
+	__webpack_require__(/*! underscore */ 17);
+	
+	var _graph_flot = __webpack_require__(/*! ./graph_flot.jsx */ 1);
+	
+	var _graph_flot2 = _interopRequireDefault(_graph_flot);
+	
+	var _call_tracer = __webpack_require__(/*! ./call_tracer.jsx */ 18);
+	
+	var _call_tracer2 = _interopRequireDefault(_call_tracer);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+	
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	
 	var UPDATE_INTERVAL = 1000;
 	var MAX_DPS = 5 * 60; //10 minutes
-
-	var Graph = (function (_React$Component) {
+	
+	var Graph = function (_React$Component) {
 	  _inherits(Graph, _React$Component);
-
+	
 	  function Graph(props) {
 	    _classCallCheck(this, Graph);
-
-	    _get(Object.getPrototypeOf(Graph.prototype), 'constructor', this).call(this, props);
-	    this.state = { dps: [], error: false, lastTs: 0 };
+	
+	    var _this = _possibleConstructorReturn(this, (Graph.__proto__ || Object.getPrototypeOf(Graph)).call(this, props));
+	
+	    _this.state = { dps: [], error: false, lastTs: 0 };
+	    return _this;
 	  }
-
+	
 	  _createClass(Graph, [{
 	    key: 'componentDidMount',
 	    value: function componentDidMount() {
-	      this.graph = new _graph_flotJsx2['default']();
+	      this.graph = new _graph_flot2.default();
 	      this.graph.init("#" + this.chartId());
-
+	
 	      window.addEventListener('resize', this.handleResize.bind(this));
-
+	
 	      var ref = setInterval(this.getData.bind(this), UPDATE_INTERVAL);
 	      var newState = this.state;
 	      this.state.interval = ref;
@@ -1226,34 +1298,34 @@ webpackJsonp([0],[
 	      var fun = this.props.fun;
 	      var panelType = "panel panel-default ";
 	      var errorMsg = "";
-
+	
 	      if (this.state.error) {
 	        panelType += "panel-danger";
-	        errorMsg = _react2['default'].createElement(
+	        errorMsg = _react2.default.createElement(
 	          'strong',
 	          null,
 	          '  -  communication error'
 	        );
 	      }
-
-	      return _react2['default'].createElement(
+	
+	      return _react2.default.createElement(
 	        'div',
 	        { className: panelType },
-	        _react2['default'].createElement(
+	        _react2.default.createElement(
 	          'div',
 	          { className: 'panel-heading' },
-	          _react2['default'].createElement(
+	          _react2.default.createElement(
 	            'button',
 	            { onClick: this.handleClose.bind(this), type: 'button',
 	              className: 'close', 'data-dismiss': 'modal',
 	              'aria-label': 'Close' },
-	            _react2['default'].createElement(
+	            _react2.default.createElement(
 	              'span',
 	              { 'aria-hidden': 'true' },
-	              '×'
+	              '\xD7'
 	            )
 	          ),
-	          _react2['default'].createElement(
+	          _react2.default.createElement(
 	            'h3',
 	            { className: 'panel-title' },
 	            fun[0],
@@ -1264,22 +1336,22 @@ webpackJsonp([0],[
 	            errorMsg
 	          )
 	        ),
-	        _react2['default'].createElement(
+	        _react2.default.createElement(
 	          'div',
 	          { className: 'panel-body' },
-	          _react2['default'].createElement(
+	          _react2.default.createElement(
 	            'div',
 	            { className: 'container-fluid' },
-	            _react2['default'].createElement('div', { id: this.chartId(), className: 'chart' }),
-	            _react2['default'].createElement('br', null),
-	            _react2['default'].createElement(_call_tracerJsx2['default'], { fun: fun })
+	            _react2.default.createElement('div', { id: this.chartId(), className: 'chart' }),
+	            _react2.default.createElement('br', null),
+	            _react2.default.createElement(_call_tracer2.default, { fun: fun })
 	          )
 	        )
 	      );
 	    }
-
+	
 	    // Handle actions
-
+	
 	  }, {
 	    key: 'handleResize',
 	    value: function handleResize(e) {
@@ -1288,23 +1360,23 @@ webpackJsonp([0],[
 	  }, {
 	    key: 'handleClose',
 	    value: function handleClose() {
-	      var _this = this;
-
+	      var _this2 = this;
+	
 	      var fun = this.props.fun;
 	      clearInterval(this.state.interval);
 	      $.ajax({
 	        url: "/api/mon_stop",
 	        data: { mod: fun[0], fun: fun[1], arity: fun[2] }
-	      }).done((function () {
-	        return _this.props.removeGraph(fun);
-	      }).bind(this));
+	      }).done(function () {
+	        return _this2.props.removeGraph(fun);
+	      }.bind(this));
 	    }
 	  }, {
 	    key: 'getData',
 	    value: function getData() {
 	      var fun = this.props.fun;
 	      var lastTs = this.state.lastTs;
-
+	
 	      $.ajax({
 	        url: "/api/data",
 	        data: {
@@ -1320,17 +1392,17 @@ webpackJsonp([0],[
 	    key: 'handleData',
 	    value: function handleData(data) {
 	      var maxAge, currData, truncData, sortedData, padding, finalData;
-
+	
 	      maxAge = Math.floor(new Date().getTime() / 1000) - MAX_DPS;
-
+	
 	      currData = this.state.dps.concat(data);
 	      sortedData = this.sortData(currData);
 	      truncData = this.truncrateData(maxAge, sortedData);
 	      padding = this.padData(maxAge, _.first(truncData).time);
 	      finalData = padding.concat(truncData);
-
+	
 	      this.graph.update(finalData);
-
+	
 	      this.state.dps = truncData;
 	      this.state.lastTs = _.last(sortedData).time;
 	      this.state.error = false;
@@ -1342,9 +1414,9 @@ webpackJsonp([0],[
 	      this.state.error = true;
 	      this.setState(this.state);
 	    }
-
+	
 	    // Helpers
-
+	
 	  }, {
 	    key: 'sortData',
 	    value: function sortData(data) {
@@ -1363,71 +1435,81 @@ webpackJsonp([0],[
 	    key: 'padData',
 	    value: function padData(maxAge, firstTime) {
 	      var data = [];
-	      for (var i = maxAge; i < firstTime; i++) data.push({ time: i });
-	      return data;
+	      for (var i = maxAge; i < firstTime; i++) {
+	        data.push({ time: i });
+	      }return data;
 	    }
 	  }, {
 	    key: 'chartId',
 	    value: function chartId() {
-          var arity = this.props.fun[2];
-          // '*' is not a valid character in a tag id
-          if(arity == '*') arity = 'x';
-	      return 'chart_' + this.props.fun[0] + '_' + this.props.fun[1] + '_' + arity;
+	      var arity = this.props.fun[2];
+	
+	      // Guess what? Dots in module name (and Elixir modules contains it - 'Elixir.Enum':map/2) are problematic for ID.
+	      var safe_module = this.props.fun[0].replace(/\./g, "-");
+	
+	      // And '*' is not a valid character too for an ID.
+	      if (arity === "*") arity = "x";
+	
+	      return 'chart_' + safe_module + '_' + this.props.fun[1] + '_' + arity;
 	    }
 	  }]);
-
+	
 	  return Graph;
-	})(_react2['default'].Component);
-
-	exports['default'] = Graph;
-	module.exports = exports['default'];
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2), __webpack_require__(17)))
+	}(_react2.default.Component);
+	
+	exports.default = Graph;
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(/*! jquery */ 2), __webpack_require__(/*! underscore */ 17)))
 
 /***/ },
 /* 17 */,
 /* 18 */
+/*!*****************************!*\
+  !*** ./app/call_tracer.jsx ***!
+  \*****************************/
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function($, _) {'use strict';
-
-	Object.defineProperty(exports, '__esModule', {
+	
+	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
-
-	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
-
-	var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
-
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
-
-	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-	var _react = __webpack_require__(3);
-
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	var _react = __webpack_require__(/*! react */ 3);
+	
 	var _react2 = _interopRequireDefault(_react);
-
-	__webpack_require__(17);
-
-	var _graph_flotJsx = __webpack_require__(1);
-
-	var _graph_flotJsx2 = _interopRequireDefault(_graph_flotJsx);
-
-	var CallsTracer = (function (_React$Component) {
+	
+	__webpack_require__(/*! underscore */ 17);
+	
+	var _graph_flot = __webpack_require__(/*! ./graph_flot.jsx */ 1);
+	
+	var _graph_flot2 = _interopRequireDefault(_graph_flot);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+	
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	
+	var CallsTracer = function (_React$Component) {
 	  _inherits(CallsTracer, _React$Component);
-
+	
 	  function CallsTracer(props) {
 	    _classCallCheck(this, CallsTracer);
-
-	    _get(Object.getPrototypeOf(CallsTracer.prototype), 'constructor', this).call(this, props);
-	    this.state = {
+	
+	    var _this = _possibleConstructorReturn(this, (CallsTracer.__proto__ || Object.getPrototypeOf(CallsTracer)).call(this, props));
+	
+	    _this.state = {
 	      capture_id: null,
 	      offset: 0,
 	      items: []
 	    };
+	    return _this;
 	  }
-
+	
 	  _createClass(CallsTracer, [{
 	    key: 'componentDidMount',
 	    value: function componentDidMount() {
@@ -1442,11 +1524,11 @@ webpackJsonp([0],[
 	    key: 'handleClick',
 	    value: function handleClick(e) {
 	      e.preventDefault();
-
+	
 	      var fun = this.props.fun;
-	      var threshold = $(_react2['default'].findDOMNode(this.refs.thresholdInput)).val();
-	      var limit = $(_react2['default'].findDOMNode(this.refs.limitInput)).val();
-
+	      var threshold = $(_react2.default.findDOMNode(this.refs.thresholdInput)).val();
+	      var limit = $(_react2.default.findDOMNode(this.refs.limitInput)).val();
+	
 	      $.ajax({
 	        url: "/api/capture",
 	        data: {
@@ -1454,19 +1536,19 @@ webpackJsonp([0],[
 	          threshold: threshold,
 	          limit: limit
 	        }
-	      }).success((function (e) {
+	      }).success(function (e) {
 	        this.state.capture_id = e.capture_id;
 	        this.state.offset = 0;
 	        this.setState(this.state);
 	        this.getCaptureData();
-	      }).bind(this));
+	      }.bind(this));
 	    }
 	  }, {
 	    key: 'handleRowExpandClick',
 	    value: function handleRowExpandClick(ref, e) {
 	      e.preventDefault();
-	      var target_row = _react2['default'].findDOMNode(this.refs[ref]);
-
+	      var target_row = _react2.default.findDOMNode(this.refs[ref]);
+	
 	      if ($(target_row).data("expanded")) {
 	        $(target_row).data("expanded", false);
 	        $(target_row).removeClass("row-expanded");
@@ -1485,19 +1567,19 @@ webpackJsonp([0],[
 	    key: 'getCaptureData',
 	    value: function getCaptureData() {
 	      var fun = this.props.fun;
-
+	
 	      $.ajax({
 	        url: "/api/capture_data",
 	        data: {
 	          mod: fun[0], fun: fun[1], arity: fun[2],
 	          offset: this.state.offset
 	        }
-	      }).success((function (e) {
+	      }).success(function (e) {
 	        var sortedItems = e.items.sort();
 	        var lastId = sortedItems.length == 0 ? this.state.offset : _.last(sortedItems).id;
-
+	
 	        this.state.threshold = e.threshold;
-
+	
 	        if (this.state.capture_id == e.capture_id) {
 	          Array.prototype.push.apply(this.state.items, sortedItems);
 	          this.state.offset = lastId;
@@ -1506,11 +1588,11 @@ webpackJsonp([0],[
 	          this.state.offset = lastId;
 	          this.state.items = sortedItems;
 	        }
-
+	
 	        this.setState(this.state);
-	      }).bind(this)).done((function () {
+	      }.bind(this)).done(function () {
 	        this.state.timeoutRef = setTimeout(this.getCaptureData.bind(this), 1000);
-	      }).bind(this));
+	      }.bind(this));
 	    }
 	  }, {
 	    key: 'render',
@@ -1519,50 +1601,50 @@ webpackJsonp([0],[
 	      for (var i = 0; i < this.state.items.length; i++) {
 	        var item = this.state.items[i];
 	        var ref = this.state.capture_id + "_" + item.id;
-	        items.push(_react2['default'].createElement(
+	        items.push(_react2.default.createElement(
 	          'tr',
 	          { key: ref, ref: ref, 'data-expanded': 'false', className: 'row-normal' },
-	          _react2['default'].createElement(
+	          _react2.default.createElement(
 	            'td',
 	            null,
-	            _react2['default'].createElement(
+	            _react2.default.createElement(
 	              'button',
 	              { onClick: this.handleRowExpandClick.bind(this, ref), type: 'button',
 	                className: 'btn btn-default' },
-	              _react2['default'].createElement('span', { className: 'expand-chevron glyphicon glyphicon-chevron-right',
+	              _react2.default.createElement('span', { className: 'expand-chevron glyphicon glyphicon-chevron-right',
 	                'aria-hidden': 'true' })
 	            )
 	          ),
-	          _react2['default'].createElement(
+	          _react2.default.createElement(
 	            'td',
 	            null,
 	            item.id
 	          ),
-	          _react2['default'].createElement(
+	          _react2.default.createElement(
 	            'td',
 	            null,
 	            item.call_time,
 	            ' us'
 	          ),
-	          _react2['default'].createElement(
+	          _react2.default.createElement(
 	            'td',
 	            null,
 	            item.pid
 	          ),
-	          _react2['default'].createElement(
+	          _react2.default.createElement(
 	            'td',
 	            { style: { maxWidth: "500px" } },
-	            _react2['default'].createElement(
+	            _react2.default.createElement(
 	              'div',
 	              { className: 'code-longbox',
 	                style: { margin: 0 } },
 	              item.args
 	            )
 	          ),
-	          _react2['default'].createElement(
+	          _react2.default.createElement(
 	            'td',
 	            { style: { maxWidth: "500px" } },
-	            _react2['default'].createElement(
+	            _react2.default.createElement(
 	              'div',
 	              { className: 'code-longbox',
 	                style: { margin: 0 } },
@@ -1571,115 +1653,115 @@ webpackJsonp([0],[
 	          )
 	        ));
 	      }
-
+	
 	      var table = "";
 	      if (items.length > 0) {
-	        table = _react2['default'].createElement(
+	        table = _react2.default.createElement(
 	          'table',
 	          { className: 'table table-hover table-striped' },
-	          _react2['default'].createElement(
+	          _react2.default.createElement(
 	            'thead',
 	            null,
-	            _react2['default'].createElement('th', null),
-	            _react2['default'].createElement(
+	            _react2.default.createElement('th', null),
+	            _react2.default.createElement(
 	              'th',
 	              null,
 	              'Id'
 	            ),
-	            _react2['default'].createElement(
+	            _react2.default.createElement(
 	              'th',
 	              null,
 	              'Call time'
 	            ),
-	            _react2['default'].createElement(
+	            _react2.default.createElement(
 	              'th',
 	              null,
 	              'Pid'
 	            ),
-	            _react2['default'].createElement(
+	            _react2.default.createElement(
 	              'th',
 	              null,
 	              'Args'
 	            ),
-	            _react2['default'].createElement(
+	            _react2.default.createElement(
 	              'th',
 	              null,
 	              'Response'
 	            )
 	          ),
-	          _react2['default'].createElement(
+	          _react2.default.createElement(
 	            'tbody',
 	            null,
 	            items
 	          )
 	        );
 	      }
-
-	      return _react2['default'].createElement(
+	
+	      return _react2.default.createElement(
 	        'div',
 	        { className: 'panel panel-default' },
-	        _react2['default'].createElement(
+	        _react2.default.createElement(
 	          'div',
 	          { className: 'panel-heading' },
 	          'Slow calls tracing'
 	        ),
-	        _react2['default'].createElement(
+	        _react2.default.createElement(
 	          'div',
 	          { className: 'panel-body' },
-	          _react2['default'].createElement(
+	          _react2.default.createElement(
 	            'form',
 	            { className: 'form-inline' },
-	            _react2['default'].createElement(
+	            _react2.default.createElement(
 	              'div',
 	              { className: 'form-group' },
-	              _react2['default'].createElement(
+	              _react2.default.createElement(
 	                'div',
 	                { className: 'input-group' },
-	                _react2['default'].createElement(
+	                _react2.default.createElement(
 	                  'div',
 	                  { className: 'input-group-addon' },
 	                  'Treshold'
 	                ),
-	                _react2['default'].createElement('input', { ref: 'thresholdInput', type: 'text', className: 'form-control',
+	                _react2.default.createElement('input', { ref: 'thresholdInput', type: 'text', className: 'form-control',
 	                  id: 'tresholdInput', placeholder: '100' }),
-	                _react2['default'].createElement(
+	                _react2.default.createElement(
 	                  'div',
 	                  { className: 'input-group-addon' },
 	                  'ms'
 	                )
 	              )
 	            ),
-	            _react2['default'].createElement(
+	            _react2.default.createElement(
 	              'span',
 	              null,
 	              '   '
 	            ),
-	            _react2['default'].createElement(
+	            _react2.default.createElement(
 	              'div',
 	              { className: 'form-group' },
-	              _react2['default'].createElement(
+	              _react2.default.createElement(
 	                'div',
 	                { className: 'input-group' },
-	                _react2['default'].createElement(
+	                _react2.default.createElement(
 	                  'div',
 	                  { className: 'input-group-addon' },
 	                  'Limit'
 	                ),
-	                _react2['default'].createElement('input', { ref: 'limitInput', type: 'text', className: 'form-control',
+	                _react2.default.createElement('input', { ref: 'limitInput', type: 'text', className: 'form-control',
 	                  id: 'limitInput', placeholder: '2' }),
-	                _react2['default'].createElement(
+	                _react2.default.createElement(
 	                  'div',
 	                  { className: 'input-group-addon' },
 	                  'calls'
 	                )
 	              )
 	            ),
-	            _react2['default'].createElement(
+	            _react2.default.createElement(
 	              'span',
 	              null,
 	              '   '
 	            ),
-	            _react2['default'].createElement(
+	            _react2.default.createElement(
 	              'button',
 	              { type: 'submit', onClick: this.handleClick.bind(this),
 	                className: 'btn btn-primary' },
@@ -1691,73 +1773,75 @@ webpackJsonp([0],[
 	      );
 	    }
 	  }]);
-
+	
 	  return CallsTracer;
-	})(_react2['default'].Component);
-
-	exports['default'] = CallsTracer;
-	module.exports = exports['default'];
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2), __webpack_require__(17)))
+	}(_react2.default.Component);
+	
+	exports.default = CallsTracer;
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(/*! jquery */ 2), __webpack_require__(/*! underscore */ 17)))
 
 /***/ },
 /* 19 */
+/*!**********************!*\
+  !*** ./app/main.jsx ***!
+  \**********************/
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
-
-	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
-
-	var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
-
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
-
-	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-	var _react = __webpack_require__(3);
-
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	var _react = __webpack_require__(/*! react */ 3);
+	
 	var _react2 = _interopRequireDefault(_react);
-
-	__webpack_require__(2);
-
-	__webpack_require__(4);
-
-	var _d3 = __webpack_require__(20);
-
-	var _d32 = _interopRequireDefault(_d3);
-
-	var _c3C3 = __webpack_require__(21);
-
-	var _c3C32 = _interopRequireDefault(_c3C3);
-
-	__webpack_require__(13);
-
-	var _graphJsx = __webpack_require__(16);
-
-	var _graphJsx2 = _interopRequireDefault(_graphJsx);
-
-	var _tracing_switchJsx = __webpack_require__(22);
-
-	var _tracing_switchJsx2 = _interopRequireDefault(_tracing_switchJsx);
-
-	var _graph_panelJsx = __webpack_require__(23);
-
-	var _graph_panelJsx2 = _interopRequireDefault(_graph_panelJsx);
-
-	var _function_browserJsx = __webpack_require__(24);
-
-	var _function_browserJsx2 = _interopRequireDefault(_function_browserJsx);
-
-	var App = (function (_React$Component) {
+	
+	__webpack_require__(/*! jquery */ 2);
+	
+	__webpack_require__(/*! bootstrap/dist/css/bootstrap.css */ 4);
+	
+	var _d = __webpack_require__(/*! d3 */ 20);
+	
+	var _d2 = _interopRequireDefault(_d);
+	
+	var _c = __webpack_require__(/*! c3/c3 */ 21);
+	
+	var _c2 = _interopRequireDefault(_c);
+	
+	__webpack_require__(/*! Flot */ 13);
+	
+	var _graph = __webpack_require__(/*! ./graph.jsx */ 16);
+	
+	var _graph2 = _interopRequireDefault(_graph);
+	
+	var _tracing_switch = __webpack_require__(/*! ./tracing_switch.jsx */ 22);
+	
+	var _tracing_switch2 = _interopRequireDefault(_tracing_switch);
+	
+	var _graph_panel = __webpack_require__(/*! ./graph_panel.jsx */ 23);
+	
+	var _graph_panel2 = _interopRequireDefault(_graph_panel);
+	
+	var _function_browser = __webpack_require__(/*! ./function_browser.jsx */ 24);
+	
+	var _function_browser2 = _interopRequireDefault(_function_browser);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+	
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	
+	var App = function (_React$Component) {
 	  _inherits(App, _React$Component);
-
+	
 	  function App(props) {
 	    _classCallCheck(this, App);
-
-	    _get(Object.getPrototypeOf(App.prototype), 'constructor', this).call(this, props);
+	
+	    return _possibleConstructorReturn(this, (App.__proto__ || Object.getPrototypeOf(App)).call(this, props));
 	  }
-
+	
 	  _createClass(App, [{
 	    key: 'addGraph',
 	    value: function addGraph(fun) {
@@ -1767,60 +1851,63 @@ webpackJsonp([0],[
 	  }, {
 	    key: 'render',
 	    value: function render() {
-	      return _react2['default'].createElement(
+	      return _react2.default.createElement(
 	        'div',
 	        { className: 'container-fluid' },
-	        _react2['default'].createElement(
+	        _react2.default.createElement(
 	          'nav',
 	          { className: 'navbar navbar-inverse navbar-fixed-top' },
-	          _react2['default'].createElement(
+	          _react2.default.createElement(
 	            'div',
 	            { className: 'navbar-header' },
-	            _react2['default'].createElement(
+	            _react2.default.createElement(
 	              'a',
 	              { className: 'navbar-brand', href: '#' },
 	              'XProf'
 	            )
 	          ),
-	          _react2['default'].createElement(
+	          _react2.default.createElement(
 	            'div',
 	            { className: 'navbar-collapse collapse', id: 'navbar-collapsible' },
-	            _react2['default'].createElement(_tracing_switchJsx2['default'], null),
-	            _react2['default'].createElement(_function_browserJsx2['default'], { ref: 'functionBrowser', addGraph: this.addGraph.bind(this) })
+	            _react2.default.createElement(_tracing_switch2.default, null),
+	            _react2.default.createElement(_function_browser2.default, { ref: 'functionBrowser', addGraph: this.addGraph.bind(this) })
 	          )
 	        ),
-	        _react2['default'].createElement(_graph_panelJsx2['default'], { ref: 'graphPanel' })
+	        _react2.default.createElement(_graph_panel2.default, { ref: 'graphPanel' })
 	      );
 	    }
 	  }]);
-
+	
 	  return App;
-	})(_react2['default'].Component);
-
-	_react2['default'].render(_react2['default'].createElement(App, null), document.getElementById('main-container'));
+	}(_react2.default.Component);
+	
+	_react2.default.render(_react2.default.createElement(App, null), document.getElementById('main-container'));
 
 /***/ },
 /* 20 */,
 /* 21 */
+/*!***********************************!*\
+  !*** ./bower_components/c3/c3.js ***!
+  \***********************************/
 /***/ function(module, exports, __webpack_require__) {
 
-	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;(function (window) {
+	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;(function (window) {
 	    'use strict';
-
+	
 	    /*global define, module, exports, require */
-
-	    var c3 = { version: "0.4.10" };
-
+	
+	    var c3 = { version: "0.4.11" };
+	
 	    var c3_chart_fn,
 	        c3_chart_internal_fn,
 	        c3_chart_internal_axis_fn;
-
+	
 	    function API(owner) {
 	        this.owner = owner;
 	    }
-
+	
 	    function inherit(base, derived) {
-
+	
 	        if (Object.create) {
 	            derived.prototype = Object.create(base.prototype);
 	        } else {
@@ -1828,17 +1915,20 @@ webpackJsonp([0],[
 	            f.prototype = base.prototype;
 	            derived.prototype = new f();
 	        }
-
+	
 	        derived.prototype.constructor = derived;
-
+	
 	        return derived;
 	    }
-
+	
 	    function Chart(config) {
 	        var $$ = this.internal = new ChartInternal(this);
 	        $$.loadConfig(config);
+	
+	        $$.beforeInit(config);
 	        $$.init();
-
+	        $$.afterInit(config);
+	
 	        // bind "this" to nested API
 	        (function bindThis(fn, target, argThis) {
 	            Object.keys(fn).forEach(function (key) {
@@ -1849,21 +1939,21 @@ webpackJsonp([0],[
 	            });
 	        })(c3_chart_fn, this, this);
 	    }
-
+	
 	    function ChartInternal(api) {
 	        var $$ = this;
-	        $$.d3 = window.d3 ? window.d3 :  true ? __webpack_require__(20) : undefined;
+	        $$.d3 = window.d3 ? window.d3 :  true ? __webpack_require__(/*! d3 */ 20) : undefined;
 	        $$.api = api;
 	        $$.config = $$.getDefaultConfig();
 	        $$.data = {};
 	        $$.cache = {};
 	        $$.axes = {};
 	    }
-
+	
 	    c3.generate = function (config) {
 	        return new Chart(config);
 	    };
-
+	
 	    c3.chart = {
 	        fn: Chart.prototype,
 	        internal: {
@@ -1876,14 +1966,20 @@ webpackJsonp([0],[
 	    c3_chart_fn = c3.chart.fn;
 	    c3_chart_internal_fn = c3.chart.internal.fn;
 	    c3_chart_internal_axis_fn = c3.chart.internal.axis.fn;
-
+	
+	    c3_chart_internal_fn.beforeInit = function () {
+	        // can do something
+	    };
+	    c3_chart_internal_fn.afterInit = function () {
+	        // can do something
+	    };
 	    c3_chart_internal_fn.init = function () {
 	        var $$ = this, config = $$.config;
-
+	
 	        $$.initParams();
-
+	
 	        if (config.data_url) {
-	            $$.convertUrlToData(config.data_url, config.data_mimeType, config.data_keys, $$.initWithData);
+	            $$.convertUrlToData(config.data_url, config.data_mimeType, config.data_headers, config.data_keys, $$.initWithData);
 	        }
 	        else if (config.data_json) {
 	            $$.initWithData($$.convertJsonToData(config.data_json, config.data_keys));
@@ -1898,10 +1994,10 @@ webpackJsonp([0],[
 	            throw Error('url or json or rows or columns is required.');
 	        }
 	    };
-
+	
 	    c3_chart_internal_fn.initParams = function () {
 	        var $$ = this, d3 = $$.d3, config = $$.config;
-
+	
 	        // MEMO: clipId needs to be unique because it conflicts when multiple charts exist
 	        $$.clipId = "c3-" + (+new Date()) + '-clip',
 	        $$.clipIdForXAxis = $$.clipId + '-xaxis',
@@ -1913,17 +2009,17 @@ webpackJsonp([0],[
 	        $$.clipPathForYAxis = $$.getClipPath($$.clipIdForYAxis);
 	        $$.clipPathForGrid = $$.getClipPath($$.clipIdForGrid),
 	        $$.clipPathForSubchart = $$.getClipPath($$.clipIdForSubchart),
-
+	
 	        $$.dragStart = null;
 	        $$.dragging = false;
 	        $$.flowing = false;
 	        $$.cancelClick = false;
 	        $$.mouseover = false;
 	        $$.transiting = false;
-
+	
 	        $$.color = $$.generateColor();
 	        $$.levelColor = $$.generateLevelColor();
-
+	
 	        $$.dataTimeFormat = config.data_xLocaltime ? d3.time.format : d3.time.format.utc;
 	        $$.axisTimeFormat = config.axis_x_localtime ? d3.time.format : d3.time.format.utc;
 	        $$.defaultAxisTimeFormat = $$.axisTimeFormat.multi([
@@ -1936,17 +2032,17 @@ webpackJsonp([0],[
 	            ["%-m/%-d", function (d) { return d.getMonth(); }],
 	            ["%Y/%-m/%-d", function () { return true; }]
 	        ]);
-
+	
 	        $$.hiddenTargetIds = [];
 	        $$.hiddenLegendIds = [];
 	        $$.focusedTargetIds = [];
 	        $$.defocusedTargetIds = [];
-
+	
 	        $$.xOrient = config.axis_rotated ? "left" : "bottom";
 	        $$.yOrient = config.axis_rotated ? (config.axis_y_inner ? "top" : "bottom") : (config.axis_y_inner ? "right" : "left");
 	        $$.y2Orient = config.axis_rotated ? (config.axis_y2_inner ? "bottom" : "top") : (config.axis_y2_inner ? "left" : "right");
 	        $$.subXOrient = config.axis_rotated ? "left" : "bottom";
-
+	
 	        $$.isLegendRight = config.legend_position === 'right';
 	        $$.isLegendInset = config.legend_position === 'inset';
 	        $$.isLegendTop = config.legend_inset_anchor === 'top-left' || config.legend_inset_anchor === 'top-right';
@@ -1954,24 +2050,24 @@ webpackJsonp([0],[
 	        $$.legendStep = 0;
 	        $$.legendItemWidth = 0;
 	        $$.legendItemHeight = 0;
-
+	
 	        $$.currentMaxTickWidths = {
 	            x: 0,
 	            y: 0,
 	            y2: 0
 	        };
-
+	
 	        $$.rotated_padding_left = 30;
 	        $$.rotated_padding_right = config.axis_rotated && !config.axis_x_show ? 0 : 30;
 	        $$.rotated_padding_top = 5;
-
+	
 	        $$.withoutFadeIn = {};
-
+	
 	        $$.intervalForObserveInserted = undefined;
-
+	
 	        $$.axes.subx = d3.selectAll([]); // needs when excluding subchart.js
 	    };
-
+	
 	    c3_chart_internal_fn.initChartElements = function () {
 	        if (this.initBar) { this.initBar(); }
 	        if (this.initLine) { this.initLine(); }
@@ -1979,17 +2075,17 @@ webpackJsonp([0],[
 	        if (this.initGauge) { this.initGauge(); }
 	        if (this.initText) { this.initText(); }
 	    };
-
+	
 	    c3_chart_internal_fn.initWithData = function (data) {
 	        var $$ = this, d3 = $$.d3, config = $$.config;
 	        var defs, main, binding = true;
-
+	
 	        $$.axis = new Axis($$);
-
+	
 	        if ($$.initPie) { $$.initPie(); }
 	        if ($$.initBrush) { $$.initBrush(); }
 	        if ($$.initZoom) { $$.initZoom(); }
-
+	
 	        if (!config.bindto) {
 	            $$.selectChart = d3.selectAll([]);
 	        }
@@ -2005,15 +2101,15 @@ webpackJsonp([0],[
 	            binding = false;
 	        }
 	        $$.selectChart.html("").classed("c3", true);
-
+	
 	        // Init data as targets
 	        $$.data.xs = {};
 	        $$.data.targets = $$.convertDataToTargets(data);
-
+	
 	        if (config.data_filter) {
 	            $$.data.targets = $$.data.targets.filter(config.data_filter);
 	        }
-
+	
 	        // Set targets to hide if needed
 	        if (config.data_hide) {
 	            $$.addHiddenTargetIds(config.data_hide === true ? $$.mapToIds($$.data.targets) : config.data_hide);
@@ -2021,16 +2117,16 @@ webpackJsonp([0],[
 	        if (config.legend_hide) {
 	            $$.addHiddenLegendIds(config.legend_hide === true ? $$.mapToIds($$.data.targets) : config.legend_hide);
 	        }
-
+	
 	        // when gauge, hide legend // TODO: fix
 	        if ($$.hasType('gauge')) {
 	            config.legend_show = false;
 	        }
-
+	
 	        // Init sizes and scales
 	        $$.updateSizes();
 	        $$.updateScales();
-
+	
 	        // Set domains for each scale
 	        $$.x.domain(d3.extent($$.getXDomain($$.data.targets)));
 	        $$.y.domain($$.getYDomain($$.data.targets, 'y'));
@@ -2038,22 +2134,26 @@ webpackJsonp([0],[
 	        $$.subX.domain($$.x.domain());
 	        $$.subY.domain($$.y.domain());
 	        $$.subY2.domain($$.y2.domain());
-
+	
 	        // Save original x domain for zoom update
 	        $$.orgXDomain = $$.x.domain();
-
+	
 	        // Set initialized scales to brush and zoom
 	        if ($$.brush) { $$.brush.scale($$.subX); }
 	        if (config.zoom_enabled) { $$.zoom.scale($$.x); }
-
+	
 	        /*-- Basic Elements --*/
-
+	
 	        // Define svgs
 	        $$.svg = $$.selectChart.append("svg")
 	            .style("overflow", "hidden")
 	            .on('mouseenter', function () { return config.onmouseover.call($$); })
 	            .on('mouseleave', function () { return config.onmouseout.call($$); });
-
+	
+	        if ($$.config.svg_classname) {
+	            $$.svg.attr('class', $$.config.svg_classname);
+	        }
+	
 	        // Define defs
 	        defs = $$.svg.append("defs");
 	        $$.clipChart = $$.appendClip(defs, $$.clipId);
@@ -2062,42 +2162,43 @@ webpackJsonp([0],[
 	        $$.clipGrid = $$.appendClip(defs, $$.clipIdForGrid);
 	        $$.clipSubchart = $$.appendClip(defs, $$.clipIdForSubchart);
 	        $$.updateSvgSize();
-
+	
 	        // Define regions
 	        main = $$.main = $$.svg.append("g").attr("transform", $$.getTranslate('main'));
-
+	
 	        if ($$.initSubchart) { $$.initSubchart(); }
 	        if ($$.initTooltip) { $$.initTooltip(); }
 	        if ($$.initLegend) { $$.initLegend(); }
-
+	        if ($$.initTitle) { $$.initTitle(); }
+	
 	        /*-- Main Region --*/
-
+	
 	        // text when empty
 	        main.append("text")
 	            .attr("class", CLASS.text + ' ' + CLASS.empty)
 	            .attr("text-anchor", "middle") // horizontal centering of text at x position in all browsers.
 	            .attr("dominant-baseline", "middle"); // vertical centering of text at y position in all browsers, except IE.
-
+	
 	        // Regions
 	        $$.initRegion();
-
+	
 	        // Grids
 	        $$.initGrid();
-
+	
 	        // Define g for chart area
 	        main.append('g')
 	            .attr("clip-path", $$.clipPath)
 	            .attr('class', CLASS.chart);
-
+	
 	        // Grid lines
 	        if (config.grid_lines_front) { $$.initGridLines(); }
-
+	
 	        // Cover whole with rects for events
 	        $$.initEventRect();
-
+	
 	        // Define g for chart
 	        $$.initChartElements();
-
+	
 	        // if zoom privileged, insert rect to forefront
 	        // TODO: is this needed?
 	        main.insert('rect', config.zoom_privileged ? null : 'g.' + CLASS.regions)
@@ -2106,16 +2207,16 @@ webpackJsonp([0],[
 	            .attr('height', $$.height)
 	            .style('opacity', 0)
 	            .on("dblclick.zoom", null);
-
+	
 	        // Set default extent if defined
 	        if (config.axis_x_extent) { $$.brush.extent($$.getDefaultExtent()); }
-
+	
 	        // Add Axis
 	        $$.axis.init();
-
+	
 	        // Set targets
 	        $$.updateTargets($$.data.targets);
-
+	
 	        // Draw with targets
 	        if (binding) {
 	            $$.updateDimension();
@@ -2128,27 +2229,14 @@ webpackJsonp([0],[
 	                withTransitionForAxis: false
 	            });
 	        }
-
+	
 	        // Bind resize event
-	        if (window.onresize == null) {
-	            window.onresize = $$.generateResize();
-	        }
-	        if (window.onresize.add) {
-	            window.onresize.add(function () {
-	                config.onresize.call($$);
-	            });
-	            window.onresize.add(function () {
-	                $$.api.flush();
-	            });
-	            window.onresize.add(function () {
-	                config.onresized.call($$);
-	            });
-	        }
-
+	        $$.bindResize();
+	
 	        // export element of the chart
 	        $$.api.element = $$.selectChart.node();
 	    };
-
+	
 	    c3_chart_internal_fn.smoothLines = function (el, type) {
 	        var $$ = this;
 	        if (type === 'grid') {
@@ -2167,8 +2255,8 @@ webpackJsonp([0],[
 	            });
 	        }
 	    };
-
-
+	
+	
 	    c3_chart_internal_fn.updateSizes = function () {
 	        var $$ = this, config = $$.config;
 	        var legendHeight = $$.legend ? $$.getLegendHeight() : 0,
@@ -2177,10 +2265,10 @@ webpackJsonp([0],[
 	            hasArc = $$.hasArcType(),
 	            xAxisHeight = config.axis_rotated || hasArc ? 0 : $$.getHorizontalAxisHeight('x'),
 	            subchartHeight = config.subchart_show && !hasArc ? (config.subchart_size_height + xAxisHeight) : 0;
-
+	
 	        $$.currentWidth = $$.getCurrentWidth();
 	        $$.currentHeight = $$.getCurrentHeight();
-
+	
 	        // for main
 	        $$.margin = config.axis_rotated ? {
 	            top: $$.getHorizontalAxisHeight('y2') + $$.getCurrentPaddingTop(),
@@ -2193,7 +2281,7 @@ webpackJsonp([0],[
 	            bottom: xAxisHeight + subchartHeight + legendHeightForBottom + $$.getCurrentPaddingBottom(),
 	            left: hasArc ? 0 : $$.getCurrentPaddingLeft()
 	        };
-
+	
 	        // for subchart
 	        $$.margin2 = config.axis_rotated ? {
 	            top: $$.margin.top,
@@ -2206,7 +2294,7 @@ webpackJsonp([0],[
 	            bottom: xAxisHeight + legendHeightForBottom,
 	            left: $$.margin.left
 	        };
-
+	
 	        // for legend
 	        $$.margin3 = {
 	            top: 0,
@@ -2215,51 +2303,51 @@ webpackJsonp([0],[
 	            left: 0
 	        };
 	        if ($$.updateSizeForLegend) { $$.updateSizeForLegend(legendHeight, legendWidth); }
-
+	
 	        $$.width = $$.currentWidth - $$.margin.left - $$.margin.right;
 	        $$.height = $$.currentHeight - $$.margin.top - $$.margin.bottom;
 	        if ($$.width < 0) { $$.width = 0; }
 	        if ($$.height < 0) { $$.height = 0; }
-
+	
 	        $$.width2 = config.axis_rotated ? $$.margin.left - $$.rotated_padding_left - $$.rotated_padding_right : $$.width;
 	        $$.height2 = config.axis_rotated ? $$.height : $$.currentHeight - $$.margin2.top - $$.margin2.bottom;
 	        if ($$.width2 < 0) { $$.width2 = 0; }
 	        if ($$.height2 < 0) { $$.height2 = 0; }
-
+	
 	        // for arc
 	        $$.arcWidth = $$.width - ($$.isLegendRight ? legendWidth + 10 : 0);
 	        $$.arcHeight = $$.height - ($$.isLegendRight ? 0 : 10);
-	        if ($$.hasType('gauge')) {
+	        if ($$.hasType('gauge') && !config.gauge_fullCircle) {
 	            $$.arcHeight += $$.height - $$.getGaugeLabelHeight();
 	        }
 	        if ($$.updateRadius) { $$.updateRadius(); }
-
+	
 	        if ($$.isLegendRight && hasArc) {
 	            $$.margin3.left = $$.arcWidth / 2 + $$.radiusExpanded * 1.1;
 	        }
 	    };
-
+	
 	    c3_chart_internal_fn.updateTargets = function (targets) {
 	        var $$ = this;
-
+	
 	        /*-- Main --*/
-
+	
 	        //-- Text --//
 	        $$.updateTargetsForText(targets);
-
+	
 	        //-- Bar --//
 	        $$.updateTargetsForBar(targets);
-
+	
 	        //-- Line --//
 	        $$.updateTargetsForLine(targets);
-
+	
 	        //-- Arc --//
 	        if ($$.hasArcType() && $$.updateTargetsForArc) { $$.updateTargetsForArc(targets); }
-
+	
 	        /*-- Sub --*/
-
+	
 	        if ($$.updateTargetsForSubchart) { $$.updateTargetsForSubchart(targets); }
-
+	
 	        // Fade-in each chart
 	        $$.showTargets();
 	    };
@@ -2269,7 +2357,7 @@ webpackJsonp([0],[
 	          .transition().duration($$.config.transition_duration)
 	            .style("opacity", 1);
 	    };
-
+	
 	    c3_chart_internal_fn.redraw = function (options, transitions) {
 	        var $$ = this, main = $$.main, d3 = $$.d3, config = $$.config;
 	        var areaIndices = $$.getShapeIndices($$.isAreaType), barIndices = $$.getShapeIndices($$.isBarType), lineIndices = $$.getShapeIndices($$.isLineType);
@@ -2282,7 +2370,7 @@ webpackJsonp([0],[
 	        var waitForDraw, flow;
 	        var targetsToShow = $$.filterTargetsToShow($$.data.targets), tickValues, i, intervalForCulling, xDomainForZoom;
 	        var xv = $$.xv.bind($$), cx, cy;
-
+	
 	        options = options || {};
 	        withY = getOption(options, "withY", true);
 	        withSubchart = getOption(options, "withSubchart", true);
@@ -2297,13 +2385,13 @@ webpackJsonp([0],[
 	        withDimension = getOption(options, "withDimension", true);
 	        withTransitionForExit = getOption(options, "withTransitionForExit", withTransition);
 	        withTransitionForAxis = getOption(options, "withTransitionForAxis", withTransition);
-
+	
 	        duration = withTransition ? config.transition_duration : 0;
 	        durationForExit = withTransitionForExit ? duration : 0;
 	        durationForAxis = withTransitionForAxis ? duration : 0;
-
+	
 	        transitions = transitions || $$.axis.generateTransitions(durationForAxis);
-
+	
 	        // update legend and transform each g
 	        if (withLegend && config.legend_show) {
 	            $$.updateLegend($$.mapToIds($$.data.targets), options, transitions);
@@ -2312,12 +2400,12 @@ webpackJsonp([0],[
 	            // no need to update axis in it because they will be updated in redraw()
 	            $$.updateDimension(true);
 	        }
-
+	
 	        // MEMO: needed for grids calculation
 	        if ($$.isCategorized() && targetsToShow.length === 0) {
 	            $$.x.domain([0, $$.axes.x.selectAll('.tick').size()]);
 	        }
-
+	
 	        if (targetsToShow.length) {
 	            $$.updateXDomain(targetsToShow, withUpdateXDomain, withUpdateOrgXDomain, withTrimXDomain);
 	            if (!config.axis_x_tick_values) {
@@ -2327,27 +2415,27 @@ webpackJsonp([0],[
 	            $$.xAxis.tickValues([]);
 	            $$.subXAxis.tickValues([]);
 	        }
-
+	
 	        if (config.zoom_rescale && !options.flow) {
 	            xDomainForZoom = $$.x.orgDomain();
 	        }
-
+	
 	        $$.y.domain($$.getYDomain(targetsToShow, 'y', xDomainForZoom));
 	        $$.y2.domain($$.getYDomain(targetsToShow, 'y2', xDomainForZoom));
-
+	
 	        if (!config.axis_y_tick_values && config.axis_y_tick_count) {
 	            $$.yAxis.tickValues($$.axis.generateTickValues($$.y.domain(), config.axis_y_tick_count));
 	        }
 	        if (!config.axis_y2_tick_values && config.axis_y2_tick_count) {
 	            $$.y2Axis.tickValues($$.axis.generateTickValues($$.y2.domain(), config.axis_y2_tick_count));
 	        }
-
+	
 	        // axes
 	        $$.axis.redraw(transitions, hideAxis);
-
+	
 	        // Update axis label
 	        $$.axis.updateLabels(withTransition);
-
+	
 	        // show/hide if manual culling needed
 	        if ((withUpdateXDomain || withUpdateXAxis) && targetsToShow.length) {
 	            if (config.axis_x_tick_culling && tickValues) {
@@ -2367,26 +2455,23 @@ webpackJsonp([0],[
 	                $$.svg.selectAll('.' + CLASS.axisX + ' .tick text').style('display', 'block');
 	            }
 	        }
-
+	
 	        // setup drawer - MEMO: these must be called after axis updated
 	        drawArea = $$.generateDrawArea ? $$.generateDrawArea(areaIndices, false) : undefined;
 	        drawBar = $$.generateDrawBar ? $$.generateDrawBar(barIndices) : undefined;
 	        drawLine = $$.generateDrawLine ? $$.generateDrawLine(lineIndices, false) : undefined;
 	        xForText = $$.generateXYForText(areaIndices, barIndices, lineIndices, true);
 	        yForText = $$.generateXYForText(areaIndices, barIndices, lineIndices, false);
-
+	
 	        // Update sub domain
 	        if (withY) {
 	            $$.subY.domain($$.getYDomain(targetsToShow, 'y'));
 	            $$.subY2.domain($$.getYDomain(targetsToShow, 'y2'));
 	        }
-
-	        // tooltip
-	        $$.tooltip.style("display", "none");
-
+	
 	        // xgrid focus
 	        $$.updateXgridFocus();
-
+	
 	        // Data empty label positioning and text.
 	        main.select("text." + CLASS.text + '.' + CLASS.empty)
 	            .attr("x", $$.width / 2)
@@ -2394,53 +2479,56 @@ webpackJsonp([0],[
 	            .text(config.data_empty_label_text)
 	          .transition()
 	            .style('opacity', targetsToShow.length ? 0 : 1);
-
+	
 	        // grid
 	        $$.updateGrid(duration);
-
+	
 	        // rect for regions
 	        $$.updateRegion(duration);
-
+	
 	        // bars
 	        $$.updateBar(durationForExit);
-
+	
 	        // lines, areas and cricles
 	        $$.updateLine(durationForExit);
 	        $$.updateArea(durationForExit);
 	        $$.updateCircle();
-
+	
 	        // text
 	        if ($$.hasDataLabel()) {
 	            $$.updateText(durationForExit);
 	        }
-
+	
+	        // title
+	        if ($$.redrawTitle) { $$.redrawTitle(); }
+	
 	        // arc
 	        if ($$.redrawArc) { $$.redrawArc(duration, durationForExit, withTransform); }
-
+	
 	        // subchart
 	        if ($$.redrawSubchart) {
 	            $$.redrawSubchart(withSubchart, transitions, duration, durationForExit, areaIndices, barIndices, lineIndices);
 	        }
-
+	
 	        // circles for select
 	        main.selectAll('.' + CLASS.selectedCircles)
 	            .filter($$.isBarType.bind($$))
 	            .selectAll('circle')
 	            .remove();
-
+	
 	        // event rects will redrawn when flow called
 	        if (config.interaction_enabled && !options.flow && withEventRect) {
 	            $$.redrawEventRect();
 	            if ($$.updateZoom) { $$.updateZoom(); }
 	        }
-
+	
 	        // update circleY based on updated parameters
 	        $$.updateCircleY();
-
+	
 	        // generate circle x/y functions depending on updated params
 	        cx = ($$.config.axis_rotated ? $$.circleY : $$.circleX).bind($$);
 	        cy = ($$.config.axis_rotated ? $$.circleX : $$.circleY).bind($$);
-
+	
 	        if (options.flow) {
 	            flow = $$.generateFlow({
 	                targets: targetsToShow,
@@ -2456,12 +2544,12 @@ webpackJsonp([0],[
 	                yForText: yForText
 	            });
 	        }
-
+	
 	        if ((duration || flow) && $$.isTabVisible()) { // Only use transition if tab visible. See #938.
 	            // transition should be derived from one transition
 	            d3.transition().duration(duration).each(function () {
 	                var transitionsToWait = [];
-
+	
 	                // redraw and gather transitions
 	                [
 	                    $$.redrawBar(drawBar, true),
@@ -2476,7 +2564,7 @@ webpackJsonp([0],[
 	                        transitionsToWait.push(transition);
 	                    });
 	                });
-
+	
 	                // Wait for end of transitions to call flow and onrendered callback
 	                waitForDraw = $$.generateWait();
 	                transitionsToWait.forEach(function (t) {
@@ -2504,13 +2592,13 @@ webpackJsonp([0],[
 	                config.onrendered.call($$);
 	            }
 	        }
-
+	
 	        // update fadein condition
 	        $$.mapToIds($$.data.targets).forEach(function (id) {
 	            $$.withoutFadeIn[id] = true;
 	        });
 	    };
-
+	
 	    c3_chart_internal_fn.updateAndRedraw = function (options) {
 	        var $$ = this, config = $$.config, transitions;
 	        options = options || {};
@@ -2545,7 +2633,7 @@ webpackJsonp([0],[
 	            withTransitionForAxis: false
 	        });
 	    };
-
+	
 	    c3_chart_internal_fn.isTimeSeries = function () {
 	        return this.config.axis_x_type === 'timeseries';
 	    };
@@ -2556,11 +2644,11 @@ webpackJsonp([0],[
 	        var $$ = this, config = $$.config;
 	        return !$$.isTimeSeries() && (config.data_x || notEmpty(config.data_xs));
 	    };
-
+	
 	    c3_chart_internal_fn.isTimeSeriesY = function () {
 	        return this.config.axis_y_type === 'timeseries';
 	    };
-
+	
 	    c3_chart_internal_fn.getTranslate = function (target) {
 	        var $$ = this, config = $$.config, x, y;
 	        if (target === 'main') {
@@ -2624,7 +2712,7 @@ webpackJsonp([0],[
 	    c3_chart_internal_fn.subxx = function (d) {
 	        return d ? this.subX(d.x) : null;
 	    };
-
+	
 	    c3_chart_internal_fn.transformMain = function (withTransition, transitions) {
 	        var $$ = this,
 	            xAxis, yAxis, y2Axis;
@@ -2658,7 +2746,7 @@ webpackJsonp([0],[
 	        if ($$.config.subchart_show) { $$.transformContext(withTransition, transitions); }
 	        if ($$.legend) { $$.transformLegend(withTransition); }
 	    };
-
+	
 	    c3_chart_internal_fn.updateSvgSize = function () {
 	        var $$ = this,
 	            brush = $$.svg.select(".c3-brush .background");
@@ -2685,8 +2773,8 @@ webpackJsonp([0],[
 	        // MEMO: parent div's height will be bigger than svg when <!DOCTYPE html>
 	        $$.selectChart.style('max-height', $$.currentHeight + "px");
 	    };
-
-
+	
+	
 	    c3_chart_internal_fn.updateDimension = function (withoutAxis) {
 	        var $$ = this;
 	        if (!withoutAxis) {
@@ -2703,7 +2791,7 @@ webpackJsonp([0],[
 	        $$.updateSvgSize();
 	        $$.transformAll(false);
 	    };
-
+	
 	    c3_chart_internal_fn.observeInserted = function (selection) {
 	        var $$ = this, observer;
 	        if (typeof MutationObserver === 'undefined') {
@@ -2720,6 +2808,7 @@ webpackJsonp([0],[
 	                        if (selection.node().parentNode) {
 	                            window.clearInterval($$.intervalForObserveInserted);
 	                            $$.updateDimension();
+	                            if ($$.brush) { $$.brush.update(); }
 	                            $$.config.oninit.call($$);
 	                            $$.redraw({
 	                                withTransform: true,
@@ -2737,8 +2826,51 @@ webpackJsonp([0],[
 	        });
 	        observer.observe(selection.node(), {attributes: true, childList: true, characterData: true});
 	    };
-
-
+	
+	    c3_chart_internal_fn.bindResize = function () {
+	        var $$ = this, config = $$.config;
+	
+	        $$.resizeFunction = $$.generateResize();
+	
+	        $$.resizeFunction.add(function () {
+	            config.onresize.call($$);
+	        });
+	        if (config.resize_auto) {
+	            $$.resizeFunction.add(function () {
+	                if ($$.resizeTimeout !== undefined) {
+	                    window.clearTimeout($$.resizeTimeout);
+	                }
+	                $$.resizeTimeout = window.setTimeout(function () {
+	                    delete $$.resizeTimeout;
+	                    $$.api.flush();
+	                }, 100);
+	            });
+	        }
+	        $$.resizeFunction.add(function () {
+	            config.onresized.call($$);
+	        });
+	
+	        if (window.attachEvent) {
+	            window.attachEvent('onresize', $$.resizeFunction);
+	        } else if (window.addEventListener) {
+	            window.addEventListener('resize', $$.resizeFunction, false);
+	        } else {
+	            // fallback to this, if this is a very old browser
+	            var wrapper = window.onresize;
+	            if (!wrapper) {
+	                // create a wrapper that will call all charts
+	                wrapper = $$.generateResize();
+	            } else if (!wrapper.add || !wrapper.remove) {
+	                // there is already a handler registered, make sure we call it too
+	                wrapper = $$.generateResize();
+	                wrapper.add(window.onresize);
+	            }
+	            // add this graph to the wrapper, we will be removed if the user calls destroy
+	            wrapper.add($$.resizeFunction);
+	            window.onresize = wrapper;
+	        }
+	    };
+	
 	    c3_chart_internal_fn.generateResize = function () {
 	        var resizeFunctions = [];
 	        function callResizeFunctions() {
@@ -2749,9 +2881,17 @@ webpackJsonp([0],[
 	        callResizeFunctions.add = function (f) {
 	            resizeFunctions.push(f);
 	        };
+	        callResizeFunctions.remove = function (f) {
+	            for (var i = 0; i < resizeFunctions.length; i++) {
+	                if (resizeFunctions[i] === f) {
+	                    resizeFunctions.splice(i, 1);
+	                    break;
+	                }
+	            }
+	        };
 	        return callResizeFunctions;
 	    };
-
+	
 	    c3_chart_internal_fn.endall = function (transition, callback) {
 	        var n = 0;
 	        transition
@@ -2787,14 +2927,14 @@ webpackJsonp([0],[
 	        };
 	        return f;
 	    };
-
+	
 	    c3_chart_internal_fn.parseDate = function (date) {
 	        var $$ = this, parsedDate;
 	        if (date instanceof Date) {
 	            parsedDate = date;
 	        } else if (typeof date === 'string') {
 	            parsedDate = $$.dataTimeFormat($$.config.data_xFormat).parse(date);
-	        } else if (typeof date === 'number' || !isNaN(date)) {
+	        } else if (typeof date === 'number' && !isNaN(date)) {
 	            parsedDate = new Date(+date);
 	        }
 	        if (!parsedDate || isNaN(+parsedDate)) {
@@ -2802,7 +2942,7 @@ webpackJsonp([0],[
 	        }
 	        return parsedDate;
 	    };
-
+	
 	    c3_chart_internal_fn.isTabVisible = function () {
 	        var hidden;
 	        if (typeof document.hidden !== "undefined") { // Opera 12.10 and Firefox 18 and later support
@@ -2814,19 +2954,21 @@ webpackJsonp([0],[
 	        } else if (typeof document.webkitHidden !== "undefined") {
 	            hidden = "webkitHidden";
 	        }
-
+	
 	        return document[hidden] ? false : true;
 	    };
-
+	
 	    c3_chart_internal_fn.getDefaultConfig = function () {
 	        var config = {
 	            bindto: '#chart',
+	            svg_classname: undefined,
 	            size_width: undefined,
 	            size_height: undefined,
 	            padding_left: undefined,
 	            padding_right: undefined,
 	            padding_top: undefined,
 	            padding_bottom: undefined,
+	            resize_auto: true,
 	            zoom_enabled: false,
 	            zoom_extent: undefined,
 	            zoom_privileged: false,
@@ -2834,6 +2976,9 @@ webpackJsonp([0],[
 	            zoom_onzoom: function () {},
 	            zoom_onzoomstart: function () {},
 	            zoom_onzoomend: function () {},
+	            zoom_x_min: undefined,
+	            zoom_x_max: undefined,
+	            interaction_brighten: true,
 	            interaction_enabled: true,
 	            onmouseover: function () {},
 	            onmouseout: function () {},
@@ -2872,6 +3017,7 @@ webpackJsonp([0],[
 	            data_onselected: function () {},
 	            data_onunselected: function () {},
 	            data_url: undefined,
+	            data_headers: undefined,
 	            data_json: undefined,
 	            data_rows: undefined,
 	            data_columns: undefined,
@@ -2882,6 +3028,7 @@ webpackJsonp([0],[
 	            // subchart
 	            subchart_show: false,
 	            subchart_size_height: 60,
+	            subchart_axis_x_show: true,
 	            subchart_onbrush: function () {},
 	            // color
 	            color_pattern: [],
@@ -2898,6 +3045,9 @@ webpackJsonp([0],[
 	            legend_item_onmouseover: undefined,
 	            legend_item_onmouseout: undefined,
 	            legend_equally: false,
+	            legend_padding: 0,
+	            legend_item_tile_width: 10,
+	            legend_item_tile_height: 10,
 	            // axis
 	            axis_rotated: false,
 	            axis_x_show: true,
@@ -2931,7 +3081,8 @@ webpackJsonp([0],[
 	            axis_y_label: {},
 	            axis_y_tick_format: undefined,
 	            axis_y_tick_outer: true,
-	            axis_y_tick_values: null,
+	            axis_y_tick_values: null,        
+	            axis_y_tick_rotate: 0,
 	            axis_y_tick_count: undefined,
 	            axis_y_tick_time_value: undefined,
 	            axis_y_tick_time_interval: undefined,
@@ -2964,6 +3115,7 @@ webpackJsonp([0],[
 	            // point - point of each data
 	            point_show: true,
 	            point_r: 2.5,
+	            point_sensitivity: 10,
 	            point_focus_expand_enabled: true,
 	            point_focus_expand_r: undefined,
 	            point_select_r: undefined,
@@ -2977,26 +3129,36 @@ webpackJsonp([0],[
 	            bar_zerobased: true,
 	            // area
 	            area_zerobased: true,
+	            area_above: false,
 	            // pie
 	            pie_label_show: true,
 	            pie_label_format: undefined,
 	            pie_label_threshold: 0.05,
-	            pie_expand: true,
+	            pie_label_ratio: undefined,
+	            pie_expand: {},
+	            pie_expand_duration: 50,
 	            // gauge
+	            gauge_fullCircle: false,
 	            gauge_label_show: true,
 	            gauge_label_format: undefined,
-	            gauge_expand: true,
 	            gauge_min: 0,
 	            gauge_max: 100,
+	            gauge_startingAngle: -1 * Math.PI/2,
 	            gauge_units: undefined,
 	            gauge_width: undefined,
+	            gauge_expand: {},
+	            gauge_expand_duration: 50,
 	            // donut
 	            donut_label_show: true,
 	            donut_label_format: undefined,
 	            donut_label_threshold: 0.05,
+	            donut_label_ratio: undefined,
 	            donut_width: undefined,
-	            donut_expand: true,
 	            donut_title: "",
+	            donut_expand: {},
+	            donut_expand_duration: 50,
+	            // spline
+	            spline_interpolation_type: 'cardinal',
 	            // region - region to change style
 	            regions: [],
 	            // tooltip - show when mouseover on each data
@@ -3011,17 +3173,28 @@ webpackJsonp([0],[
 	            },
 	            tooltip_init_show: false,
 	            tooltip_init_x: 0,
-	            tooltip_init_position: {top: '0px', left: '50px'}
+	            tooltip_init_position: {top: '0px', left: '50px'},
+	            tooltip_onshow: function () {},
+	            tooltip_onhide: function () {},
+	            // title
+	            title_text: undefined,
+	            title_padding: {
+	                top: 0,
+	                right: 0,
+	                bottom: 0,
+	                left: 0
+	            },
+	            title_position: 'top-center',
 	        };
-
+	
 	        Object.keys(this.additionalConfig).forEach(function (key) {
 	            config[key] = this.additionalConfig[key];
 	        }, this);
-
+	
 	        return config;
 	    };
 	    c3_chart_internal_fn.additionalConfig = {};
-
+	
 	    c3_chart_internal_fn.loadConfig = function (config) {
 	        var this_config = this.config, target, keys, read;
 	        function find() {
@@ -3048,7 +3221,7 @@ webpackJsonp([0],[
 	            }
 	        });
 	    };
-
+	
 	    c3_chart_internal_fn.getScale = function (min, max, forTimeseries) {
 	        return (forTimeseries ? this.d3.time.scale() : this.d3.scale.linear()).range([min, max]);
 	    };
@@ -3124,12 +3297,12 @@ webpackJsonp([0],[
 	        $$.xAxisTickValues = $$.axis.getXAxisTickValues();
 	        $$.yAxisTickValues = $$.axis.getYAxisTickValues();
 	        $$.y2AxisTickValues = $$.axis.getY2AxisTickValues();
-
+	
 	        $$.xAxis = $$.axis.getXAxis($$.x, $$.xOrient, $$.xAxisTickFormat, $$.xAxisTickValues, config.axis_x_tick_outer);
 	        $$.subXAxis = $$.axis.getXAxis($$.subX, $$.subXOrient, $$.xAxisTickFormat, $$.xAxisTickValues, config.axis_x_tick_outer);
 	        $$.yAxis = $$.axis.getYAxis($$.y, $$.yOrient, config.axis_y_tick_format, $$.yAxisTickValues, config.axis_y_tick_outer);
 	        $$.y2Axis = $$.axis.getYAxis($$.y2, $$.y2Orient, config.axis_y2_tick_format, $$.y2AxisTickValues, config.axis_y2_tick_outer);
-
+	
 	        // Set initialized scales to brush and zoom
 	        if (!forInit) {
 	            if ($$.brush) { $$.brush.scale($$.subX); }
@@ -3138,7 +3311,7 @@ webpackJsonp([0],[
 	        // update for arc
 	        if ($$.updateArc) { $$.updateArc(); }
 	    };
-
+	
 	    c3_chart_internal_fn.getYDomainMin = function (targets) {
 	        var $$ = this, config = $$.config,
 	            ids = $$.mapToIds(targets), ys = $$.getValuesAsIdKeyed(targets),
@@ -3216,11 +3389,11 @@ webpackJsonp([0],[
 	            isInverted = axisId === 'y2' ? config.axis_y2_inverted : config.axis_y_inverted,
 	            showHorizontalDataLabel = $$.hasDataLabel() && config.axis_rotated,
 	            showVerticalDataLabel = $$.hasDataLabel() && !config.axis_rotated;
-
+	
 	        // MEMO: avoid inverting domain unexpectedly
 	        yDomainMin = isValue(yMin) ? yMin : isValue(yMax) ? (yDomainMin < yMax ? yDomainMin : yMax - 10) : yDomainMin;
 	        yDomainMax = isValue(yMax) ? yMax : isValue(yMin) ? (yMin < yDomainMax ? yDomainMax : yMin + 10) : yDomainMax;
-
+	
 	        if (yTargets.length === 0) { // use current domain if target of axisId is none
 	            return axisId === 'y2' ? $$.y2.domain() : $$.y.domain();
 	        }
@@ -3235,21 +3408,21 @@ webpackJsonp([0],[
 	        }
 	        isAllPositive = yDomainMin >= 0 && yDomainMax >= 0;
 	        isAllNegative = yDomainMin <= 0 && yDomainMax <= 0;
-
+	
 	        // Cancel zerobased if axis_*_min / axis_*_max specified
 	        if ((isValue(yMin) && isAllPositive) || (isValue(yMax) && isAllNegative)) {
 	            isZeroBased = false;
 	        }
-
+	
 	        // Bar/Area chart should be 0-based if all positive|negative
 	        if (isZeroBased) {
 	            if (isAllPositive) { yDomainMin = 0; }
 	            if (isAllNegative) { yDomainMax = 0; }
 	        }
-
+	
 	        domainLength = Math.abs(yDomainMax - yDomainMin);
 	        padding = padding_top = padding_bottom = domainLength * 0.1;
-
+	
 	        if (typeof center !== 'undefined') {
 	            yDomainAbs = Math.max(Math.abs(yDomainMin), Math.abs(yDomainMax));
 	            yDomainMax = center + yDomainAbs;
@@ -3343,7 +3516,7 @@ webpackJsonp([0],[
 	    };
 	    c3_chart_internal_fn.updateXDomain = function (targets, withUpdateXDomain, withUpdateOrgXDomain, withTrim, domain) {
 	        var $$ = this, config = $$.config;
-
+	
 	        if (withUpdateOrgXDomain) {
 	            $$.x.domain(domain ? domain : $$.d3.extent($$.getXDomain(targets)));
 	            $$.orgXDomain = $$.x.domain();
@@ -3355,25 +3528,26 @@ webpackJsonp([0],[
 	            $$.x.domain(domain ? domain : (!$$.brush || $$.brush.empty()) ? $$.orgXDomain : $$.brush.extent());
 	            if (config.zoom_enabled) { $$.zoom.scale($$.x).updateScaleExtent(); }
 	        }
-
+	
 	        // Trim domain when too big by zoom mousemove event
 	        if (withTrim) { $$.x.domain($$.trimXDomain($$.x.orgDomain())); }
-
+	
 	        return $$.x.domain();
 	    };
 	    c3_chart_internal_fn.trimXDomain = function (domain) {
-	        var $$ = this;
-	        if (domain[0] <= $$.orgXDomain[0]) {
-	            domain[1] = +domain[1] + ($$.orgXDomain[0] - domain[0]);
-	            domain[0] = $$.orgXDomain[0];
+	        var zoomDomain = this.getZoomDomain(),
+	            min = zoomDomain[0], max = zoomDomain[1];
+	        if (domain[0] <= min) {
+	            domain[1] = +domain[1] + (min - domain[0]);
+	            domain[0] = min;
 	        }
-	        if ($$.orgXDomain[1] <= domain[1]) {
-	            domain[0] = +domain[0] - (domain[1] - $$.orgXDomain[1]);
-	            domain[1] = $$.orgXDomain[1];
+	        if (max <= domain[1]) {
+	            domain[0] = +domain[0] - (domain[1] - max);
+	            domain[1] = max;
 	        }
 	        return domain;
 	    };
-
+	
 	    c3_chart_internal_fn.isX = function (key) {
 	        var $$ = this, config = $$.config;
 	        return (config.data_x && key === config.data_x) || (notEmpty(config.data_xs) && hasValue(config.data_xs, key));
@@ -3429,7 +3603,7 @@ webpackJsonp([0],[
 	        var $$ = this, name;
 	        if (data) {
 	            name = $$.config.data_names[data.id];
-	            data.name = name ? name : data.id;
+	            data.name = name !== undefined ? name : data.id;
 	        }
 	        return data;
 	    };
@@ -3523,7 +3697,7 @@ webpackJsonp([0],[
 	    };
 	    c3_chart_internal_fn.mapToTargetIds = function (ids) {
 	        var $$ = this;
-	        return ids ? (isString(ids) ? [ids] : ids) : $$.mapToIds($$.data.targets);
+	        return ids ? [].concat(ids) : $$.mapToIds($$.data.targets);
 	    };
 	    c3_chart_internal_fn.hasTarget = function (targets, id) {
 	        var ids = this.mapToIds(targets), i;
@@ -3547,7 +3721,8 @@ webpackJsonp([0],[
 	    c3_chart_internal_fn.mapTargetsToUniqueXs = function (targets) {
 	        var $$ = this;
 	        var xs = $$.d3.set($$.d3.merge(targets.map(function (t) { return t.values.map(function (v) { return +v.x; }); }))).values();
-	        return $$.isTimeSeries() ? xs.map(function (x) { return new Date(+x); }) : xs.map(function (x) { return +x; });
+	        xs = $$.isTimeSeries() ? xs.map(function (x) { return new Date(+x); }) : xs.map(function (x) { return +x; });
+	        return xs.sort(function (a, b) { return a < b ? -1 : a > b ? 1 : a >= b ? 0 : NaN; });
 	    };
 	    c3_chart_internal_fn.addHiddenTargetIds = function (targetIds) {
 	        this.hiddenTargetIds = this.hiddenTargetIds.concat(targetIds);
@@ -3668,21 +3843,21 @@ webpackJsonp([0],[
 	        }
 	        return sames;
 	    };
-
+	
 	    c3_chart_internal_fn.findClosestFromTargets = function (targets, pos) {
 	        var $$ = this, candidates;
-
+	
 	        // map to array of closest points of each target
 	        candidates = targets.map(function (target) {
 	            return $$.findClosest(target.values, pos);
 	        });
-
+	
 	        // decide closest point and return
 	        return $$.findClosest(candidates, pos);
 	    };
 	    c3_chart_internal_fn.findClosest = function (values, pos) {
-	        var $$ = this, minDist = 100, closest;
-
+	        var $$ = this, minDist = $$.config.point_sensitivity, closest;
+	
 	        // find mouseovering bar
 	        values.filter(function (v) { return v && $$.isBarType(v.id); }).forEach(function (v) {
 	            var shape = $$.main.select('.' + CLASS.bars + $$.getTargetSelectorSuffix(v.id) + ' .' + CLASS.bar + '-' + v.index).node();
@@ -3690,7 +3865,7 @@ webpackJsonp([0],[
 	                closest = v;
 	            }
 	        });
-
+	
 	        // find closest point from non-bar
 	        values.filter(function (v) { return v && !$$.isBarType(v.id); }).forEach(function (v) {
 	            var d = $$.dist(v, pos);
@@ -3699,7 +3874,7 @@ webpackJsonp([0],[
 	                closest = v;
 	            }
 	        });
-
+	
 	        return closest;
 	    };
 	    c3_chart_internal_fn.dist = function (data, pos) {
@@ -3708,19 +3883,19 @@ webpackJsonp([0],[
 	            yIndex = config.axis_rotated ? 0 : 1,
 	            y = $$.circleY(data, data.index),
 	            x = $$.x(data.x);
-	        return Math.pow(x - pos[xIndex], 2) + Math.pow(y - pos[yIndex], 2);
+	        return Math.sqrt(Math.pow(x - pos[xIndex], 2) + Math.pow(y - pos[yIndex], 2));
 	    };
 	    c3_chart_internal_fn.convertValuesToStep = function (values) {
 	        var converted = [].concat(values), i;
-
+	
 	        if (!this.isCategorized()) {
 	            return values;
 	        }
-
+	
 	        for (i = values.length + 1; 0 < i; i--) {
 	            converted[i] = converted[i - 1];
 	        }
-
+	
 	        converted[0] = {
 	            x: converted[0].x - 1,
 	            value: converted[0].value,
@@ -3731,7 +3906,7 @@ webpackJsonp([0],[
 	            value: converted[values.length].value,
 	            id: converted[values.length].id
 	        };
-
+	
 	        return converted;
 	    };
 	    c3_chart_internal_fn.updateDataAttributes = function (name, attrs) {
@@ -3743,10 +3918,16 @@ webpackJsonp([0],[
 	        $$.redraw({withLegend: true});
 	        return current;
 	    };
-
-	    c3_chart_internal_fn.convertUrlToData = function (url, mimeType, keys, done) {
+	
+	    c3_chart_internal_fn.convertUrlToData = function (url, mimeType, headers, keys, done) {
 	        var $$ = this, type = mimeType ? mimeType : 'csv';
-	        $$.d3.xhr(url, function (error, data) {
+	        var req = $$.d3.xhr(url);
+	        if (headers) {
+	            Object.keys(headers).forEach(function (header) {
+	                req.header(header, headers[header]);
+	            });
+	        }
+	        req.get(function (error, data) {
 	            var d;
 	            if (!data) {
 	                throw new Error(error.responseURL + ' ' + error.status + ' (' + error.statusText + ')');
@@ -3794,7 +3975,10 @@ webpackJsonp([0],[
 	                var new_row = [];
 	                targetKeys.forEach(function (key) {
 	                    // convert undefined to null because undefined data will be removed in convertDataToTargets()
-	                    var v = isUndefined(o[key]) ? null : o[key];
+	                    var v = $$.findValueInJson(o, key);
+	                    if (isUndefined(v)) {
+	                        v = null;
+	                    }
 	                    new_row.push(v);
 	                });
 	                new_rows.push(new_row);
@@ -3807,6 +3991,20 @@ webpackJsonp([0],[
 	            data = $$.convertColumnsToData(new_rows);
 	        }
 	        return data;
+	    };
+	    c3_chart_internal_fn.findValueInJson = function (object, path) {
+	        path = path.replace(/\[(\w+)\]/g, '.$1'); // convert indexes to properties (replace [] with .)
+	        path = path.replace(/^\./, '');           // strip a leading dot
+	        var pathArray = path.split('.');
+	        for (var i = 0; i < pathArray.length; ++i) {
+	            var k = pathArray[i];
+	            if (k in object) {
+	                object = object[k];
+	            } else {
+	                return;
+	            }
+	        }
+	        return object;
 	    };
 	    c3_chart_internal_fn.convertRowsToData = function (rows) {
 	        var keys = rows[0], new_row = {}, new_rows = [], i, j;
@@ -3843,11 +4041,11 @@ webpackJsonp([0],[
 	            ids = $$.d3.keys(data[0]).filter($$.isNotX, $$),
 	            xs = $$.d3.keys(data[0]).filter($$.isX, $$),
 	            targets;
-
+	
 	        // save x for update data by load when custom x and c3.x API
 	        ids.forEach(function (id) {
 	            var xKey = $$.getXKey(id);
-
+	
 	            if ($$.isCustomX() || $$.isTimeSeries()) {
 	                // if included in input data
 	                if (xs.indexOf(xKey) >= 0) {
@@ -3870,15 +4068,15 @@ webpackJsonp([0],[
 	                $$.data.xs[id] = data.map(function (d, i) { return i; });
 	            }
 	        });
-
-
+	
+	
 	        // check x is defined
 	        ids.forEach(function (id) {
 	            if (!$$.data.xs[id]) {
 	                throw new Error('x is not defined for id = "' + id + '".');
 	            }
 	        });
-
+	
 	        // convert to target
 	        targets = ids.map(function (id, index) {
 	            var convertedId = config.data_idConverter(id);
@@ -3886,21 +4084,30 @@ webpackJsonp([0],[
 	                id: convertedId,
 	                id_org: id,
 	                values: data.map(function (d, i) {
-	                    var xKey = $$.getXKey(id), rawX = d[xKey], x = $$.generateTargetX(rawX, id, i);
+	                    var xKey = $$.getXKey(id), rawX = d[xKey],
+	                        value = d[id] !== null && !isNaN(d[id]) ? +d[id] : null, x;
 	                    // use x as categories if custom x and categorized
-	                    if ($$.isCustomX() && $$.isCategorized() && index === 0 && rawX) {
-	                        if (i === 0) { config.axis_x_categories = []; }
-	                        config.axis_x_categories.push(rawX);
+	                    if ($$.isCustomX() && $$.isCategorized() && index === 0 && !isUndefined(rawX)) {
+	                        if (index === 0 && i === 0) {
+	                            config.axis_x_categories = [];
+	                        }
+	                        x = config.axis_x_categories.indexOf(rawX);
+	                        if (x === -1) {
+	                            x = config.axis_x_categories.length;
+	                            config.axis_x_categories.push(rawX);
+	                        }
+	                    } else {
+	                        x  = $$.generateTargetX(rawX, id, i);
 	                    }
 	                    // mark as x = undefined if value is undefined and filter to remove after mapped
 	                    if (isUndefined(d[id]) || $$.data.xs[id].length <= i) {
 	                        x = undefined;
 	                    }
-	                    return {x: x, value: d[id] !== null && !isNaN(d[id]) ? +d[id] : null, id: convertedId};
+	                    return {x: x, value: value, id: convertedId};
 	                }).filter(function (v) { return isDefined(v.x); })
 	            };
 	        });
-
+	
 	        // finish targets
 	        targets.forEach(function (t) {
 	            var i;
@@ -3922,20 +4129,24 @@ webpackJsonp([0],[
 	                return v1 - v2;
 	            });
 	        });
-
+	
+	        // cache information about values
+	        $$.hasNegativeValue = $$.hasNegativeValueInTargets(targets);
+	        $$.hasPositiveValue = $$.hasPositiveValueInTargets(targets);
+	
 	        // set target types
 	        if (config.data_type) {
 	            $$.setTargetType($$.mapToIds(targets).filter(function (id) { return ! (id in config.data_types); }), config.data_type);
 	        }
-
+	
 	        // cache as original id keyed
 	        targets.forEach(function (d) {
 	            $$.addCache(d.id_org, d);
 	        });
-
+	
 	        return targets;
 	    };
-
+	
 	    c3_chart_internal_fn.load = function (targets, args) {
 	        var $$ = this;
 	        if (targets) {
@@ -3962,13 +4173,13 @@ webpackJsonp([0],[
 	            });
 	            $$.data.targets = $$.data.targets.concat(targets); // add remained
 	        }
-
+	
 	        // Set targets
 	        $$.updateTargets($$.data.targets);
-
+	
 	        // Redraw with new targets
 	        $$.redraw({withUpdateOrgXDomain: true, withUpdateXDomain: true, withLegend: true});
-
+	
 	        if (args.done) { args.done(); }
 	    };
 	    c3_chart_internal_fn.loadFromArgs = function (args) {
@@ -3977,7 +4188,7 @@ webpackJsonp([0],[
 	            $$.load($$.convertDataToTargets(args.data), args);
 	        }
 	        else if (args.url) {
-	            $$.convertUrlToData(args.url, args.mimeType, args.keys, function (data) {
+	            $$.convertUrlToData(args.url, args.mimeType, args.headers, args.keys, function (data) {
 	                $$.load($$.convertDataToTargets(data), args);
 	            });
 	        }
@@ -4024,12 +4235,12 @@ webpackJsonp([0],[
 	            });
 	        });
 	    };
-
+	
 	    c3_chart_internal_fn.categoryName = function (i) {
 	        var config = this.config;
 	        return i < config.axis_x_categories.length ? config.axis_x_categories[i] : i;
 	    };
-
+	
 	    c3_chart_internal_fn.initEventRect = function () {
 	        var $$ = this;
 	        $$.main.select('.' + CLASS.chart).append("g")
@@ -4040,19 +4251,19 @@ webpackJsonp([0],[
 	        var $$ = this, config = $$.config,
 	            eventRectUpdate, maxDataCountTarget,
 	            isMultipleX = $$.isMultipleX();
-
+	
 	        // rects for mouseover
 	        var eventRects = $$.main.select('.' + CLASS.eventRects)
 	                .style('cursor', config.zoom_enabled ? config.axis_rotated ? 'ns-resize' : 'ew-resize' : null)
 	                .classed(CLASS.eventRectsMultiple, isMultipleX)
 	                .classed(CLASS.eventRectsSingle, !isMultipleX);
-
+	
 	        // clear old rects
 	        eventRects.selectAll('.' + CLASS.eventRect).remove();
-
+	
 	        // open as public variable
 	        $$.eventRect = eventRects.selectAll('.' + CLASS.eventRect);
-
+	
 	        if (isMultipleX) {
 	            eventRectUpdate = $$.eventRect.data([0]);
 	            // enter : only one rect will be added
@@ -4078,10 +4289,10 @@ webpackJsonp([0],[
 	    c3_chart_internal_fn.updateEventRect = function (eventRectUpdate) {
 	        var $$ = this, config = $$.config,
 	            x, y, w, h, rectW, rectX;
-
+	
 	        // set update selection if null
 	        eventRectUpdate = eventRectUpdate || $$.eventRect.data(function (d) { return d; });
-
+	
 	        if ($$.isMultipleX()) {
 	            // TODO: rotated not supported yet
 	            x = 0;
@@ -4091,34 +4302,34 @@ webpackJsonp([0],[
 	        }
 	        else {
 	            if (($$.isCustomX() || $$.isTimeSeries()) && !$$.isCategorized()) {
-
+	
 	                // update index for x that is used by prevX and nextX
 	                $$.updateXs();
-
+	
 	                rectW = function (d) {
 	                    var prevX = $$.getPrevX(d.index), nextX = $$.getNextX(d.index);
-
+	
 	                    // if there this is a single data point make the eventRect full width (or height)
 	                    if (prevX === null && nextX === null) {
 	                        return config.axis_rotated ? $$.height : $$.width;
 	                    }
-
+	
 	                    if (prevX === null) { prevX = $$.x.domain()[0]; }
 	                    if (nextX === null) { nextX = $$.x.domain()[1]; }
-
+	
 	                    return Math.max(0, ($$.x(nextX) - $$.x(prevX)) / 2);
 	                };
 	                rectX = function (d) {
 	                    var prevX = $$.getPrevX(d.index), nextX = $$.getNextX(d.index),
 	                        thisX = $$.data.xs[d.id][d.index];
-
+	
 	                    // if there this is a single data point position the eventRect at 0
 	                    if (prevX === null && nextX === null) {
 	                        return 0;
 	                    }
-
+	
 	                    if (prevX === null) { prevX = $$.x.domain()[0]; }
-
+	
 	                    return ($$.x(thisX) + $$.x(prevX)) / 2;
 	                };
 	            } else {
@@ -4132,7 +4343,7 @@ webpackJsonp([0],[
 	            w = config.axis_rotated ? $$.width : rectW;
 	            h = config.axis_rotated ? rectW : $$.height;
 	        }
-
+	
 	        eventRectUpdate
 	            .attr('class', $$.classEvent.bind($$))
 	            .attr("x", x)
@@ -4147,14 +4358,14 @@ webpackJsonp([0],[
 	            .style("cursor", config.data_selection_enabled && config.data_selection_grouped ? "pointer" : null)
 	            .on('mouseover', function (d) {
 	                var index = d.index;
-
+	
 	                if ($$.dragging || $$.flowing) { return; } // do nothing while dragging/flowing
 	                if ($$.hasArcType()) { return; }
-
+	
 	                // Expand shapes for selection
 	                if (config.point_focus_expand_enabled) { $$.expandCircles(index, null, true); }
 	                $$.expandBars(index, null, true);
-
+	
 	                // Call event handler
 	                $$.main.selectAll('.' + CLASS.shape + '-' + index).each(function (d) {
 	                    config.data_onmouseover.call($$.api, d);
@@ -4177,28 +4388,28 @@ webpackJsonp([0],[
 	            .on('mousemove', function (d) {
 	                var selectedData, index = d.index,
 	                    eventRect = $$.svg.select('.' + CLASS.eventRect + '-' + index);
-
+	
 	                if ($$.dragging || $$.flowing) { return; } // do nothing while dragging/flowing
 	                if ($$.hasArcType()) { return; }
-
+	
 	                if ($$.isStepType(d) && $$.config.line_step_type === 'step-after' && d3.mouse(this)[0] < $$.x($$.getXValue(d.id, index))) {
 	                    index -= 1;
 	                }
-
+	
 	                // Show tooltip
 	                selectedData = $$.filterTargetsToShow($$.data.targets).map(function (t) {
 	                    return $$.addName($$.getValueOnIndex(t.values, index));
 	                });
-
+	
 	                if (config.tooltip_grouped) {
 	                    $$.showTooltip(selectedData, this);
 	                    $$.showXGridFocus(selectedData);
 	                }
-
+	
 	                if (config.tooltip_grouped && (!config.data_selection_enabled || config.data_selection_grouped)) {
 	                    return;
 	                }
-
+	
 	                $$.main.selectAll('.' + CLASS.shape + '-' + index)
 	                    .each(function () {
 	                        d3.select(this).classed(CLASS.EXPANDED, true);
@@ -4255,10 +4466,10 @@ webpackJsonp([0],[
 	                ) : function () {}
 	            );
 	    };
-
+	
 	    c3_chart_internal_fn.generateEventRectsForMultipleXs = function (eventRectEnter) {
 	        var $$ = this, d3 = $$.d3, config = $$.config;
-
+	
 	        function mouseout() {
 	            $$.svg.select('.' + CLASS.eventRect).style('cursor', null);
 	            $$.hideXGridFocus();
@@ -4266,7 +4477,7 @@ webpackJsonp([0],[
 	            $$.unexpandCircles();
 	            $$.unexpandBars();
 	        }
-
+	
 	        eventRectEnter.append('rect')
 	            .attr('x', 0)
 	            .attr('y', 0)
@@ -4281,46 +4492,46 @@ webpackJsonp([0],[
 	            .on('mousemove', function () {
 	                var targetsToShow = $$.filterTargetsToShow($$.data.targets);
 	                var mouse, closest, sameXData, selectedData;
-
+	
 	                if ($$.dragging) { return; } // do nothing when dragging
 	                if ($$.hasArcType(targetsToShow)) { return; }
-
+	
 	                mouse = d3.mouse(this);
 	                closest = $$.findClosestFromTargets(targetsToShow, mouse);
-
+	
 	                if ($$.mouseover && (!closest || closest.id !== $$.mouseover.id)) {
 	                    config.data_onmouseout.call($$.api, $$.mouseover);
 	                    $$.mouseover = undefined;
 	                }
-
+	
 	                if (! closest) {
 	                    mouseout();
 	                    return;
 	                }
-
+	
 	                if ($$.isScatterType(closest) || !config.tooltip_grouped) {
 	                    sameXData = [closest];
 	                } else {
 	                    sameXData = $$.filterByX(targetsToShow, closest.x);
 	                }
-
+	
 	                // show tooltip when cursor is close to some point
 	                selectedData = sameXData.map(function (d) {
 	                    return $$.addName(d);
 	                });
 	                $$.showTooltip(selectedData, this);
-
+	
 	                // expand points
 	                if (config.point_focus_expand_enabled) {
 	                    $$.expandCircles(closest.index, closest.id, true);
 	                }
 	                $$.expandBars(closest.index, closest.id, true);
-
+	
 	                // Show xgrid focus line
 	                $$.showXGridFocus(selectedData);
-
+	
 	                // Show cursor as pointer if point is close to mouse position
-	                if ($$.isBarType(closest.id) || $$.dist(closest, mouse) < 100) {
+	                if ($$.isBarType(closest.id) || $$.dist(closest, mouse) < config.point_sensitivity) {
 	                    $$.svg.select('.' + CLASS.eventRect).style('cursor', 'pointer');
 	                    if (!$$.mouseover) {
 	                        config.data_onmouseover.call($$.api, closest);
@@ -4331,16 +4542,13 @@ webpackJsonp([0],[
 	            .on('click', function () {
 	                var targetsToShow = $$.filterTargetsToShow($$.data.targets);
 	                var mouse, closest;
-
 	                if ($$.hasArcType(targetsToShow)) { return; }
-
+	
 	                mouse = d3.mouse(this);
 	                closest = $$.findClosestFromTargets(targetsToShow, mouse);
-
 	                if (! closest) { return; }
-
 	                // select if selection enabled
-	                if ($$.isBarType(closest.id) || $$.dist(closest, mouse) < 100) {
+	                if ($$.isBarType(closest.id) || $$.dist(closest, mouse) < config.point_sensitivity) {
 	                    $$.main.selectAll('.' + CLASS.shapes + $$.getTargetSelectorSuffix(closest.id)).selectAll('.' + CLASS.shape + '-' + closest.index).each(function () {
 	                        if (config.data_selection_grouped || $$.isWithinShape(this, closest)) {
 	                            $$.toggleShape(this, closest, closest.index);
@@ -4366,12 +4574,12 @@ webpackJsonp([0],[
 	            x = box.left + (mouse ? mouse[0] : 0),
 	            y = box.top + (mouse ? mouse[1] : 0),
 	            event = document.createEvent("MouseEvents");
-
+	
 	        event.initMouseEvent(type, true, true, window, 0, x, y, x, y,
 	                             false, false, false, false, 0, null);
 	        eventRect.dispatchEvent(event);
 	    };
-
+	
 	    c3_chart_internal_fn.getCurrentWidth = function () {
 	        var $$ = this, config = $$.config;
 	        return config.size_width ? config.size_width : $$.getParentWidth();
@@ -4379,11 +4587,16 @@ webpackJsonp([0],[
 	    c3_chart_internal_fn.getCurrentHeight = function () {
 	        var $$ = this, config = $$.config,
 	            h = config.size_height ? config.size_height : $$.getParentHeight();
-	        return h > 0 ? h : 320 / ($$.hasType('gauge') ? 2 : 1);
+	        return h > 0 ? h : 320 / ($$.hasType('gauge') && !config.gauge_fullCircle ? 2 : 1); 
 	    };
 	    c3_chart_internal_fn.getCurrentPaddingTop = function () {
-	        var config = this.config;
-	        return isValue(config.padding_top) ? config.padding_top : 0;
+	        var $$ = this,
+	            config = $$.config,
+	            padding = isValue(config.padding_top) ? config.padding_top : 0;
+	        if ($$.title && $$.title.node()) {
+	            padding += $$.getTitlePadding();
+	        }
+	        return padding;
 	    };
 	    c3_chart_internal_fn.getCurrentPaddingBottom = function () {
 	        var config = this.config;
@@ -4414,7 +4627,7 @@ webpackJsonp([0],[
 	            return ceil10($$.getAxisWidthByAxisId('y2')) + legendWidthOnRight;
 	        }
 	    };
-
+	
 	    c3_chart_internal_fn.getParentRectValue = function (key) {
 	        var parent = this.selectChart.node(), v;
 	        while (parent && parent.tagName !== 'BODY') {
@@ -4441,8 +4654,8 @@ webpackJsonp([0],[
 	        var h = this.selectChart.style('height');
 	        return h.indexOf('px') > 0 ? +h.replace('px', '') : 0;
 	    };
-
-
+	
+	
 	    c3_chart_internal_fn.getSvgLeft = function (withoutRecompute) {
 	        var $$ = this, config = $$.config,
 	            hasLeftAxisRect = config.axis_rotated || (!config.axis_rotated && !config.axis_y_inner),
@@ -4454,8 +4667,8 @@ webpackJsonp([0],[
 	            svgLeft = svgRect.right - chartRect.left - (hasArc ? 0 : $$.getCurrentPaddingLeft(withoutRecompute));
 	        return svgLeft > 0 ? svgLeft : 0;
 	    };
-
-
+	
+	
 	    c3_chart_internal_fn.getAxisWidthByAxisId = function (id, withoutRecompute) {
 	        var $$ = this, position = $$.axis.getLabelPositionById(id);
 	        return $$.axis.getMaxTickWidth(id, withoutRecompute) + (position.isInner ? 20 : 40);
@@ -4464,19 +4677,25 @@ webpackJsonp([0],[
 	        var $$ = this, config = $$.config, h = 30;
 	        if (axisId === 'x' && !config.axis_x_show) { return 8; }
 	        if (axisId === 'x' && config.axis_x_height) { return config.axis_x_height; }
-	        if (axisId === 'y' && !config.axis_y_show) { return config.legend_show && !$$.isLegendRight && !$$.isLegendInset ? 10 : 1; }
+	        if (axisId === 'y' && !config.axis_y_show) { 
+	            return config.legend_show && !$$.isLegendRight && !$$.isLegendInset ? 10 : 1; 
+	        }
 	        if (axisId === 'y2' && !config.axis_y2_show) { return $$.rotated_padding_top; }
 	        // Calculate x axis height when tick rotated
 	        if (axisId === 'x' && !config.axis_rotated && config.axis_x_tick_rotate) {
 	            h = 30 + $$.axis.getMaxTickWidth(axisId) * Math.cos(Math.PI * (90 - config.axis_x_tick_rotate) / 180);
 	        }
+	        // Calculate y axis height when tick rotated
+	        if (axisId === 'y' && config.axis_rotated && config.axis_y_tick_rotate) {
+	            h = 30 + $$.axis.getMaxTickWidth(axisId) * Math.cos(Math.PI * (90 - config.axis_y_tick_rotate) / 180);
+	        }
 	        return h + ($$.axis.getLabelPositionById(axisId).isInner ? 0 : 10) + (axisId === 'y2' ? -10 : 0);
 	    };
-
+	
 	    c3_chart_internal_fn.getEventRectWidth = function () {
 	        return Math.max(0, this.xAxis.tickInterval());
 	    };
-
+	
 	    c3_chart_internal_fn.getShapeIndices = function (typeFilter) {
 	        var $$ = this, config = $$.config,
 	            indices = {}, i = 0, j, k;
@@ -4520,7 +4739,17 @@ webpackJsonp([0],[
 	                var values = $$.isStepType(d) ? $$.convertValuesToStep(t.values) : t.values;
 	                if (t.id === d.id || indices[t.id] !== indices[d.id]) { return; }
 	                if (targetIds.indexOf(t.id) < targetIds.indexOf(d.id)) {
-	                    if (values[i].value * d.value >= 0) {
+	                    // check if the x values line up
+	                    if (typeof values[i] === 'undefined' || +values[i].x !== +d.x) {  // "+" for timeseries
+	                        // if not, try to find the value that does line up
+	                        i = -1;
+	                        values.forEach(function (v, j) {
+	                            if (v.x === d.x) {
+	                                i = j;
+	                            }
+	                        });
+	                    }
+	                    if (i in values && values[i].value * d.value >= 0) {
 	                        offset += scale(values[i].value) - y0;
 	                    }
 	                }
@@ -4542,13 +4771,14 @@ webpackJsonp([0],[
 	        }
 	        return isWithin;
 	    };
-
-
+	
+	
 	    c3_chart_internal_fn.getInterpolate = function (d) {
-	        var $$ = this;
-	        return $$.isSplineType(d) ? "cardinal" : $$.isStepType(d) ? $$.config.line_step_type : "linear";
+	        var $$ = this,
+	            interpolation = $$.isInterpolationType($$.config.spline_interpolation_type) ? $$.config.spline_interpolation_type : 'cardinal';
+	        return $$.isSplineType(d) ? interpolation : $$.isStepType(d) ? $$.config.line_step_type : "linear";
 	    };
-
+	
 	    c3_chart_internal_fn.initLine = function () {
 	        var $$ = this;
 	        $$.main.select('.' + CLASS.chart).append("g")
@@ -4607,7 +4837,7 @@ webpackJsonp([0],[
 	    };
 	    c3_chart_internal_fn.redrawLine = function (drawLine, withTransition) {
 	        return [
-	            (withTransition ? this.mainLine.transition() : this.mainLine)
+	            (withTransition ? this.mainLine.transition(Math.random().toString()) : this.mainLine)
 	                .attr("d", drawLine)
 	                .style("stroke", this.color)
 	                .style("opacity", 1)
@@ -4622,7 +4852,7 @@ webpackJsonp([0],[
 	            yValue = function (d, i) {
 	                return config.data_groups.length > 0 ? getPoints(d, i)[0][1] : yScaleGetter.call($$, d.id)(d.value);
 	            };
-
+	
 	        line = config.axis_rotated ? line.x(yValue).y(xValue) : line.x(xValue).y(yValue);
 	        if (!config.line_connectNull) { line = line.defined(function (d) { return d.value != null; }); }
 	        return function (d) {
@@ -4669,8 +4899,8 @@ webpackJsonp([0],[
 	            ];
 	        };
 	    };
-
-
+	
+	
 	    c3_chart_internal_fn.lineWithRegions = function (d, x, y, _regions) {
 	        var $$ = this, config = $$.config,
 	            prev = -1, i, j,
@@ -4679,7 +4909,7 @@ webpackJsonp([0],[
 	            xOffset = $$.isCategorized() ? 0.5 : 0,
 	            xValue, yValue,
 	            regions = [];
-
+	
 	        function isWithinRegions(x, regions) {
 	            var i;
 	            for (i = 0; i < regions.length; i++) {
@@ -4687,7 +4917,7 @@ webpackJsonp([0],[
 	            }
 	            return false;
 	        }
-
+	
 	        // Check start/end of regions
 	        if (isDefined(_regions)) {
 	            for (i = 0; i < _regions.length; i++) {
@@ -4704,11 +4934,11 @@ webpackJsonp([0],[
 	                }
 	            }
 	        }
-
+	
 	        // Set scales
 	        xValue = config.axis_rotated ? function (d) { return y(d.value); } : function (d) { return x(d.x); };
 	        yValue = config.axis_rotated ? function (d) { return x(d.x); } : function (d) { return y(d.value); };
-
+	
 	        // Define svg generator function for region
 	        function generateM(points) {
 	            return 'M' + points[0][0] + ' ' + points[0][1] + ' ' + points[1][0] + ' ' + points[1][1];
@@ -4737,10 +4967,10 @@ webpackJsonp([0],[
 	                return generateM(points);
 	            };
 	        }
-
+	
 	        // Generate
 	        for (i = 0; i < d.length; i++) {
-
+	
 	            // Draw as normal
 	            if (isUndefined(regions) || ! isWithinRegions(d[i].x, regions)) {
 	                s += " " + xValue(d[i]) + " " + yValue(d[i]);
@@ -4749,24 +4979,24 @@ webpackJsonp([0],[
 	            else {
 	                xp = $$.getScale(d[i - 1].x + xOffset, d[i].x + xOffset, $$.isTimeSeries());
 	                yp = $$.getScale(d[i - 1].value, d[i].value);
-
+	
 	                dx = x(d[i].x) - x(d[i - 1].x);
 	                dy = y(d[i].value) - y(d[i - 1].value);
 	                dd = Math.sqrt(Math.pow(dx, 2) + Math.pow(dy, 2));
 	                diff = 2 / dd;
 	                diffx2 = diff * 2;
-
+	
 	                for (j = diff; j <= 1; j += diffx2) {
 	                    s += sWithRegion(d[i - 1], d[i], j, diff);
 	                }
 	            }
 	            prev = d[i].x;
 	        }
-
+	
 	        return s;
 	    };
-
-
+	
+	
 	    c3_chart_internal_fn.updateArea = function (durationForExit) {
 	        var $$ = this, d3 = $$.d3;
 	        $$.mainArea = $$.main.selectAll('.' + CLASS.areas).selectAll('.' + CLASS.area)
@@ -4783,7 +5013,7 @@ webpackJsonp([0],[
 	    };
 	    c3_chart_internal_fn.redrawArea = function (drawArea, withTransition) {
 	        return [
-	            (withTransition ? this.mainArea.transition() : this.mainArea)
+	            (withTransition ? this.mainArea.transition(Math.random().toString()) : this.mainArea)
 	                .attr("d", drawArea)
 	                .style("fill", this.color)
 	                .style("opacity", this.orgAreaOpacity)
@@ -4800,12 +5030,12 @@ webpackJsonp([0],[
 	            value1 = function (d, i) {
 	                return config.data_groups.length > 0 ? getPoints(d, i)[1][1] : yScaleGetter.call($$, d.id)(d.value);
 	            };
-
-	        area = config.axis_rotated ? area.x0(value0).x1(value1).y(xValue) : area.x(xValue).y0(value0).y1(value1);
+	
+	        area = config.axis_rotated ? area.x0(value0).x1(value1).y(xValue) : area.x(xValue).y0(config.area_above ? 0 : value0).y1(value1);
 	        if (!config.line_connectNull) {
 	            area = area.defined(function (d) { return d.value !== null; });
 	        }
-
+	
 	        return function (d) {
 	            var values = config.line_connectNull ? $$.filterRemoveNull(d.values) : d.values,
 	                x0 = 0, y0 = 0, path;
@@ -4849,8 +5079,8 @@ webpackJsonp([0],[
 	            ];
 	        };
 	    };
-
-
+	
+	
 	    c3_chart_internal_fn.updateCircle = function () {
 	        var $$ = this;
 	        $$.mainCircle = $$.main.selectAll('.' + CLASS.circles).selectAll('.' + CLASS.circle)
@@ -4866,12 +5096,12 @@ webpackJsonp([0],[
 	    c3_chart_internal_fn.redrawCircle = function (cx, cy, withTransition) {
 	        var selectedCircles = this.main.selectAll('.' + CLASS.selectedCircle);
 	        return [
-	            (withTransition ? this.mainCircle.transition() : this.mainCircle)
+	            (withTransition ? this.mainCircle.transition(Math.random().toString()) : this.mainCircle)
 	                .style('opacity', this.opacityForCircle.bind(this))
 	                .style("fill", this.color)
 	                .attr("cx", cx)
 	                .attr("cy", cy),
-	            (withTransition ? selectedCircles.transition() : selectedCircles)
+	            (withTransition ? selectedCircles.transition(Math.random().toString()) : selectedCircles)
 	                .attr("cx", cx)
 	                .attr("cy", cy)
 	        ];
@@ -4923,7 +5153,7 @@ webpackJsonp([0],[
 	    };
 	    c3_chart_internal_fn.pointSelectR = function (d) {
 	        var $$ = this, config = $$.config;
-	        return config.point_select_r ? config.point_select_r : $$.pointR(d) * 4;
+	        return isFunction(config.point_select_r) ? config.point_select_r(d) : ((config.point_select_r) ? config.point_select_r : $$.pointR(d) * 4);
 	    };
 	    c3_chart_internal_fn.isWithinCircle = function (that, r) {
 	        var d3 = this.d3,
@@ -4934,7 +5164,7 @@ webpackJsonp([0],[
 	    c3_chart_internal_fn.isWithinStep = function (that, y) {
 	        return Math.abs(y - this.d3.mouse(that)[1]) < 30;
 	    };
-
+	
 	    c3_chart_internal_fn.initBar = function () {
 	        var $$ = this;
 	        $$.main.select('.' + CLASS.chart).append("g")
@@ -4957,7 +5187,7 @@ webpackJsonp([0],[
 	        mainBarEnter.append('g')
 	            .attr("class", classBars)
 	            .style("cursor", function (d) { return config.data_selection_isselectable(d) ? "pointer" : null; });
-
+	
 	    };
 	    c3_chart_internal_fn.updateBar = function (durationForExit) {
 	        var $$ = this,
@@ -4979,7 +5209,7 @@ webpackJsonp([0],[
 	    };
 	    c3_chart_internal_fn.redrawBar = function (drawBar, withTransition) {
 	        return [
-	            (withTransition ? this.mainBar.transition() : this.mainBar)
+	            (withTransition ? this.mainBar.transition(Math.random().toString()) : this.mainBar)
 	                .attr('d', drawBar)
 	                .style("fill", this.color)
 	                .style("opacity", 1)
@@ -5009,17 +5239,17 @@ webpackJsonp([0],[
 	        return function (d, i) {
 	            // 4 points that make a bar
 	            var points = getPoints(d, i);
-
+	
 	            // switch points if axis is rotated, not applicable for sub chart
 	            var indexX = config.axis_rotated ? 1 : 0;
 	            var indexY = config.axis_rotated ? 0 : 1;
-
+	
 	            var path = 'M ' + points[0][indexX] + ',' + points[0][indexY] + ' ' +
 	                    'L' + points[1][indexX] + ',' + points[1][indexY] + ' ' +
 	                    'L' + points[2][indexX] + ',' + points[2][indexY] + ' ' +
 	                    'L' + points[3][indexX] + ',' + points[3][indexY] + ' ' +
 	                    'z';
-
+	
 	            return path;
 	        };
 	    };
@@ -5057,7 +5287,7 @@ webpackJsonp([0],[
 	            sx = x - offset, ex = x + w + offset, sy = y + h + offset, ey = y - offset;
 	        return sx < mouse[0] && mouse[0] < ex && ey < mouse[1] && mouse[1] < sy;
 	    };
-
+	
 	    c3_chart_internal_fn.initText = function () {
 	        var $$ = this;
 	        $$.main.select('.' + CLASS.chart).append("g")
@@ -5107,14 +5337,16 @@ webpackJsonp([0],[
 	                .style("fill-opacity", forFlow ? 0 : this.opacityForText.bind(this))
 	        ];
 	    };
-	    c3_chart_internal_fn.getTextRect = function (text, cls) {
+	    c3_chart_internal_fn.getTextRect = function (text, cls, element) {
 	        var dummy = this.d3.select('body').append('div').classed('c3', true),
 	            svg = dummy.append("svg").style('visibility', 'hidden').style('position', 'fixed').style('top', 0).style('left', 0),
+	            font = this.d3.select(element).style('font'),
 	            rect;
 	        svg.selectAll('.dummy')
 	            .data([text])
 	          .enter().append('text')
 	            .classed(cls ? cls : "", true)
+	            .style('font', font)
 	            .text(text)
 	          .each(function () { rect = this.getBoundingClientRect(); });
 	        dummy.remove();
@@ -5158,7 +5390,7 @@ webpackJsonp([0],[
 	            yPos = (points[0][0] + points[2][0] + box.height * 0.6) / 2;
 	        } else {
 	            yPos = points[2][1];
-	            if (d.value < 0) {
+	            if (d.value < 0  || (d.value === 0 && !$$.hasPositiveValue)) {
 	                yPos += box.height;
 	                if ($$.isBarType(d) && $$.isSafari()) {
 	                    yPos -= 3;
@@ -5180,7 +5412,7 @@ webpackJsonp([0],[
 	        }
 	        return yPos;
 	    };
-
+	
 	    c3_chart_internal_fn.setTargetType = function (targetIds, type) {
 	        var $$ = this, config = $$.config;
 	        $$.mapToTargetIds(targetIds).forEach(function (id) {
@@ -5272,7 +5504,10 @@ webpackJsonp([0],[
 	    c3_chart_internal_fn.barOrLineData = function (d) {
 	        return this.isBarType(d) || this.isLineType(d) ? d.values : [];
 	    };
-
+	    c3_chart_internal_fn.isInterpolationType = function (type) {
+	        return ['linear', 'linear-closed', 'basis', 'basis-open', 'basis-closed', 'bundle', 'cardinal', 'cardinal-open', 'cardinal-closed', 'monotone'].indexOf(type) >= 0;
+	    };
+	
 	    c3_chart_internal_fn.initGrid = function () {
 	        var $$ = this, config = $$.config, d3 = $$.d3;
 	        $$.grid = $$.main.append('g')
@@ -5306,7 +5541,7 @@ webpackJsonp([0],[
 	        var $$ = this, config = $$.config, d3 = $$.d3,
 	            xgridData = $$.generateGridData(config.grid_x_type, $$.x),
 	            tickOffset = $$.isCategorized() ? $$.xAxis.tickOffset() : 0;
-
+	
 	        $$.xgridAttr = config.axis_rotated ? {
 	            'x1': 0,
 	            'x2': $$.width,
@@ -5318,7 +5553,7 @@ webpackJsonp([0],[
 	            'y1': 0,
 	            'y2': $$.height
 	        };
-
+	
 	        $$.xgrid = $$.main.select('.' + CLASS.xgrids).selectAll('.' + CLASS.xgrid)
 	            .data(xgridData);
 	        $$.xgrid.enter().append('line').attr("class", CLASS.xgrid);
@@ -5328,7 +5563,7 @@ webpackJsonp([0],[
 	        }
 	        $$.xgrid.exit().remove();
 	    };
-
+	
 	    c3_chart_internal_fn.updateYGrid = function () {
 	        var $$ = this, config = $$.config,
 	            gridValues = $$.yAxis.tickValues() || $$.y.ticks(config.grid_y_ticks);
@@ -5343,7 +5578,7 @@ webpackJsonp([0],[
 	        $$.ygrid.exit().remove();
 	        $$.smoothLines($$.ygrid, 'grid');
 	    };
-
+	
 	    c3_chart_internal_fn.gridTextAnchor = function (d) {
 	        return d.position ? d.position : "end";
 	    };
@@ -5359,10 +5594,10 @@ webpackJsonp([0],[
 	    c3_chart_internal_fn.updateGrid = function (duration) {
 	        var $$ = this, main = $$.main, config = $$.config,
 	            xgridLine, ygridLine, yv;
-
+	
 	        // hide if arc type
 	        $$.grid.style('visibility', $$.hasArcType() ? 'hidden' : 'visible');
-
+	
 	        main.select('line.' + CLASS.xgridFocus).style("visibility", "hidden");
 	        if (config.grid_x_show) {
 	            $$.updateXGrid();
@@ -5386,7 +5621,7 @@ webpackJsonp([0],[
 	        $$.xgridLines.exit().transition().duration(duration)
 	            .style("opacity", 0)
 	            .remove();
-
+	
 	        // Y-Grid
 	        if (config.grid_y_show) {
 	            $$.updateYGrid();
@@ -5513,7 +5748,7 @@ webpackJsonp([0],[
 	            config.grid_y_lines = config.grid_y_lines.filter(toShow);
 	        }
 	    };
-
+	
 	    c3_chart_internal_fn.initTooltip = function () {
 	        var $$ = this, config = $$.config, i;
 	        $$.tooltip = $$.selectChart
@@ -5545,21 +5780,44 @@ webpackJsonp([0],[
 	            titleFormat = config.tooltip_format_title || defaultTitleFormat,
 	            nameFormat = config.tooltip_format_name || function (name) { return name; },
 	            valueFormat = config.tooltip_format_value || defaultValueFormat,
-	            text, i, title, value, name, bgcolor;
+	            text, i, title, value, name, bgcolor,
+	            orderAsc = $$.isOrderAsc();
+	
+	        if (config.data_groups.length === 0) {
+	            d.sort(function(a, b){
+	                var v1 = a ? a.value : null, v2 = b ? b.value : null;
+	                return orderAsc ? v1 - v2 : v2 - v1;
+	            });
+	        } else {
+	            var ids = $$.orderTargets($$.data.targets).map(function (i) {
+	                return i.id;
+	            });
+	            d.sort(function(a, b) {
+	                var v1 = a ? a.value : null, v2 = b ? b.value : null;
+	                if (v1 > 0 && v2 > 0) {
+	                    v1 = a ? ids.indexOf(a.id) : null;
+	                    v2 = b ? ids.indexOf(b.id) : null;
+	                }
+	                return orderAsc ? v1 - v2 : v2 - v1;
+	            });
+	        }
+	
 	        for (i = 0; i < d.length; i++) {
 	            if (! (d[i] && (d[i].value || d[i].value === 0))) { continue; }
-
+	
 	            if (! text) {
-	                title = titleFormat ? titleFormat(d[i].x) : d[i].x;
-	                text = "<table class='" + CLASS.tooltip + "'>" + (title || title === 0 ? "<tr><th colspan='2'>" + title + "</th></tr>" : "");
+	                title = sanitise(titleFormat ? titleFormat(d[i].x) : d[i].x);
+	                text = "<table class='" + $$.CLASS.tooltip + "'>" + (title || title === 0 ? "<tr><th colspan='2'>" + title + "</th></tr>" : "");
 	            }
-
-	            value = valueFormat(d[i].value, d[i].ratio, d[i].id, d[i].index);
+	
+	            value = sanitise(valueFormat(d[i].value, d[i].ratio, d[i].id, d[i].index, d));
 	            if (value !== undefined) {
-	                name = nameFormat(d[i].name, d[i].ratio, d[i].id, d[i].index);
+	                // Skip elements when their name is set to null
+	                if (d[i].name === null) { continue; }
+	                name = sanitise(nameFormat(d[i].name, d[i].ratio, d[i].id, d[i].index));
 	                bgcolor = $$.levelColor ? $$.levelColor(d[i].value) : color(d[i].id);
-
-	                text += "<tr class='" + CLASS.tooltipName + "-" + d[i].id + "'>";
+	
+	                text += "<tr class='" + $$.CLASS.tooltipName + "-" + $$.getTargetSelectorSuffix(d[i].id) + "'>";
 	                text += "<td class='name'><span style='background-color:" + bgcolor + "'></span>" + name + "</td>";
 	                text += "<td class='value'>" + value + "</td>";
 	                text += "</tr>";
@@ -5589,9 +5847,9 @@ webpackJsonp([0],[
 	                chartRight = svgLeft + $$.currentWidth - $$.getCurrentPaddingRight();
 	                tooltipTop = mouse[1] + 15;
 	            }
-
+	
 	            if (tooltipRight > chartRight) {
-	                // 20 is needed for Firefox to keep tooletip width
+	                // 20 is needed for Firefox to keep tooltip width
 	                tooltipLeft -= tooltipRight - chartRight + 20;
 	            }
 	            if (tooltipTop + tHeight > $$.currentHeight) {
@@ -5613,11 +5871,11 @@ webpackJsonp([0],[
 	            return;
 	        }
 	        $$.tooltip.html(config.tooltip_contents.call($$, selectedData, $$.axis.getXAxisTickFormat(), $$.getYFormat(forArc), $$.color)).style("display", "block");
-
+	
 	        // Get tooltip dimensions
 	        tWidth = $$.tooltip.property('offsetWidth');
 	        tHeight = $$.tooltip.property('offsetHeight');
-
+	
 	        position = positionFunction.call(this, dataToShow, tWidth, tHeight, element);
 	        // Set tooltip
 	        $$.tooltip
@@ -5627,7 +5885,7 @@ webpackJsonp([0],[
 	    c3_chart_internal_fn.hideTooltip = function () {
 	        this.tooltip.style("display", "none");
 	    };
-
+	
 	    c3_chart_internal_fn.initLegend = function () {
 	        var $$ = this;
 	        $$.legendItemTextBox = {};
@@ -5651,7 +5909,7 @@ webpackJsonp([0],[
 	            top: $$.isLegendTop ? $$.getCurrentPaddingTop() + config.legend_inset_y + 5.5 : $$.currentHeight - legendHeight - $$.getCurrentPaddingBottom() - config.legend_inset_y,
 	            left: $$.isLegendLeft ? $$.getCurrentPaddingLeft() + config.legend_inset_x + 0.5 : $$.currentWidth - legendWidth - $$.getCurrentPaddingRight() - config.legend_inset_x + 0.5
 	        };
-
+	
 	        $$.margin3 = {
 	            top: $$.isLegendRight ? 0 : $$.isLegendInset ? insetLegendPosition.top : $$.currentHeight - legendHeight,
 	            right: NaN,
@@ -5743,32 +6001,37 @@ webpackJsonp([0],[
 	    };
 	    c3_chart_internal_fn.updateLegend = function (targetIds, options, transitions) {
 	        var $$ = this, config = $$.config;
-	        var xForLegend, xForLegendText, xForLegendRect, yForLegend, yForLegendText, yForLegendRect;
-	        var paddingTop = 4, paddingRight = 10, maxWidth = 0, maxHeight = 0, posMin = 10, tileWidth = 15;
+	        var xForLegend, xForLegendText, xForLegendRect, yForLegend, yForLegendText, yForLegendRect, x1ForLegendTile, x2ForLegendTile, yForLegendTile;
+	        var paddingTop = 4, paddingRight = 10, maxWidth = 0, maxHeight = 0, posMin = 10, tileWidth = config.legend_item_tile_width + 5;
 	        var l, totalLength = 0, offsets = {}, widths = {}, heights = {}, margins = [0], steps = {}, step = 0;
 	        var withTransition, withTransitionForTransform;
 	        var texts, rects, tiles, background;
-
+	
+	        // Skip elements when their name is set to null
+	        targetIds = targetIds.filter(function(id) {
+	            return !isDefined(config.data_names[id]) || config.data_names[id] !== null;
+	        });
+	
 	        options = options || {};
 	        withTransition = getOption(options, "withTransition", true);
 	        withTransitionForTransform = getOption(options, "withTransitionForTransform", true);
-
+	
 	        function getTextBox(textElement, id) {
 	            if (!$$.legendItemTextBox[id]) {
-	                $$.legendItemTextBox[id] = $$.getTextRect(textElement.textContent, CLASS.legendItem);
+	                $$.legendItemTextBox[id] = $$.getTextRect(textElement.textContent, CLASS.legendItem, textElement);
 	            }
 	            return $$.legendItemTextBox[id];
 	        }
-
+	
 	        function updatePositions(textElement, id, index) {
 	            var reset = index === 0, isLast = index === targetIds.length - 1,
 	                box = getTextBox(textElement, id),
-	                itemWidth = box.width + tileWidth + (isLast && !($$.isLegendRight || $$.isLegendInset) ? 0 : paddingRight),
+	                itemWidth = box.width + tileWidth + (isLast && !($$.isLegendRight || $$.isLegendInset) ? 0 : paddingRight) + config.legend_padding,
 	                itemHeight = box.height + paddingTop,
 	                itemLength = $$.isLegendRight || $$.isLegendInset ? itemHeight : itemWidth,
 	                areaLength = $$.isLegendRight || $$.isLegendInset ? $$.getLegendHeight() : $$.getLegendWidth(),
 	                margin, maxLength;
-
+	
 	            // MEMO: care about condifion of step, totalLength
 	            function updateValues(id, withoutStep) {
 	                if (!withoutStep) {
@@ -5784,26 +6047,26 @@ webpackJsonp([0],[
 	                offsets[id] = totalLength;
 	                totalLength += itemLength;
 	            }
-
+	
 	            if (reset) {
 	                totalLength = 0;
 	                step = 0;
 	                maxWidth = 0;
 	                maxHeight = 0;
 	            }
-
+	
 	            if (config.legend_show && !$$.isLegendToShow(id)) {
 	                widths[id] = heights[id] = steps[id] = offsets[id] = 0;
 	                return;
 	            }
-
+	
 	            widths[id] = itemWidth;
 	            heights[id] = itemHeight;
-
+	
 	            if (!maxWidth || itemWidth >= maxWidth) { maxWidth = itemWidth; }
 	            if (!maxHeight || itemHeight >= maxHeight) { maxHeight = itemHeight; }
 	            maxLength = $$.isLegendRight || $$.isLegendInset ? maxHeight : maxWidth;
-
+	
 	            if (config.legend_equally) {
 	                Object.keys(widths).forEach(function (id) { widths[id] = maxWidth; });
 	                Object.keys(heights).forEach(function (id) { heights[id] = maxHeight; });
@@ -5820,12 +6083,12 @@ webpackJsonp([0],[
 	                updateValues(id);
 	            }
 	        }
-
+	
 	        if ($$.isLegendInset) {
 	            step = config.legend_inset_step ? config.legend_inset_step : targetIds.length;
 	            $$.updateLegendStep(step);
 	        }
-
+	
 	        if ($$.isLegendRight) {
 	            xForLegend = function (id) { return maxWidth * steps[id]; };
 	            yForLegend = function (id) { return margins[steps[id]] + offsets[id]; };
@@ -5836,11 +6099,14 @@ webpackJsonp([0],[
 	            xForLegend = function (id) { return margins[steps[id]] + offsets[id]; };
 	            yForLegend = function (id) { return maxHeight * steps[id]; };
 	        }
-	        xForLegendText = function (id, i) { return xForLegend(id, i) + 14; };
+	        xForLegendText = function (id, i) { return xForLegend(id, i) + 4 + config.legend_item_tile_width; };
 	        yForLegendText = function (id, i) { return yForLegend(id, i) + 9; };
 	        xForLegendRect = function (id, i) { return xForLegend(id, i); };
 	        yForLegendRect = function (id, i) { return yForLegend(id, i) - 5; };
-
+	        x1ForLegendTile = function (id, i) { return xForLegend(id, i) - 2; };
+	        x2ForLegendTile = function (id, i) { return xForLegend(id, i) - 2 + config.legend_item_tile_width; };
+	        yForLegendTile = function (id, i) { return yForLegend(id, i) + 4; };
+	
 	        // Define g for legend area
 	        l = $$.legend.selectAll('.' + CLASS.legendItem)
 	            .data(targetIds)
@@ -5862,19 +6128,23 @@ webpackJsonp([0],[
 	                }
 	            })
 	            .on('mouseover', function (id) {
-	                $$.d3.select(this).classed(CLASS.legendItemFocused, true);
-	                if (!$$.transiting && $$.isTargetToShow(id)) {
-	                    $$.api.focus(id);
-	                }
 	                if (config.legend_item_onmouseover) {
 	                    config.legend_item_onmouseover.call($$, id);
 	                }
+	                else {
+	                    $$.d3.select(this).classed(CLASS.legendItemFocused, true);
+	                    if (!$$.transiting && $$.isTargetToShow(id)) {
+	                        $$.api.focus(id);
+	                    }
+	                }
 	            })
 	            .on('mouseout', function (id) {
-	                $$.d3.select(this).classed(CLASS.legendItemFocused, false);
-	                $$.api.revert();
 	                if (config.legend_item_onmouseout) {
 	                    config.legend_item_onmouseout.call($$, id);
+	                }
+	                else {
+	                    $$.d3.select(this).classed(CLASS.legendItemFocused, false);
+	                    $$.api.revert();
 	                }
 	            });
 	        l.append('text')
@@ -5888,15 +6158,16 @@ webpackJsonp([0],[
 	            .style('fill-opacity', 0)
 	            .attr('x', $$.isLegendRight || $$.isLegendInset ? xForLegendRect : -200)
 	            .attr('y', $$.isLegendRight || $$.isLegendInset ? -200 : yForLegendRect);
-	        l.append('rect')
-	            .attr("class", CLASS.legendItemTile)
+	        l.append('line')
+	            .attr('class', CLASS.legendItemTile)
+	            .style('stroke', $$.color)
 	            .style("pointer-events", "none")
-	            .style('fill', $$.color)
-	            .attr('x', $$.isLegendRight || $$.isLegendInset ? xForLegendText : -200)
-	            .attr('y', $$.isLegendRight || $$.isLegendInset ? -200 : yForLegend)
-	            .attr('width', 10)
-	            .attr('height', 10);
-
+	            .attr('x1', $$.isLegendRight || $$.isLegendInset ? x1ForLegendTile : -200)
+	            .attr('y1', $$.isLegendRight || $$.isLegendInset ? -200 : yForLegendTile)
+	            .attr('x2', $$.isLegendRight || $$.isLegendInset ? x2ForLegendTile : -200)
+	            .attr('y2', $$.isLegendRight || $$.isLegendInset ? -200 : yForLegendTile)
+	            .attr('stroke-width', config.legend_item_tile_height);
+	
 	        // Set background for inset legend
 	        background = $$.legend.select('.' + CLASS.legendBackground + ' rect');
 	        if ($$.isLegendInset && maxWidth > 0 && background.size() === 0) {
@@ -5904,7 +6175,7 @@ webpackJsonp([0],[
 	                .attr("class", CLASS.legendBackground)
 	                .append('rect');
 	        }
-
+	
 	        texts = $$.legend.selectAll('text')
 	            .data(targetIds)
 	            .text(function (id) { return isDefined(config.data_names[id]) ? config.data_names[id] : id; }) // MEMO: needed for update
@@ -5912,7 +6183,7 @@ webpackJsonp([0],[
 	        (withTransition ? texts.transition() : texts)
 	            .attr('x', xForLegendText)
 	            .attr('y', yForLegendText);
-
+	
 	        rects = $$.legend.selectAll('rect.' + CLASS.legendItemEvent)
 	            .data(targetIds);
 	        (withTransition ? rects.transition() : rects)
@@ -5920,24 +6191,26 @@ webpackJsonp([0],[
 	            .attr('height', function (id) { return heights[id]; })
 	            .attr('x', xForLegendRect)
 	            .attr('y', yForLegendRect);
-
-	        tiles = $$.legend.selectAll('rect.' + CLASS.legendItemTile)
-	            .data(targetIds);
-	        (withTransition ? tiles.transition() : tiles)
-	            .style('fill', $$.color)
-	            .attr('x', xForLegend)
-	            .attr('y', yForLegend);
-
+	
+	        tiles = $$.legend.selectAll('line.' + CLASS.legendItemTile)
+	                .data(targetIds);
+	            (withTransition ? tiles.transition() : tiles)
+	                .style('stroke', $$.color)
+	                .attr('x1', x1ForLegendTile)
+	                .attr('y1', yForLegendTile)
+	                .attr('x2', x2ForLegendTile)
+	                .attr('y2', yForLegendTile);
+	
 	        if (background) {
 	            (withTransition ? background.transition() : background)
 	                .attr('height', $$.getLegendHeight() - 12)
 	                .attr('width', maxWidth * (step + 1) + 10);
 	        }
-
+	
 	        // toggle legend state
 	        $$.legend.selectAll('.' + CLASS.legendItem)
 	            .classed(CLASS.legendItemHidden, function (id) { return !$$.isTargetToShow(id); });
-
+	
 	        // Update all to reflect change of legend
 	        $$.updateLegendItemWidth(maxWidth);
 	        $$.updateLegendItemHeight(maxHeight);
@@ -5950,15 +6223,47 @@ webpackJsonp([0],[
 	        $$.transformAll(withTransitionForTransform, transitions);
 	        $$.legendHasRendered = true;
 	    };
-
+	
+	    c3_chart_internal_fn.initTitle = function () {
+	        var $$ = this;
+	        $$.title = $$.svg.append("text")
+	              .text($$.config.title_text)
+	              .attr("class", $$.CLASS.title);
+	    };
+	    c3_chart_internal_fn.redrawTitle = function () {
+	        var $$ = this;
+	        $$.title
+	              .attr("x", $$.xForTitle.bind($$))
+	              .attr("y", $$.yForTitle.bind($$));
+	    };
+	    c3_chart_internal_fn.xForTitle = function () {
+	        var $$ = this, config = $$.config, position = config.title_position || 'left', x;
+	        if (position.indexOf('right') >= 0) {
+	            x = $$.currentWidth - $$.getTextRect($$.title.node().textContent, $$.CLASS.title, $$.title.node()).width - config.title_padding.right;
+	        } else if (position.indexOf('center') >= 0) {
+	            x = ($$.currentWidth - $$.getTextRect($$.title.node().textContent, $$.CLASS.title, $$.title.node()).width) / 2;
+	        } else { // left
+	            x = config.title_padding.left;
+	        }
+	        return x;
+	    };
+	    c3_chart_internal_fn.yForTitle = function () {
+	        var $$ = this;
+	        return $$.config.title_padding.top + $$.getTextRect($$.title.node().textContent, $$.CLASS.title, $$.title.node()).height;
+	    };
+	    c3_chart_internal_fn.getTitlePadding = function() {
+	        var $$ = this;
+	        return $$.yForTitle() + $$.config.title_padding.bottom;
+	    };
+	
 	    function Axis(owner) {
 	        API.call(this, owner);
 	    }
-
+	
 	    inherit(API, Axis);
-
+	
 	    Axis.prototype.init = function init() {
-
+	
 	        var $$ = this.owner, config = $$.config, main = $$.main;
 	        $$.axes.x = main.append("g")
 	            .attr("class", CLASS.axis + ' ' + CLASS.axisX)
@@ -5978,7 +6283,7 @@ webpackJsonp([0],[
 	            .attr("class", CLASS.axisYLabel)
 	            .attr("transform", config.axis_rotated ? "" : "rotate(-90)")
 	            .style("text-anchor", this.textAnchorForYAxisLabel.bind(this));
-
+	
 	        $$.axes.y2 = main.append("g")
 	            .attr("class", CLASS.axis + ' ' + CLASS.axisY2)
 	            // clip-path?
@@ -6000,11 +6305,11 @@ webpackJsonp([0],[
 	                withoutTransition: withoutTransition,
 	            },
 	            axis = c3_axis($$.d3, axisParams).scale(scale).orient(orient);
-
-	        if ($$.isTimeSeries() && tickValues) {
+	
+	        if ($$.isTimeSeries() && tickValues && typeof tickValues !== "function") {
 	            tickValues = tickValues.map(function (v) { return $$.parseDate(v); });
 	        }
-
+	
 	        // Set tick
 	        axis.tickFormat(tickFormat).tickValues(tickValues);
 	        if ($$.isCategorized()) {
@@ -6013,7 +6318,7 @@ webpackJsonp([0],[
 	                config.axis_x_tick_culling = false;
 	            }
 	        }
-
+	
 	        return axis;
 	    };
 	    Axis.prototype.updateXAxisTickValues = function updateXAxisTickValues(targets, axis) {
@@ -6029,17 +6334,16 @@ webpackJsonp([0],[
 	        }
 	        return tickValues;
 	    };
-	    Axis.prototype.getYAxis = function getYAxis(scale, orient, tickFormat, tickValues, withOuterTick, withoutTransition) {
-	        var axisParams = {
-	            withOuterTick: withOuterTick,
-	            withoutTransition: withoutTransition,
-	        },
-	            $$ = this.owner,
-	            d3 = $$.d3,
-	            config = $$.config,
-	            axis = c3_axis(d3, axisParams).scale(scale).orient(orient).tickFormat(tickFormat);
+	    Axis.prototype.getYAxis = function getYAxis(scale, orient, tickFormat, tickValues, withOuterTick, withoutTransition, withoutRotateTickText) {
+	        var $$ = this.owner, config = $$.config,
+	            axisParams = {
+	                withOuterTick: withOuterTick,
+	                withoutTransition: withoutTransition,
+	                tickTextRotate: withoutRotateTickText ? 0 : config.axis_y_tick_rotate
+	            },
+	            axis = c3_axis($$.d3, axisParams).scale(scale).orient(orient).tickFormat(tickFormat);
 	        if ($$.isTimeSeriesY()) {
-	            axis.ticks(d3.time[config.axis_y_tick_time_value], config.axis_y_tick_time_interval);
+	            axis.ticks($$.d3.time[config.axis_y_tick_time_value], config.axis_y_tick_time_interval);
 	        } else {
 	            axis.tickValues(tickValues);
 	        }
@@ -6229,10 +6533,10 @@ webpackJsonp([0],[
 	            targetsToShow = $$.filterTargetsToShow($$.data.targets);
 	            if (id === 'y') {
 	                scale = $$.y.copy().domain($$.getYDomain(targetsToShow, 'y'));
-	                axis = this.getYAxis(scale, $$.yOrient, config.axis_y_tick_format, $$.yAxisTickValues, false, true);
+	                axis = this.getYAxis(scale, $$.yOrient, config.axis_y_tick_format, $$.yAxisTickValues, false, true, true);
 	            } else if (id === 'y2') {
 	                scale = $$.y2.copy().domain($$.getYDomain(targetsToShow, 'y2'));
-	                axis = this.getYAxis(scale, $$.y2Orient, config.axis_y2_tick_format, $$.y2AxisTickValues, false, true);
+	                axis = this.getYAxis(scale, $$.y2Orient, config.axis_y2_tick_format, $$.y2AxisTickValues, false, true, true);
 	            } else {
 	                scale = $$.x.copy().domain($$.getXDomain(targetsToShow));
 	                axis = this.getXAxis(scale, $$.xOrient, $$.xAxisTickFormat, $$.xAxisTickValues, false, true, true);
@@ -6251,7 +6555,7 @@ webpackJsonp([0],[
 	        $$.currentMaxTickWidths[id] = maxWidth <= 0 ? $$.currentMaxTickWidths[id] : maxWidth;
 	        return $$.currentMaxTickWidths[id];
 	    };
-
+	
 	    Axis.prototype.updateLabels = function updateLabels(withTransition) {
 	        var $$ = this.owner;
 	        var axisXLabel = $$.main.select('.' + CLASS.axisX + ' .' + CLASS.axisXLabel),
@@ -6274,14 +6578,15 @@ webpackJsonp([0],[
 	            .text(this.textForY2AxisLabel.bind(this));
 	    };
 	    Axis.prototype.getPadding = function getPadding(padding, key, defaultValue, domainLength) {
-	        if (!isValue(padding[key])) {
+	        var p = typeof padding === 'number' ? padding : padding[key];
+	        if (!isValue(p)) {
 	            return defaultValue;
 	        }
 	        if (padding.unit === 'ratio') {
 	            return padding[key] * domainLength;
 	        }
 	        // assume padding is pixels if unit is not specified
-	        return this.convertPixelsToAxisPadding(padding[key], domainLength);
+	        return this.convertPixelsToAxisPadding(p, domainLength);
 	    };
 	    Axis.prototype.convertPixelsToAxisPadding = function convertPixelsToAxisPadding(pixels, domainLength) {
 	        var $$ = this.owner,
@@ -6334,7 +6639,7 @@ webpackJsonp([0],[
 	        transitions.axisY2.call($$.y2Axis);
 	        transitions.axisSubX.call($$.subXAxis);
 	    };
-
+	
 	    c3_chart_internal_fn.getClipPath = function (id) {
 	        var isIE9 = window.navigator.appVersion.toLowerCase().indexOf("msie 9.") >= 0;
 	        return "url(" + (isIE9 ? "" : document.URL.split('#')[0]) + "#" + id + ")";
@@ -6393,7 +6698,7 @@ webpackJsonp([0],[
 	        var $$ = this;
 	        return $$.getAxisClipHeight($$.config.axis_rotated);
 	    };
-
+	
 	    c3_chart_internal_fn.initPie = function () {
 	        var $$ = this, d3 = $$.d3, config = $$.config;
 	        $$.pie = d3.layout.pie().value(function (d) {
@@ -6403,7 +6708,7 @@ webpackJsonp([0],[
 	            $$.pie.sort(null);
 	        }
 	    };
-
+	
 	    c3_chart_internal_fn.updateRadius = function () {
 	        var $$ = this, config = $$.config,
 	            w = config.gauge_width || config.donut_width;
@@ -6412,18 +6717,23 @@ webpackJsonp([0],[
 	        $$.innerRadiusRatio = w ? ($$.radius - w) / $$.radius : 0.6;
 	        $$.innerRadius = $$.hasType('donut') || $$.hasType('gauge') ? $$.radius * $$.innerRadiusRatio : 0;
 	    };
-
+	
 	    c3_chart_internal_fn.updateArc = function () {
 	        var $$ = this;
 	        $$.svgArc = $$.getSvgArc();
 	        $$.svgArcExpanded = $$.getSvgArcExpanded();
 	        $$.svgArcExpandedSub = $$.getSvgArcExpanded(0.98);
 	    };
-
+	
 	    c3_chart_internal_fn.updateAngle = function (d) {
 	        var $$ = this, config = $$.config,
 	            found = false, index = 0,
-	            gMin = config.gauge_min, gMax = config.gauge_max, gTic, gValue;
+	            gMin, gMax, gTic, gValue;
+	
+	        if (!config) {
+	            return null;
+	        }
+	
 	        $$.pie($$.filterTargetsToShow($$.data.targets)).forEach(function (t) {
 	            if (! found && t.data.id === d.data.id) {
 	                found = true;
@@ -6439,14 +6749,16 @@ webpackJsonp([0],[
 	            d.endAngle = d.startAngle;
 	        }
 	        if ($$.isGaugeType(d.data)) {
-	            gTic = (Math.PI) / (gMax - gMin);
+	            gMin = config.gauge_min;
+	            gMax = config.gauge_max;
+	            gTic = (Math.PI * (config.gauge_fullCircle ? 2 : 1)) / (gMax - gMin);
 	            gValue = d.value < gMin ? 0 : d.value < gMax ? d.value - gMin : (gMax - gMin);
-	            d.startAngle = -1 * (Math.PI / 2);
+	            d.startAngle = config.gauge_startingAngle;
 	            d.endAngle = d.startAngle + gTic * gValue;
 	        }
 	        return found ? d : null;
 	    };
-
+	
 	    c3_chart_internal_fn.getSvgArc = function () {
 	        var $$ = this,
 	            arc = $$.d3.svg.arc().outerRadius($$.radius).innerRadius($$.innerRadius),
@@ -6460,7 +6772,7 @@ webpackJsonp([0],[
 	        newArc.centroid = arc.centroid;
 	        return newArc;
 	    };
-
+	
 	    c3_chart_internal_fn.getSvgArcExpanded = function (rate) {
 	        var $$ = this,
 	            arc = $$.d3.svg.arc().outerRadius($$.radiusExpanded * (rate ? rate : 1)).innerRadius($$.innerRadius);
@@ -6469,33 +6781,39 @@ webpackJsonp([0],[
 	            return updated ? arc(updated) : "M 0 0";
 	        };
 	    };
-
+	
 	    c3_chart_internal_fn.getArc = function (d, withoutUpdate, force) {
 	        return force || this.isArcType(d.data) ? this.svgArc(d, withoutUpdate) : "M 0 0";
 	    };
-
-
+	
+	
 	    c3_chart_internal_fn.transformForArcLabel = function (d) {
-	        var $$ = this,
+	        var $$ = this, config = $$.config,
 	            updated = $$.updateAngle(d), c, x, y, h, ratio, translate = "";
 	        if (updated && !$$.hasType('gauge')) {
 	            c = this.svgArc.centroid(updated);
 	            x = isNaN(c[0]) ? 0 : c[0];
 	            y = isNaN(c[1]) ? 0 : c[1];
 	            h = Math.sqrt(x * x + y * y);
-	            // TODO: ratio should be an option?
-	            ratio = $$.radius && h ? (36 / $$.radius > 0.375 ? 1.175 - 36 / $$.radius : 0.8) * $$.radius / h : 0;
+	            if ($$.hasType('donut') && config.donut_label_ratio) {
+	                ratio = isFunction(config.donut_label_ratio) ? config.donut_label_ratio(d, $$.radius, h) : config.donut_label_ratio;
+	            } else if ($$.hasType('pie') && config.pie_label_ratio) {
+	                ratio = isFunction(config.pie_label_ratio) ? config.pie_label_ratio(d, $$.radius, h) : config.pie_label_ratio;
+	            } else {
+	                ratio = $$.radius && h ? (36 / $$.radius > 0.375 ? 1.175 - 36 / $$.radius : 0.8) * $$.radius / h : 0;
+	            }
 	            translate = "translate(" + (x * ratio) +  ',' + (y * ratio) +  ")";
 	        }
 	        return translate;
 	    };
-
+	
 	    c3_chart_internal_fn.getArcRatio = function (d) {
 	        var $$ = this,
-	            whole = $$.hasType('gauge') ? Math.PI : (Math.PI * 2);
+	            config = $$.config,
+	            whole = Math.PI * ($$.hasType('gauge') && !config.gauge_fullCircle ? 1 : 2);
 	        return d ? (d.endAngle - d.startAngle) / whole : null;
 	    };
-
+	
 	    c3_chart_internal_fn.convertToArcData = function (d) {
 	        return this.addName({
 	            id: d.data.id,
@@ -6504,7 +6822,7 @@ webpackJsonp([0],[
 	            index: d.index
 	        });
 	    };
-
+	
 	    c3_chart_internal_fn.textForArcLabel = function (d) {
 	        var $$ = this,
 	            updated, value, ratio, id, format;
@@ -6517,10 +6835,10 @@ webpackJsonp([0],[
 	        format = $$.getArcLabelFormat();
 	        return format ? format(value, ratio, id) : $$.defaultArcValueFormat(value, ratio);
 	    };
-
+	
 	    c3_chart_internal_fn.expandArc = function (targetIds) {
 	        var $$ = this, interval;
-
+	
 	        // MEMO: avoid to cancel transition
 	        if ($$.transiting) {
 	            interval = window.setInterval(function () {
@@ -6533,15 +6851,15 @@ webpackJsonp([0],[
 	            }, 10);
 	            return;
 	        }
-
+	
 	        targetIds = $$.mapToTargetIds(targetIds);
-
+	
 	        $$.svg.selectAll($$.selectorTargets(targetIds, '.' + CLASS.chartArc)).each(function (d) {
 	            if (! $$.shouldExpand(d.data.id)) { return; }
 	            $$.d3.select(this).selectAll('path')
-	                .transition().duration(50)
+	                .transition().duration($$.expandDuration(d.data.id))
 	                .attr("d", $$.svgArcExpanded)
-	                .transition().duration(100)
+	                .transition().duration($$.expandDuration(d.data.id) * 2)
 	                .attr("d", $$.svgArcExpandedSub)
 	                .each(function (d) {
 	                    if ($$.isDonutType(d.data)) {
@@ -6550,26 +6868,45 @@ webpackJsonp([0],[
 	                });
 	        });
 	    };
-
+	
 	    c3_chart_internal_fn.unexpandArc = function (targetIds) {
 	        var $$ = this;
-
+	
 	        if ($$.transiting) { return; }
-
+	
 	        targetIds = $$.mapToTargetIds(targetIds);
-
+	
 	        $$.svg.selectAll($$.selectorTargets(targetIds, '.' + CLASS.chartArc)).selectAll('path')
-	            .transition().duration(50)
+	            .transition().duration(function(d) {
+	                return $$.expandDuration(d.data.id);
+	            })
 	            .attr("d", $$.svgArc);
 	        $$.svg.selectAll('.' + CLASS.arc)
 	            .style("opacity", 1);
 	    };
-
+	
+	    c3_chart_internal_fn.expandDuration = function (id) {
+	        var $$ = this, config = $$.config;
+	
+	        if ($$.isDonutType(id)) {
+	            return config.donut_expand_duration;
+	        } else if ($$.isGaugeType(id)) {
+	            return config.gauge_expand_duration;
+	        } else if ($$.isPieType(id)) {
+	            return config.pie_expand_duration;
+	        } else {
+	            return 50;
+	        }
+	
+	    };
+	
 	    c3_chart_internal_fn.shouldExpand = function (id) {
 	        var $$ = this, config = $$.config;
-	        return ($$.isDonutType(id) && config.donut_expand) || ($$.isGaugeType(id) && config.gauge_expand) || ($$.isPieType(id) && config.pie_expand);
+	        return ($$.isDonutType(id) && config.donut_expand) ||
+	               ($$.isGaugeType(id) && config.gauge_expand) ||
+	               ($$.isPieType(id) && config.pie_expand);
 	    };
-
+	
 	    c3_chart_internal_fn.shouldShowArcLabel = function () {
 	        var $$ = this, config = $$.config, shouldShow = true;
 	        if ($$.hasType('donut')) {
@@ -6580,13 +6917,13 @@ webpackJsonp([0],[
 	        // when gauge, always true
 	        return shouldShow;
 	    };
-
+	
 	    c3_chart_internal_fn.meetsArcLabelThreshold = function (ratio) {
 	        var $$ = this, config = $$.config,
 	            threshold = $$.hasType('donut') ? config.donut_label_threshold : config.pie_label_threshold;
 	        return ratio >= threshold;
 	    };
-
+	
 	    c3_chart_internal_fn.getArcLabelFormat = function () {
 	        var $$ = this, config = $$.config,
 	            format = config.pie_label_format;
@@ -6597,12 +6934,12 @@ webpackJsonp([0],[
 	        }
 	        return format;
 	    };
-
+	
 	    c3_chart_internal_fn.getArcTitle = function () {
 	        var $$ = this;
 	        return $$.hasType('donut') ? $$.config.donut_title : "";
 	    };
-
+	
 	    c3_chart_internal_fn.updateTargetsForArc = function (targets) {
 	        var $$ = this, main = $$.main,
 	            mainPieUpdate, mainPieEnter,
@@ -6624,7 +6961,7 @@ webpackJsonp([0],[
 	        // MEMO: can not keep same color..., but not bad to update color in redraw
 	        //mainPieUpdate.exit().remove();
 	    };
-
+	
 	    c3_chart_internal_fn.initArc = function () {
 	        var $$ = this;
 	        $$.arcs = $$.main.select('.' + CLASS.chart).append("g")
@@ -6635,7 +6972,7 @@ webpackJsonp([0],[
 	            .style("text-anchor", "middle")
 	            .text($$.getArcTitle());
 	    };
-
+	
 	    c3_chart_internal_fn.redrawArc = function (duration, durationForExit, withTransform) {
 	        var $$ = this, d3 = $$.d3, config = $$.config, main = $$.main,
 	            mainArc;
@@ -6648,7 +6985,7 @@ webpackJsonp([0],[
 	            .style("opacity", 0)
 	            .each(function (d) {
 	                if ($$.isGaugeType(d.data)) {
-	                    d.startAngle = d.endAngle = -1 * (Math.PI / 2);
+	                    d.startAngle = d.endAngle = config.gauge_startingAngle;
 	                }
 	                this._current = d;
 	            });
@@ -6661,18 +6998,22 @@ webpackJsonp([0],[
 	                    return;
 	                }
 	                updated = $$.updateAngle(d);
-	                arcData = $$.convertToArcData(updated);
-	                // transitions
-	                $$.expandArc(updated.data.id);
-	                $$.api.focus(updated.data.id);
-	                $$.toggleFocusLegend(updated.data.id, true);
-	                $$.config.data_onmouseover(arcData, this);
+	                if (updated) {
+	                    arcData = $$.convertToArcData(updated);
+	                    // transitions
+	                    $$.expandArc(updated.data.id);
+	                    $$.api.focus(updated.data.id);
+	                    $$.toggleFocusLegend(updated.data.id, true);
+	                    $$.config.data_onmouseover(arcData, this);
+	                }
 	            } : null)
 	            .on('mousemove', config.interaction_enabled ? function (d) {
-	                var updated = $$.updateAngle(d),
+	                var updated = $$.updateAngle(d), arcData, selectedData;
+	                if (updated) {
 	                    arcData = $$.convertToArcData(updated),
 	                    selectedData = [arcData];
-	                $$.showTooltip(selectedData, this);
+	                    $$.showTooltip(selectedData, this);
+	                }
 	            } : null)
 	            .on('mouseout', config.interaction_enabled ? function (d) {
 	                var updated, arcData;
@@ -6680,19 +7021,25 @@ webpackJsonp([0],[
 	                    return;
 	                }
 	                updated = $$.updateAngle(d);
-	                arcData = $$.convertToArcData(updated);
-	                // transitions
-	                $$.unexpandArc(updated.data.id);
-	                $$.api.revert();
-	                $$.revertLegend();
-	                $$.hideTooltip();
-	                $$.config.data_onmouseout(arcData, this);
+	                if (updated) {
+	                    arcData = $$.convertToArcData(updated);
+	                    // transitions
+	                    $$.unexpandArc(updated.data.id);
+	                    $$.api.revert();
+	                    $$.revertLegend();
+	                    $$.hideTooltip();
+	                    $$.config.data_onmouseout(arcData, this);
+	                }
 	            } : null)
 	            .on('click', config.interaction_enabled ? function (d, i) {
-	                var updated = $$.updateAngle(d),
+	                var updated = $$.updateAngle(d), arcData;
+	                if (updated) {
 	                    arcData = $$.convertToArcData(updated);
-	                if ($$.toggleShape) { $$.toggleShape(this, arcData, i); }
-	                $$.config.data_onclick.call($$.api, arcData, this);
+	                    if ($$.toggleShape) {
+	                        $$.toggleShape(this, arcData, i);
+	                    }
+	                    $$.config.data_onclick.call($$.api, arcData, this);
+	                }
 	            } : null)
 	            .each(function () { $$.transiting = true; })
 	            .transition().duration(duration)
@@ -6742,14 +7089,14 @@ webpackJsonp([0],[
 	            .style("opacity", function (d) { return $$.isTargetToShow(d.data.id) && $$.isArcType(d.data) ? 1 : 0; });
 	        main.select('.' + CLASS.chartArcsTitle)
 	            .style("opacity", $$.hasType('donut') || $$.hasType('gauge') ? 1 : 0);
-
+	
 	        if ($$.hasType('gauge')) {
 	            $$.arcs.select('.' + CLASS.chartArcsBackground)
 	                .attr("d", function () {
 	                    var d = {
 	                        data: [{value: config.gauge_max}],
-	                        startAngle: -1 * (Math.PI / 2),
-	                        endAngle: Math.PI / 2
+	                        startAngle: config.gauge_startingAngle,
+	                        endAngle: -1 * config.gauge_startingAngle
 	                    };
 	                    return $$.getArc(d, true, true);
 	                });
@@ -6757,11 +7104,11 @@ webpackJsonp([0],[
 	                .attr("dy", ".75em")
 	                .text(config.gauge_label_show ? config.gauge_units : '');
 	            $$.arcs.select('.' + CLASS.chartArcsGaugeMin)
-	                .attr("dx", -1 * ($$.innerRadius + (($$.radius - $$.innerRadius) / 2)) + "px")
+	                .attr("dx", -1 * ($$.innerRadius + (($$.radius - $$.innerRadius) / (config.gauge_fullCircle ? 1 : 2))) + "px")
 	                .attr("dy", "1.2em")
 	                .text(config.gauge_label_show ? config.gauge_min : '');
 	            $$.arcs.select('.' + CLASS.chartArcsGaugeMax)
-	                .attr("dx", $$.innerRadius + (($$.radius - $$.innerRadius) / 2) + "px")
+	                .attr("dx", $$.innerRadius + (($$.radius - $$.innerRadius) / (config.gauge_fullCircle ? 1 : 2)) + "px")
 	                .attr("dy", "1.2em")
 	                .text(config.gauge_label_show ? config.gauge_max : '');
 	        }
@@ -6788,7 +7135,7 @@ webpackJsonp([0],[
 	    c3_chart_internal_fn.getGaugeLabelHeight = function () {
 	        return this.config.gauge_label_show ? 20 : 0;
 	    };
-
+	
 	    c3_chart_internal_fn.initRegion = function () {
 	        var $$ = this;
 	        $$.region = $$.main.append('g')
@@ -6797,23 +7144,30 @@ webpackJsonp([0],[
 	    };
 	    c3_chart_internal_fn.updateRegion = function (duration) {
 	        var $$ = this, config = $$.config;
-
+	
 	        // hide if arc type
 	        $$.region.style('visibility', $$.hasArcType() ? 'hidden' : 'visible');
-
+	
 	        $$.mainRegion = $$.main.select('.' + CLASS.regions).selectAll('.' + CLASS.region)
 	            .data(config.regions);
 	        $$.mainRegion.enter().append('g')
-	            .attr('class', $$.classRegion.bind($$))
 	          .append('rect')
 	            .style("fill-opacity", 0);
+	        $$.mainRegion
+	            .attr('class', $$.classRegion.bind($$));
 	        $$.mainRegion.exit().transition().duration(duration)
 	            .style("opacity", 0)
 	            .remove();
 	    };
 	    c3_chart_internal_fn.redrawRegion = function (withTransition) {
 	        var $$ = this,
-	            regions = $$.mainRegion.selectAll('rect'),
+	            regions = $$.mainRegion.selectAll('rect').each(function () {
+	                // data is binded to g and it's not transferred to rect (child node) automatically,
+	                // then data of each rect has to be updated manually.
+	                // TODO: there should be more efficient way to solve this?
+	                var parentData = $$.d3.select(this.parentNode).datum();
+	                $$.d3.select(this).datum(parentData);
+	            }),
 	            x = $$.regionX.bind($$),
 	            y = $$.regionY.bind($$),
 	            w = $$.regionWidth.bind($$),
@@ -6870,16 +7224,16 @@ webpackJsonp([0],[
 	    c3_chart_internal_fn.isRegionOnX = function (d) {
 	        return !d.axis || d.axis === 'x';
 	    };
-
+	
 	    c3_chart_internal_fn.drag = function (mouse) {
 	        var $$ = this, config = $$.config, main = $$.main, d3 = $$.d3;
 	        var sx, sy, mx, my, minX, maxX, minY, maxY;
-
+	
 	        if ($$.hasArcType()) { return; }
 	        if (! config.data_selection_enabled) { return; } // do nothing if not selectable
 	        if (config.zoom_enabled && ! $$.zoom.altDomain) { return; } // skip if zoomable because of conflict drag dehavior
 	        if (!config.data_selection_multiple) { return; } // skip when single selection because drag is used for multiple selection
-
+	
 	        sx = $$.dragStart[0];
 	        sy = $$.dragStart[1];
 	        mx = mouse[0];
@@ -6888,7 +7242,7 @@ webpackJsonp([0],[
 	        maxX = Math.max(sx, mx);
 	        minY = (config.data_selection_grouped) ? $$.margin.top : Math.min(sy, my);
 	        maxY = (config.data_selection_grouped) ? $$.height : Math.max(sy, my);
-
+	
 	        main.select('.' + CLASS.dragarea)
 	            .attr('x', minX)
 	            .attr('y', minY)
@@ -6928,7 +7282,7 @@ webpackJsonp([0],[
 	                }
 	            });
 	    };
-
+	
 	    c3_chart_internal_fn.dragstart = function (mouse) {
 	        var $$ = this, config = $$.config;
 	        if ($$.hasArcType()) { return; }
@@ -6939,7 +7293,7 @@ webpackJsonp([0],[
 	            .style('opacity', 0.1);
 	        $$.dragging = true;
 	    };
-
+	
 	    c3_chart_internal_fn.dragend = function () {
 	        var $$ = this, config = $$.config;
 	        if ($$.hasArcType()) { return; }
@@ -6952,7 +7306,7 @@ webpackJsonp([0],[
 	            .classed(CLASS.INCLUDED, false);
 	        $$.dragging = false;
 	    };
-
+	
 	    c3_chart_internal_fn.selectPoint = function (target, d, i) {
 	        var $$ = this, config = $$.config,
 	            cx = (config.axis_rotated ? $$.circleY : $$.circleX).bind($$),
@@ -6973,7 +7327,7 @@ webpackJsonp([0],[
 	    };
 	    c3_chart_internal_fn.unselectPoint = function (target, d, i) {
 	        var $$ = this;
-	        $$.config.data_onunselected(d, target.node());
+	        $$.config.data_onunselected.call($$.api, d, target.node());
 	        // remove selected-circle from low layer g
 	        $$.main.select('.' + CLASS.selectedCircles + $$.getTargetSelectorSuffix(d.id)).selectAll('.' + CLASS.selectedCircle + '-' + i)
 	            .transition().duration(100).attr('r', 0)
@@ -6985,14 +7339,18 @@ webpackJsonp([0],[
 	    c3_chart_internal_fn.selectPath = function (target, d) {
 	        var $$ = this;
 	        $$.config.data_onselected.call($$, d, target.node());
-	        target.transition().duration(100)
-	            .style("fill", function () { return $$.d3.rgb($$.color(d)).brighter(0.75); });
+	        if ($$.config.interaction_brighten) {
+	            target.transition().duration(100)
+	                .style("fill", function () { return $$.d3.rgb($$.color(d)).brighter(0.75); });
+	        }
 	    };
 	    c3_chart_internal_fn.unselectPath = function (target, d) {
 	        var $$ = this;
 	        $$.config.data_onunselected.call($$, d, target.node());
-	        target.transition().duration(100)
-	            .style("fill", function () { return $$.color(d); });
+	        if ($$.config.interaction_brighten) {
+	            target.transition().duration(100)
+	                .style("fill", function () { return $$.color(d); });
+	        }
 	    };
 	    c3_chart_internal_fn.togglePath = function (selected, target, d, i) {
 	        selected ? this.selectPath(target, d, i) : this.unselectPath(target, d, i);
@@ -7016,7 +7374,7 @@ webpackJsonp([0],[
 	        var $$ = this, d3 = $$.d3, config = $$.config,
 	            shape = d3.select(that), isSelected = shape.classed(CLASS.SELECTED),
 	            toggle = $$.getToggle(that, d).bind($$);
-
+	
 	        if (config.data_selection_enabled && config.data_selection_isselectable(d)) {
 	            if (!config.data_selection_multiple) {
 	                $$.main.selectAll('.' + CLASS.shapes + (config.data_selection_grouped ? $$.getTargetSelectorSuffix(d.id) : "")).selectAll('.' + CLASS.shape).each(function (d, i) {
@@ -7028,7 +7386,7 @@ webpackJsonp([0],[
 	            toggle(!isSelected, shape, d, i);
 	        }
 	    };
-
+	
 	    c3_chart_internal_fn.initBrush = function () {
 	        var $$ = this, d3 = $$.d3;
 	        $$.brush = d3.svg.brush().on("brush", function () { $$.redrawForBrush(); });
@@ -7042,35 +7400,37 @@ webpackJsonp([0],[
 	    };
 	    c3_chart_internal_fn.initSubchart = function () {
 	        var $$ = this, config = $$.config,
-	            context = $$.context = $$.svg.append("g").attr("transform", $$.getTranslate('context'));
-
-	        context.style('visibility', config.subchart_show ? 'visible' : 'hidden');
-
+	            context = $$.context = $$.svg.append("g").attr("transform", $$.getTranslate('context')),
+	            visibility = config.subchart_show ? 'visible' : 'hidden';
+	
+	        context.style('visibility', visibility);
+	
 	        // Define g for chart area
 	        context.append('g')
 	            .attr("clip-path", $$.clipPathForSubchart)
 	            .attr('class', CLASS.chart);
-
+	
 	        // Define g for bar chart area
 	        context.select('.' + CLASS.chart).append("g")
 	            .attr("class", CLASS.chartBars);
-
+	
 	        // Define g for line chart area
 	        context.select('.' + CLASS.chart).append("g")
 	            .attr("class", CLASS.chartLines);
-
+	
 	        // Add extent rect for Brush
 	        context.append("g")
 	            .attr("clip-path", $$.clipPath)
 	            .attr("class", CLASS.brush)
 	            .call($$.brush);
-
+	
 	        // ATTENTION: This must be called AFTER chart added
 	        // Add Axis
 	        $$.axes.subx = context.append("g")
 	            .attr("class", CLASS.axisX)
 	            .attr("transform", $$.getTranslate('subx'))
-	            .attr("clip-path", config.axis_rotated ? "" : $$.clipPathForXAxis);
+	            .attr("clip-path", config.axis_rotated ? "" : $$.clipPathForXAxis)
+	            .style("visibility", config.subchart_axis_x_show ? visibility : 'hidden');
 	    };
 	    c3_chart_internal_fn.updateTargetsForSubchart = function (targets) {
 	        var $$ = this, context = $$.context, config = $$.config,
@@ -7080,7 +7440,7 @@ webpackJsonp([0],[
 	            classChartLine = $$.classChartLine.bind($$),
 	            classLines = $$.classLines.bind($$),
 	            classAreas = $$.classAreas.bind($$);
-
+	
 	        if (config.subchart_show) {
 	            //-- Bar --//
 	            contextBarUpdate = context.select('.' + CLASS.chartBars).selectAll('.' + CLASS.chartBar)
@@ -7092,7 +7452,7 @@ webpackJsonp([0],[
 	            // Bars for each data
 	            contextBarEnter.append('g')
 	                .attr("class", classBars);
-
+	
 	            //-- Line --//
 	            contextLineUpdate = context.select('.' + CLASS.chartLines).selectAll('.' + CLASS.chartLine)
 	                .data(targets)
@@ -7106,7 +7466,7 @@ webpackJsonp([0],[
 	            // Area
 	            contextLineEnter.append("g")
 	                .attr("class", classAreas);
-
+	
 	            //-- Brush --//
 	            context.selectAll('.' + CLASS.brush + ' rect')
 	                .attr(config.axis_rotated ? "width" : "height", config.axis_rotated ? $$.width2 : $$.height2);
@@ -7127,7 +7487,7 @@ webpackJsonp([0],[
 	            .remove();
 	    };
 	    c3_chart_internal_fn.redrawBarForSubchart = function (drawBarOnSub, withTransition, duration) {
-	        (withTransition ? this.contextBar.transition().duration(duration) : this.contextBar)
+	        (withTransition ? this.contextBar.transition(Math.random().toString()).duration(duration) : this.contextBar)
 	            .attr('d', drawBarOnSub)
 	            .style('opacity', 1);
 	    };
@@ -7145,7 +7505,7 @@ webpackJsonp([0],[
 	            .remove();
 	    };
 	    c3_chart_internal_fn.redrawLineForSubchart = function (drawLineOnSub, withTransition, duration) {
-	        (withTransition ? this.contextLine.transition().duration(duration) : this.contextLine)
+	        (withTransition ? this.contextLine.transition(Math.random().toString()).duration(duration) : this.contextLine)
 	            .attr("d", drawLineOnSub)
 	            .style('opacity', 1);
 	    };
@@ -7164,7 +7524,7 @@ webpackJsonp([0],[
 	            .remove();
 	    };
 	    c3_chart_internal_fn.redrawAreaForSubchart = function (drawAreaOnSub, withTransition, duration) {
-	        (withTransition ? this.contextArea.transition().duration(duration) : this.contextArea)
+	        (withTransition ? this.contextArea.transition(Math.random().toString()).duration(duration) : this.contextArea)
 	            .attr("d", drawAreaOnSub)
 	            .style("fill", this.color)
 	            .style("opacity", this.orgAreaOpacity);
@@ -7172,9 +7532,9 @@ webpackJsonp([0],[
 	    c3_chart_internal_fn.redrawSubchart = function (withSubchart, transitions, duration, durationForExit, areaIndices, barIndices, lineIndices) {
 	        var $$ = this, d3 = $$.d3, config = $$.config,
 	            drawAreaOnSub, drawBarOnSub, drawLineOnSub;
-
+	
 	        $$.context.style('visibility', config.subchart_show ? 'visible' : 'hidden');
-
+	
 	        // subchart
 	        if (config.subchart_show) {
 	            // reflect main chart to extent on subchart if zoomed
@@ -7183,7 +7543,7 @@ webpackJsonp([0],[
 	            }
 	            // update subchart elements if needed
 	            if (withSubchart) {
-
+	
 	                // extent rect
 	                if (!$$.brush.empty()) {
 	                    $$.brush.extent($$.x.orgDomain()).update();
@@ -7192,11 +7552,11 @@ webpackJsonp([0],[
 	                drawAreaOnSub = $$.generateDrawArea(areaIndices, true);
 	                drawBarOnSub = $$.generateDrawBar(barIndices, true);
 	                drawLineOnSub = $$.generateDrawLine(lineIndices, true);
-
+	
 	                $$.updateBarForSubchart(duration);
 	                $$.updateLineForSubchart(duration);
 	                $$.updateAreaForSubchart(duration);
-
+	
 	                $$.redrawBarForSubchart(drawBarOnSub, duration, duration);
 	                $$.redrawLineForSubchart(drawLineOnSub, duration, duration);
 	                $$.redrawAreaForSubchart(drawAreaOnSub, duration, duration);
@@ -7233,10 +7593,10 @@ webpackJsonp([0],[
 	        }
 	        return extent;
 	    };
-
+	
 	    c3_chart_internal_fn.initZoom = function () {
 	        var $$ = this, d3 = $$.d3, config = $$.config, startEvent;
-
+	
 	        $$.zoom = d3.behavior.zoom()
 	            .on("zoomstart", function () {
 	                startEvent = d3.event.sourceEvent;
@@ -7264,11 +7624,17 @@ webpackJsonp([0],[
 	            return [extent[0], Math.max($$.getMaxDataCount() / extent[1], extent[1])];
 	        };
 	        $$.zoom.updateScaleExtent = function () {
-	            var ratio = diffDomain($$.x.orgDomain()) / diffDomain($$.orgXDomain),
+	            var ratio = diffDomain($$.x.orgDomain()) / diffDomain($$.getZoomDomain()),
 	                extent = this.orgScaleExtent();
 	            this.scaleExtent([extent[0] * ratio, extent[1] * ratio]);
 	            return this;
 	        };
+	    };
+	    c3_chart_internal_fn.getZoomDomain = function () {
+	        var $$ = this, config = $$.config, d3 = $$.d3,
+	            min = d3.min([$$.orgXDomain[0], config.zoom_x_min]),
+	            max = d3.max([$$.orgXDomain[1], config.zoom_x_max]);
+	        return [min, max];
 	    };
 	    c3_chart_internal_fn.updateZoom = function () {
 	        var $$ = this, z = $$.config.zoom_enabled ? $$.zoom : function () {};
@@ -7303,17 +7669,17 @@ webpackJsonp([0],[
 	        }
 	        config.zoom_onzoom.call($$.api, x.orgDomain());
 	    };
-
+	
 	    c3_chart_internal_fn.generateColor = function () {
 	        var $$ = this, config = $$.config, d3 = $$.d3,
 	            colors = config.data_colors,
 	            pattern = notEmpty(config.color_pattern) ? config.color_pattern : d3.scale.category10().range(),
 	            callback = config.data_color,
 	            ids = [];
-
+	
 	        return function (d) {
 	            var id = d.id || (d.data && d.data.id) || d, color;
-
+	
 	            // if callback function is provided
 	            if (colors[id] instanceof Function) {
 	                color = colors[id](d);
@@ -7350,7 +7716,7 @@ webpackJsonp([0],[
 	            return color;
 	        } : null;
 	    };
-
+	
 	    c3_chart_internal_fn.getYFormat = function (forArc) {
 	        var $$ = this,
 	            formatForY = forArc && !$$.hasType('gauge') ? $$.defaultArcValueFormat : $$.yFormat,
@@ -7393,7 +7759,7 @@ webpackJsonp([0],[
 	        }
 	        return format;
 	    };
-
+	
 	    c3_chart_internal_fn.hasCaches = function (ids) {
 	        for (var i = 0; i < ids.length; i++) {
 	            if (! (ids[i] in this.cache)) { return false; }
@@ -7410,7 +7776,7 @@ webpackJsonp([0],[
 	        }
 	        return targets;
 	    };
-
+	
 	    var CLASS = c3_chart_internal_fn.CLASS = {
 	        target: 'c3-target',
 	        chart: 'c3-chart',
@@ -7439,6 +7805,7 @@ webpackJsonp([0],[
 	        defocused: 'c3-defocused',
 	        region: 'c3-region',
 	        regions: 'c3-regions',
+	        title: 'c3-title',
 	        tooltipContainer: 'c3-tooltip-container',
 	        tooltip: 'c3-tooltip',
 	        tooltipName: 'c3-tooltip-name',
@@ -7585,7 +7952,7 @@ webpackJsonp([0],[
 	        var $$ = this;
 	        return ids && ids.length ? ids.map(function (id) { return $$.selectorLegend(id); }) : null;
 	    };
-
+	
 	    var isValue = c3_chart_internal_fn.isValue = function (v) {
 	        return v || v === 0;
 	    },
@@ -7611,10 +7978,10 @@ webpackJsonp([0],[
 	            return d[1] - d[0];
 	        },
 	        isEmpty = c3_chart_internal_fn.isEmpty = function (o) {
-	            return !o || (isString(o) && o.length === 0) || (typeof o === 'object' && Object.keys(o).length === 0);
+	            return typeof o === 'undefined' || o === null || (isString(o) && o.length === 0) || (typeof o === 'object' && Object.keys(o).length === 0);
 	        },
 	        notEmpty = c3_chart_internal_fn.notEmpty = function (o) {
-	            return Object.keys(o).length > 0;
+	            return !c3_chart_internal_fn.isEmpty(o);
 	        },
 	        getOption = c3_chart_internal_fn.getOption = function (options, key, defaultValue) {
 	            return isDefined(options[key]) ? options[key] : defaultValue;
@@ -7626,19 +7993,22 @@ webpackJsonp([0],[
 	            });
 	            return found;
 	        },
+	        sanitise = c3_chart_internal_fn.sanitise = function (str) {
+	            return typeof str === 'string' ? str.replace(/</g, '&lt;').replace(/>/g, '&gt;') : str;
+	        },
 	        getPathBox = c3_chart_internal_fn.getPathBox = function (path) {
 	            var box = path.getBoundingClientRect(),
 	                items = [path.pathSegList.getItem(0), path.pathSegList.getItem(1)],
 	                minX = items[0].x, minY = Math.min(items[0].y, items[1].y);
 	            return {x: minX, y: minY, width: box.width, height: box.height};
 	        };
-
+	
 	    c3_chart_fn.focus = function (targetIds) {
 	        var $$ = this.internal, candidates;
-
+	
 	        targetIds = $$.mapToTargetIds(targetIds);
 	        candidates = $$.svg.selectAll($$.selectorTargets(targetIds.filter($$.isTargetToShow, $$))),
-
+	
 	        this.revert();
 	        this.defocus();
 	        candidates.classed(CLASS.focused, true).classed(CLASS.defocused, false);
@@ -7646,37 +8016,37 @@ webpackJsonp([0],[
 	            $$.expandArc(targetIds);
 	        }
 	        $$.toggleFocusLegend(targetIds, true);
-
+	
 	        $$.focusedTargetIds = targetIds;
 	        $$.defocusedTargetIds = $$.defocusedTargetIds.filter(function (id) {
 	            return targetIds.indexOf(id) < 0;
 	        });
 	    };
-
+	
 	    c3_chart_fn.defocus = function (targetIds) {
 	        var $$ = this.internal, candidates;
-
+	
 	        targetIds = $$.mapToTargetIds(targetIds);
 	        candidates = $$.svg.selectAll($$.selectorTargets(targetIds.filter($$.isTargetToShow, $$))),
-
+	
 	        candidates.classed(CLASS.focused, false).classed(CLASS.defocused, true);
 	        if ($$.hasArcType()) {
 	            $$.unexpandArc(targetIds);
 	        }
 	        $$.toggleFocusLegend(targetIds, false);
-
+	
 	        $$.focusedTargetIds = $$.focusedTargetIds.filter(function (id) {
 	            return targetIds.indexOf(id) < 0;
 	        });
 	        $$.defocusedTargetIds = targetIds;
 	    };
-
+	
 	    c3_chart_fn.revert = function (targetIds) {
 	        var $$ = this.internal, candidates;
-
+	
 	        targetIds = $$.mapToTargetIds(targetIds);
 	        candidates = $$.svg.selectAll($$.selectorTargets(targetIds)); // should be for all targets
-
+	
 	        candidates.classed(CLASS.focused, false).classed(CLASS.defocused, false);
 	        if ($$.hasArcType()) {
 	            $$.unexpandArc(targetIds);
@@ -7689,62 +8059,62 @@ webpackJsonp([0],[
 	                })
 	                .classed(CLASS.legendItemFocused, false);
 	        }
-
+	
 	        $$.focusedTargetIds = [];
 	        $$.defocusedTargetIds = [];
 	    };
-
+	
 	    c3_chart_fn.show = function (targetIds, options) {
 	        var $$ = this.internal, targets;
-
+	
 	        targetIds = $$.mapToTargetIds(targetIds);
 	        options = options || {};
-
+	
 	        $$.removeHiddenTargetIds(targetIds);
 	        targets = $$.svg.selectAll($$.selectorTargets(targetIds));
-
+	
 	        targets.transition()
 	            .style('opacity', 1, 'important')
 	            .call($$.endall, function () {
 	                targets.style('opacity', null).style('opacity', 1);
 	            });
-
+	
 	        if (options.withLegend) {
 	            $$.showLegend(targetIds);
 	        }
-
+	
 	        $$.redraw({withUpdateOrgXDomain: true, withUpdateXDomain: true, withLegend: true});
 	    };
-
+	
 	    c3_chart_fn.hide = function (targetIds, options) {
 	        var $$ = this.internal, targets;
-
+	
 	        targetIds = $$.mapToTargetIds(targetIds);
 	        options = options || {};
-
+	
 	        $$.addHiddenTargetIds(targetIds);
 	        targets = $$.svg.selectAll($$.selectorTargets(targetIds));
-
+	
 	        targets.transition()
 	            .style('opacity', 0, 'important')
 	            .call($$.endall, function () {
 	                targets.style('opacity', null).style('opacity', 0);
 	            });
-
+	
 	        if (options.withLegend) {
 	            $$.hideLegend(targetIds);
 	        }
-
+	
 	        $$.redraw({withUpdateOrgXDomain: true, withUpdateXDomain: true, withLegend: true});
 	    };
-
+	
 	    c3_chart_fn.toggle = function (targetIds, options) {
 	        var that = this, $$ = this.internal;
 	        $$.mapToTargetIds(targetIds).forEach(function (targetId) {
 	            $$.isTargetToShow(targetId) ? that.hide(targetId, options) : that.show(targetId, options);
 	        });
 	    };
-
+	
 	    c3_chart_fn.zoom = function (domain) {
 	        var $$ = this.internal;
 	        if (domain) {
@@ -7767,12 +8137,48 @@ webpackJsonp([0],[
 	        $$.brush.clear().update();
 	        $$.redraw({withUpdateXDomain: true});
 	    };
-
+	
+	    c3_chart_fn.zoom.max = function (max) {
+	        var $$ = this.internal, config = $$.config, d3 = $$.d3;
+	        if (max === 0 || max) {
+	            config.zoom_x_max = d3.max([$$.orgXDomain[1], max]);
+	        }
+	        else {
+	            return config.zoom_x_max;
+	        }
+	    };
+	
+	    c3_chart_fn.zoom.min = function (min) {
+	        var $$ = this.internal, config = $$.config, d3 = $$.d3;
+	        if (min === 0 || min) {
+	            config.zoom_x_min = d3.min([$$.orgXDomain[0], min]);
+	        }
+	        else {
+	            return config.zoom_x_min;
+	        }
+	    };
+	
+	    c3_chart_fn.zoom.range = function (range) {
+	        if (arguments.length) {
+	            if (isDefined(range.max)) { this.domain.max(range.max); }
+	            if (isDefined(range.min)) { this.domain.min(range.min); }
+	        } else {
+	            return {
+	                max: this.domain.max(),
+	                min: this.domain.min()
+	            };
+	        }
+	    };
+	
 	    c3_chart_fn.load = function (args) {
 	        var $$ = this.internal, config = $$.config;
 	        // update xs if specified
 	        if (args.xs) {
 	            $$.addXs(args.xs);
+	        }
+	        // update names if exists
+	        if ('names' in args) {
+	            c3_chart_fn.data.names.bind(this)(args.names);
 	        }
 	        // update classes if exists
 	        if ('classes' in args) {
@@ -7811,7 +8217,7 @@ webpackJsonp([0],[
 	            $$.loadFromArgs(args);
 	        }
 	    };
-
+	
 	    c3_chart_fn.unload = function (args) {
 	        var $$ = this.internal;
 	        args = args || {};
@@ -7825,12 +8231,12 @@ webpackJsonp([0],[
 	            if (args.done) { args.done(); }
 	        });
 	    };
-
+	
 	    c3_chart_fn.flow = function (args) {
 	        var $$ = this.internal,
 	            targets, data, notfoundIds = [], orgDataCount = $$.getMaxDataCount(),
 	            dataCount, domain, baseTarget, baseValue, length = 0, tail = 0, diff, to;
-
+	
 	        if (args.json) {
 	            data = $$.convertJsonToData(args.json, args.keys);
 	        }
@@ -7844,19 +8250,19 @@ webpackJsonp([0],[
 	            return;
 	        }
 	        targets = $$.convertDataToTargets(data, true);
-
+	
 	        // Update/Add data
 	        $$.data.targets.forEach(function (t) {
 	            var found = false, i, j;
 	            for (i = 0; i < targets.length; i++) {
 	                if (t.id === targets[i].id) {
 	                    found = true;
-
+	
 	                    if (t.values[t.values.length - 1]) {
 	                        tail = t.values[t.values.length - 1].index + 1;
 	                    }
 	                    length = targets[i].values.length;
-
+	
 	                    for (j = 0; j < length; j++) {
 	                        targets[i].values[j].index = tail + j;
 	                        if (!$$.isTimeSeries()) {
@@ -7864,14 +8270,14 @@ webpackJsonp([0],[
 	                        }
 	                    }
 	                    t.values = t.values.concat(targets[i].values);
-
+	
 	                    targets.splice(i, 1);
 	                    break;
 	                }
 	            }
 	            if (!found) { notfoundIds.push(t.id); }
 	        });
-
+	
 	        // Append null for not found targets
 	        $$.data.targets.forEach(function (t) {
 	            var i, j;
@@ -7889,7 +8295,7 @@ webpackJsonp([0],[
 	                }
 	            }
 	        });
-
+	
 	        // Generate null values for new target
 	        if ($$.data.targets.length) {
 	            targets.forEach(function (t) {
@@ -7912,12 +8318,12 @@ webpackJsonp([0],[
 	            });
 	        }
 	        $$.data.targets = $$.data.targets.concat(targets); // add remained
-
+	
 	        // check data count because behavior needs to change when it's only one
 	        dataCount = $$.getMaxDataCount();
 	        baseTarget = $$.data.targets[0];
 	        baseValue = baseTarget.values[0];
-
+	
 	        // Update length to flow if needed
 	        if (isDefined(args.to)) {
 	            length = 0;
@@ -7928,7 +8334,7 @@ webpackJsonp([0],[
 	        } else if (isDefined(args.length)) {
 	            length = args.length;
 	        }
-
+	
 	        // If only one data, update the domain to flow from left edge of the chart
 	        if (!orgDataCount) {
 	            if ($$.isTimeSeries()) {
@@ -7949,10 +8355,10 @@ webpackJsonp([0],[
 	                $$.updateXDomain(null, true, true, false, domain);
 	            }
 	        }
-
+	
 	        // Set targets
 	        $$.updateTargets($$.data.targets);
-
+	
 	        // Redraw with new targets
 	        $$.redraw({
 	            flow: {
@@ -7968,10 +8374,10 @@ webpackJsonp([0],[
 	            withUpdateXAxis: true,
 	        });
 	    };
-
+	
 	    c3_chart_internal_fn.generateFlow = function (args) {
 	        var $$ = this, config = $$.config, d3 = $$.d3;
-
+	
 	        return function () {
 	            var targets = args.targets,
 	                flow = args.flow,
@@ -7984,7 +8390,7 @@ webpackJsonp([0],[
 	                xForText = args.xForText,
 	                yForText = args.yForText,
 	                duration = args.duration;
-
+	
 	            var translateX, scaleX = 1, transform,
 	                flowIndex = flow.index,
 	                flowLength = flow.length,
@@ -7994,7 +8400,7 @@ webpackJsonp([0],[
 	                durationForFlow = flow.duration || duration,
 	                done = flow.done || function () {},
 	                wait = $$.generateWait();
-
+	
 	            var xgrid = $$.xgrid || d3.selectAll([]),
 	                xgridLines = $$.xgridLines || d3.selectAll([]),
 	                mainRegion = $$.mainRegion || d3.selectAll([]),
@@ -8003,20 +8409,20 @@ webpackJsonp([0],[
 	                mainLine = $$.mainLine || d3.selectAll([]),
 	                mainArea = $$.mainArea || d3.selectAll([]),
 	                mainCircle = $$.mainCircle || d3.selectAll([]);
-
+	
 	            // set flag
 	            $$.flowing = true;
-
+	
 	            // remove head data after rendered
 	            $$.data.targets.forEach(function (d) {
 	                d.values.splice(0, flowLength);
 	            });
-
+	
 	            // update x domain to generate axis elements for flow
 	            domain = $$.updateXDomain(targets, true, true);
 	            // update elements related to x scale
 	            if ($$.updateXGrid) { $$.updateXGrid(true); }
-
+	
 	            // generate transform to flow
 	            if (!flow.orgDataCount) { // if empty
 	                if ($$.data.targets[0].values.length !== 1) {
@@ -8030,7 +8436,7 @@ webpackJsonp([0],[
 	                        translateX = diffDomain(domain) / 2;
 	                    }
 	                }
-	            } else if (flow.orgDataCount === 1 || flowStart.x === flowEnd.x) {
+	            } else if (flow.orgDataCount === 1 || (flowStart && flowStart.x) === (flowEnd && flowEnd.x)) {
 	                translateX = $$.x(orgDomain[0]) - $$.x(domain[0]);
 	            } else {
 	                if ($$.isTimeSeries()) {
@@ -8041,11 +8447,9 @@ webpackJsonp([0],[
 	            }
 	            scaleX = (diffDomain(orgDomain) / diffDomain(domain));
 	            transform = 'translate(' + translateX + ',0) scale(' + scaleX + ',1)';
-
-	            // hide tooltip
+	
 	            $$.hideXGridFocus();
-	            $$.hideTooltip();
-
+	
 	            d3.transition().ease('linear').duration(durationForFlow).each(function () {
 	                wait.add($$.axes.x.transition().call($$.xAxis));
 	                wait.add(mainBar.transition().attr('transform', transform));
@@ -8059,7 +8463,7 @@ webpackJsonp([0],[
 	            })
 	            .call(wait, function () {
 	                var i, shapes = [], texts = [], eventRects = [];
-
+	
 	                // remove flowed elements
 	                if (flowLength) {
 	                    for (i = 0; i < flowLength; i++) {
@@ -8072,7 +8476,7 @@ webpackJsonp([0],[
 	                    $$.svg.selectAll('.' + CLASS.eventRects).selectAll(eventRects).remove();
 	                    $$.svg.select('.' + CLASS.xgrid).remove();
 	                }
-
+	
 	                // draw again for removing flowed elements and reverting attr
 	                xgrid
 	                    .attr('transform', null)
@@ -8108,19 +8512,19 @@ webpackJsonp([0],[
 	                mainRegion.select('rect').filter($$.isRegionOnX)
 	                    .attr("x", $$.regionX.bind($$))
 	                    .attr("width", $$.regionWidth.bind($$));
-
+	
 	                if (config.interaction_enabled) {
 	                    $$.redrawEventRect();
 	                }
-
+	
 	                // callback for end of flow
 	                done();
-
+	
 	                $$.flowing = false;
 	            });
 	        };
 	    };
-
+	
 	    c3_chart_fn.selected = function (targetId) {
 	        var $$ = this.internal, d3 = $$.d3;
 	        return d3.merge(
@@ -8175,13 +8579,13 @@ webpackJsonp([0],[
 	            }
 	        });
 	    };
-
+	
 	    c3_chart_fn.transform = function (type, targetIds) {
 	        var $$ = this.internal,
 	            options = ['pie', 'donut'].indexOf(type) >= 0 ? {withTransform: true} : null;
 	        $$.transformTo(targetIds, type, options);
 	    };
-
+	
 	    c3_chart_internal_fn.transformTo = function (targetIds, type, optionsForRedraw) {
 	        var $$ = this,
 	            withTransitionForAxis = !$$.hasArcType(),
@@ -8192,7 +8596,7 @@ webpackJsonp([0],[
 	        $$.updateTargets($$.data.targets); // this is needed when transforming to arc
 	        $$.updateAndRedraw(options);
 	    };
-
+	
 	    c3_chart_fn.groups = function (groups) {
 	        var $$ = this.internal, config = $$.config;
 	        if (isUndefined(groups)) { return config.data_groups; }
@@ -8200,7 +8604,7 @@ webpackJsonp([0],[
 	        $$.redraw();
 	        return config.data_groups;
 	    };
-
+	
 	    c3_chart_fn.xgrids = function (grids) {
 	        var $$ = this.internal, config = $$.config;
 	        if (! grids) { return config.grid_x_lines; }
@@ -8216,7 +8620,7 @@ webpackJsonp([0],[
 	        var $$ = this.internal;
 	        $$.removeGridLines(params, true);
 	    };
-
+	
 	    c3_chart_fn.ygrids = function (grids) {
 	        var $$ = this.internal, config = $$.config;
 	        if (! grids) { return config.grid_y_lines; }
@@ -8232,7 +8636,7 @@ webpackJsonp([0],[
 	        var $$ = this.internal;
 	        $$.removeGridLines(params, false);
 	    };
-
+	
 	    c3_chart_fn.regions = function (regions) {
 	        var $$ = this.internal, config = $$.config;
 	        if (!regions) { return config.regions; }
@@ -8250,16 +8654,16 @@ webpackJsonp([0],[
 	    c3_chart_fn.regions.remove = function (options) {
 	        var $$ = this.internal, config = $$.config,
 	            duration, classes, regions;
-
+	
 	        options = options || {};
 	        duration = $$.getOption(options, "duration", config.transition_duration);
 	        classes = $$.getOption(options, "classes", [CLASS.region]);
-
+	
 	        regions = $$.main.select('.' + CLASS.regions).selectAll(classes.map(function (c) { return '.' + c; }));
 	        (duration ? regions.transition().duration(duration) : regions)
 	            .style('opacity', 0)
 	            .remove();
-
+	
 	        config.regions = config.regions.filter(function (region) {
 	            var found = false;
 	            if (!region['class']) {
@@ -8270,10 +8674,10 @@ webpackJsonp([0],[
 	            });
 	            return !found;
 	        });
-
+	
 	        return config.regions;
 	    };
-
+	
 	    c3_chart_fn.data = function (targetIds) {
 	        var targets = this.internal.data.targets;
 	        return typeof targetIds === 'undefined' ? targets : targets.filter(function (t) {
@@ -8301,7 +8705,7 @@ webpackJsonp([0],[
 	    c3_chart_fn.data.axes = function (axes) {
 	        return this.internal.updateDataAttributes('axes', axes);
 	    };
-
+	
 	    c3_chart_fn.category = function (i, category) {
 	        var $$ = this.internal, config = $$.config;
 	        if (arguments.length > 1) {
@@ -8317,13 +8721,13 @@ webpackJsonp([0],[
 	        $$.redraw();
 	        return config.axis_x_categories;
 	    };
-
+	
 	    // TODO: fix
 	    c3_chart_fn.color = function (id) {
 	        var $$ = this.internal;
 	        return $$.color(id); // more patterns
 	    };
-
+	
 	    c3_chart_fn.x = function (x) {
 	        var $$ = this.internal;
 	        if (arguments.length) {
@@ -8340,7 +8744,7 @@ webpackJsonp([0],[
 	        }
 	        return $$.data.xs;
 	    };
-
+	
 	    c3_chart_fn.axis = function () {};
 	    c3_chart_fn.axis.labels = function (labels) {
 	        var $$ = this.internal;
@@ -8401,7 +8805,7 @@ webpackJsonp([0],[
 	            };
 	        }
 	    };
-
+	
 	    c3_chart_fn.legend = function () {};
 	    c3_chart_fn.legend.show = function (targetIds) {
 	        var $$ = this.internal;
@@ -8413,44 +8817,59 @@ webpackJsonp([0],[
 	        $$.hideLegend($$.mapToTargetIds(targetIds));
 	        $$.updateAndRedraw({withLegend: true});
 	    };
-
+	
 	    c3_chart_fn.resize = function (size) {
 	        var $$ = this.internal, config = $$.config;
 	        config.size_width = size ? size.width : null;
 	        config.size_height = size ? size.height : null;
 	        this.flush();
 	    };
-
+	
 	    c3_chart_fn.flush = function () {
 	        var $$ = this.internal;
 	        $$.updateAndRedraw({withLegend: true, withTransition: false, withTransitionForTransform: false});
 	    };
-
+	
 	    c3_chart_fn.destroy = function () {
 	        var $$ = this.internal;
-
+	
 	        window.clearInterval($$.intervalForObserveInserted);
-	        window.onresize = null;
-
+	
+	        if ($$.resizeTimeout !== undefined) {
+	            window.clearTimeout($$.resizeTimeout);
+	        }
+	
+	        if (window.detachEvent) {
+	            window.detachEvent('onresize', $$.resizeFunction);
+	        } else if (window.removeEventListener) {
+	            window.removeEventListener('resize', $$.resizeFunction);
+	        } else {
+	            var wrapper = window.onresize;
+	            // check if no one else removed our wrapper and remove our resizeFunction from it
+	            if (wrapper && wrapper.add && wrapper.remove) {
+	                wrapper.remove($$.resizeFunction);
+	            }
+	        }
+	
 	        $$.selectChart.classed('c3', false).html("");
-
+	
 	        // MEMO: this is needed because the reference of some elements will not be released, then memory leak will happen.
 	        Object.keys($$).forEach(function (key) {
 	            $$[key] = null;
 	        });
-
+	
 	        return null;
 	    };
-
+	
 	    c3_chart_fn.tooltip = function () {};
 	    c3_chart_fn.tooltip.show = function (args) {
 	        var $$ = this.internal, index, mouse;
-
+	
 	        // determine mouse position on the chart
 	        if (args.mouse) {
 	            mouse = args.mouse;
 	        }
-
+	
 	        // determine focus data
 	        if (args.data) {
 	            if ($$.isMultipleX()) {
@@ -8468,16 +8887,20 @@ webpackJsonp([0],[
 	        else if (typeof args.index !== 'undefined') {
 	            index = args.index;
 	        }
-
+	
 	        // emulate mouse events to show
 	        $$.dispatchEvent('mouseover', index, mouse);
 	        $$.dispatchEvent('mousemove', index, mouse);
+	
+	        $$.config.tooltip_onshow.call($$, args.data);
 	    };
 	    c3_chart_fn.tooltip.hide = function () {
 	        // TODO: get target data by checking the state of focus
 	        this.internal.dispatchEvent('mouseout', 0);
+	
+	        this.internal.config.tooltip_onhide.call(this);
 	    };
-
+	
 	    // Features:
 	    // 1. category axis
 	    // 2. ceil values of translate/x/y to int for half pixel antialiasing
@@ -8485,12 +8908,12 @@ webpackJsonp([0],[
 	    var tickTextCharSize;
 	    function c3_axis(d3, params) {
 	        var scale = d3.scale.linear(), orient = "bottom", innerTickSize = 6, outerTickSize, tickPadding = 3, tickValues = null, tickFormat, tickArguments;
-
+	
 	        var tickOffset = 0, tickCulling = true, tickCentered;
-
+	
 	        params = params || {};
 	        outerTickSize = params.withOuterTick ? 6 : 0;
-
+	
 	        function axisX(selection, x) {
 	            selection.attr("transform", function (d) {
 	                return "translate(" + Math.ceil(x(d) + tickOffset) + ", 0)";
@@ -8558,9 +8981,9 @@ webpackJsonp([0],[
 	        function axis(g) {
 	            g.each(function () {
 	                var g = axis.g = d3.select(this);
-
+	
 	                var scale0 = this.__chart__ || scale, scale1 = this.__chart__ = copyScale();
-
+	
 	                var ticks = tickValues ? tickValues : generateTicks(scale1),
 	                    tick = g.selectAll(".tick").data(ticks, scale1),
 	                    tickEnter = tick.enter().insert("g", ".domain").attr("class", "tick").style("opacity", 1e-6),
@@ -8568,18 +8991,18 @@ webpackJsonp([0],[
 	                    tickExit = tick.exit().remove(),
 	                    tickUpdate = transitionise(tick).style("opacity", 1),
 	                    tickTransform, tickX, tickY;
-
+	
 	                var range = scale.rangeExtent ? scale.rangeExtent() : scaleExtent(scale.range()),
 	                    path = g.selectAll(".domain").data([ 0 ]),
 	                    pathUpdate = (path.enter().append("path").attr("class", "domain"), transitionise(path));
 	                tickEnter.append("line");
 	                tickEnter.append("text");
-
+	
 	                var lineEnter = tickEnter.select("line"),
 	                    lineUpdate = tickUpdate.select("line"),
 	                    textEnter = tickEnter.select("text"),
 	                    textUpdate = tickUpdate.select("text");
-
+	
 	                if (params.isCategory) {
 	                    tickOffset = Math.ceil((scale1(1) - scale1(0)) / 2);
 	                    tickX = tickCentered ? 0 : tickOffset;
@@ -8587,24 +9010,24 @@ webpackJsonp([0],[
 	                } else {
 	                    tickOffset = tickX = 0;
 	                }
-
+	
 	                var text, tspan, sizeFor1Char = getSizeFor1Char(g.select('.tick')), counts = [];
 	                var tickLength = Math.max(innerTickSize, 0) + tickPadding,
 	                    isVertical = orient === 'left' || orient === 'right';
-
+	
 	                // this should be called only when category axis
 	                function splitTickText(d, maxWidth) {
 	                    var tickText = textFormatted(d),
 	                        subtext, spaceIndex, textWidth, splitted = [];
-
+	
 	                    if (Object.prototype.toString.call(tickText) === "[object Array]") {
 	                        return tickText;
 	                    }
-
+	
 	                    if (!maxWidth || maxWidth <= 0) {
 	                        maxWidth = isVertical ? 95 : params.isCategory ? (Math.ceil(scale1(ticks[1]) - scale1(ticks[0])) - 12) : 110;
 	                    }
-
+	
 	                    function split(splitted, text) {
 	                        spaceIndex = undefined;
 	                        for (var i = 1; i < text.length; i++) {
@@ -8623,10 +9046,10 @@ webpackJsonp([0],[
 	                        }
 	                        return splitted.concat(text);
 	                    }
-
+	
 	                    return split(splitted, tickText + "");
 	                }
-
+	
 	                function tspanDy(d, i) {
 	                    var dy = sizeFor1Char.h;
 	                    if (i === 0) {
@@ -8638,12 +9061,12 @@ webpackJsonp([0],[
 	                    }
 	                    return dy;
 	                }
-
+	
 	                function tickSize(d) {
 	                    var tickPosition = scale(d) + (tickCentered ? 0 : tickOffset);
 	                    return range[0] < tickPosition && tickPosition < range[1] ? innerTickSize : 0;
 	                }
-
+	
 	                text = tick.select("text");
 	                tspan = text.selectAll('tspan')
 	                    .data(function (d, i) {
@@ -8656,9 +9079,9 @@ webpackJsonp([0],[
 	                tspan.enter().append('tspan');
 	                tspan.exit().remove();
 	                tspan.text(function (d) { return d.splitted; });
-
+	
 	                var rotate = params.tickTextRotate;
-
+	
 	                function textAnchorForText(rotate) {
 	                    if (!rotate) {
 	                        return 'middle';
@@ -8683,7 +9106,7 @@ webpackJsonp([0],[
 	                    }
 	                    return 11.5 - 2.5 * (rotate / 15) * (rotate > 0 ? 1 : -1);
 	                }
-
+	
 	                switch (orient) {
 	                case "bottom":
 	                    {
@@ -8808,7 +9231,7 @@ webpackJsonp([0],[
 	        };
 	        return axis;
 	    }
-
+	
 	    c3_chart_internal_fn.isSafari = function () {
 	        var ua = window.navigator.userAgent;
 	        return ua.indexOf('Safari') >= 0 && ua.indexOf('Chrome') < 0;
@@ -8817,11 +9240,13 @@ webpackJsonp([0],[
 	        var ua = window.navigator.userAgent;
 	        return ua.indexOf('Chrome') >= 0;
 	    };
-
+	
+	    /* jshint ignore:start */
+	
 	    // PhantomJS doesn't have support for Function.prototype.bind, which has caused confusion. Use
 	    // this polyfill to avoid the confusion.
 	    // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function/bind#Polyfill
-
+	
 	    if (!Function.prototype.bind) {
 	      Function.prototype.bind = function(oThis) {
 	        if (typeof this !== 'function') {
@@ -8829,68 +9254,888 @@ webpackJsonp([0],[
 	          // internal IsCallable function
 	          throw new TypeError('Function.prototype.bind - what is trying to be bound is not callable');
 	        }
-
+	
 	        var aArgs   = Array.prototype.slice.call(arguments, 1),
 	            fToBind = this,
 	            fNOP    = function() {},
 	            fBound  = function() {
 	              return fToBind.apply(this instanceof fNOP ? this : oThis, aArgs.concat(Array.prototype.slice.call(arguments)));
 	            };
-
+	
 	        fNOP.prototype = this.prototype;
 	        fBound.prototype = new fNOP();
-
+	
 	        return fBound;
 	      };
 	    }
-
+	
+	    //SVGPathSeg API polyfill
+	    //https://github.com/progers/pathseg
+	    //
+	    //This is a drop-in replacement for the SVGPathSeg and SVGPathSegList APIs that were removed from
+	    //SVG2 (https://lists.w3.org/Archives/Public/www-svg/2015Jun/0044.html), including the latest spec
+	    //changes which were implemented in Firefox 43 and Chrome 46.
+	    //Chrome 48 removes these APIs, so this polyfill is required.
+	
+	    (function() { "use strict";
+	     if (!("SVGPathSeg" in window)) {
+	         // Spec: http://www.w3.org/TR/SVG11/single-page.html#paths-InterfaceSVGPathSeg
+	         window.SVGPathSeg = function(type, typeAsLetter, owningPathSegList) {
+	             this.pathSegType = type;
+	             this.pathSegTypeAsLetter = typeAsLetter;
+	             this._owningPathSegList = owningPathSegList;
+	         }
+	
+	         SVGPathSeg.PATHSEG_UNKNOWN = 0;
+	         SVGPathSeg.PATHSEG_CLOSEPATH = 1;
+	         SVGPathSeg.PATHSEG_MOVETO_ABS = 2;
+	         SVGPathSeg.PATHSEG_MOVETO_REL = 3;
+	         SVGPathSeg.PATHSEG_LINETO_ABS = 4;
+	         SVGPathSeg.PATHSEG_LINETO_REL = 5;
+	         SVGPathSeg.PATHSEG_CURVETO_CUBIC_ABS = 6;
+	         SVGPathSeg.PATHSEG_CURVETO_CUBIC_REL = 7;
+	         SVGPathSeg.PATHSEG_CURVETO_QUADRATIC_ABS = 8;
+	         SVGPathSeg.PATHSEG_CURVETO_QUADRATIC_REL = 9;
+	         SVGPathSeg.PATHSEG_ARC_ABS = 10;
+	         SVGPathSeg.PATHSEG_ARC_REL = 11;
+	         SVGPathSeg.PATHSEG_LINETO_HORIZONTAL_ABS = 12;
+	         SVGPathSeg.PATHSEG_LINETO_HORIZONTAL_REL = 13;
+	         SVGPathSeg.PATHSEG_LINETO_VERTICAL_ABS = 14;
+	         SVGPathSeg.PATHSEG_LINETO_VERTICAL_REL = 15;
+	         SVGPathSeg.PATHSEG_CURVETO_CUBIC_SMOOTH_ABS = 16;
+	         SVGPathSeg.PATHSEG_CURVETO_CUBIC_SMOOTH_REL = 17;
+	         SVGPathSeg.PATHSEG_CURVETO_QUADRATIC_SMOOTH_ABS = 18;
+	         SVGPathSeg.PATHSEG_CURVETO_QUADRATIC_SMOOTH_REL = 19;
+	
+	         // Notify owning PathSegList on any changes so they can be synchronized back to the path element.
+	         SVGPathSeg.prototype._segmentChanged = function() {
+	             if (this._owningPathSegList)
+	                 this._owningPathSegList.segmentChanged(this);
+	         }
+	
+	         window.SVGPathSegClosePath = function(owningPathSegList) {
+	             SVGPathSeg.call(this, SVGPathSeg.PATHSEG_CLOSEPATH, "z", owningPathSegList);
+	         }
+	         SVGPathSegClosePath.prototype = Object.create(SVGPathSeg.prototype);
+	         SVGPathSegClosePath.prototype.toString = function() { return "[object SVGPathSegClosePath]"; }
+	         SVGPathSegClosePath.prototype._asPathString = function() { return this.pathSegTypeAsLetter; }
+	         SVGPathSegClosePath.prototype.clone = function() { return new SVGPathSegClosePath(undefined); }
+	
+	         window.SVGPathSegMovetoAbs = function(owningPathSegList, x, y) {
+	             SVGPathSeg.call(this, SVGPathSeg.PATHSEG_MOVETO_ABS, "M", owningPathSegList);
+	             this._x = x;
+	             this._y = y;
+	         }
+	         SVGPathSegMovetoAbs.prototype = Object.create(SVGPathSeg.prototype);
+	         SVGPathSegMovetoAbs.prototype.toString = function() { return "[object SVGPathSegMovetoAbs]"; }
+	         SVGPathSegMovetoAbs.prototype._asPathString = function() { return this.pathSegTypeAsLetter + " " + this._x + " " + this._y; }
+	         SVGPathSegMovetoAbs.prototype.clone = function() { return new SVGPathSegMovetoAbs(undefined, this._x, this._y); }
+	         Object.defineProperty(SVGPathSegMovetoAbs.prototype, "x", { get: function() { return this._x; }, set: function(x) { this._x = x; this._segmentChanged(); }, enumerable: true });
+	         Object.defineProperty(SVGPathSegMovetoAbs.prototype, "y", { get: function() { return this._y; }, set: function(y) { this._y = y; this._segmentChanged(); }, enumerable: true });
+	
+	         window.SVGPathSegMovetoRel = function(owningPathSegList, x, y) {
+	             SVGPathSeg.call(this, SVGPathSeg.PATHSEG_MOVETO_REL, "m", owningPathSegList);
+	             this._x = x;
+	             this._y = y;
+	         }
+	         SVGPathSegMovetoRel.prototype = Object.create(SVGPathSeg.prototype);
+	         SVGPathSegMovetoRel.prototype.toString = function() { return "[object SVGPathSegMovetoRel]"; }
+	         SVGPathSegMovetoRel.prototype._asPathString = function() { return this.pathSegTypeAsLetter + " " + this._x + " " + this._y; }
+	         SVGPathSegMovetoRel.prototype.clone = function() { return new SVGPathSegMovetoRel(undefined, this._x, this._y); }
+	         Object.defineProperty(SVGPathSegMovetoRel.prototype, "x", { get: function() { return this._x; }, set: function(x) { this._x = x; this._segmentChanged(); }, enumerable: true });
+	         Object.defineProperty(SVGPathSegMovetoRel.prototype, "y", { get: function() { return this._y; }, set: function(y) { this._y = y; this._segmentChanged(); }, enumerable: true });
+	
+	         window.SVGPathSegLinetoAbs = function(owningPathSegList, x, y) {
+	             SVGPathSeg.call(this, SVGPathSeg.PATHSEG_LINETO_ABS, "L", owningPathSegList);
+	             this._x = x;
+	             this._y = y;
+	         }
+	         SVGPathSegLinetoAbs.prototype = Object.create(SVGPathSeg.prototype);
+	         SVGPathSegLinetoAbs.prototype.toString = function() { return "[object SVGPathSegLinetoAbs]"; }
+	         SVGPathSegLinetoAbs.prototype._asPathString = function() { return this.pathSegTypeAsLetter + " " + this._x + " " + this._y; }
+	         SVGPathSegLinetoAbs.prototype.clone = function() { return new SVGPathSegLinetoAbs(undefined, this._x, this._y); }
+	         Object.defineProperty(SVGPathSegLinetoAbs.prototype, "x", { get: function() { return this._x; }, set: function(x) { this._x = x; this._segmentChanged(); }, enumerable: true });
+	         Object.defineProperty(SVGPathSegLinetoAbs.prototype, "y", { get: function() { return this._y; }, set: function(y) { this._y = y; this._segmentChanged(); }, enumerable: true });
+	
+	         window.SVGPathSegLinetoRel = function(owningPathSegList, x, y) {
+	             SVGPathSeg.call(this, SVGPathSeg.PATHSEG_LINETO_REL, "l", owningPathSegList);
+	             this._x = x;
+	             this._y = y;
+	         }
+	         SVGPathSegLinetoRel.prototype = Object.create(SVGPathSeg.prototype);
+	         SVGPathSegLinetoRel.prototype.toString = function() { return "[object SVGPathSegLinetoRel]"; }
+	         SVGPathSegLinetoRel.prototype._asPathString = function() { return this.pathSegTypeAsLetter + " " + this._x + " " + this._y; }
+	         SVGPathSegLinetoRel.prototype.clone = function() { return new SVGPathSegLinetoRel(undefined, this._x, this._y); }
+	         Object.defineProperty(SVGPathSegLinetoRel.prototype, "x", { get: function() { return this._x; }, set: function(x) { this._x = x; this._segmentChanged(); }, enumerable: true });
+	         Object.defineProperty(SVGPathSegLinetoRel.prototype, "y", { get: function() { return this._y; }, set: function(y) { this._y = y; this._segmentChanged(); }, enumerable: true });
+	
+	         window.SVGPathSegCurvetoCubicAbs = function(owningPathSegList, x, y, x1, y1, x2, y2) {
+	             SVGPathSeg.call(this, SVGPathSeg.PATHSEG_CURVETO_CUBIC_ABS, "C", owningPathSegList);
+	             this._x = x;
+	             this._y = y;
+	             this._x1 = x1;
+	             this._y1 = y1;
+	             this._x2 = x2;
+	             this._y2 = y2;
+	         }
+	         SVGPathSegCurvetoCubicAbs.prototype = Object.create(SVGPathSeg.prototype);
+	         SVGPathSegCurvetoCubicAbs.prototype.toString = function() { return "[object SVGPathSegCurvetoCubicAbs]"; }
+	         SVGPathSegCurvetoCubicAbs.prototype._asPathString = function() { return this.pathSegTypeAsLetter + " " + this._x1 + " " + this._y1 + " " + this._x2 + " " + this._y2 + " " + this._x + " " + this._y; }
+	         SVGPathSegCurvetoCubicAbs.prototype.clone = function() { return new SVGPathSegCurvetoCubicAbs(undefined, this._x, this._y, this._x1, this._y1, this._x2, this._y2); }
+	         Object.defineProperty(SVGPathSegCurvetoCubicAbs.prototype, "x", { get: function() { return this._x; }, set: function(x) { this._x = x; this._segmentChanged(); }, enumerable: true });
+	         Object.defineProperty(SVGPathSegCurvetoCubicAbs.prototype, "y", { get: function() { return this._y; }, set: function(y) { this._y = y; this._segmentChanged(); }, enumerable: true });
+	         Object.defineProperty(SVGPathSegCurvetoCubicAbs.prototype, "x1", { get: function() { return this._x1; }, set: function(x1) { this._x1 = x1; this._segmentChanged(); }, enumerable: true });
+	         Object.defineProperty(SVGPathSegCurvetoCubicAbs.prototype, "y1", { get: function() { return this._y1; }, set: function(y1) { this._y1 = y1; this._segmentChanged(); }, enumerable: true });
+	         Object.defineProperty(SVGPathSegCurvetoCubicAbs.prototype, "x2", { get: function() { return this._x2; }, set: function(x2) { this._x2 = x2; this._segmentChanged(); }, enumerable: true });
+	         Object.defineProperty(SVGPathSegCurvetoCubicAbs.prototype, "y2", { get: function() { return this._y2; }, set: function(y2) { this._y2 = y2; this._segmentChanged(); }, enumerable: true });
+	
+	         window.SVGPathSegCurvetoCubicRel = function(owningPathSegList, x, y, x1, y1, x2, y2) {
+	             SVGPathSeg.call(this, SVGPathSeg.PATHSEG_CURVETO_CUBIC_REL, "c", owningPathSegList);
+	             this._x = x;
+	             this._y = y;
+	             this._x1 = x1;
+	             this._y1 = y1;
+	             this._x2 = x2;
+	             this._y2 = y2;
+	         }
+	         SVGPathSegCurvetoCubicRel.prototype = Object.create(SVGPathSeg.prototype);
+	         SVGPathSegCurvetoCubicRel.prototype.toString = function() { return "[object SVGPathSegCurvetoCubicRel]"; }
+	         SVGPathSegCurvetoCubicRel.prototype._asPathString = function() { return this.pathSegTypeAsLetter + " " + this._x1 + " " + this._y1 + " " + this._x2 + " " + this._y2 + " " + this._x + " " + this._y; }
+	         SVGPathSegCurvetoCubicRel.prototype.clone = function() { return new SVGPathSegCurvetoCubicRel(undefined, this._x, this._y, this._x1, this._y1, this._x2, this._y2); }
+	         Object.defineProperty(SVGPathSegCurvetoCubicRel.prototype, "x", { get: function() { return this._x; }, set: function(x) { this._x = x; this._segmentChanged(); }, enumerable: true });
+	         Object.defineProperty(SVGPathSegCurvetoCubicRel.prototype, "y", { get: function() { return this._y; }, set: function(y) { this._y = y; this._segmentChanged(); }, enumerable: true });
+	         Object.defineProperty(SVGPathSegCurvetoCubicRel.prototype, "x1", { get: function() { return this._x1; }, set: function(x1) { this._x1 = x1; this._segmentChanged(); }, enumerable: true });
+	         Object.defineProperty(SVGPathSegCurvetoCubicRel.prototype, "y1", { get: function() { return this._y1; }, set: function(y1) { this._y1 = y1; this._segmentChanged(); }, enumerable: true });
+	         Object.defineProperty(SVGPathSegCurvetoCubicRel.prototype, "x2", { get: function() { return this._x2; }, set: function(x2) { this._x2 = x2; this._segmentChanged(); }, enumerable: true });
+	         Object.defineProperty(SVGPathSegCurvetoCubicRel.prototype, "y2", { get: function() { return this._y2; }, set: function(y2) { this._y2 = y2; this._segmentChanged(); }, enumerable: true });
+	
+	         window.SVGPathSegCurvetoQuadraticAbs = function(owningPathSegList, x, y, x1, y1) {
+	             SVGPathSeg.call(this, SVGPathSeg.PATHSEG_CURVETO_QUADRATIC_ABS, "Q", owningPathSegList);
+	             this._x = x;
+	             this._y = y;
+	             this._x1 = x1;
+	             this._y1 = y1;
+	         }
+	         SVGPathSegCurvetoQuadraticAbs.prototype = Object.create(SVGPathSeg.prototype);
+	         SVGPathSegCurvetoQuadraticAbs.prototype.toString = function() { return "[object SVGPathSegCurvetoQuadraticAbs]"; }
+	         SVGPathSegCurvetoQuadraticAbs.prototype._asPathString = function() { return this.pathSegTypeAsLetter + " " + this._x1 + " " + this._y1 + " " + this._x + " " + this._y; }
+	         SVGPathSegCurvetoQuadraticAbs.prototype.clone = function() { return new SVGPathSegCurvetoQuadraticAbs(undefined, this._x, this._y, this._x1, this._y1); }
+	         Object.defineProperty(SVGPathSegCurvetoQuadraticAbs.prototype, "x", { get: function() { return this._x; }, set: function(x) { this._x = x; this._segmentChanged(); }, enumerable: true });
+	         Object.defineProperty(SVGPathSegCurvetoQuadraticAbs.prototype, "y", { get: function() { return this._y; }, set: function(y) { this._y = y; this._segmentChanged(); }, enumerable: true });
+	         Object.defineProperty(SVGPathSegCurvetoQuadraticAbs.prototype, "x1", { get: function() { return this._x1; }, set: function(x1) { this._x1 = x1; this._segmentChanged(); }, enumerable: true });
+	         Object.defineProperty(SVGPathSegCurvetoQuadraticAbs.prototype, "y1", { get: function() { return this._y1; }, set: function(y1) { this._y1 = y1; this._segmentChanged(); }, enumerable: true });
+	
+	         window.SVGPathSegCurvetoQuadraticRel = function(owningPathSegList, x, y, x1, y1) {
+	             SVGPathSeg.call(this, SVGPathSeg.PATHSEG_CURVETO_QUADRATIC_REL, "q", owningPathSegList);
+	             this._x = x;
+	             this._y = y;
+	             this._x1 = x1;
+	             this._y1 = y1;
+	         }
+	         SVGPathSegCurvetoQuadraticRel.prototype = Object.create(SVGPathSeg.prototype);
+	         SVGPathSegCurvetoQuadraticRel.prototype.toString = function() { return "[object SVGPathSegCurvetoQuadraticRel]"; }
+	         SVGPathSegCurvetoQuadraticRel.prototype._asPathString = function() { return this.pathSegTypeAsLetter + " " + this._x1 + " " + this._y1 + " " + this._x + " " + this._y; }
+	         SVGPathSegCurvetoQuadraticRel.prototype.clone = function() { return new SVGPathSegCurvetoQuadraticRel(undefined, this._x, this._y, this._x1, this._y1); }
+	         Object.defineProperty(SVGPathSegCurvetoQuadraticRel.prototype, "x", { get: function() { return this._x; }, set: function(x) { this._x = x; this._segmentChanged(); }, enumerable: true });
+	         Object.defineProperty(SVGPathSegCurvetoQuadraticRel.prototype, "y", { get: function() { return this._y; }, set: function(y) { this._y = y; this._segmentChanged(); }, enumerable: true });
+	         Object.defineProperty(SVGPathSegCurvetoQuadraticRel.prototype, "x1", { get: function() { return this._x1; }, set: function(x1) { this._x1 = x1; this._segmentChanged(); }, enumerable: true });
+	         Object.defineProperty(SVGPathSegCurvetoQuadraticRel.prototype, "y1", { get: function() { return this._y1; }, set: function(y1) { this._y1 = y1; this._segmentChanged(); }, enumerable: true });
+	
+	         window.SVGPathSegArcAbs = function(owningPathSegList, x, y, r1, r2, angle, largeArcFlag, sweepFlag) {
+	             SVGPathSeg.call(this, SVGPathSeg.PATHSEG_ARC_ABS, "A", owningPathSegList);
+	             this._x = x;
+	             this._y = y;
+	             this._r1 = r1;
+	             this._r2 = r2;
+	             this._angle = angle;
+	             this._largeArcFlag = largeArcFlag;
+	             this._sweepFlag = sweepFlag;
+	         }
+	         SVGPathSegArcAbs.prototype = Object.create(SVGPathSeg.prototype);
+	         SVGPathSegArcAbs.prototype.toString = function() { return "[object SVGPathSegArcAbs]"; }
+	         SVGPathSegArcAbs.prototype._asPathString = function() { return this.pathSegTypeAsLetter + " " + this._r1 + " " + this._r2 + " " + this._angle + " " + (this._largeArcFlag ? "1" : "0") + " " + (this._sweepFlag ? "1" : "0") + " " + this._x + " " + this._y; }
+	         SVGPathSegArcAbs.prototype.clone = function() { return new SVGPathSegArcAbs(undefined, this._x, this._y, this._r1, this._r2, this._angle, this._largeArcFlag, this._sweepFlag); }
+	         Object.defineProperty(SVGPathSegArcAbs.prototype, "x", { get: function() { return this._x; }, set: function(x) { this._x = x; this._segmentChanged(); }, enumerable: true });
+	         Object.defineProperty(SVGPathSegArcAbs.prototype, "y", { get: function() { return this._y; }, set: function(y) { this._y = y; this._segmentChanged(); }, enumerable: true });
+	         Object.defineProperty(SVGPathSegArcAbs.prototype, "r1", { get: function() { return this._r1; }, set: function(r1) { this._r1 = r1; this._segmentChanged(); }, enumerable: true });
+	         Object.defineProperty(SVGPathSegArcAbs.prototype, "r2", { get: function() { return this._r2; }, set: function(r2) { this._r2 = r2; this._segmentChanged(); }, enumerable: true });
+	         Object.defineProperty(SVGPathSegArcAbs.prototype, "angle", { get: function() { return this._angle; }, set: function(angle) { this._angle = angle; this._segmentChanged(); }, enumerable: true });
+	         Object.defineProperty(SVGPathSegArcAbs.prototype, "largeArcFlag", { get: function() { return this._largeArcFlag; }, set: function(largeArcFlag) { this._largeArcFlag = largeArcFlag; this._segmentChanged(); }, enumerable: true });
+	         Object.defineProperty(SVGPathSegArcAbs.prototype, "sweepFlag", { get: function() { return this._sweepFlag; }, set: function(sweepFlag) { this._sweepFlag = sweepFlag; this._segmentChanged(); }, enumerable: true });
+	
+	         window.SVGPathSegArcRel = function(owningPathSegList, x, y, r1, r2, angle, largeArcFlag, sweepFlag) {
+	             SVGPathSeg.call(this, SVGPathSeg.PATHSEG_ARC_REL, "a", owningPathSegList);
+	             this._x = x;
+	             this._y = y;
+	             this._r1 = r1;
+	             this._r2 = r2;
+	             this._angle = angle;
+	             this._largeArcFlag = largeArcFlag;
+	             this._sweepFlag = sweepFlag;
+	         }
+	         SVGPathSegArcRel.prototype = Object.create(SVGPathSeg.prototype);
+	         SVGPathSegArcRel.prototype.toString = function() { return "[object SVGPathSegArcRel]"; }
+	         SVGPathSegArcRel.prototype._asPathString = function() { return this.pathSegTypeAsLetter + " " + this._r1 + " " + this._r2 + " " + this._angle + " " + (this._largeArcFlag ? "1" : "0") + " " + (this._sweepFlag ? "1" : "0") + " " + this._x + " " + this._y; }
+	         SVGPathSegArcRel.prototype.clone = function() { return new SVGPathSegArcRel(undefined, this._x, this._y, this._r1, this._r2, this._angle, this._largeArcFlag, this._sweepFlag); }
+	         Object.defineProperty(SVGPathSegArcRel.prototype, "x", { get: function() { return this._x; }, set: function(x) { this._x = x; this._segmentChanged(); }, enumerable: true });
+	         Object.defineProperty(SVGPathSegArcRel.prototype, "y", { get: function() { return this._y; }, set: function(y) { this._y = y; this._segmentChanged(); }, enumerable: true });
+	         Object.defineProperty(SVGPathSegArcRel.prototype, "r1", { get: function() { return this._r1; }, set: function(r1) { this._r1 = r1; this._segmentChanged(); }, enumerable: true });
+	         Object.defineProperty(SVGPathSegArcRel.prototype, "r2", { get: function() { return this._r2; }, set: function(r2) { this._r2 = r2; this._segmentChanged(); }, enumerable: true });
+	         Object.defineProperty(SVGPathSegArcRel.prototype, "angle", { get: function() { return this._angle; }, set: function(angle) { this._angle = angle; this._segmentChanged(); }, enumerable: true });
+	         Object.defineProperty(SVGPathSegArcRel.prototype, "largeArcFlag", { get: function() { return this._largeArcFlag; }, set: function(largeArcFlag) { this._largeArcFlag = largeArcFlag; this._segmentChanged(); }, enumerable: true });
+	         Object.defineProperty(SVGPathSegArcRel.prototype, "sweepFlag", { get: function() { return this._sweepFlag; }, set: function(sweepFlag) { this._sweepFlag = sweepFlag; this._segmentChanged(); }, enumerable: true });
+	
+	         window.SVGPathSegLinetoHorizontalAbs = function(owningPathSegList, x) {
+	             SVGPathSeg.call(this, SVGPathSeg.PATHSEG_LINETO_HORIZONTAL_ABS, "H", owningPathSegList);
+	             this._x = x;
+	         }
+	         SVGPathSegLinetoHorizontalAbs.prototype = Object.create(SVGPathSeg.prototype);
+	         SVGPathSegLinetoHorizontalAbs.prototype.toString = function() { return "[object SVGPathSegLinetoHorizontalAbs]"; }
+	         SVGPathSegLinetoHorizontalAbs.prototype._asPathString = function() { return this.pathSegTypeAsLetter + " " + this._x; }
+	         SVGPathSegLinetoHorizontalAbs.prototype.clone = function() { return new SVGPathSegLinetoHorizontalAbs(undefined, this._x); }
+	         Object.defineProperty(SVGPathSegLinetoHorizontalAbs.prototype, "x", { get: function() { return this._x; }, set: function(x) { this._x = x; this._segmentChanged(); }, enumerable: true });
+	
+	         window.SVGPathSegLinetoHorizontalRel = function(owningPathSegList, x) {
+	             SVGPathSeg.call(this, SVGPathSeg.PATHSEG_LINETO_HORIZONTAL_REL, "h", owningPathSegList);
+	             this._x = x;
+	         }
+	         SVGPathSegLinetoHorizontalRel.prototype = Object.create(SVGPathSeg.prototype);
+	         SVGPathSegLinetoHorizontalRel.prototype.toString = function() { return "[object SVGPathSegLinetoHorizontalRel]"; }
+	         SVGPathSegLinetoHorizontalRel.prototype._asPathString = function() { return this.pathSegTypeAsLetter + " " + this._x; }
+	         SVGPathSegLinetoHorizontalRel.prototype.clone = function() { return new SVGPathSegLinetoHorizontalRel(undefined, this._x); }
+	         Object.defineProperty(SVGPathSegLinetoHorizontalRel.prototype, "x", { get: function() { return this._x; }, set: function(x) { this._x = x; this._segmentChanged(); }, enumerable: true });
+	
+	         window.SVGPathSegLinetoVerticalAbs = function(owningPathSegList, y) {
+	             SVGPathSeg.call(this, SVGPathSeg.PATHSEG_LINETO_VERTICAL_ABS, "V", owningPathSegList);
+	             this._y = y;
+	         }
+	         SVGPathSegLinetoVerticalAbs.prototype = Object.create(SVGPathSeg.prototype);
+	         SVGPathSegLinetoVerticalAbs.prototype.toString = function() { return "[object SVGPathSegLinetoVerticalAbs]"; }
+	         SVGPathSegLinetoVerticalAbs.prototype._asPathString = function() { return this.pathSegTypeAsLetter + " " + this._y; }
+	         SVGPathSegLinetoVerticalAbs.prototype.clone = function() { return new SVGPathSegLinetoVerticalAbs(undefined, this._y); }
+	         Object.defineProperty(SVGPathSegLinetoVerticalAbs.prototype, "y", { get: function() { return this._y; }, set: function(y) { this._y = y; this._segmentChanged(); }, enumerable: true });
+	
+	         window.SVGPathSegLinetoVerticalRel = function(owningPathSegList, y) {
+	             SVGPathSeg.call(this, SVGPathSeg.PATHSEG_LINETO_VERTICAL_REL, "v", owningPathSegList);
+	             this._y = y;
+	         }
+	         SVGPathSegLinetoVerticalRel.prototype = Object.create(SVGPathSeg.prototype);
+	         SVGPathSegLinetoVerticalRel.prototype.toString = function() { return "[object SVGPathSegLinetoVerticalRel]"; }
+	         SVGPathSegLinetoVerticalRel.prototype._asPathString = function() { return this.pathSegTypeAsLetter + " " + this._y; }
+	         SVGPathSegLinetoVerticalRel.prototype.clone = function() { return new SVGPathSegLinetoVerticalRel(undefined, this._y); }
+	         Object.defineProperty(SVGPathSegLinetoVerticalRel.prototype, "y", { get: function() { return this._y; }, set: function(y) { this._y = y; this._segmentChanged(); }, enumerable: true });
+	
+	         window.SVGPathSegCurvetoCubicSmoothAbs = function(owningPathSegList, x, y, x2, y2) {
+	             SVGPathSeg.call(this, SVGPathSeg.PATHSEG_CURVETO_CUBIC_SMOOTH_ABS, "S", owningPathSegList);
+	             this._x = x;
+	             this._y = y;
+	             this._x2 = x2;
+	             this._y2 = y2;
+	         }
+	         SVGPathSegCurvetoCubicSmoothAbs.prototype = Object.create(SVGPathSeg.prototype);
+	         SVGPathSegCurvetoCubicSmoothAbs.prototype.toString = function() { return "[object SVGPathSegCurvetoCubicSmoothAbs]"; }
+	         SVGPathSegCurvetoCubicSmoothAbs.prototype._asPathString = function() { return this.pathSegTypeAsLetter + " " + this._x2 + " " + this._y2 + " " + this._x + " " + this._y; }
+	         SVGPathSegCurvetoCubicSmoothAbs.prototype.clone = function() { return new SVGPathSegCurvetoCubicSmoothAbs(undefined, this._x, this._y, this._x2, this._y2); }
+	         Object.defineProperty(SVGPathSegCurvetoCubicSmoothAbs.prototype, "x", { get: function() { return this._x; }, set: function(x) { this._x = x; this._segmentChanged(); }, enumerable: true });
+	         Object.defineProperty(SVGPathSegCurvetoCubicSmoothAbs.prototype, "y", { get: function() { return this._y; }, set: function(y) { this._y = y; this._segmentChanged(); }, enumerable: true });
+	         Object.defineProperty(SVGPathSegCurvetoCubicSmoothAbs.prototype, "x2", { get: function() { return this._x2; }, set: function(x2) { this._x2 = x2; this._segmentChanged(); }, enumerable: true });
+	         Object.defineProperty(SVGPathSegCurvetoCubicSmoothAbs.prototype, "y2", { get: function() { return this._y2; }, set: function(y2) { this._y2 = y2; this._segmentChanged(); }, enumerable: true });
+	
+	         window.SVGPathSegCurvetoCubicSmoothRel = function(owningPathSegList, x, y, x2, y2) {
+	             SVGPathSeg.call(this, SVGPathSeg.PATHSEG_CURVETO_CUBIC_SMOOTH_REL, "s", owningPathSegList);
+	             this._x = x;
+	             this._y = y;
+	             this._x2 = x2;
+	             this._y2 = y2;
+	         }
+	         SVGPathSegCurvetoCubicSmoothRel.prototype = Object.create(SVGPathSeg.prototype);
+	         SVGPathSegCurvetoCubicSmoothRel.prototype.toString = function() { return "[object SVGPathSegCurvetoCubicSmoothRel]"; }
+	         SVGPathSegCurvetoCubicSmoothRel.prototype._asPathString = function() { return this.pathSegTypeAsLetter + " " + this._x2 + " " + this._y2 + " " + this._x + " " + this._y; }
+	         SVGPathSegCurvetoCubicSmoothRel.prototype.clone = function() { return new SVGPathSegCurvetoCubicSmoothRel(undefined, this._x, this._y, this._x2, this._y2); }
+	         Object.defineProperty(SVGPathSegCurvetoCubicSmoothRel.prototype, "x", { get: function() { return this._x; }, set: function(x) { this._x = x; this._segmentChanged(); }, enumerable: true });
+	         Object.defineProperty(SVGPathSegCurvetoCubicSmoothRel.prototype, "y", { get: function() { return this._y; }, set: function(y) { this._y = y; this._segmentChanged(); }, enumerable: true });
+	         Object.defineProperty(SVGPathSegCurvetoCubicSmoothRel.prototype, "x2", { get: function() { return this._x2; }, set: function(x2) { this._x2 = x2; this._segmentChanged(); }, enumerable: true });
+	         Object.defineProperty(SVGPathSegCurvetoCubicSmoothRel.prototype, "y2", { get: function() { return this._y2; }, set: function(y2) { this._y2 = y2; this._segmentChanged(); }, enumerable: true });
+	
+	         window.SVGPathSegCurvetoQuadraticSmoothAbs = function(owningPathSegList, x, y) {
+	             SVGPathSeg.call(this, SVGPathSeg.PATHSEG_CURVETO_QUADRATIC_SMOOTH_ABS, "T", owningPathSegList);
+	             this._x = x;
+	             this._y = y;
+	         }
+	         SVGPathSegCurvetoQuadraticSmoothAbs.prototype = Object.create(SVGPathSeg.prototype);
+	         SVGPathSegCurvetoQuadraticSmoothAbs.prototype.toString = function() { return "[object SVGPathSegCurvetoQuadraticSmoothAbs]"; }
+	         SVGPathSegCurvetoQuadraticSmoothAbs.prototype._asPathString = function() { return this.pathSegTypeAsLetter + " " + this._x + " " + this._y; }
+	         SVGPathSegCurvetoQuadraticSmoothAbs.prototype.clone = function() { return new SVGPathSegCurvetoQuadraticSmoothAbs(undefined, this._x, this._y); }
+	         Object.defineProperty(SVGPathSegCurvetoQuadraticSmoothAbs.prototype, "x", { get: function() { return this._x; }, set: function(x) { this._x = x; this._segmentChanged(); }, enumerable: true });
+	         Object.defineProperty(SVGPathSegCurvetoQuadraticSmoothAbs.prototype, "y", { get: function() { return this._y; }, set: function(y) { this._y = y; this._segmentChanged(); }, enumerable: true });
+	
+	         window.SVGPathSegCurvetoQuadraticSmoothRel = function(owningPathSegList, x, y) {
+	             SVGPathSeg.call(this, SVGPathSeg.PATHSEG_CURVETO_QUADRATIC_SMOOTH_REL, "t", owningPathSegList);
+	             this._x = x;
+	             this._y = y;
+	         }
+	         SVGPathSegCurvetoQuadraticSmoothRel.prototype = Object.create(SVGPathSeg.prototype);
+	         SVGPathSegCurvetoQuadraticSmoothRel.prototype.toString = function() { return "[object SVGPathSegCurvetoQuadraticSmoothRel]"; }
+	         SVGPathSegCurvetoQuadraticSmoothRel.prototype._asPathString = function() { return this.pathSegTypeAsLetter + " " + this._x + " " + this._y; }
+	         SVGPathSegCurvetoQuadraticSmoothRel.prototype.clone = function() { return new SVGPathSegCurvetoQuadraticSmoothRel(undefined, this._x, this._y); }
+	         Object.defineProperty(SVGPathSegCurvetoQuadraticSmoothRel.prototype, "x", { get: function() { return this._x; }, set: function(x) { this._x = x; this._segmentChanged(); }, enumerable: true });
+	         Object.defineProperty(SVGPathSegCurvetoQuadraticSmoothRel.prototype, "y", { get: function() { return this._y; }, set: function(y) { this._y = y; this._segmentChanged(); }, enumerable: true });
+	
+	         // Add createSVGPathSeg* functions to SVGPathElement.
+	         // Spec: http://www.w3.org/TR/SVG11/single-page.html#paths-InterfaceSVGPathElement.
+	         SVGPathElement.prototype.createSVGPathSegClosePath = function() { return new SVGPathSegClosePath(undefined); }
+	         SVGPathElement.prototype.createSVGPathSegMovetoAbs = function(x, y) { return new SVGPathSegMovetoAbs(undefined, x, y); }
+	         SVGPathElement.prototype.createSVGPathSegMovetoRel = function(x, y) { return new SVGPathSegMovetoRel(undefined, x, y); }
+	         SVGPathElement.prototype.createSVGPathSegLinetoAbs = function(x, y) { return new SVGPathSegLinetoAbs(undefined, x, y); }
+	         SVGPathElement.prototype.createSVGPathSegLinetoRel = function(x, y) { return new SVGPathSegLinetoRel(undefined, x, y); }
+	         SVGPathElement.prototype.createSVGPathSegCurvetoCubicAbs = function(x, y, x1, y1, x2, y2) { return new SVGPathSegCurvetoCubicAbs(undefined, x, y, x1, y1, x2, y2); }
+	         SVGPathElement.prototype.createSVGPathSegCurvetoCubicRel = function(x, y, x1, y1, x2, y2) { return new SVGPathSegCurvetoCubicRel(undefined, x, y, x1, y1, x2, y2); }
+	         SVGPathElement.prototype.createSVGPathSegCurvetoQuadraticAbs = function(x, y, x1, y1) { return new SVGPathSegCurvetoQuadraticAbs(undefined, x, y, x1, y1); }
+	         SVGPathElement.prototype.createSVGPathSegCurvetoQuadraticRel = function(x, y, x1, y1) { return new SVGPathSegCurvetoQuadraticRel(undefined, x, y, x1, y1); }
+	         SVGPathElement.prototype.createSVGPathSegArcAbs = function(x, y, r1, r2, angle, largeArcFlag, sweepFlag) { return new SVGPathSegArcAbs(undefined, x, y, r1, r2, angle, largeArcFlag, sweepFlag); }
+	         SVGPathElement.prototype.createSVGPathSegArcRel = function(x, y, r1, r2, angle, largeArcFlag, sweepFlag) { return new SVGPathSegArcRel(undefined, x, y, r1, r2, angle, largeArcFlag, sweepFlag); }
+	         SVGPathElement.prototype.createSVGPathSegLinetoHorizontalAbs = function(x) { return new SVGPathSegLinetoHorizontalAbs(undefined, x); }
+	         SVGPathElement.prototype.createSVGPathSegLinetoHorizontalRel = function(x) { return new SVGPathSegLinetoHorizontalRel(undefined, x); }
+	         SVGPathElement.prototype.createSVGPathSegLinetoVerticalAbs = function(y) { return new SVGPathSegLinetoVerticalAbs(undefined, y); }
+	         SVGPathElement.prototype.createSVGPathSegLinetoVerticalRel = function(y) { return new SVGPathSegLinetoVerticalRel(undefined, y); }
+	         SVGPathElement.prototype.createSVGPathSegCurvetoCubicSmoothAbs = function(x, y, x2, y2) { return new SVGPathSegCurvetoCubicSmoothAbs(undefined, x, y, x2, y2); }
+	         SVGPathElement.prototype.createSVGPathSegCurvetoCubicSmoothRel = function(x, y, x2, y2) { return new SVGPathSegCurvetoCubicSmoothRel(undefined, x, y, x2, y2); }
+	         SVGPathElement.prototype.createSVGPathSegCurvetoQuadraticSmoothAbs = function(x, y) { return new SVGPathSegCurvetoQuadraticSmoothAbs(undefined, x, y); }
+	         SVGPathElement.prototype.createSVGPathSegCurvetoQuadraticSmoothRel = function(x, y) { return new SVGPathSegCurvetoQuadraticSmoothRel(undefined, x, y); }
+	     }
+	
+	     if (!("SVGPathSegList" in window)) {
+	         // Spec: http://www.w3.org/TR/SVG11/single-page.html#paths-InterfaceSVGPathSegList
+	         window.SVGPathSegList = function(pathElement) {
+	             this._pathElement = pathElement;
+	             this._list = this._parsePath(this._pathElement.getAttribute("d"));
+	
+	             // Use a MutationObserver to catch changes to the path's "d" attribute.
+	             this._mutationObserverConfig = { "attributes": true, "attributeFilter": ["d"] };
+	             this._pathElementMutationObserver = new MutationObserver(this._updateListFromPathMutations.bind(this));
+	             this._pathElementMutationObserver.observe(this._pathElement, this._mutationObserverConfig);
+	         }
+	
+	         Object.defineProperty(SVGPathSegList.prototype, "numberOfItems", {
+	             get: function() {
+	                 this._checkPathSynchronizedToList();
+	                 return this._list.length;
+	             },
+	             enumerable: true
+	         });
+	
+	         // Add the pathSegList accessors to SVGPathElement.
+	         // Spec: http://www.w3.org/TR/SVG11/single-page.html#paths-InterfaceSVGAnimatedPathData
+	         Object.defineProperty(SVGPathElement.prototype, "pathSegList", {
+	             get: function() {
+	                 if (!this._pathSegList)
+	                     this._pathSegList = new SVGPathSegList(this);
+	                 return this._pathSegList;
+	             },
+	             enumerable: true
+	         });
+	         // FIXME: The following are not implemented and simply return SVGPathElement.pathSegList.
+	         Object.defineProperty(SVGPathElement.prototype, "normalizedPathSegList", { get: function() { return this.pathSegList; }, enumerable: true });
+	         Object.defineProperty(SVGPathElement.prototype, "animatedPathSegList", { get: function() { return this.pathSegList; }, enumerable: true });
+	         Object.defineProperty(SVGPathElement.prototype, "animatedNormalizedPathSegList", { get: function() { return this.pathSegList; }, enumerable: true });
+	
+	         // Process any pending mutations to the path element and update the list as needed.
+	         // This should be the first call of all public functions and is needed because
+	         // MutationObservers are not synchronous so we can have pending asynchronous mutations.
+	         SVGPathSegList.prototype._checkPathSynchronizedToList = function() {
+	             this._updateListFromPathMutations(this._pathElementMutationObserver.takeRecords());
+	         }
+	
+	         SVGPathSegList.prototype._updateListFromPathMutations = function(mutationRecords) {
+	             if (!this._pathElement)
+	                 return;
+	             var hasPathMutations = false;
+	             mutationRecords.forEach(function(record) {
+	                 if (record.attributeName == "d")
+	                     hasPathMutations = true;
+	             });
+	             if (hasPathMutations)
+	                 this._list = this._parsePath(this._pathElement.getAttribute("d"));
+	         }
+	
+	         // Serialize the list and update the path's 'd' attribute.
+	         SVGPathSegList.prototype._writeListToPath = function() {
+	             this._pathElementMutationObserver.disconnect();
+	             this._pathElement.setAttribute("d", SVGPathSegList._pathSegArrayAsString(this._list));
+	             this._pathElementMutationObserver.observe(this._pathElement, this._mutationObserverConfig);
+	         }
+	
+	         // When a path segment changes the list needs to be synchronized back to the path element.
+	         SVGPathSegList.prototype.segmentChanged = function(pathSeg) {
+	             this._writeListToPath();
+	         }
+	
+	         SVGPathSegList.prototype.clear = function() {
+	             this._checkPathSynchronizedToList();
+	
+	             this._list.forEach(function(pathSeg) {
+	                 pathSeg._owningPathSegList = null;
+	             });
+	             this._list = [];
+	             this._writeListToPath();
+	         }
+	
+	         SVGPathSegList.prototype.initialize = function(newItem) {
+	             this._checkPathSynchronizedToList();
+	
+	             this._list = [newItem];
+	             newItem._owningPathSegList = this;
+	             this._writeListToPath();
+	             return newItem;
+	         }
+	
+	         SVGPathSegList.prototype._checkValidIndex = function(index) {
+	             if (isNaN(index) || index < 0 || index >= this.numberOfItems)
+	                 throw "INDEX_SIZE_ERR";
+	         }
+	
+	         SVGPathSegList.prototype.getItem = function(index) {
+	             this._checkPathSynchronizedToList();
+	
+	             this._checkValidIndex(index);
+	             return this._list[index];
+	         }
+	
+	         SVGPathSegList.prototype.insertItemBefore = function(newItem, index) {
+	             this._checkPathSynchronizedToList();
+	
+	             // Spec: If the index is greater than or equal to numberOfItems, then the new item is appended to the end of the list.
+	             if (index > this.numberOfItems)
+	                 index = this.numberOfItems;
+	             if (newItem._owningPathSegList) {
+	                 // SVG2 spec says to make a copy.
+	                 newItem = newItem.clone();
+	             }
+	             this._list.splice(index, 0, newItem);
+	             newItem._owningPathSegList = this;
+	             this._writeListToPath();
+	             return newItem;
+	         }
+	
+	         SVGPathSegList.prototype.replaceItem = function(newItem, index) {
+	             this._checkPathSynchronizedToList();
+	
+	             if (newItem._owningPathSegList) {
+	                 // SVG2 spec says to make a copy.
+	                 newItem = newItem.clone();
+	             }
+	             this._checkValidIndex(index);
+	             this._list[index] = newItem;
+	             newItem._owningPathSegList = this;
+	             this._writeListToPath();
+	             return newItem;
+	         }
+	
+	         SVGPathSegList.prototype.removeItem = function(index) {
+	             this._checkPathSynchronizedToList();
+	
+	             this._checkValidIndex(index);
+	             var item = this._list[index];
+	             this._list.splice(index, 1);
+	             this._writeListToPath();
+	             return item;
+	         }
+	
+	         SVGPathSegList.prototype.appendItem = function(newItem) {
+	             this._checkPathSynchronizedToList();
+	
+	             if (newItem._owningPathSegList) {
+	                 // SVG2 spec says to make a copy.
+	                 newItem = newItem.clone();
+	             }
+	             this._list.push(newItem);
+	             newItem._owningPathSegList = this;
+	             // TODO: Optimize this to just append to the existing attribute.
+	             this._writeListToPath();
+	             return newItem;
+	         }
+	
+	         SVGPathSegList._pathSegArrayAsString = function(pathSegArray) {
+	             var string = "";
+	             var first = true;
+	             pathSegArray.forEach(function(pathSeg) {
+	                 if (first) {
+	                     first = false;
+	                     string += pathSeg._asPathString();
+	                 } else {
+	                     string += " " + pathSeg._asPathString();
+	                 }
+	             });
+	             return string;
+	         }
+	
+	         // This closely follows SVGPathParser::parsePath from Source/core/svg/SVGPathParser.cpp.
+	         SVGPathSegList.prototype._parsePath = function(string) {
+	             if (!string || string.length == 0)
+	                 return [];
+	
+	             var owningPathSegList = this;
+	
+	             var Builder = function() {
+	                 this.pathSegList = [];
+	             }
+	
+	             Builder.prototype.appendSegment = function(pathSeg) {
+	                 this.pathSegList.push(pathSeg);
+	             }
+	
+	             var Source = function(string) {
+	                 this._string = string;
+	                 this._currentIndex = 0;
+	                 this._endIndex = this._string.length;
+	                 this._previousCommand = SVGPathSeg.PATHSEG_UNKNOWN;
+	
+	                 this._skipOptionalSpaces();
+	             }
+	
+	             Source.prototype._isCurrentSpace = function() {
+	                 var character = this._string[this._currentIndex];
+	                 return character <= " " && (character == " " || character == "\n" || character == "\t" || character == "\r" || character == "\f");
+	             }
+	
+	             Source.prototype._skipOptionalSpaces = function() {
+	                 while (this._currentIndex < this._endIndex && this._isCurrentSpace())
+	                     this._currentIndex++;
+	                 return this._currentIndex < this._endIndex;
+	             }
+	
+	             Source.prototype._skipOptionalSpacesOrDelimiter = function() {
+	                 if (this._currentIndex < this._endIndex && !this._isCurrentSpace() && this._string.charAt(this._currentIndex) != ",")
+	                     return false;
+	                 if (this._skipOptionalSpaces()) {
+	                     if (this._currentIndex < this._endIndex && this._string.charAt(this._currentIndex) == ",") {
+	                         this._currentIndex++;
+	                         this._skipOptionalSpaces();
+	                     }
+	                 }
+	                 return this._currentIndex < this._endIndex;
+	             }
+	
+	             Source.prototype.hasMoreData = function() {
+	                 return this._currentIndex < this._endIndex;
+	             }
+	
+	             Source.prototype.peekSegmentType = function() {
+	                 var lookahead = this._string[this._currentIndex];
+	                 return this._pathSegTypeFromChar(lookahead);
+	             }
+	
+	             Source.prototype._pathSegTypeFromChar = function(lookahead) {
+	                 switch (lookahead) {
+	                 case "Z":
+	                 case "z":
+	                     return SVGPathSeg.PATHSEG_CLOSEPATH;
+	                 case "M":
+	                     return SVGPathSeg.PATHSEG_MOVETO_ABS;
+	                 case "m":
+	                     return SVGPathSeg.PATHSEG_MOVETO_REL;
+	                 case "L":
+	                     return SVGPathSeg.PATHSEG_LINETO_ABS;
+	                 case "l":
+	                     return SVGPathSeg.PATHSEG_LINETO_REL;
+	                 case "C":
+	                     return SVGPathSeg.PATHSEG_CURVETO_CUBIC_ABS;
+	                 case "c":
+	                     return SVGPathSeg.PATHSEG_CURVETO_CUBIC_REL;
+	                 case "Q":
+	                     return SVGPathSeg.PATHSEG_CURVETO_QUADRATIC_ABS;
+	                 case "q":
+	                     return SVGPathSeg.PATHSEG_CURVETO_QUADRATIC_REL;
+	                 case "A":
+	                     return SVGPathSeg.PATHSEG_ARC_ABS;
+	                 case "a":
+	                     return SVGPathSeg.PATHSEG_ARC_REL;
+	                 case "H":
+	                     return SVGPathSeg.PATHSEG_LINETO_HORIZONTAL_ABS;
+	                 case "h":
+	                     return SVGPathSeg.PATHSEG_LINETO_HORIZONTAL_REL;
+	                 case "V":
+	                     return SVGPathSeg.PATHSEG_LINETO_VERTICAL_ABS;
+	                 case "v":
+	                     return SVGPathSeg.PATHSEG_LINETO_VERTICAL_REL;
+	                 case "S":
+	                     return SVGPathSeg.PATHSEG_CURVETO_CUBIC_SMOOTH_ABS;
+	                 case "s":
+	                     return SVGPathSeg.PATHSEG_CURVETO_CUBIC_SMOOTH_REL;
+	                 case "T":
+	                     return SVGPathSeg.PATHSEG_CURVETO_QUADRATIC_SMOOTH_ABS;
+	                 case "t":
+	                     return SVGPathSeg.PATHSEG_CURVETO_QUADRATIC_SMOOTH_REL;
+	                 default:
+	                     return SVGPathSeg.PATHSEG_UNKNOWN;
+	                 }
+	             }
+	
+	             Source.prototype._nextCommandHelper = function(lookahead, previousCommand) {
+	                 // Check for remaining coordinates in the current command.
+	                 if ((lookahead == "+" || lookahead == "-" || lookahead == "." || (lookahead >= "0" && lookahead <= "9")) && previousCommand != SVGPathSeg.PATHSEG_CLOSEPATH) {
+	                     if (previousCommand == SVGPathSeg.PATHSEG_MOVETO_ABS)
+	                         return SVGPathSeg.PATHSEG_LINETO_ABS;
+	                     if (previousCommand == SVGPathSeg.PATHSEG_MOVETO_REL)
+	                         return SVGPathSeg.PATHSEG_LINETO_REL;
+	                     return previousCommand;
+	                 }
+	                 return SVGPathSeg.PATHSEG_UNKNOWN;
+	             }
+	
+	             Source.prototype.initialCommandIsMoveTo = function() {
+	                 // If the path is empty it is still valid, so return true.
+	                 if (!this.hasMoreData())
+	                     return true;
+	                 var command = this.peekSegmentType();
+	                 // Path must start with moveTo.
+	                 return command == SVGPathSeg.PATHSEG_MOVETO_ABS || command == SVGPathSeg.PATHSEG_MOVETO_REL;
+	             }
+	
+	             // Parse a number from an SVG path. This very closely follows genericParseNumber(...) from Source/core/svg/SVGParserUtilities.cpp.
+	             // Spec: http://www.w3.org/TR/SVG11/single-page.html#paths-PathDataBNF
+	             Source.prototype._parseNumber = function() {
+	                 var exponent = 0;
+	                 var integer = 0;
+	                 var frac = 1;
+	                 var decimal = 0;
+	                 var sign = 1;
+	                 var expsign = 1;
+	
+	                 var startIndex = this._currentIndex;
+	
+	                 this._skipOptionalSpaces();
+	
+	                 // Read the sign.
+	                 if (this._currentIndex < this._endIndex && this._string.charAt(this._currentIndex) == "+")
+	                     this._currentIndex++;
+	                 else if (this._currentIndex < this._endIndex && this._string.charAt(this._currentIndex) == "-") {
+	                     this._currentIndex++;
+	                     sign = -1;
+	                 }
+	
+	                 if (this._currentIndex == this._endIndex || ((this._string.charAt(this._currentIndex) < "0" || this._string.charAt(this._currentIndex) > "9") && this._string.charAt(this._currentIndex) != "."))
+	                     // The first character of a number must be one of [0-9+-.].
+	                     return undefined;
+	
+	                 // Read the integer part, build right-to-left.
+	                 var startIntPartIndex = this._currentIndex;
+	                 while (this._currentIndex < this._endIndex && this._string.charAt(this._currentIndex) >= "0" && this._string.charAt(this._currentIndex) <= "9")
+	                     this._currentIndex++; // Advance to first non-digit.
+	
+	                 if (this._currentIndex != startIntPartIndex) {
+	                     var scanIntPartIndex = this._currentIndex - 1;
+	                     var multiplier = 1;
+	                     while (scanIntPartIndex >= startIntPartIndex) {
+	                         integer += multiplier * (this._string.charAt(scanIntPartIndex--) - "0");
+	                         multiplier *= 10;
+	                     }
+	                 }
+	
+	                 // Read the decimals.
+	                 if (this._currentIndex < this._endIndex && this._string.charAt(this._currentIndex) == ".") {
+	                     this._currentIndex++;
+	
+	                     // There must be a least one digit following the .
+	                     if (this._currentIndex >= this._endIndex || this._string.charAt(this._currentIndex) < "0" || this._string.charAt(this._currentIndex) > "9")
+	                         return undefined;
+	                     while (this._currentIndex < this._endIndex && this._string.charAt(this._currentIndex) >= "0" && this._string.charAt(this._currentIndex) <= "9")
+	                         decimal += (this._string.charAt(this._currentIndex++) - "0") * (frac *= 0.1);
+	                 }
+	
+	                 // Read the exponent part.
+	                 if (this._currentIndex != startIndex && this._currentIndex + 1 < this._endIndex && (this._string.charAt(this._currentIndex) == "e" || this._string.charAt(this._currentIndex) == "E") && (this._string.charAt(this._currentIndex + 1) != "x" && this._string.charAt(this._currentIndex + 1) != "m")) {
+	                     this._currentIndex++;
+	
+	                     // Read the sign of the exponent.
+	                     if (this._string.charAt(this._currentIndex) == "+") {
+	                         this._currentIndex++;
+	                     } else if (this._string.charAt(this._currentIndex) == "-") {
+	                         this._currentIndex++;
+	                         expsign = -1;
+	                     }
+	
+	                     // There must be an exponent.
+	                     if (this._currentIndex >= this._endIndex || this._string.charAt(this._currentIndex) < "0" || this._string.charAt(this._currentIndex) > "9")
+	                         return undefined;
+	
+	                     while (this._currentIndex < this._endIndex && this._string.charAt(this._currentIndex) >= "0" && this._string.charAt(this._currentIndex) <= "9") {
+	                         exponent *= 10;
+	                         exponent += (this._string.charAt(this._currentIndex) - "0");
+	                         this._currentIndex++;
+	                     }
+	                 }
+	
+	                 var number = integer + decimal;
+	                 number *= sign;
+	
+	                 if (exponent)
+	                     number *= Math.pow(10, expsign * exponent);
+	
+	                 if (startIndex == this._currentIndex)
+	                     return undefined;
+	
+	                 this._skipOptionalSpacesOrDelimiter();
+	
+	                 return number;
+	             }
+	
+	             Source.prototype._parseArcFlag = function() {
+	                 if (this._currentIndex >= this._endIndex)
+	                     return undefined;
+	                 var flag = false;
+	                 var flagChar = this._string.charAt(this._currentIndex++);
+	                 if (flagChar == "0")
+	                     flag = false;
+	                 else if (flagChar == "1")
+	                     flag = true;
+	                 else
+	                     return undefined;
+	
+	                 this._skipOptionalSpacesOrDelimiter();
+	                 return flag;
+	             }
+	
+	             Source.prototype.parseSegment = function() {
+	                 var lookahead = this._string[this._currentIndex];
+	                 var command = this._pathSegTypeFromChar(lookahead);
+	                 if (command == SVGPathSeg.PATHSEG_UNKNOWN) {
+	                     // Possibly an implicit command. Not allowed if this is the first command.
+	                     if (this._previousCommand == SVGPathSeg.PATHSEG_UNKNOWN)
+	                         return null;
+	                     command = this._nextCommandHelper(lookahead, this._previousCommand);
+	                     if (command == SVGPathSeg.PATHSEG_UNKNOWN)
+	                         return null;
+	                 } else {
+	                     this._currentIndex++;
+	                 }
+	
+	                 this._previousCommand = command;
+	
+	                 switch (command) {
+	                 case SVGPathSeg.PATHSEG_MOVETO_REL:
+	                     return new SVGPathSegMovetoRel(owningPathSegList, this._parseNumber(), this._parseNumber());
+	                 case SVGPathSeg.PATHSEG_MOVETO_ABS:
+	                     return new SVGPathSegMovetoAbs(owningPathSegList, this._parseNumber(), this._parseNumber());
+	                 case SVGPathSeg.PATHSEG_LINETO_REL:
+	                     return new SVGPathSegLinetoRel(owningPathSegList, this._parseNumber(), this._parseNumber());
+	                 case SVGPathSeg.PATHSEG_LINETO_ABS:
+	                     return new SVGPathSegLinetoAbs(owningPathSegList, this._parseNumber(), this._parseNumber());
+	                 case SVGPathSeg.PATHSEG_LINETO_HORIZONTAL_REL:
+	                     return new SVGPathSegLinetoHorizontalRel(owningPathSegList, this._parseNumber());
+	                 case SVGPathSeg.PATHSEG_LINETO_HORIZONTAL_ABS:
+	                     return new SVGPathSegLinetoHorizontalAbs(owningPathSegList, this._parseNumber());
+	                 case SVGPathSeg.PATHSEG_LINETO_VERTICAL_REL:
+	                     return new SVGPathSegLinetoVerticalRel(owningPathSegList, this._parseNumber());
+	                 case SVGPathSeg.PATHSEG_LINETO_VERTICAL_ABS:
+	                     return new SVGPathSegLinetoVerticalAbs(owningPathSegList, this._parseNumber());
+	                 case SVGPathSeg.PATHSEG_CLOSEPATH:
+	                     this._skipOptionalSpaces();
+	                     return new SVGPathSegClosePath(owningPathSegList);
+	                 case SVGPathSeg.PATHSEG_CURVETO_CUBIC_REL:
+	                     var points = {x1: this._parseNumber(), y1: this._parseNumber(), x2: this._parseNumber(), y2: this._parseNumber(), x: this._parseNumber(), y: this._parseNumber()};
+	                     return new SVGPathSegCurvetoCubicRel(owningPathSegList, points.x, points.y, points.x1, points.y1, points.x2, points.y2);
+	                 case SVGPathSeg.PATHSEG_CURVETO_CUBIC_ABS:
+	                     var points = {x1: this._parseNumber(), y1: this._parseNumber(), x2: this._parseNumber(), y2: this._parseNumber(), x: this._parseNumber(), y: this._parseNumber()};
+	                     return new SVGPathSegCurvetoCubicAbs(owningPathSegList, points.x, points.y, points.x1, points.y1, points.x2, points.y2);
+	                 case SVGPathSeg.PATHSEG_CURVETO_CUBIC_SMOOTH_REL:
+	                     var points = {x2: this._parseNumber(), y2: this._parseNumber(), x: this._parseNumber(), y: this._parseNumber()};
+	                     return new SVGPathSegCurvetoCubicSmoothRel(owningPathSegList, points.x, points.y, points.x2, points.y2);
+	                 case SVGPathSeg.PATHSEG_CURVETO_CUBIC_SMOOTH_ABS:
+	                     var points = {x2: this._parseNumber(), y2: this._parseNumber(), x: this._parseNumber(), y: this._parseNumber()};
+	                     return new SVGPathSegCurvetoCubicSmoothAbs(owningPathSegList, points.x, points.y, points.x2, points.y2);
+	                 case SVGPathSeg.PATHSEG_CURVETO_QUADRATIC_REL:
+	                     var points = {x1: this._parseNumber(), y1: this._parseNumber(), x: this._parseNumber(), y: this._parseNumber()};
+	                     return new SVGPathSegCurvetoQuadraticRel(owningPathSegList, points.x, points.y, points.x1, points.y1);
+	                 case SVGPathSeg.PATHSEG_CURVETO_QUADRATIC_ABS:
+	                     var points = {x1: this._parseNumber(), y1: this._parseNumber(), x: this._parseNumber(), y: this._parseNumber()};
+	                     return new SVGPathSegCurvetoQuadraticAbs(owningPathSegList, points.x, points.y, points.x1, points.y1);
+	                 case SVGPathSeg.PATHSEG_CURVETO_QUADRATIC_SMOOTH_REL:
+	                     return new SVGPathSegCurvetoQuadraticSmoothRel(owningPathSegList, this._parseNumber(), this._parseNumber());
+	                 case SVGPathSeg.PATHSEG_CURVETO_QUADRATIC_SMOOTH_ABS:
+	                     return new SVGPathSegCurvetoQuadraticSmoothAbs(owningPathSegList, this._parseNumber(), this._parseNumber());
+	                 case SVGPathSeg.PATHSEG_ARC_REL:
+	                     var points = {x1: this._parseNumber(), y1: this._parseNumber(), arcAngle: this._parseNumber(), arcLarge: this._parseArcFlag(), arcSweep: this._parseArcFlag(), x: this._parseNumber(), y: this._parseNumber()};
+	                     return new SVGPathSegArcRel(owningPathSegList, points.x, points.y, points.x1, points.y1, points.arcAngle, points.arcLarge, points.arcSweep);
+	                 case SVGPathSeg.PATHSEG_ARC_ABS:
+	                     var points = {x1: this._parseNumber(), y1: this._parseNumber(), arcAngle: this._parseNumber(), arcLarge: this._parseArcFlag(), arcSweep: this._parseArcFlag(), x: this._parseNumber(), y: this._parseNumber()};
+	                     return new SVGPathSegArcAbs(owningPathSegList, points.x, points.y, points.x1, points.y1, points.arcAngle, points.arcLarge, points.arcSweep);
+	                 default:
+	                     throw "Unknown path seg type."
+	                 }
+	             }
+	
+	             var builder = new Builder();
+	             var source = new Source(string);
+	
+	             if (!source.initialCommandIsMoveTo())
+	                 return [];
+	             while (source.hasMoreData()) {
+	                 var pathSeg = source.parseSegment();
+	                 if (!pathSeg)
+	                     return [];
+	                 builder.appendSegment(pathSeg);
+	             }
+	
+	             return builder.pathSegList;
+	         }
+	     }
+	    }());
+	
+	    /* jshint ignore:end */
+	
 	    if (true) {
-	        !(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(20)], __WEBPACK_AMD_DEFINE_FACTORY__ = (c3), __WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ? (__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+	        !(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(/*! d3 */ 20)], __WEBPACK_AMD_DEFINE_RESULT__ = function () { return c3; }.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 	    } else if ('undefined' !== typeof exports && 'undefined' !== typeof module) {
 	        module.exports = c3;
 	    } else {
 	        window.c3 = c3;
 	    }
-
+	
 	})(window);
 
 
 /***/ },
 /* 22 */
+/*!********************************!*\
+  !*** ./app/tracing_switch.jsx ***!
+  \********************************/
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function($) {'use strict';
-
-	Object.defineProperty(exports, '__esModule', {
+	
+	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
-
-	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
-
-	var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
-
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
-
-	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-	var _react = __webpack_require__(3);
-
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	var _react = __webpack_require__(/*! react */ 3);
+	
 	var _react2 = _interopRequireDefault(_react);
-
-	__webpack_require__(17);
-
-	var TracingSwitch = (function (_React$Component) {
+	
+	__webpack_require__(/*! underscore */ 17);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+	
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	
+	var TracingSwitch = function (_React$Component) {
 	  _inherits(TracingSwitch, _React$Component);
-
+	
 	  function TracingSwitch(props) {
 	    _classCallCheck(this, TracingSwitch);
-
-	    _get(Object.getPrototypeOf(TracingSwitch.prototype), 'constructor', this).call(this, props);
-	    this.state = { tracing: false };
+	
+	    var _this = _possibleConstructorReturn(this, (TracingSwitch.__proto__ || Object.getPrototypeOf(TracingSwitch)).call(this, props));
+	
+	    _this.state = { tracing: false };
+	    return _this;
 	  }
-
+	
 	  _createClass(TracingSwitch, [{
 	    key: 'componentDidMount',
 	    value: function componentDidMount() {
@@ -8905,25 +10150,25 @@ webpackJsonp([0],[
 	    key: 'handleClick',
 	    value: function handleClick(event) {
 	      var spec = this.state.tracing ? "pause" : "all";
-
+	
 	      $.ajax({
 	        url: "/api/trace_set",
 	        data: { spec: spec }
 	      }).error(function (jqXHR, errorcode) {
 	        return console.error("Cant set tracing", errorcode);
-	      }).always((function () {
+	      }).always(function () {
 	        clearTimeout(this.state.timeout);
 	        this.getTracingStatus();
-	      }).bind(this));
+	      }.bind(this));
 	    }
 	  }, {
 	    key: 'getTracingStatus',
 	    value: function getTracingStatus() {
-	      $.ajax({ url: "/api/trace_status" }).done((function (data) {
+	      $.ajax({ url: "/api/trace_status" }).done(function (data) {
 	        this.state.tracing = data.tracing;
 	        this.state.timeout = window.setTimeout(this.getTracingStatus.bind(this), 1000);
 	        this.setState(this.state);
-	      }).bind(this));
+	      }.bind(this));
 	    }
 	  }, {
 	    key: 'render',
@@ -8931,66 +10176,70 @@ webpackJsonp([0],[
 	      var symbol = "glyphicon glyphicon-" + (this.state.tracing ? "pause" : "record");
 	      var btnColor = "btn btn-" + (this.state.tracing ? "danger" : "success");
 	      var text = this.state.tracing ? "Pause tracing" : "Trace all";
-
-	      return _react2['default'].createElement(
+	
+	      return _react2.default.createElement(
 	        'form',
 	        { className: 'navbar-form navbar-left', role: 'search' },
-	        _react2['default'].createElement(
+	        _react2.default.createElement(
 	          'button',
 	          { type: 'button', onClick: this.handleClick.bind(this), className: btnColor },
-	          _react2['default'].createElement('span', { className: symbol, 'aria-hidden': 'true' }),
+	          _react2.default.createElement('span', { className: symbol, 'aria-hidden': 'true' }),
 	          ' ',
 	          text
 	        )
 	      );
 	    }
 	  }]);
-
+	
 	  return TracingSwitch;
-	})(_react2['default'].Component);
-
-	exports['default'] = TracingSwitch;
-	module.exports = exports['default'];
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2)))
+	}(_react2.default.Component);
+	
+	exports.default = TracingSwitch;
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(/*! jquery */ 2)))
 
 /***/ },
 /* 23 */
+/*!*****************************!*\
+  !*** ./app/graph_panel.jsx ***!
+  \*****************************/
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function($) {'use strict';
-
-	Object.defineProperty(exports, '__esModule', {
+	
+	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
-
-	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
-
-	var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
-
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
-
-	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-	var _react = __webpack_require__(3);
-
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	var _react = __webpack_require__(/*! react */ 3);
+	
 	var _react2 = _interopRequireDefault(_react);
-
-	var _graphJsx = __webpack_require__(16);
-
-	var _graphJsx2 = _interopRequireDefault(_graphJsx);
-
-	var GraphPanel = (function (_React$Component) {
+	
+	var _graph = __webpack_require__(/*! ./graph.jsx */ 16);
+	
+	var _graph2 = _interopRequireDefault(_graph);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+	
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	
+	var GraphPanel = function (_React$Component) {
 	  _inherits(GraphPanel, _React$Component);
-
+	
 	  function GraphPanel(props) {
 	    _classCallCheck(this, GraphPanel);
-
-	    _get(Object.getPrototypeOf(GraphPanel.prototype), 'constructor', this).call(this, props);
-	    this.state = { funs: [] };
+	
+	    var _this = _possibleConstructorReturn(this, (GraphPanel.__proto__ || Object.getPrototypeOf(GraphPanel)).call(this, props));
+	
+	    _this.state = { funs: [] };
+	    return _this;
 	  }
-
+	
 	  _createClass(GraphPanel, [{
 	    key: 'componentDidMount',
 	    value: function componentDidMount() {
@@ -9001,18 +10250,18 @@ webpackJsonp([0],[
 	    value: function componentWillUnmount() {
 	      window.clearTimeout(this.interval);
 	    }
-
+	
 	    // Getting data
-
+	
 	  }, {
 	    key: 'startMonitoring',
 	    value: function startMonitoring(fun) {
 	      $.ajax({
 	        url: "/api/mon_start",
 	        data: { mod: fun[0], fun: fun[1], arity: fun[2] }
-	      }).done((function () {
+	      }).done(function () {
 	        this.getFunsList();
-	      }).bind(this));
+	      }.bind(this));
 	    }
 	  }, {
 	    key: 'addGraph',
@@ -9048,88 +10297,92 @@ webpackJsonp([0],[
 	  }, {
 	    key: 'handleFunsError',
 	    value: function handleFunsError(jqXHR, error) {
-	      console.log("Getting funs error", error);
+	      console.error("Getting funs error: ", error);
 	      window.setTimeout(this.getFunsList.bind(this), 1000);
 	    }
 	  }, {
 	    key: 'render',
 	    value: function render() {
 	      var funs = this.state.funs;
-
+	
 	      var graphsPanels = [];
 	      for (var i = 0; i < funs.length; i++) {
-	        graphsPanels.push(_react2['default'].createElement(
+	        graphsPanels.push(_react2.default.createElement(
 	          'div',
 	          { key: funs[i], className: 'row' },
-	          _react2['default'].createElement(
+	          _react2.default.createElement(
 	            'div',
 	            { className: 'col-md-12' },
-	            _react2['default'].createElement(_graphJsx2['default'], { removeGraph: this.removeGraph.bind(this), fun: funs[i] })
+	            _react2.default.createElement(_graph2.default, { removeGraph: this.removeGraph.bind(this), fun: funs[i] })
 	          )
 	        ));
 	      }
-
-	      return _react2['default'].createElement(
+	
+	      return _react2.default.createElement(
 	        'div',
 	        { className: 'container-fluid' },
 	        graphsPanels
 	      );
 	    }
 	  }]);
-
+	
 	  return GraphPanel;
-	})(_react2['default'].Component);
-
-	exports['default'] = GraphPanel;
-	module.exports = exports['default'];
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2)))
+	}(_react2.default.Component);
+	
+	exports.default = GraphPanel;
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(/*! jquery */ 2)))
 
 /***/ },
 /* 24 */
+/*!**********************************!*\
+  !*** ./app/function_browser.jsx ***!
+  \**********************************/
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function($) {'use strict';
-
-	Object.defineProperty(exports, '__esModule', {
+	
+	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
-
-	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
-
-	var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
-
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
-
-	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-	var _react = __webpack_require__(3);
-
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	var _react = __webpack_require__(/*! react */ 3);
+	
 	var _react2 = _interopRequireDefault(_react);
-
-	__webpack_require__(17);
-
-	var ACModal = (function (_React$Component) {
+	
+	__webpack_require__(/*! underscore */ 17);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+	
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	
+	var ACModal = function (_React$Component) {
 	  _inherits(ACModal, _React$Component);
-
+	
 	  function ACModal(props) {
 	    _classCallCheck(this, ACModal);
-
-	    _get(Object.getPrototypeOf(ACModal.prototype), 'constructor', this).call(this, props);
-	    this.state = {
+	
+	    var _this = _possibleConstructorReturn(this, (ACModal.__proto__ || Object.getPrototypeOf(ACModal)).call(this, props));
+	
+	    _this.state = {
 	      funs: [],
 	      position: -1
 	    };
-	    this.cleared = false;
+	    _this.cleared = false;
+	    return _this;
 	  }
-
+	
 	  _createClass(ACModal, [{
 	    key: 'componentDidUpdate',
 	    value: function componentDidUpdate() {
 	      /* check if we need to scroll up because list of funs was reloaded */
 	      if (this.cleared) {
-	        var node = _react2['default'].findDOMNode(this.refs.suggestionsPanel);
+	        var node = _react2.default.findDOMNode(this.refs.suggestionsPanel);
 	        if (node) {
 	          node.scrollTop = 0;
 	          this.cleared = false;
@@ -9139,8 +10392,6 @@ webpackJsonp([0],[
 	  }, {
 	    key: 'displayFuns',
 	    value: function displayFuns(data) {
-	      console.log("data", data);
-
 	      if (data.length == 0) {
 	        this.cleared = true;
 	      }
@@ -9157,7 +10408,7 @@ webpackJsonp([0],[
 	    key: 'moveHighlight',
 	    value: function moveHighlight(delta) {
 	      var targetPosition = this.state.position + delta;
-
+	
 	      if (targetPosition > 0 || targetPosition < this.state.funs.length) {
 	        this.state.position = targetPosition;
 	        this.setState(this.state);
@@ -9168,11 +10419,11 @@ webpackJsonp([0],[
 	    value: function highlightedFun() {
 	      var fun = null;
 	      var pos = this.state.position;
-
+	
 	      if (pos != -1) {
 	        fun = this.state.funs[pos];
 	      }
-
+	
 	      return fun;
 	    }
 	  }, {
@@ -9182,42 +10433,42 @@ webpackJsonp([0],[
 	      var rows = [];
 	      var highlightClass = "";
 	      var width, height;
-
+	
 	      for (var i = 0; i < funs.length && i < 100; i++) {
-
+	
 	        if (i == this.state.position) highlightClass = "row-highlight";else highlightClass = "";
-
-	        rows.push(_react2['default'].createElement(
+	
+	        rows.push(_react2.default.createElement(
 	          'tr',
 	          { className: highlightClass, key: funs[i],
 	            onClick: this.handleFunClick.bind(this, funs[i]) },
-	          _react2['default'].createElement(
+	          _react2.default.createElement(
 	            'td',
 	            null,
 	            ACModal.formatFun(funs[i])
 	          )
 	        ));
 	      }
-
+	
 	      width = $("#searchBox").css("width");
 	      height = $("#searchBox").css("height");
-
+	
 	      if (funs.length > 0) {
-	        return _react2['default'].createElement(
+	        return _react2.default.createElement(
 	          'div',
 	          { ref: 'suggestionsPanel', className: 'panel panel-default suggestions-panel',
 	            style: { top: height, width: width } },
-	          _react2['default'].createElement(
+	          _react2.default.createElement(
 	            'table',
 	            { className: 'table table-striped' },
-	            _react2['default'].createElement(
+	            _react2.default.createElement(
 	              'tbody',
 	              null,
 	              rows
 	            )
 	          )
 	        );
-	      } else return _react2['default'].createElement('div', null);
+	      } else return _react2.default.createElement('div', null);
 	    }
 	  }], [{
 	    key: 'formatFun',
@@ -9225,26 +10476,28 @@ webpackJsonp([0],[
 	      return fun[0] + ':' + fun[1] + '/' + fun[2];
 	    }
 	  }]);
-
+	
 	  return ACModal;
-	})(_react2['default'].Component);
-
-	var FunctionBrowser = (function (_React$Component2) {
+	}(_react2.default.Component);
+	
+	var FunctionBrowser = function (_React$Component2) {
 	  _inherits(FunctionBrowser, _React$Component2);
-
+	
 	  function FunctionBrowser(props) {
 	    _classCallCheck(this, FunctionBrowser);
-
-	    _get(Object.getPrototypeOf(FunctionBrowser.prototype), 'constructor', this).call(this, props);
-	    this.state = { value: "" };
+	
+	    var _this2 = _possibleConstructorReturn(this, (FunctionBrowser.__proto__ || Object.getPrototypeOf(FunctionBrowser)).call(this, props));
+	
+	    _this2.state = { value: "" };
+	    return _this2;
 	  }
-
+	
 	  _createClass(FunctionBrowser, [{
 	    key: 'matchFunSignature',
 	    value: function matchFunSignature(input) {
-	      var regex = /([\.\w]+):(\w+)\/(\d+)/;
+	      var regex = /(\w+(?:\.\w+)*):(\w+)\/(\d+)/;
 	      var res = regex.exec(input);
-
+	
 	      if (res) return [res[1], res[2], parseInt(res[3])];else return null;
 	    }
 	  }, {
@@ -9254,7 +10507,7 @@ webpackJsonp([0],[
 	          fun = null,
 	          arity = null;
 	      var regex, enteredFun;
-
+	
 	      switch (e.keyCode) {
 	        case 27:
 	          /* ESC */
@@ -9263,9 +10516,9 @@ webpackJsonp([0],[
 	          break;
 	        case 13:
 	          /* RETURN */
-	          /* submit funciton or try to compelete using selected fun */
+	          /* submit function or try to complete using selected fun */
 	          e.preventDefault();
-
+	
 	          enteredFun = this.matchFunSignature(e.target.value);
 	          if (enteredFun) this.props.addGraph(enteredFun);else this.completeSearch();
 	          break;
@@ -9276,7 +10529,7 @@ webpackJsonp([0],[
 	          this.completeSearch();
 	          break;
 	        case 38:
-	          /* ARROw UP */
+	          /* ARROW UP */
 	          /* select next fun from the list */
 	          this.refs.acm.moveHighlight(-1);
 	          break;
@@ -9300,14 +10553,14 @@ webpackJsonp([0],[
 	  }, {
 	    key: 'getSearchBox',
 	    value: function getSearchBox() {
-	      return _react2['default'].findDOMNode(this.refs.searchBox);
+	      return _react2.default.findDOMNode(this.refs.searchBox);
 	    }
 	  }, {
 	    key: 'completeSearch',
 	    value: function completeSearch() {
 	      var highlightedFun = this.refs.acm.highlightedFun();
 	      var funStr;
-
+	
 	      if (highlightedFun) {
 	        funStr = ACModal.formatFun(highlightedFun);
 	        $(this.getSearchBox()).val(funStr);
@@ -9330,38 +10583,38 @@ webpackJsonp([0],[
 	    value: function render() {
 	      var autocomp = null;
 	      var value = this.state.value;
-
-	      return _react2['default'].createElement(
+	
+	      return _react2.default.createElement(
 	        'form',
 	        { className: 'navbar-form' },
-	        _react2['default'].createElement(
+	        _react2.default.createElement(
 	          'div',
 	          { className: 'form-group', style: { display: "inline" } },
-	          _react2['default'].createElement(
+	          _react2.default.createElement(
 	            'div',
 	            { className: 'input-group', style: { display: "table" } },
-	            _react2['default'].createElement(
+	            _react2.default.createElement(
 	              'span',
 	              { className: 'input-group-addon', style: { width: "1%" } },
-	              _react2['default'].createElement('span', { className: 'glyphicon glyphicon-search' })
+	              _react2.default.createElement('span', { className: 'glyphicon glyphicon-search' })
 	            ),
-	            _react2['default'].createElement('input', { id: 'searchBox', ref: 'searchBox', type: 'text', className: 'form-control',
+	            _react2.default.createElement('input', { id: 'searchBox', ref: 'searchBox', type: 'text', className: 'form-control',
 	              placeholder: 'Function', 'aria-describedby': 'sizing-addon3',
 	              value: value, onKeyDown: this.handleKeyDown.bind(this),
 	              onChange: this.handleChange.bind(this), autofocus: 'autofocus' }),
-	            _react2['default'].createElement(ACModal, { ref: 'acm', addGraph: this.props.addGraph })
+	            _react2.default.createElement(ACModal, { ref: 'acm', addGraph: this.props.addGraph })
 	          )
 	        )
 	      );
 	    }
 	  }]);
-
+	
 	  return FunctionBrowser;
-	})(_react2['default'].Component);
-
-	exports['default'] = FunctionBrowser;
-	module.exports = exports['default'];
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2)))
+	}(_react2.default.Component);
+	
+	exports.default = FunctionBrowser;
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(/*! jquery */ 2)))
 
 /***/ }
 ]);
+//# sourceMappingURL=bundle.js.map
