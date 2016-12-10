@@ -53,7 +53,7 @@ export default class GraphPanel extends React.Component {
   }
 
   handleFunsError(jqXHR, error) {
-    console.log("Getting funs error", error);
+    console.error("Getting funs error: ", error);
     window.setTimeout(this.getFunsList.bind(this), 1000);
   }
 

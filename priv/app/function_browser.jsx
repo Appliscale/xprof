@@ -23,8 +23,6 @@ class ACModal extends React.Component {
   }
 
   displayFuns(data) {
-    console.log("data", data);
-
     if(data.length == 0) {
       this.cleared = true;
     }
@@ -107,7 +105,7 @@ export default class FunctionBrowser extends React.Component {
   }
 
   matchFunSignature(input) {
-    var regex = /(\w+):(\w+)\/(\d+)/;
+    var regex = /([\w\.]+):(\w+)\/(\d+)/;
     var res = regex.exec(input);
 
     if(res)

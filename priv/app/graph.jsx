@@ -135,8 +135,13 @@ export default class Graph extends React.Component {
 
   chartId() {
     var arity = this.props.fun[2];
-    // '*' is not a valid character in a tag id
-    if(arity == '*') arity = 'x';
-    return `chart_${this.props.fun[0]}_${this.props.fun[1]}_${arity}`
+
+    // Guess what? Dots in module name (and Elixir modules contains it - 'Elixir.Enum':map/2) are problematic for ID.
+    var safe_module = this.props.fun[0].replace(/\./g, "-");
+
+    // And '*' is not a valid character too for an ID.
+    if (arity === "*") arity = "x";
+
+    return `chart_${safe_module}_${this.props.fun[1]}_${arity}`
   }
 }

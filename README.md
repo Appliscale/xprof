@@ -26,7 +26,7 @@ inefficient code. Finding this code is usually pretty difficult.
 ```erlang
 {deps, [
        ...
-       {xprof, ".*", {git, "https://github.com/mniec/xprof.git"}}
+       {xprof, ".*", {git, "https://github.com/appliscale/xprof.git"}}
 ]}.
 ```
 

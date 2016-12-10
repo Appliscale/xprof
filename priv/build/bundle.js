@@ -880,7 +880,7 @@ webpackJsonp([0],[
 				return makeUtcWrapper(new Date(ts));
 			}
 		}
-		
+
 		// map of app. size of time units in milliseconds
 
 		var timeUnitSize = {
@@ -898,9 +898,9 @@ webpackJsonp([0],[
 
 		var baseSpec = [
 			[1, "second"], [2, "second"], [5, "second"], [10, "second"],
-			[30, "second"], 
+			[30, "second"],
 			[1, "minute"], [2, "minute"], [5, "minute"], [10, "minute"],
-			[30, "minute"], 
+			[30, "minute"],
 			[1, "hour"], [2, "hour"], [4, "hour"],
 			[8, "hour"], [12, "hour"],
 			[1, "day"], [2, "day"], [3, "day"],
@@ -9242,7 +9242,7 @@ webpackJsonp([0],[
 	  _createClass(FunctionBrowser, [{
 	    key: 'matchFunSignature',
 	    value: function matchFunSignature(input) {
-	      var regex = /(\w+):(\w+)\/(\d+)/;
+	      var regex = /([\.\w]+):(\w+)\/(\d+)/;
 	      var res = regex.exec(input);
 
 	      if (res) return [res[1], res[2], parseInt(res[3])];else return null;
