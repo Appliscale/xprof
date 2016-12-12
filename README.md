@@ -26,7 +26,7 @@ inefficient code. Finding this code is usually pretty difficult.
 ```erlang
 {deps, [
        ...
-       {xprof, ".*", {git, "https://github.com/mniec/xprof.git"}}
+       {xprof, ".*", {git, "https://github.com/appliscale/xprof.git"}}
 ]}.
 ```
 
@@ -81,6 +81,7 @@ make test
 ### Working with JS sources
 
 The WebUI uses
+
 * React.js
 * ECMAScript 6
 * Bootstap
@@ -111,6 +112,7 @@ are modified.
 
 ```bash
 $ cd priv;
+$ npm install
 $ bower install
 $ webpack -d
 ```

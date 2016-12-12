@@ -1,15 +1,14 @@
 {
   "name": "xprof",
-  "version": "0.0.0",
+  "version": "1.1.0",
   "authors": [
-    "Michal Niec <michal@npspace.pl>"
+    "Michal Niec <michal.niec@appliscale.io>"
   ],
-  "description": "erlang profiler",
-  "main": "main.js",
+  "description": "Visual BEAM profiler",
   "keywords": [
     "xprof"
   ],
-  "license": "MIT",
+  "license": "BSD-3-Clause",
   "ignore": [
     "**/.*",
     "node_modules",

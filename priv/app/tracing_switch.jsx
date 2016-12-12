@@ -17,18 +17,18 @@ export default class TracingSwitch extends React.Component {
 
   handleClick(event) {
     var spec = this.state.tracing ? "pause" : "all";
-    
+
     $.ajax({
       url: "/api/trace_set",
       data: {spec: spec}
     })
-      .error((jqXHR, errorcode) =>      
-	console.error("Cant set tracing", errorcode))
-      .always(function() {
-	clearTimeout(this.state.timeout);
-	this.getTracingStatus()}.bind(this))
+    .error((jqXHR, errorcode) => console.error("Cant set tracing", errorcode))
+    .always(function() {
+	    clearTimeout(this.state.timeout);
+	    this.getTracingStatus()
+    }.bind(this))
   }
-  
+
   getTracingStatus() {
     $.ajax({url: "/api/trace_status"}).done(function(data) {
       this.state.tracing = data.tracing;
@@ -44,7 +44,7 @@ export default class TracingSwitch extends React.Component {
 
     return (
       <form className="navbar-form navbar-left" role="search">
-	<button type="button" onClick={this.handleClick.bind(this)} className={btnColor}>	  
+	<button type="button" onClick={this.handleClick.bind(this)} className={btnColor}>
 	  <span className={symbol} aria-hidden="true"></span> {text}
 	</button>
       </form>)

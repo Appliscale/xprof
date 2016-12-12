@@ -1,6 +1,6 @@
 {application, xprof,
- [{description, "An OTP application"}
- ,{vsn, "0.1.0"}
+ [{description, "Visual BEAM profiler"}
+ ,{vsn, "1.1.0"}
  ,{registered, []}
  ,{mod, {'xprof_app', []}}
  ,{applications,
@@ -11,4 +11,7 @@
    ]}
  ,{env,[]}
  ,{modules, []}
+ ,{licenses, ["BSD-3-Clause"]}
+ ,{maintainers, ["Michal Niec", "Pawel Pikula", "Peter Gomori", "Wojciech Gawronski"]}
+ ,{links, [{"Github", "https://github.com/appliscale/xprof"}]}
  ]}.

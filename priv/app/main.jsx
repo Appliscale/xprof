@@ -3,7 +3,7 @@ import 'jquery';
 import 'bootstrap/dist/css/bootstrap.css';
 import d3 from 'd3';
 import c3 from 'c3/c3';
-import 'flot';
+import 'Flot';
 import Graph from './graph.jsx'
 import TracingSwitch from './tracing_switch.jsx'
 import GraphPanel from './graph_panel.jsx'
