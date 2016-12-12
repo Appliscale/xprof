@@ -33,7 +33,7 @@ inefficient code. Finding this code is usually pretty difficult.
 `xprof` is available on *Hex* package manager, so you are able to use it also in the following way:
 
 ```erlang
-# With `rebar3`:
+%% It is possible only with newest version of `rebar3` (at least `3.3.3`):
 
 {deps, [
        ...
