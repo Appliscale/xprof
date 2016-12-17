@@ -24,7 +24,7 @@ handle_req(<<"funs">>, Req, State) ->
     {Query, _} = cowboy_req:qs_val(<<"query">>, Req, <<"">>),
 
     Funs = lists:sort(xprof_vm_info:get_available_funs(Query)),
-    Json = jiffy:encode(Funs),
+    Json = jsone:encode(Funs),
 
     lager:debug("Returning ~b functions matching phrase \"~s\"",
                 [length(Funs), Query]),
@@ -55,7 +55,7 @@ handle_req(<<"mon_stop">>, Req, State) ->
 handle_req(<<"mon_get_all">>, Req, State) ->
     Funs = xprof_tracer:all_monitored(),
     FunsArr = [tuple_to_list(MFA) || MFA <- Funs],
-    Json = jiffy:encode(FunsArr),
+    Json = jsone:encode(FunsArr),
     {ok, ResReq} = cowboy_req:reply(200,
                                     [{<<"content-type">>,
                                       <<"application/json">>}],
@@ -71,7 +71,7 @@ handle_req(<<"data">>, Req, State) ->
             {error, not_found} ->
                 cowboy_req:reply(404, Req);
             Vals ->
-                Json = jiffy:encode([{Val} || Val <- Vals]),
+                Json = jsone:encode([{Val} || Val <- Vals]),
 
                 cowboy_req:reply(200,
                                  [{<<"content-type">>,
@@ -95,7 +95,7 @@ handle_req(<<"trace_set">>, Req, State) ->
 
 handle_req(<<"trace_status">>, Req, State) ->
     {_, Paused, _} = xprof_tracer:trace_status(),
-    Json = jiffy:encode({[{tracing, not Paused}]}),
+    Json = jsone:encode({[{tracing, not Paused}]}),
     {ok, ResReq} = cowboy_req:reply(200,
                                     [{<<"content-type">>,
                                       <<"application/json">>}],
@@ -114,7 +114,7 @@ handle_req(<<"capture">>, Req, State) ->
                [Limit ,M,F,A,Threshold]),
 
     {ok, CaptureId} = xprof_tracer_handler:capture(MFA, Threshold, Limit),
-    Json = jiffy:encode({[{capture_id, CaptureId}]}),
+    Json = jsone:encode({[{capture_id, CaptureId}]}),
 
     {ok, ResReq} = cowboy_req:reply(200,
                                     [{<<"content-type">>,
@@ -130,7 +130,7 @@ handle_req(<<"capture_data">>, Req, State) ->
         xprof_tracer_handler:get_captured_data(MFA, Offset),
 
     ItemsJson = [{args_res2proplist(Item)} || Item <- Items],
-    Json = jiffy:encode({[{capture_id, Id},
+    Json = jsone:encode({[{capture_id, Id},
                           {threshold, Threshold},
                           {limit, Limit},
                           {items, ItemsJson}]}),
