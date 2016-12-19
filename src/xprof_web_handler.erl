@@ -125,19 +125,21 @@ handle_req(<<"capture_data">>, Req, State) ->
     {OffsetStr, _} = cowboy_req:qs_val(<<"offset">>, Req),
     Offset = binary_to_integer(OffsetStr),
 
-
-    {ok, {Id, Threshold, Limit}, Items} =
-        xprof_tracer_handler:get_captured_data(MFA, Offset),
-
-    ItemsJson = [{args_res2proplist(Item)} || Item <- Items],
-    Json = jsone:encode({[{capture_id, Id},
-                          {threshold, Threshold},
-                          {limit, Limit},
-                          {items, ItemsJson}]}),
-    {ok, ResReq} = cowboy_req:reply(200,
-                                    [{<<"content-type">>,
-                                      <<"application/json">>}],
-                                    Json, Req),
+    {ok, ResReq} =
+        case xprof_tracer_handler:get_captured_data(MFA, Offset) of
+            {error, not_found} ->
+                cowboy_req:reply(404, Req);
+            {ok, {Id, Threshold, Limit}, Items} ->
+                ItemsJson = [{args_res2proplist(Item)} || Item <- Items],
+                Json = jsone:encode({[{capture_id, Id},
+                                      {threshold, Threshold},
+                                      {limit, Limit},
+                                      {items, ItemsJson}]}),
+                cowboy_req:reply(200,
+                                 [{<<"content-type">>,
+                                   <<"application/json">>}],
+                                 Json, Req)
+        end,
     {ok, ResReq, State}.
 
 %% Helpers
