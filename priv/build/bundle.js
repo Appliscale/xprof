@@ -2118,8 +2118,12 @@ webpackJsonp([0],[
 	
 	  _createClass(App, [{
 	    key: 'addGraph',
-	    value: function addGraph(fun) {
-	      this.refs.graphPanel.addGraph(fun);
+	    value: function addGraph(query) {
+	      this.refs.graphPanel.addGraph(query);
+	    }
+	  }, {
+	    key: 'clearFunctionBrowser',
+	    value: function clearFunctionBrowser() {
 	      this.refs.functionBrowser.clear();
 	    }
 	  }, {
@@ -2147,7 +2151,7 @@ webpackJsonp([0],[
 	            _react2.default.createElement(_function_browser2.default, { ref: 'functionBrowser', addGraph: this.addGraph.bind(this) })
 	          )
 	        ),
-	        _react2.default.createElement(_graph_panel2.default, { ref: 'graphPanel' })
+	        _react2.default.createElement(_graph_panel2.default, { ref: 'graphPanel', clearFunctionBrowser: this.clearFunctionBrowser.bind(this) })
 	      );
 	    }
 	  }]);
@@ -2724,18 +2728,19 @@ webpackJsonp([0],[
 	
 	  }, {
 	    key: 'startMonitoring',
-	    value: function startMonitoring(fun) {
+	    value: function startMonitoring(query) {
 	      $.ajax({
 	        url: "/api/mon_start",
-	        data: { mod: fun[0], fun: fun[1], arity: fun[2] }
-	      }).done(function () {
+	        data: { query: query }
+	      }).success(function () {
+	        this.props.clearFunctionBrowser();
 	        this.getFunsList();
 	      }.bind(this));
 	    }
 	  }, {
 	    key: 'addGraph',
-	    value: function addGraph(fun) {
-	      this.startMonitoring(fun);
+	    value: function addGraph(query) {
+	      this.startMonitoring(query);
 	    }
 	  }, {
 	    key: 'removeGraph',
@@ -2871,7 +2876,8 @@ webpackJsonp([0],[
 	  }, {
 	    key: 'handleFunClick',
 	    value: function handleFunClick(fun, e) {
-	      this.props.addGraph(fun);
+	      var query = ACModal.formatFun(fun);
+	      this.props.addGraph(query);
 	    }
 	  }, {
 	    key: 'moveHighlight',
@@ -2962,12 +2968,11 @@ webpackJsonp([0],[
 	  }
 	
 	  _createClass(FunctionBrowser, [{
-	    key: 'matchFunSignature',
-	    value: function matchFunSignature(input) {
-	      var regex = /(\w+(?:\.\w+)*):(\w+)\/(\d+)/;
-	      var res = regex.exec(input);
-	
-	      if (res) return [res[1], res[2], parseInt(res[3])];else return null;
+	    key: 'checkInput',
+	    value: function checkInput(input) {
+	      /* for now this is mostly just a placeholder to check function browser input
+	         whether it is suitable to add a graph */
+	      if (input) return input;else return null;
 	    }
 	  }, {
 	    key: 'handleKeyDown',
@@ -2975,7 +2980,7 @@ webpackJsonp([0],[
 	      var mod = null,
 	          fun = null,
 	          arity = null;
-	      var regex, enteredFun;
+	      var enteredQuery;
 	
 	      switch (e.keyCode) {
 	        case 27:
@@ -2988,8 +2993,8 @@ webpackJsonp([0],[
 	          /* submit function or try to complete using selected fun */
 	          e.preventDefault();
 	
-	          enteredFun = this.matchFunSignature(e.target.value);
-	          if (enteredFun) this.props.addGraph(enteredFun);else this.completeSearch();
+	          enteredQuery = this.checkInput(e.target.value);
+	          if (enteredQuery) this.props.addGraph(enteredQuery);else this.completeSearch();
 	          break;
 	        case 9:
 	          /* TAB */
