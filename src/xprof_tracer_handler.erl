@@ -69,16 +69,20 @@ capture(MFA = {M,F,A}, Threshold, Limit) ->
                                         list(any())}.
 get_captured_data(MFA, Offset) ->
     Name = xprof_lib:mfa2atom(MFA),
-    Items = lists:sort(ets:select(Name,
-                                  [{
-                                     {{args_res, '$1'},
-                                      {'$2', '$3','$4','$5'}},
-                                     [{'>','$1',Offset}],
-                                     [['$1', '$2', '$3', '$4', '$5']]
-                                   }])),
+    try
+        Items = lists:sort(ets:select(Name,
+                                      [{
+                                         {{args_res, '$1'},
+                                          {'$2', '$3','$4','$5'}},
+                                         [{'>','$1',Offset}],
+                                         [['$1', '$2', '$3', '$4', '$5']]
+                                       }])),
 
-    [{capture_spec, Id, Threshold, Limit}] = ets:lookup(Name, capture_spec),
-    {ok, {Id, Threshold, Limit}, Items}.
+        [{capture_spec, Id, Threshold, Limit}] = ets:lookup(Name, capture_spec),
+        {ok, {Id, Threshold, Limit}, Items}
+    catch error:badarg ->
+            {error, not_found}
+    end.
 
 
 %% gen_server callbacks
