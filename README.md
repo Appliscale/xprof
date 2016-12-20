@@ -120,23 +120,18 @@ served by cowboy server (xprof's dependency).
 
 To develop `xprof` in convenience following setup is recommended.
 
-In the first terminal window start Erlang `xprof` and _sync_ which automatically
-reloads modules that have changed.
+In the first terminal window start Erlang `xprof` by calling `make dev`.
+The  _sync_ app will be started, It automatically reloads erlang modules that
+have changed, so you don't need to recompile everytime something changed.
 
 ```bash
-$ export REBAR_PROFILE=dev
-$ ./rebar3 shell
-> sync:go().
-> xprof:start().
+$ make dev
 ```
 
 In the second window install all the assets and start webpack in development
 mode which is also going to recompile all JS files in priv directory when they
-are modified.
+are modified. To achieve that use:
 
 ```bash
-$ cd priv;
-$ npm install
-$ bower install
-$ webpack -d
+$ make webpack_autoreload
 ```
