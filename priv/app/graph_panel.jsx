@@ -21,7 +21,10 @@ export default class GraphPanel extends React.Component {
     $.ajax({
       url: "/api/mon_start",
       data: {query: query}
-    }).done(function() { this.getFunsList()}.bind(this));
+    }).success(function() {
+      this.props.clearFunctionBrowser();
+      this.getFunsList();
+    }.bind(this));
 
   }
 
