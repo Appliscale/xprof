@@ -30,7 +30,9 @@ export default class FlotGraph  {
         labelFormatter: this.labelFormatter.bind(this),
         noColumns: 10
       },
-      grid: { hoverable: true},
+      grid: {
+        hoverable: true
+      },
       tooltip: {
         show: true,
         lines: true,
@@ -42,7 +44,7 @@ export default class FlotGraph  {
           tickFormatter: function (v) {
             return Math.round(v/10.0)/100.0 + " ms";
           },
-          position: "left",
+          position: "left"
         },
         {
           min: 0,
@@ -57,7 +59,8 @@ export default class FlotGraph  {
   }
 
   labelFormatter(label, series) {
-    return "<span class='legend-label' id='" + series.id + this.divid.substr(1) +"'>"
+    let id = series.id + this.divid.substr(1);
+    return `<span class="legend-label" id="${id}">`
       + label + "</span>";
   }
 

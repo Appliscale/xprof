@@ -65,7 +65,9 @@ webpackJsonp([0],[
 	          labelFormatter: this.labelFormatter.bind(this),
 	          noColumns: 10
 	        },
-	        grid: { hoverable: true },
+	        grid: {
+	          hoverable: true
+	        },
 	        tooltip: {
 	          show: true,
 	          lines: true,
@@ -90,7 +92,8 @@ webpackJsonp([0],[
 	  }, {
 	    key: 'labelFormatter',
 	    value: function labelFormatter(label, series) {
-	      return "<span class='legend-label' id='" + series.id + this.divid.substr(1) + "'>" + label + "</span>";
+	      var id = series.id + this.divid.substr(1);
+	      return '<span class="legend-label" id="' + id + '">' + label + "</span>";
 	    }
 	  }, {
 	    key: 'resize',
