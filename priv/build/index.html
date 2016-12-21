@@ -2,8 +2,9 @@
 <html>
   <head>
     <meta charset="utf-8">
-    <title>XProf</title>
+    <title>XProf - BEAM profiler</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" type="image/png" href="build/xprof_icon.png"/>
     <style>
 
     body {
@@ -44,13 +45,42 @@
        overflow: scroll;
      }
 
+     a.navbar-brand {
+       padding: 8px;
+     }
+
+     .navbar-default {
+       background-color: #49525A !important;
+     }
+
+     .legend-label {
+       min-width: 400px !important;
+       padding: 10px;
+       margin-right: 10px;
+     }
+
+     .legend-label:hover {
+       cursor: pointer;
+     }
+
+     .footer2 {
+       position: absolute;
+       left: 0;
+       right: 0;
+       bottom: 0;
+       height: 60px;
+       background-color: "#aaa";
+     }
+
     </style>
   </head>
   <body>
     <div id="main-container" class="container-fluid">
     </div>
-    <div className="footer">
-      <p>© NPSPACE 2015</p>
+    <div class="navbar-fixed-bottom" style="background-color: #ecf0f1;">
+      <a href="http://appliscale.io">
+        <img src="build/img/appliscale_logo.png" alt="appliscale.io"/>
+      </a>
     </div>
     <script src="build/vendors.js"></script>
     <script src="build/bundle.js"></script>
