@@ -6,7 +6,7 @@ var config = {
     // specify that react should be part of that chunk
     entry: {
       app: ['./app/graph_flot.jsx', './app/graph.jsx', './app/main.jsx'],
-      vendors: ['jquery', 'underscore','react', 'd3', 'Flot']
+      vendors: ['jquery', 'underscore','react', 'Flot']
     },
     resolve: {
       root: [path.join(__dirname, "bower_components")],

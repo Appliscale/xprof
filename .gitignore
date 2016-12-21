@@ -30,8 +30,8 @@ cover/
 .idea/
 
 _build/
-build/
 
+priv/build/*.js.map
 priv/bower_components/
 priv/node_modules/
 

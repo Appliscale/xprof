@@ -1,8 +1,6 @@
 import React from 'react';
 import 'jquery';
-import 'bootstrap/dist/css/bootstrap.css';
-import d3 from 'd3';
-import c3 from 'c3/c3';
+import 'bootswatch/flatly/bootstrap.css';
 import 'Flot';
 import Graph from './graph.jsx'
 import TracingSwitch from './tracing_switch.jsx'
@@ -22,9 +20,11 @@ class App extends React.Component {
   render() {
     return (
       <div className="container-fluid">
-        <nav className="navbar navbar-inverse navbar-fixed-top">
+        <nav className="navbar navbar-default navbar-fixed-top">
           <div className="navbar-header">
-            <a className="navbar-brand" href="#">XProf</a>
+            <a className="navbar-brand" href="#">
+              <img src="build/img/xprof_logo.png" height="45px"/>
+            </a>
           </div>
 
           <div className="navbar-collapse collapse" id="navbar-collapsible">

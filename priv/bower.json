@@ -18,10 +18,11 @@
   ],
   "dependencies": {
     "Flot": "flot#~0.8.3",
-    "bootstrap": "3.3.5",
-    "c3": "~0.4.10",
+    "bootstrap": "3.3.7",
+    "bootswatch": "3.3.7",
     "jquery": "~2.1.4",
     "react": "~0.13.3",
-    "underscore": "~1.8.3"
+    "underscore": "~1.8.3",
+    "flot.tooltip": "0.8.7"
   }
 }
