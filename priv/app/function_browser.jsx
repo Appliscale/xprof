@@ -22,6 +22,10 @@ class ACModal extends React.Component {
     }
   }
 
+  getFuns() {
+      return this.state.funs.map(ACModal.formatFun);
+  }
+
   displayFuns(data) {
     if(data.length == 0) {
       this.cleared = true;
@@ -171,6 +175,12 @@ export default class FunctionBrowser extends React.Component {
     if(highlightedFun) {
       $(this.getSearchBox()).val(highlightedFun);
       this.refs.acm.displayFuns([]);
+    } else {
+      var suggestedFuns = this.refs.acm.getFuns();
+      if(suggestedFuns.length > 0) {
+        var prefix = this.commonArrayPrefix(suggestedFuns);
+        $(this.getSearchBox()).val(prefix);
+      }
     }
   }
 
@@ -182,6 +192,20 @@ export default class FunctionBrowser extends React.Component {
   funsSuccess(data) {
     if (this.state.value != "")
       this.refs.acm.displayFuns(data);
+  }
+
+  commonArrayPrefix(sortedArray) {
+      var string1 = sortedArray[0];
+      var string2 = sortedArray[sortedArray.length - 1];
+      return this.commonPrefix(string1, string2);
+  }
+
+  commonPrefix(string1, string2) {
+      var len = string1.length;
+      var i = 0;
+
+      while(i < len && string1.charAt(i) === string2.charAt(i)) i++;
+      return string1.substring(0, i);
   }
 
   render() {
