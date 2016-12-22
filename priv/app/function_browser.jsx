@@ -45,12 +45,13 @@ class ACModal extends React.Component {
     }
   }
 
+  /* highlightedFun(): string | null; */
   highlightedFun() {
     var fun = null;
     var pos = this.state.position;
 
     if(pos != -1) {
-      fun = this.state.funs[pos];
+      fun = ACModal.formatFun(this.state.funs[pos]);
     }
 
     return fun;
@@ -166,11 +167,9 @@ export default class FunctionBrowser extends React.Component {
 
   completeSearch() {
     var highlightedFun = this.refs.acm.highlightedFun();
-    var funStr;
 
     if(highlightedFun) {
-      funStr = ACModal.formatFun(highlightedFun);
-      $(this.getSearchBox()).val(funStr);
+      $(this.getSearchBox()).val(highlightedFun);
       this.refs.acm.displayFuns([]);
     }
   }
