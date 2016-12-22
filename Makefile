@@ -10,7 +10,7 @@ bower: npm
 	cd priv; $(BIN_DIR)/bower install
 
 webpack: bower
-	cd priv; $(BIN_DIR)/webpack
+	cd priv; $(BIN_DIR)/webpack -d
 
 webpack_autoreload: bower
 	cd priv;  $(BIN_DIR)/webpack -w -d
