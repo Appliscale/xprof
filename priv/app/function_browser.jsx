@@ -129,17 +129,12 @@ export default class FunctionBrowser extends React.Component {
         this.clear();
         break;
       case 13: /* RETURN */
-        /* submit function or try to complete using selected fun */
+        /* submit either selected suggestion or content of textbox  */
         e.preventDefault();
-
-        enteredQuery = this.checkInput(e.target.value);
-        if(enteredQuery)
-          this.props.addGraph(enteredQuery);
-        else
-          this.completeSearch();
+        this.submitFun(e.target.value);
         break;
       case 9: /* TAB */
-        /* try to complete using selected suggestion*/
+        /* try to complete using selected suggestion */
         e.preventDefault();
         this.completeSearch();
         break;
@@ -167,6 +162,18 @@ export default class FunctionBrowser extends React.Component {
 
   getSearchBox() {
     return React.findDOMNode(this.refs.searchBox);
+  }
+
+  submitFun(input) {
+    var highlightedFun = this.refs.acm.highlightedFun();
+
+    if(highlightedFun && highlightedFun.startsWith(input)) {
+      this.props.addGraph(highlightedFun);
+    } else {
+      var enteredQuery = this.checkInput(input);
+      if(enteredQuery)
+        this.props.addGraph(enteredQuery);
+    }
   }
 
   completeSearch() {
