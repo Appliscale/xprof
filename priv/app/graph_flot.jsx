@@ -26,9 +26,10 @@ export default class FlotGraph  {
         shadowSize: 0,   // Drawing is faster without shadows
       },
       legend: {
-        position: "se",
+        position: "sw",
         labelFormatter: this.labelFormatter.bind(this),
-        noColumns: 10
+        noColumns: 8,
+        margin: [10, 0]
       },
       grid: {
         hoverable: true
@@ -56,17 +57,25 @@ export default class FlotGraph  {
         show: true,
       }
     });
+    this.updateLegendNoColumns();
   }
 
   labelFormatter(label, series) {
+    let dataPoint = series.data.slice(-1)[0][1];
+    let val = Math.round(dataPoint/10.0)/100.0;
+    let unit = "ms";
+    if (label == "count"){
+      val = dataPoint;
+      unit = "calls/s";
+    }
     let id = series.id + this.divid.substr(1);
-    return `<span class="legend-label" id="${id}">`
-      + label + "</span>";
+    return `<div class="legend-label" id="${id}">${label} (${val} ${unit})</div>`;
   }
 
   resize(){
     this.plot.resize();
     this.plot.setupGrid();
+    this.updateLegendNoColumns();
     this.plot.draw();
     this.hookLegendClickCallbacks();
   }
@@ -74,11 +83,23 @@ export default class FlotGraph  {
   update(data) {
     this.plot.setData(this.createDataSet(data));
     this.plot.setupGrid();
+    this.updateLegendNoColumns();
     this.plot.draw();
     this.hookLegendClickCallbacks();
   }
 
   close(data) {
+  }
+
+  // "reactive" legend
+  updateLegendNoColumns() {
+    let opts = this.plot.getOptions();
+    let len = this.lines.length;
+    let w = this.plot.width();
+    let seriesLabelWidth = 117;
+    let units = Math.floor(w/seriesLabelWidth);
+    let exp = Math.max(0, Math.ceil(len/units) - 1);
+    opts.legend.noColumns = len / Math.pow(2, exp);
   }
 
   togglePlot(id) {

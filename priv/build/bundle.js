@@ -61,9 +61,10 @@ webpackJsonp([0],[
 	        series: {
 	          shadowSize: 0 },
 	        legend: {
-	          position: "se",
+	          position: "sw",
 	          labelFormatter: this.labelFormatter.bind(this),
-	          noColumns: 10
+	          noColumns: 8,
+	          margin: [10, 0]
 	        },
 	        grid: {
 	          hoverable: true
@@ -88,18 +89,27 @@ webpackJsonp([0],[
 	          show: true
 	        }
 	      });
+	      this.updateLegendNoColumns();
 	    }
 	  }, {
 	    key: 'labelFormatter',
 	    value: function labelFormatter(label, series) {
+	      var dataPoint = series.data.slice(-1)[0][1];
+	      var val = Math.round(dataPoint / 10.0) / 100.0;
+	      var unit = "ms";
+	      if (label == "count") {
+	        val = dataPoint;
+	        unit = "calls/s";
+	      }
 	      var id = series.id + this.divid.substr(1);
-	      return '<span class="legend-label" id="' + id + '">' + label + "</span>";
+	      return '<div class="legend-label" id="' + id + '">' + label + ' (' + val + ' ' + unit + ')</div>';
 	    }
 	  }, {
 	    key: 'resize',
 	    value: function resize() {
 	      this.plot.resize();
 	      this.plot.setupGrid();
+	      this.updateLegendNoColumns();
 	      this.plot.draw();
 	      this.hookLegendClickCallbacks();
 	    }
@@ -108,12 +118,27 @@ webpackJsonp([0],[
 	    value: function update(data) {
 	      this.plot.setData(this.createDataSet(data));
 	      this.plot.setupGrid();
+	      this.updateLegendNoColumns();
 	      this.plot.draw();
 	      this.hookLegendClickCallbacks();
 	    }
 	  }, {
 	    key: 'close',
 	    value: function close(data) {}
+	
+	    // "reactive" legend
+	
+	  }, {
+	    key: 'updateLegendNoColumns',
+	    value: function updateLegendNoColumns() {
+	      var opts = this.plot.getOptions();
+	      var len = this.lines.length;
+	      var w = this.plot.width();
+	      var seriesLabelWidth = 117;
+	      var units = Math.floor(w / seriesLabelWidth);
+	      var exp = Math.max(0, Math.ceil(len / units) - 1);
+	      opts.legend.noColumns = len / Math.pow(2, exp);
+	    }
 	  }, {
 	    key: 'togglePlot',
 	    value: function togglePlot(id) {
