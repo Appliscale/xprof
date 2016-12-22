@@ -27,7 +27,7 @@ class ACModal extends React.Component {
       this.cleared = true;
     }
     this.state.funs = data;
-    this.state.position = -1;
+    this.state.position = data.length == 1 ? 0 : -1;
     this.setState(this.state);
   }
 
