@@ -12,8 +12,11 @@ class App extends React.Component {
     super(props);
   }
 
-  addGraph(fun) {
-    this.refs.graphPanel.addGraph(fun);
+  addGraph(query) {
+    this.refs.graphPanel.addGraph(query);
+  }
+
+  clearFunctionBrowser() {
     this.refs.functionBrowser.clear();
   }
 
@@ -32,7 +35,7 @@ class App extends React.Component {
             <FunctionBrowser ref='functionBrowser' addGraph={this.addGraph.bind(this)}/>
           </div>
         </nav>
-        <GraphPanel ref='graphPanel'/>
+        <GraphPanel ref='graphPanel' clearFunctionBrowser={this.clearFunctionBrowser.bind(this)}/>
       </div>
     );
   }

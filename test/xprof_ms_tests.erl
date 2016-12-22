@@ -4,6 +4,24 @@
 
 -define(M, xprof_ms).
 
+heuristic_test_() ->
+    [?_assertEqual(
+        {mfa, 'm.m', f, 1},
+        ?M:fun2ms("m.m:f/1")),
+     ?_assertEqual(
+        {mfa, 'M@:f', f, 1},
+        ?M:fun2ms("M@:f:f/1")),
+     ?_assertMatch(
+        {error,"expression is not an xprof match-spec fun" ++ _},
+        ?M:fun2ms(":f/1")),
+     ?_assertMatch(
+        {error,"expression is not an xprof match-spec fun" ++ _},
+        ?M:fun2ms("m:/1")),
+     ?_assertEqual(
+        {error,"syntax error before: '/' at column 4"},
+        ?M:fun2ms("m:f/"))
+    ].
+
 tokens_test_() ->
     [?_assertEqual(
         {error,"expression is not an xprof match-spec fun []"},

@@ -1,8 +1,32 @@
 -module(xprof_ms).
 
--compile(export_all).
+-export([fun2ms/1]).
 
+-spec fun2ms(string()) -> {mfa, module(), atom(), integer()}
+                        | {ms, module(), atom(), tuple()}
+                        | {error, string()}.
 fun2ms(Str) ->
+    %% first try a simple heuristics that resembles the logic in
+    %% `xprof_vm_info:get_available_funs/1'
+
+    %% the difference is that for atoms (module/funcion name) with special
+    %% characters the above function uses simply list_to_atom which does not
+    %% require the atom to be single-quoted, while the below `erl_scan' does
+    %% require single quotes.
+    %% TODO: replace this heuristic with proper Elixir parsing
+    try
+        {match, [M, F, A]} =
+            re:run(Str, "^(.+):(.+)/(\\d+)$", [{capture, all_but_first, list}]),
+        {mfa,
+         list_to_existing_atom(M),
+         list_to_existing_atom(F),
+         list_to_integer(A)}
+    catch _:_ ->
+            fun2ms_erl(Str)
+    end.
+
+
+fun2ms_erl(Str) ->
     try
         case tokens(Str) of
             {mfa, _M, _F, _Arity} = MFA ->

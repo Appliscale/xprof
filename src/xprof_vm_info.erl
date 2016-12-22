@@ -18,8 +18,11 @@ get_available_funs(Query) ->
             case is_module(ModBin) of
                 {true, Mod} ->
                     Funs = get_all_functions(Mod),
+                    %% match instead on "mod:fun/" if value seems to be a
+                    %% match-spec fun of the form "mod:fun(..."
+                    FunPrefix = re:replace(Rest, "\\(.*", "/", [{return, list}]),
                     [[Mod, Fun, Arity]
-                     || {Fun, Arity} <- filter_funs(binary_to_list(Rest), Funs)];
+                     || {Fun, Arity} <- filter_funs(FunPrefix, Funs)];
                 false ->
                     []
             end;
