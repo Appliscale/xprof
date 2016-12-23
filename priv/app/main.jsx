@@ -1,13 +1,13 @@
-import 'jquery';
-import React from 'react';
+import "jquery";
+import React from "react";
 
-import 'Flot';
-import 'bootswatch/flatly/bootstrap.css';
+import "Flot";
+import "bootswatch/flatly/bootstrap.css";
 
-import Graph from './graph.jsx'
-import TracingSwitch from './tracing_switch.jsx'
-import GraphPanel from './graph_panel.jsx'
-import FunctionBrowser from './function_browser.jsx'
+import Graph from "./graph.jsx";
+import TracingSwitch from "./tracing_switch.jsx";
+import GraphPanel from "./graph_panel.jsx";
+import FunctionBrowser from "./function_browser.jsx";
 
 class App extends React.Component {
   constructor(props) {
@@ -34,10 +34,10 @@ class App extends React.Component {
 
           <div className="navbar-collapse collapse" id="navbar-collapsible">
             <TracingSwitch/>
-            <FunctionBrowser ref='functionBrowser' addGraph={this.addGraph.bind(this)}/>
+            <FunctionBrowser ref="functionBrowser" addGraph={this.addGraph.bind(this)}/>
           </div>
         </nav>
-        <GraphPanel ref='graphPanel' clearFunctionBrowser={this.clearFunctionBrowser.bind(this)}/>
+        <GraphPanel ref="graphPanel" clearFunctionBrowser={this.clearFunctionBrowser.bind(this)}/>
       </div>
     );
   }
@@ -45,5 +45,5 @@ class App extends React.Component {
 
 React.render(
   <App/>,
-  document.getElementById('main-container')
+  document.getElementById("main-container")
 );

@@ -1,7 +1,7 @@
-import 'underscore';
-import React from 'react';
+import "underscore";
+import React from "react";
 
-import Utils from './utils.js';
+import Utils from "./utils.js";
 
 class ACModal extends React.Component {
   constructor(props) {
@@ -14,10 +14,11 @@ class ACModal extends React.Component {
   }
 
   componentDidUpdate() {
-    /* check if we need to scroll up because list of funs was reloaded */
-    if(this.cleared) {
+    // Check if we need to scroll up because list of funs was reloaded.
+    if (this.cleared) {
       var node = React.findDOMNode(this.refs.suggestionsPanel);
-      if(node) {
+
+      if (node) {
         node.scrollTop = 0;
         this.cleared = false;
       }
@@ -25,11 +26,13 @@ class ACModal extends React.Component {
   }
 
   displayFuns(data) {
-    if(data.length == 0) {
+    if (data.length === 0) {
       this.cleared = true;
     }
+
     this.state.funs = data;
     this.state.position = -1;
+
     this.setState(this.state);
   }
 
@@ -41,7 +44,7 @@ class ACModal extends React.Component {
   moveHighlight(delta) {
     var targetPosition = this.state.position + delta;
 
-    if(targetPosition > 0 || targetPosition < this.state.funs.length){
+    if (targetPosition > 0 || targetPosition < this.state.funs.length) {
       this.state.position = targetPosition;
       this.setState(this.state);
     }
@@ -51,7 +54,7 @@ class ACModal extends React.Component {
     var fun = null;
     var pos = this.state.position;
 
-    if(pos != -1) {
+    if (pos !== -1) {
       fun = this.state.funs[pos];
     }
 
@@ -65,11 +68,11 @@ class ACModal extends React.Component {
     var width, height;
 
     for (let i = 0; i < mfas.length && i < 100; i++) {
-
-      if(i == this.state.position)
+      if (i === this.state.position) {
         highlightClass = "row-highlight";
-      else
+      } else {
         highlightClass = "";
+      }
 
       rows.push(
         <tr className={highlightClass} key={funs[i]}
@@ -84,15 +87,17 @@ class ACModal extends React.Component {
     if (funs.length > 0) {
       return (
         <div ref="suggestionsPanel" className="panel panel-default suggestions-panel"
-             style={{top:height,width:width}}>
+             style={{ top: height, width: width }}>
           <table className="table table-striped">
             <tbody>
               {rows}
             </tbody>
           </table>
-        </div>)
-    } else
-    return (<div></div>);
+        </div>
+      );
+    } else {
+      return (<div></div>);
+    }
   }
 }
 
@@ -100,60 +105,70 @@ export default class FunctionBrowser extends React.Component {
 
   constructor(props) {
     super(props);
-    this.state = {value: ""};
+    this.state = { value: "" };
   }
 
   checkInput(input) {
-    /* for now this is mostly just a placeholder to check function browser input
-       whether it is suitable to add a graph */
-    if(input)
+    // For now this is mostly a placeholder to check function browser input, whether it is suitable to add a graph.
+
+    if (input) {
       return input;
-    else
+    } else {
       return null;
+    }
   }
 
   handleKeyDown(e) {
-    var mod = null, fun = null, arity =null;
+    var mod = null, fun = null, arity = null;
     var enteredQuery;
 
-    switch(e.keyCode) {
-      case 27: /* ESC */
-        /* erase everything */
+    switch (e.keyCode) {
+      // ESC
+      case 27:
+        // Erase everything.
         this.clear();
         break;
-      case 13: /* RETURN */
-        /* submit function or try to complete using selected fun */
+
+      // RETURN
+      case 13:
+        // Submit function or try to complete using selected fun.
         e.preventDefault();
 
         enteredQuery = this.checkInput(e.target.value);
-        if(enteredQuery)
+        if (enteredQuery) {
           this.props.addGraph(enteredQuery);
-        else
+        } else {
           this.completeSearch();
+        }
         break;
-      case 9: /* TAB */
-        /* try to complete using selected suggestion*/
+
+      // TAB
+      case 9:
+        // Try to complete using selected suggestion.
         e.preventDefault();
         this.completeSearch();
         break;
-      case 38: /* ARROW UP */
-        /* select next fun from the list */
+
+      // ARROW UP
+      case 38:
+        // Select next fun from the list.
         this.refs.acm.moveHighlight(-1);
         break;
-      case 40: /* ARROW DOWN */
-        /* select previous fun from the list */
+
+      // ARROW DOWN
+      case 40:
+        // Select previous fun from the list.
         this.refs.acm.moveHighlight(1);
         break;
     }
   }
 
   handleChange(event) {
-    this.setState({value: event.target.value});
-    if (event.target.value != "") {
-      $.getJSON("/api/funs", {query: event.target.value},
-                this.funsSuccess.bind(this));
-    }
-    else {
+    this.setState({ value: event.target.value });
+
+    if (event.target.value !== "") {
+      $.getJSON("/api/funs", { query: event.target.value }, this.funsSuccess.bind(this));
+    } else {
       this.refs.acm.displayFuns([]);
     }
   }
@@ -166,9 +181,10 @@ export default class FunctionBrowser extends React.Component {
     var highlightedMFA = this.refs.acm.highlightedFun();
     var funStr;
 
-    if(highlightedMFA) {
+    if (highlightedMFA) {
       funStr = Utils.formatMA(highlightedMFA);
       $(this.getSearchBox()).val(funStr);
+
       this.refs.acm.displayFuns([]);
     }
   }
@@ -179,8 +195,9 @@ export default class FunctionBrowser extends React.Component {
   }
 
   funsSuccess(data) {
-    if (this.state.value != "")
+    if (this.state.value !== "") {
       this.refs.acm.displayFuns(data);
+    }
   }
 
   render() {
@@ -189,18 +206,18 @@ export default class FunctionBrowser extends React.Component {
 
     return (
       <form className="navbar-form">
-        <div className="form-group" style={{display:"inline"}}>
-          <div className="input-group" style={{display:"table"}}>
-            <span className="input-group-addon" style={{width:"1%"}}>
+        <div className="form-group" style={{ display: "inline" }}>
+          <div className="input-group" style={{ display: "table" }}>
+            <span className="input-group-addon" style={{ width: "1%" }}>
               <span className="glyphicon glyphicon-search"></span></span>
-              <input id="searchBox" ref='searchBox' type="text" className="form-control"
+              <input id="searchBox" ref="searchBox" type="text" className="form-control"
                      placeholder="Function" aria-describedby="sizing-addon3"
                      value={value} onKeyDown={this.handleKeyDown.bind(this)}
                      onChange={this.handleChange.bind(this)} autofocus="autofocus"/>
-              <ACModal ref='acm' addGraph={this.props.addGraph}></ACModal>
+              <ACModal ref="acm" addGraph={this.props.addGraph}></ACModal>
           </div>
         </div>
       </form>
-    )
+    );
   }
 }

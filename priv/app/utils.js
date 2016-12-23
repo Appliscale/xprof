@@ -13,10 +13,10 @@ export default class Utils {
 
   static formatMFA(MFA) {
     if (MFA.length !== 3) {
-      throw new Error(`Unexpected argument passed to the formatter (MFA length: ${MFA.length}).`)
+      throw new Error(`Unexpected argument passed to the formatter (MFA length: ${MFA.length}).`);
     }
 
-    if (typeof(MFA[0]) !== "string") {
+    if (typeof (MFA[0]) !== "string") {
       throw new Error("Module name is not a string.");
     }
 
@@ -24,7 +24,7 @@ export default class Utils {
       throw new Error("Module name is an empty string.");
     }
 
-    if (typeof(MFA[1]) !== "string") {
+    if (typeof (MFA[1]) !== "string") {
       throw new Error("Function name is not a string.");
     }
 
@@ -40,6 +40,6 @@ export default class Utils {
       MFA[1] = `'${MFA[1]}'`;
     }
 
-    return `${MFA[0]}:${MFA[1]}/${MFA[2]}`
+    return `${MFA[0]}:${MFA[1]}/${MFA[2]}`;
   }
 }

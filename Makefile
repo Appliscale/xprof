@@ -12,7 +12,9 @@ npm:
 bower: npm
 	cd priv; $(BIN_DIR)/bower install
 
-check_front_end: bower
+bootstrap_front_end: bower
+
+check_front_end:
 	cd priv; $(BIN_DIR)/eslint *.json app/*.jsx app/*.js test/*.js
 
 test_front_end: check_front_end
@@ -28,4 +30,4 @@ test: compile
 	./rebar3 do eunit -c, ct -c, cover
 
 
-.PHONY=compile dev bower webpack webpack_autoreload test npm
+.PHONY=compile dev npm bower bootstrap_front_end check_front_end test_front_end webpack webpack_autoreload test

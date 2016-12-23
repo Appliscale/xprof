@@ -1,13 +1,14 @@
-import 'underscore';
-import React from 'react';
+import "underscore";
+import React from "react";
 
-import FlotGraph from  "./graph_flot.jsx"
+import FlotGraph from "./graph_flot.jsx";
 
 export default class CallsTracer extends React.Component {
   constructor(props) {
     super(props);
+
     this.state = {
-      capture_id:null,
+      capture_id: null,
       offset: 0,
       items: []
     };
@@ -46,9 +47,10 @@ export default class CallsTracer extends React.Component {
 
   handleRowExpandClick(ref, e) {
     e.preventDefault();
+
     var target_row = React.findDOMNode(this.refs[ref]);
 
-    if($(target_row).data("expanded")) {
+    if ($(target_row).data("expanded")) {
       $(target_row).data("expanded", false);
       $(target_row).removeClass("row-expanded");
       $(target_row).addClass("row-normal");
@@ -74,15 +76,14 @@ export default class CallsTracer extends React.Component {
       }
     }).success(function(e) {
       var sortedItems = e.items.sort();
-      var lastId = sortedItems.length == 0 ? this.state.offset : _.last(sortedItems).id;
+      var lastId = sortedItems.length === 0 ? this.state.offset : _.last(sortedItems).id;
 
       this.state.threshold = e.threshold;
 
-      if(this.state.capture_id == e.capture_id) {
+      if (this.state.capture_id === e.capture_id) {
         Array.prototype.push.apply(this.state.items, sortedItems);
-        this.state.offset    = lastId;
-      }
-      else{
+        this.state.offset = lastId;
+      } else {
         this.state.capture_id = e.capture_id;
         this.state.offset = lastId;
         this.state.items = sortedItems;
@@ -91,19 +92,21 @@ export default class CallsTracer extends React.Component {
       this.setState(this.state);
 
     }.bind(this)).done(function() {
-      this.state.timeoutRef = setTimeout(this.getCaptureData.bind(this),1000);
+      this.state.timeoutRef = setTimeout(this.getCaptureData.bind(this), 1000);
     }.bind(this));
   }
 
   render() {
     var items = [];
-    for(var i=0;i < this.state.items.length;i++) {
+
+    for (var i = 0; i < this.state.items.length; ++i) {
       var item = this.state.items[i];
       var ref = this.state.capture_id + "_" + item.id;
+
       items.push(
         <tr key={ref} ref={ref} data-expanded="false" className="row-normal">
           <td>
-            <button onClick={this.handleRowExpandClick.bind(this,ref)} type="button"
+            <button onClick={this.handleRowExpandClick.bind(this, ref)} type="button"
                     className="btn btn-default">
               <span className="expand-chevron glyphicon glyphicon-chevron-right"
                     aria-hidden="true">
@@ -111,17 +114,15 @@ export default class CallsTracer extends React.Component {
             </button>
           </td>
           <td>{item.id}</td>
-          <td>{item.call_time} us</td>
+          <td>{item.call_time} &micro;s</td>
           <td>{item.pid}</td>
-          <td style={{maxWidth:"500px"}}>
-            <div className="code-longbox"
-                 style={{margin:0}}>
+          <td style={{ maxWidth: "500px" }}>
+            <div className="code-longbox" style={{ margin: 0 }}>
               {item.args}
             </div>
           </td>
-          <td style={{maxWidth:"500px"}}>
-            <div className="code-longbox"
-                 style={{margin:0}}>
+          <td style={{ maxWidth: "500px" }}>
+            <div className="code-longbox" style={{ margin: 0 }}>
               {item.res}
             </div>
           </td>
@@ -129,21 +130,22 @@ export default class CallsTracer extends React.Component {
     }
 
     var table = "";
-    if(items.length > 0 ) {
-      table =
-      <table className="table table-hover table-striped">
-        <thead>
-          <th></th>
-          <th>Id</th>
-          <th>Call time</th>
-          <th>Pid</th>
-          <th>Args</th>
-          <th>Response</th>
-        </thead>
-        <tbody>
-          {items}
-        </tbody>
-      </table>;
+    if (items.length > 0) {
+      table = (
+        <table className="table table-hover table-striped">
+          <thead>
+            <th></th>
+            <th>Id</th>
+            <th>Call time</th>
+            <th>Pid</th>
+            <th>Args</th>
+            <th>Response</th>
+          </thead>
+          <tbody>
+            {items}
+          </tbody>
+        </table>
+      );
     }
 
     return (
@@ -152,7 +154,6 @@ export default class CallsTracer extends React.Component {
           Slow calls tracing
         </div>
         <div className="panel-body">
-
           <form className="form-inline">
             <div className="form-group">
               <div className="input-group">
@@ -162,8 +163,7 @@ export default class CallsTracer extends React.Component {
                 <div className="input-group-addon">ms</div>
               </div>
             </div>
-            <span>   </span>
-
+            <span></span>
             <div className="form-group">
               <div className="input-group">
                 <div className="input-group-addon">Limit</div>
@@ -172,13 +172,13 @@ export default class CallsTracer extends React.Component {
                 <div className="input-group-addon">calls</div>
               </div>
             </div>
-            <span>   </span>
-
+            <span></span>
             <button type="submit" onClick={this.handleClick.bind(this)}
                     className="btn btn-primary">Catch</button>
           </form>
         </div>
         {table}
-      </div>)
+      </div>
+    );
   }
 }
