@@ -1,4 +1,5 @@
 import React from 'react';
+
 import Graph from './graph.jsx'
 
 export default class GraphPanel extends React.Component {

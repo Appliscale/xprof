@@ -30,7 +30,9 @@ start_cowboy() ->
 cowboy_routes() ->
     [{'_', [{"/api/:what", xprof_web_handler, []},
             {"/build/[...]", cowboy_static, {priv_dir, ?APP, "build"}},
-            {"/", cowboy_static, {priv_file, ?APP, "build/index.html"}}
+            {"/styles/[...]", cowboy_static, {priv_dir, ?APP, "styles"}},
+            {"/img/[...]", cowboy_static, {priv_dir, ?APP, "img"}},
+            {"/", cowboy_static, {priv_file, ?APP, "index.html"}}
            ]}].
 
 stop_cowboy() ->

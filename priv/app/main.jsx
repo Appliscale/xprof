@@ -1,7 +1,9 @@
-import React from 'react';
 import 'jquery';
-import 'bootswatch/flatly/bootstrap.css';
+import React from 'react';
+
 import 'Flot';
+import 'bootswatch/flatly/bootstrap.css';
+
 import Graph from './graph.jsx'
 import TracingSwitch from './tracing_switch.jsx'
 import GraphPanel from './graph_panel.jsx'
@@ -26,7 +28,7 @@ class App extends React.Component {
         <nav className="navbar navbar-default navbar-fixed-top">
           <div className="navbar-header">
             <a className="navbar-brand" href="#">
-              <img src="build/img/xprof_logo.png" height="45px"/>
+              <img src="img/xprof_logo.png" height="45px"/>
             </a>
           </div>
 
