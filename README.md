@@ -52,15 +52,25 @@ defp deps do
   end
 ```
 
+## Keyboard shortcuts
+
+- **UP**/**DOWN** arrows: select previous/next item in the dropdown suggestion
+  list
+- **TAB**: if no suggetion is selected yet auto-complete to longest common
+  prefix of dropdown list items. Otherwise copy the selected item to the search
+  box and clear the dropdown list.
+- **ENTER**: start tracing either the selected suggestion if there is any or the
+  expression in the search box.
+
 ## Configuration
 
 You can configure `xprof` by changing its application variables:
 
 Key         | Default     | Description
 :-----------|:------------|:-----------
-port        |7890         |Port for the web interface
+`port`      |7890         |Port for the web interface
 
-## `xprof` flavoured match-spec funs
+## XProf flavoured match-spec funs
 
 **CAUTION: Experimental support (WIP).**
 
@@ -120,8 +130,8 @@ served by cowboy server (xprof's dependency).
 
 To develop `xprof` in convenience following setup is recommended.
 
-In the first terminal window start Erlang `xprof` by calling `make dev`.
-The  _sync_ app will be started, It automatically reloads erlang modules that
+In the first terminal window start Erlang `xprof` by calling `make dev`. The
+_sync_ app will also be started. It automatically reloads erlang modules that
 have changed, so you don't need to recompile everytime something changed.
 
 ```bash
