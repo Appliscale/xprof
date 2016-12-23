@@ -2864,13 +2864,18 @@ webpackJsonp([0],[
 	      }
 	    }
 	  }, {
+	    key: 'getFuns',
+	    value: function getFuns() {
+	      return this.state.funs.map(ACModal.formatFun);
+	    }
+	  }, {
 	    key: 'displayFuns',
 	    value: function displayFuns(data) {
 	      if (data.length == 0) {
 	        this.cleared = true;
 	      }
 	      this.state.funs = data;
-	      this.state.position = -1;
+	      this.state.position = data.length == 1 ? 0 : -1;
 	      this.setState(this.state);
 	    }
 	  }, {
@@ -2889,6 +2894,9 @@ webpackJsonp([0],[
 	        this.setState(this.state);
 	      }
 	    }
+	
+	    /* highlightedFun(): string | null; */
+	
 	  }, {
 	    key: 'highlightedFun',
 	    value: function highlightedFun() {
@@ -2896,7 +2904,7 @@ webpackJsonp([0],[
 	      var pos = this.state.position;
 	
 	      if (pos != -1) {
-	        fun = this.state.funs[pos];
+	        fun = ACModal.formatFun(this.state.funs[pos]);
 	      }
 	
 	      return fun;
@@ -2990,15 +2998,13 @@ webpackJsonp([0],[
 	          break;
 	        case 13:
 	          /* RETURN */
-	          /* submit function or try to complete using selected fun */
+	          /* submit either selected suggestion or content of textbox  */
 	          e.preventDefault();
-	
-	          enteredQuery = this.checkInput(e.target.value);
-	          if (enteredQuery) this.props.addGraph(enteredQuery);else this.completeSearch();
+	          this.submitFun(e.target.value);
 	          break;
 	        case 9:
 	          /* TAB */
-	          /* try to complete using selected suggestion*/
+	          /* try to complete using selected suggestion */
 	          e.preventDefault();
 	          this.completeSearch();
 	          break;
@@ -3030,15 +3036,31 @@ webpackJsonp([0],[
 	      return _react2.default.findDOMNode(this.refs.searchBox);
 	    }
 	  }, {
+	    key: 'submitFun',
+	    value: function submitFun(input) {
+	      var highlightedFun = this.refs.acm.highlightedFun();
+	
+	      if (highlightedFun && highlightedFun.startsWith(input)) {
+	        this.props.addGraph(highlightedFun);
+	      } else {
+	        var enteredQuery = this.checkInput(input);
+	        if (enteredQuery) this.props.addGraph(enteredQuery);
+	      }
+	    }
+	  }, {
 	    key: 'completeSearch',
 	    value: function completeSearch() {
 	      var highlightedFun = this.refs.acm.highlightedFun();
-	      var funStr;
 	
 	      if (highlightedFun) {
-	        funStr = ACModal.formatFun(highlightedFun);
-	        $(this.getSearchBox()).val(funStr);
+	        $(this.getSearchBox()).val(highlightedFun);
 	        this.refs.acm.displayFuns([]);
+	      } else {
+	        var suggestedFuns = this.refs.acm.getFuns();
+	        if (suggestedFuns.length > 0) {
+	          var prefix = this.commonArrayPrefix(suggestedFuns);
+	          $(this.getSearchBox()).val(prefix);
+	        }
 	      }
 	    }
 	  }, {
@@ -3051,6 +3073,23 @@ webpackJsonp([0],[
 	    key: 'funsSuccess',
 	    value: function funsSuccess(data) {
 	      if (this.state.value != "") this.refs.acm.displayFuns(data);
+	    }
+	  }, {
+	    key: 'commonArrayPrefix',
+	    value: function commonArrayPrefix(sortedArray) {
+	      var string1 = sortedArray[0];
+	      var string2 = sortedArray[sortedArray.length - 1];
+	      return this.commonPrefix(string1, string2);
+	    }
+	  }, {
+	    key: 'commonPrefix',
+	    value: function commonPrefix(string1, string2) {
+	      var len = string1.length;
+	      var i = 0;
+	
+	      while (i < len && string1.charAt(i) === string2.charAt(i)) {
+	        i++;
+	      }return string1.substring(0, i);
 	    }
 	  }, {
 	    key: 'render',
