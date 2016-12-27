@@ -1,11 +1,11 @@
-import React from 'react';
+import React from "react";
 
-import Graph from './graph.jsx'
+import Graph from "./graph.jsx";
 
 export default class GraphPanel extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {funs: []};
+    this.state = { funs: [] };
   }
 
   componentDidMount() {
@@ -21,12 +21,11 @@ export default class GraphPanel extends React.Component {
   startMonitoring(query) {
     $.ajax({
       url: "/api/mon_start",
-      data: {query: query}
+      data: { query: query }
     }).success(function() {
       this.props.clearFunctionBrowser();
       this.getFunsList();
     }.bind(this));
-
   }
 
   addGraph(query) {
@@ -69,10 +68,10 @@ export default class GraphPanel extends React.Component {
       graphsPanels.push(
         <div key={funs[i]} className="row">
           <div className="col-md-12">
-            <Graph removeGraph={this.removeGraph.bind(this)}  fun={funs[i]}/>
+            <Graph removeGraph={this.removeGraph.bind(this)} fun={funs[i]}/>
           </div>
         </div>
-      )
+      );
     }
 
     return (<div className="container-fluid">{graphsPanels}</div>);
