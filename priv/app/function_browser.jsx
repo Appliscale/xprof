@@ -1,5 +1,7 @@
-import React from 'react';
 import 'underscore';
+import React from 'react';
+
+import Utils from './utils.js';
 
 class ACModal extends React.Component {
   constructor(props) {
@@ -31,8 +33,8 @@ class ACModal extends React.Component {
     this.setState(this.state);
   }
 
-  handleFunClick(fun, e) {
-    var query = ACModal.formatFun(fun);
+  handleFunClick(MFA, e) {
+    var query = Utils.formatMFA(MFA);
     this.props.addGraph(query);
   }
 
@@ -56,17 +58,13 @@ class ACModal extends React.Component {
     return fun;
   }
 
-  static formatFun(fun) {
-    return `${fun[0]}:${fun[1]}/${fun[2]}`
-  }
-
   render() {
-    var funs = this.state.funs;
+    var mfas = this.state.funs;
     var rows = [];
     var highlightClass = "";
     var width, height;
 
-    for (let i = 0; i < funs.length && i < 100; i++) {
+    for (let i = 0; i < mfas.length && i < 100; i++) {
 
       if(i == this.state.position)
         highlightClass = "row-highlight";
@@ -76,7 +74,7 @@ class ACModal extends React.Component {
       rows.push(
         <tr className={highlightClass} key={funs[i]}
             onClick={this.handleFunClick.bind(this, funs[i])}>
-          <td>{ACModal.formatFun(funs[i])}</td>
+          <td>{Utils.formatMFA(mfas[i])}</td>
         </tr>);
     }
 
@@ -165,11 +163,11 @@ export default class FunctionBrowser extends React.Component {
   }
 
   completeSearch() {
-    var highlightedFun = this.refs.acm.highlightedFun();
+    var highlightedMFA = this.refs.acm.highlightedFun();
     var funStr;
 
-    if(highlightedFun) {
-      funStr = ACModal.formatFun(highlightedFun);
+    if(highlightedMFA) {
+      funStr = Utils.formatMA(highlightedMFA);
       $(this.getSearchBox()).val(funStr);
       this.refs.acm.displayFuns([]);
     }

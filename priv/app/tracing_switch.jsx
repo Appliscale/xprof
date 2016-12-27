@@ -1,5 +1,5 @@
-import React from 'react';
 import 'underscore';
+import React from 'react';
 
 export default class TracingSwitch extends React.Component {
   constructor(props) {
@@ -38,9 +38,9 @@ export default class TracingSwitch extends React.Component {
   }
 
   render() {
-    var symbol   = "glyphicon glyphicon-" + (this.state.tracing ? "pause" : "record");
+    var symbol = "glyphicon glyphicon-" + (this.state.tracing ? "pause" : "record");
     var btnColor = "btn btn-" + (this.state.tracing ? "danger" : "success");
-    var text     = this.state.tracing ? "Pause tracing" : "Trace all";
+    var text = this.state.tracing ? "Pause tracing" : "Trace all";
 
     return (
       <form className="navbar-form navbar-left" role="search">

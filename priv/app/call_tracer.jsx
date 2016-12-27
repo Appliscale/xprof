@@ -1,5 +1,6 @@
-import React from 'react';
 import 'underscore';
+import React from 'react';
+
 import FlotGraph from  "./graph_flot.jsx"
 
 export default class CallsTracer extends React.Component {

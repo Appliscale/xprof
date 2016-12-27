@@ -4,7 +4,7 @@
   "authors": [
     "Michal Niec <michal.niec@appliscale.io>"
   ],
-  "description": "Visual BEAM profiler",
+  "description": "XProf - BEAM profiler",
   "keywords": [
     "xprof"
   ],

@@ -1,7 +1,10 @@
-import React from 'react';
 import 'underscore';
-import FlotGraph from  "./graph_flot.jsx"
-import CallsTracer from "./call_tracer.jsx"
+import React from 'react';
+
+import FlotGraph from  "./graph_flot.jsx";
+import CallsTracer from "./call_tracer.jsx";
+
+import Utils from "./utils.js";
 
 const UPDATE_INTERVAL = 1000;
 const MAX_DPS = 5 * 60; //10 minutes
@@ -29,7 +32,7 @@ export default class Graph extends React.Component {
   }
 
   render() {
-    var fun = this.props.fun;
+    var MFA = this.props.fun;
     var panelType = "panel panel-default ";
     var errorMsg = "";
 
@@ -45,7 +48,7 @@ export default class Graph extends React.Component {
                   className="close" data-dismiss="modal"
                   aria-label="Close"><span aria-hidden="true">&times;</span>
           </button>
-          <h3 className="panel-title">{fun[0]}:{fun[1]}/{fun[2]}{errorMsg}</h3>
+          <h3 className="panel-title">{Utils.formatMFA(MFA)}{errorMsg}</h3>
         </div>
         <div className="panel-body">
 

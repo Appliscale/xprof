@@ -1,5 +1,5 @@
-import React from 'react';
 import 'jquery';
+import React from 'react';
 
 import 'Flot';
 import "Flot/jquery.flot.fillbetween.js";
