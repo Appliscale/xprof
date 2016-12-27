@@ -75,8 +75,8 @@ class ACModal extends React.Component {
       }
 
       rows.push(
-        <tr className={highlightClass} key={funs[i]}
-            onClick={this.handleFunClick.bind(this, funs[i])}>
+        <tr className={highlightClass} key={mfas[i]}
+            onClick={this.handleFunClick.bind(this, mfas[i])}>
           <td>{Utils.formatMFA(mfas[i])}</td>
         </tr>);
     }
@@ -84,7 +84,7 @@ class ACModal extends React.Component {
     width = $("#searchBox").css("width");
     height = $("#searchBox").css("height");
 
-    if (funs.length > 0) {
+    if (mfas.length > 0) {
       return (
         <div ref="suggestionsPanel" className="panel panel-default suggestions-panel"
              style={{ top: height, width: width }}>
