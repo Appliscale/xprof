@@ -58,7 +58,7 @@ export default class Graph extends React.Component {
           <div className="container-fluid">
             <div id={this.chartId()} className="chart"></div>
             <br/>
-            <CallsTracer fun={MFA} />
+            <CallsTracer fun={MFA} defaultThreshold={100} defaultLimit={2}/>
           </div>
         </div>
       </div>
