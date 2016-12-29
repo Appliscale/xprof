@@ -32,9 +32,9 @@ export default class GraphPanel extends React.Component {
     this.startMonitoring(query);
   }
 
-  removeGraph(fun) {
+  removeGraph(mfa) {
     var newState = this.state;
-    var index = this.state.funs.indexOf(fun);
+    var index = this.state.funs.indexOf(mfa);
     if (index > -1) {
       newState.funs.splice(index, 1);
     }
@@ -67,7 +67,7 @@ export default class GraphPanel extends React.Component {
       graphsPanels.push(
         <div key={funs[i]} className="row">
           <div className="col-md-12">
-            <Graph removeGraph={this.removeGraph.bind(this)} fun={funs[i]}/>
+            <Graph removeGraph={this.removeGraph.bind(this)} mfa={funs[i]}/>
           </div>
         </div>
       );

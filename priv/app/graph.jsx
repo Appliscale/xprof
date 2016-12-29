@@ -38,7 +38,7 @@ export default class Graph extends React.Component {
   }
 
   render() {
-    var MFA = this.props.fun;
+    var MFA = this.props.mfa;
     var panelType = "panel panel-default ";
     var errorMsg = "";
 
@@ -61,7 +61,7 @@ export default class Graph extends React.Component {
           <div className="container-fluid">
             <div id={this.chartId()} className="chart"></div>
             <br/>
-            <CallsTracer fun={MFA} defaultThreshold={100} defaultLimit={2}/>
+            <CallsTracer mfa={MFA}/>
           </div>
         </div>
       </div>
@@ -75,26 +75,26 @@ export default class Graph extends React.Component {
   }
 
   handleClose() {
-    var fun = this.props.fun;
+    var mfa = this.props.mfa;
 
     clearInterval(this.state.interval);
 
     $.ajax({
       url: "/api/mon_stop",
-      data: { mod: fun[0], fun: fun[1], arity: fun[2] }
-    }).done(() => this.props.removeGraph(fun));
+      data: { mod: mfa[0], fun: mfa[1], arity: mfa[2] }
+    }).done(() => this.props.removeGraph(mfa));
   }
 
   getData() {
-    var fun = this.props.fun;
+    var mfa = this.props.mfa;
     var lastTs = this.state.lastTs;
 
     $.ajax({
       url: "/api/data",
       data: {
-        mod: fun[0],
-        fun: fun[1],
-        arity: fun[2],
+        mod: mfa[0],
+        fun: mfa[1],
+        arity: mfa[2],
         last_ts: lastTs }
     })
       .done(this.handleData.bind(this))
@@ -152,16 +152,16 @@ export default class Graph extends React.Component {
   }
 
   chartId() {
-    var arity = this.props.fun[2];
+    var arity = this.props.mfa[2];
 
     // Guess what? Dots in module name (and Elixir modules contains it - "Elixir.Enum":map/2) are problematic for ID.
-    var safe_module = this.props.fun[0].replace(/\./g, "-");
+    var safe_module = this.props.mfa[0].replace(/\./g, "-");
 
     // And "*" is not a valid character too for an ID.
     if (arity === "*") {
       arity = "x";
     }
 
-    return `chart_${safe_module}_${this.props.fun[1]}_${arity}`;
+    return `chart_${safe_module}_${this.props.mfa[1]}_${arity}`;
   }
 }

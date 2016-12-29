@@ -39,7 +39,8 @@ class CallsTableRow extends React.Component {
             {item.res}
           </div>
         </td>
-      </tr>);
+      </tr>
+    );
   }
 }
 
@@ -88,13 +89,15 @@ class StartStopButton extends React.Component {
         <button type="submit" onClick={this.onClick.bind(this)}
           className="btn btn-danger" disabled={disabled}>
           Stop
-        </button>);
+        </button>
+      );
     } else {
       return (
         <button type="submit" onClick={this.onClick.bind(this)}
           className="btn btn-success" disabled={disabled}>
-        Start
-      </button>);
+          Start
+        </button>
+      );
     }
   }
 }
@@ -120,20 +123,20 @@ export default class CallsTracer extends React.Component {
   }
 
   componentWillUnmount() {
-    clearTimeout(this.timeoutRef);
+    clearTimeout(this.state.timeoutRef);
   }
 
   handleCaptureStart() {
-    let fun = this.props.fun;
-    let threshold = this.state.threshold_value || this.props.defaultThreshold;
-    let limit = this.state.limit_value || this.props.defaultLimit;
+    let mfa = this.props.mfa;
+    let threshold = this.state.threshold_value;
+    let limit = this.state.limit_value;
 
     this.setState({ status: this.Status.RUNNING });
 
     $.ajax({
       url: "/api/capture",
       data: {
-        mod: fun[0], fun: fun[1], arity: fun[2],
+        mod: mfa[0], fun: mfa[1], arity: mfa[2],
         threshold: threshold,
         limit: limit }
     }).done((response) => {
@@ -146,29 +149,35 @@ export default class CallsTracer extends React.Component {
   }
 
   handleCaptureStop() {
-    let fun = this.props.fun;
+    let mfa = this.props.mfa;
     $.ajax({
       url: "api/capture_stop",
-      data: { mod: fun[0], fun: fun[1], arity: fun[2] }
+      data: { mod: mfa[0], fun: mfa[1], arity: mfa[2] }
     }).done((response) => this.setState({ status: this.Status.STOPPED }));
   }
 
   getCaptureData() {
-    var fun = this.props.fun;
+    var mfa = this.props.mfa;
 
     $.ajax({
       url: "/api/capture_data",
       data: {
-        mod: fun[0], fun: fun[1], arity: fun[2],
+        mod: mfa[0], fun: mfa[1], arity: mfa[2],
         offset: this.state.offset
       }
     }).done(function(data, textStatus, jqXHR) {
       if (jqXHR.status === 200) {
         if (this.state.capture_id !== data.capture_id) {
           this.state.items = [];
-          if (data.threshold > 0) { this.state.threshold_value = data.threshold; };
-          if (data.limit > 0) { this.state.limit_value = data.limit; };
           this.state.offset = 0;
+
+          if (data.threshold > 0) {
+            this.state.threshold_value = data.threshold;
+          }
+
+          if (data.limit > 0) {
+            this.state.limit_value = data.limit;
+          }
         } else {
           const sortedItems = data.items.sort();
           const lastId = sortedItems.length === 0 ? this.state.offset : _.last(sortedItems).id;
@@ -179,8 +188,6 @@ export default class CallsTracer extends React.Component {
         this.state.capture_id = data.capture_id;
         this.state.status = data.has_more ? this.Status.RUNNING : this.Status.STOPPED;
 
-      } else if (jqXHR.status !== 404) {
-        this.state.status = this.Status.STOPPED;
       }
 
       this.state.timeoutRef = setTimeout(this.getCaptureData.bind(this), 750);
@@ -222,7 +229,9 @@ export default class CallsTracer extends React.Component {
       error = true;
     }
 
+    const atLeastOneEmptyInput = !threshold || !limit;
     const started = this.state.status === this.Status.RUNNING;
+    const buttonDisabled = error || atLeastOneEmptyInput;
 
     return (
       <div className="panel panel-default">
@@ -236,7 +245,7 @@ export default class CallsTracer extends React.Component {
                 <div className="input-group-addon">Treshold</div>
                 <span className={thresholdClass}>
                 <input ref="thresholdInput" type="text" className="form-control"
-                  id="tresholdInput" placeholder={this.props.defaultThreshold}
+                  id="tresholdInput" placeholder={"1 - 1000000"}
                   value={this.state.threshold_value || ""}
                   onChange={this.handleChange.bind(this, "threshold")}
                   disabled={started}/>
@@ -250,7 +259,7 @@ export default class CallsTracer extends React.Component {
                 <div className="input-group-addon">Limit</div>
                 <span className={limitClass}>
                 <input ref="limitInput" type="text" className="form-control"
-                  id="limitInput" placeholder={this.props.defaultLimit}
+                  id="limitInput" placeholder={"1 - 100"}
                   value={this.state.limit_value || ""}
                   onChange={this.handleChange.bind(this, "limit")}
                   disabled={started}/>
@@ -259,7 +268,7 @@ export default class CallsTracer extends React.Component {
               </div>
             </div>
             <span>
-              <StartStopButton disabled={error} started={started}
+              <StartStopButton disabled={buttonDisabled} started={started}
                 onStart={this.handleCaptureStart.bind(this)}
                 onStop={this.handleCaptureStop.bind(this)}/>
             </span>
