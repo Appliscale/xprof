@@ -11,7 +11,7 @@ export default class TracingSwitch extends React.Component {
     this.state.timeout = window.setTimeout(this.getTracingStatus.bind(this), 1000);
   }
 
-  componentDidUnmount() {
+  componentWillUnmount() {
     window.clearTimeout(this.state.timeout);
   }
 
@@ -22,7 +22,7 @@ export default class TracingSwitch extends React.Component {
       url: "/api/trace_set",
       data: { spec: spec }
     })
-    .error((jqXHR, errorcode) => console.error("Cant set tracing", errorcode))
+    .fail((jqXHR, textStatus, errorThrown) => console.error("Cant set tracing", errorThrown))
     .always(() => {
       clearTimeout(this.state.timeout);
       this.getTracingStatus();
@@ -30,11 +30,14 @@ export default class TracingSwitch extends React.Component {
   }
 
   getTracingStatus() {
-    $.ajax({ url: "/api/trace_status" }).done((data) => {
-      this.state.tracing = data.tracing;
-      this.state.timeout = window.setTimeout(this.getTracingStatus.bind(this), 1000);
-      this.setState(this.state);
-    });
+    $.ajax({ url: "/api/trace_status" })
+      .done((data) => {
+        this.state.tracing = data.tracing;
+        this.setState(this.state);
+      })
+      .always(() =>
+        this.state.timeout = window.setTimeout(this.getTracingStatus.bind(this), 1000)
+      );
   }
 
   render() {

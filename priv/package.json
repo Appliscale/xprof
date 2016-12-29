@@ -36,7 +36,14 @@
     "mocha": "3.2.0",
     "style-loader": "0.13.0",
     "url-loader": "0.5.7",
-    "webpack": "1.12.9"
+    "webpack": "1.14.0",
+    "react-bootstrap": "0.30.7",
+    "react": "15.4.1",
+    "react-dom": "15.4.1",
+    "jquery": "~2.1.4",
+    "underscore": "~1.8.3",
+    "bootstrap": "3.3.7",
+    "bootswatch": "3.3.7"
   },
   "eslintConfig": {
     "env": {

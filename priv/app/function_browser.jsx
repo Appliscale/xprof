@@ -1,5 +1,6 @@
 import "underscore";
 import React from "react";
+import ReactDOM from "react-dom";
 
 import Utils from "./utils.js";
 
@@ -16,7 +17,7 @@ class ACModal extends React.Component {
   componentDidUpdate() {
     // Check if we need to scroll up because list of funs was reloaded.
     if (this.cleared) {
-      var node = React.findDOMNode(this.refs.suggestionsPanel);
+      var node = ReactDOM.findDOMNode(this.refs.suggestionsPanel);
 
       if (node) {
         node.scrollTop = 0;
@@ -174,7 +175,7 @@ export default class FunctionBrowser extends React.Component {
   }
 
   getSearchBox() {
-    return React.findDOMNode(this.refs.searchBox);
+    return ReactDOM.findDOMNode(this.refs.searchBox);
   }
 
   completeSearch() {
@@ -213,7 +214,7 @@ export default class FunctionBrowser extends React.Component {
               <input id="searchBox" ref="searchBox" type="text" className="form-control"
                      placeholder="Function" aria-describedby="sizing-addon3"
                      value={value} onKeyDown={this.handleKeyDown.bind(this)}
-                     onChange={this.handleChange.bind(this)} autofocus="autofocus"/>
+                     onChange={this.handleChange.bind(this)} autoFocus="autofocus"/>
               <ACModal ref="acm" addGraph={this.props.addGraph}></ACModal>
           </div>
         </div>

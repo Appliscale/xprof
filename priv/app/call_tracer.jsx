@@ -1,8 +1,6 @@
 import "underscore";
 import React from "react";
 
-import FlotGraph from "./graph_flot.jsx";
-
 class CallsTableRow extends React.Component {
   constructor(props) {
     super(props);
@@ -50,11 +48,13 @@ class CallsTable extends React.Component {
     return (
       <table className="table table-hover table-striped">
         <thead>
-          <th></th>
-          <th>Call time</th>
-          <th>Pid</th>
-          <th>Args</th>
-          <th>Response</th>
+          <tr>
+            <th></th>
+            <th>Call time</th>
+            <th>Pid</th>
+            <th>Args</th>
+            <th>Response</th>
+          </tr>
         </thead>
         <tbody>
           {this.props.items.map((item) =>
@@ -135,9 +135,8 @@ export default class CallsTracer extends React.Component {
       data: {
         mod: fun[0], fun: fun[1], arity: fun[2],
         threshold: threshold,
-        limit: limit
-      }
-    }).success((response) => {
+        limit: limit }
+    }).done((response) => {
       this.state.capture_id = response.capture_id;
       this.state.offset = 0;
       this.state.items = [];
@@ -150,12 +149,8 @@ export default class CallsTracer extends React.Component {
     let fun = this.props.fun;
     $.ajax({
       url: "api/capture_stop",
-      data: {
-        mod: fun[0], fun: fun[1], arity: fun[2]
-      }
-    }).success((response) =>
-      this.setState({ status: this.Status.STOPPED })
-    );
+      data: { mod: fun[0], fun: fun[1], arity: fun[2] }
+    }).done((response) => this.setState({ status: this.Status.STOPPED }));
   }
 
   getCaptureData() {
@@ -214,20 +209,17 @@ export default class CallsTracer extends React.Component {
   }
 
   render() {
-    let thresholdClass = "";
-    let limitClass = "";
     let error = false;
-
-    const limitVal = this.state.limit_value;
-    if (limitVal && !this.isPostiveIntegerSmallerThan(limitVal, 100)) {
-        limitClass = "has-error";
-        error = true;
+    const limit = this.state.limit_value;
+    if (limit && !this.isPostiveIntegerSmallerThan(limit, 100)) {
+      var limitClass = "has-error";
+      error = true;
     }
 
-    const thresholdVal = this.state.threshold_value;
-    if (thresholdVal && !this.isPostiveIntegerSmallerThan(thresholdVal, 1000000)) {
-        thresholdClass = "has-error";
-        error = true;
+    const threshold = this.state.threshold_value;
+    if (threshold && !this.isPostiveIntegerSmallerThan(threshold, 1000000)) {
+      var thresholdClass = "has-error";
+      error = true;
     }
 
     const started = this.state.status === this.Status.RUNNING;
@@ -245,7 +237,7 @@ export default class CallsTracer extends React.Component {
                 <span className={thresholdClass}>
                 <input ref="thresholdInput" type="text" className="form-control"
                   id="tresholdInput" placeholder={this.props.defaultThreshold}
-                  value={this.state.threshold_value}
+                  value={this.state.threshold_value || ""}
                   onChange={this.handleChange.bind(this, "threshold")}
                   disabled={started}/>
                 </span>
@@ -259,7 +251,7 @@ export default class CallsTracer extends React.Component {
                 <span className={limitClass}>
                 <input ref="limitInput" type="text" className="form-control"
                   id="limitInput" placeholder={this.props.defaultLimit}
-                  value={this.state.limit_value}
+                  value={this.state.limit_value || ""}
                   onChange={this.handleChange.bind(this, "limit")}
                   disabled={started}/>
                 </span>

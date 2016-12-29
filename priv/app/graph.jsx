@@ -14,7 +14,7 @@ const MAX_DPS = 5 * 60;
 export default class Graph extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { dps: [], error: false, lastTs: 0 };
+    this.state = { dps: [], error: false, lastTs: 0, unomunted: true };
   }
 
   componentDidMount() {
@@ -27,11 +27,14 @@ export default class Graph extends React.Component {
     var newState = this.state;
 
     this.state.interval = ref;
+    this.state.unmounted = false;
     this.setState(this.state);
   }
 
   componentWillUnmount() {
     window.removeEventListener("resize", this.handleResize.bind(this));
+    window.clearInterval(this.state.interval);
+    this.state.unmounted = true;
   }
 
   render() {
@@ -79,9 +82,7 @@ export default class Graph extends React.Component {
     $.ajax({
       url: "/api/mon_stop",
       data: { mod: fun[0], fun: fun[1], arity: fun[2] }
-    }).done(
-      () => this.props.removeGraph(fun)
-    );
+    }).done(() => this.props.removeGraph(fun));
   }
 
   getData() {
@@ -94,11 +95,10 @@ export default class Graph extends React.Component {
         mod: fun[0],
         fun: fun[1],
         arity: fun[2],
-        last_ts: lastTs
-      },
-      success: this.handleData.bind(this),
-      error: this.handleDataError.bind(this)
-    });
+        last_ts: lastTs }
+    })
+      .done(this.handleData.bind(this))
+      .fail(this.handleDataError.bind(this));
   }
 
   handleData(data) {
@@ -118,12 +118,17 @@ export default class Graph extends React.Component {
     this.state.lastTs = _.last(sortedData).time;
     this.state.error = false;
 
-    this.setState(this.state);
+    if (!this.unmounted) {
+      this.setState(this.state);
+    }
   }
 
   handleDataError(jqXHR, error) {
     this.state.error = true;
-    this.setState(this.state);
+
+    if (!this.unmounted) {
+      this.setState(this.state);
+    }
   }
 
   // Helpers
