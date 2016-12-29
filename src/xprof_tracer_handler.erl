@@ -9,7 +9,7 @@
 
 -behaviour(gen_server).
 
--export([start_link/1, data/2, capture/3, get_captured_data/2]).
+-export([start_link/1, data/2, capture/3, capture_stop/1, get_captured_data/2]).
 
 -export([trace_mfa_off/1]).
 
@@ -60,13 +60,19 @@ capture(MFA = {M,F,A}, Threshold, Limit) ->
     Name = xprof_lib:mfa2atom(MFA),
     gen_server:call(Name, {capture, Threshold, Limit}).
 
+-spec capture_stop(xprof:mfaid()) -> ok.
+capture_stop(MFA) ->
+    Name = xprof_lib:mfa2atom(MFA),
+    gen_server:call(Name, capture_stop).
+
 %% @doc
 -spec get_captured_data(mfa(), non_neg_integer()) ->
                                empty | {ok,
                                         {Id :: non_neg_integer(),
                                          Threshold :: non_neg_integer(),
-                                         Limit :: non_neg_integer()},
-                                        list(any())}.
+                                         Limit :: non_neg_integer(),
+                                         OrigLimit :: non_neg_integer()
+                                        },list(any())}.
 get_captured_data(MFA, Offset) ->
     Name = xprof_lib:mfa2atom(MFA),
     try
@@ -78,8 +84,9 @@ get_captured_data(MFA, Offset) ->
                                          [['$1', '$2', '$3', '$4', '$5']]
                                        }])),
 
-        [{capture_spec, Id, Threshold, Limit}] = ets:lookup(Name, capture_spec),
-        {ok, {Id, Threshold, Limit}, Items}
+        Res = ets:lookup(Name, capture_spec),
+        [{capture_spec, Id, Threshold, Limit, OrigLimit}] = Res,
+        {ok, {Id, Threshold, Limit, OrigLimit}, Items}
     catch error:badarg ->
             {error, not_found}
     end.
@@ -103,7 +110,20 @@ handle_call({capture, Threshold, Limit}, _From,
                            capture_counter = 1},
     init_new_capture_in_ets(NewState),
     capture_args_trace_on(MFA),
-    {reply, {ok, NewId}, NewState};
+    {Timeout, NewState2} = maybe_make_snapshot(NewState),
+    {reply, {ok, NewId}, NewState2, Timeout};
+handle_call(capture_stop, _From, State = #state{mfa = MFA}) ->
+    capture_args_trace_off(MFA),
+    #state{capture_spec = {Threshold, Limit},
+           name = Name,
+           capture_id = Id} = State,
+    %% update limit to otherwise has_more will return invalid value
+    %% we take ets count to make it idempotent in case 2 instances send stop cmd
+    Count = ets:select_count(Name, [{{{args_res, '_'}, '_'}, [], [true]}]),
+    NewState = State#state{capture_spec = {Threshold, Count}},
+    ets:insert(Name, {capture_spec, Id, Threshold, Count, Limit}),
+    {Timeout, NewState2} = maybe_make_snapshot(NewState),
+    {reply, ok, NewState2, Timeout};
 handle_call(Request, _From, State) ->
     lager:warning("Received unknown message: ~p", [Request]),
     {reply, ignored, State}.
@@ -144,7 +164,7 @@ code_change(_OldVsn, State, _Extra) ->
 
 init_storage(Name) ->
     ets:new(Name, [public, named_table]),
-    ets:insert(Name, {capture_spec, -1, -1, -1}),
+    ets:insert(Name, {capture_spec, -1, -1, -1, -1}),
     hdr_histogram:open(1000000,3).
 
 maybe_make_snapshot(State = #state{name=Name, last_ts=LastTS,
@@ -202,7 +222,7 @@ init_new_capture_in_ets(State) ->
                          [],
                          [true]
                        }]),
-    ets:insert(Name, {capture_spec, Id, Threshold, Limit}).
+    ets:insert(Name, {capture_spec, Id, Threshold, Limit, Limit}).
 
 %% @doc Count the depth of recursion in this process
 put_ts_args(Pid, StartTime, Args) ->

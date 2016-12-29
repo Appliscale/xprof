@@ -17,6 +17,15 @@
     "url": "https://github.com/appliscale/xprof/issues"
   },
   "homepage": "https://github.com/appliscale/xprof",
+  "dependencies" : {
+    "bootswatch": "3.3.7",
+    "bootstrap": "3.3.7",
+    "jquery": "~2.1.4",
+    "react": "15.4.1",
+    "react-dom": "15.4.1",
+    "react-bootstrap": "0.30.7",
+    "underscore": "~1.8.3"
+  },
   "devDependencies": {
     "babel-core": "6.2.1",
     "babel-loader": "6.2.0",
@@ -36,7 +45,7 @@
     "mocha": "3.2.0",
     "style-loader": "0.13.0",
     "url-loader": "0.5.7",
-    "webpack": "1.12.9"
+    "webpack": "1.14.0"
   },
   "eslintConfig": {
     "env": {

@@ -14,7 +14,7 @@ const MAX_DPS = 5 * 60;
 export default class Graph extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { dps: [], error: false, lastTs: 0 };
+    this.state = { dps: [], error: false, lastTs: 0, unomunted: true };
   }
 
   componentDidMount() {
@@ -27,15 +27,18 @@ export default class Graph extends React.Component {
     var newState = this.state;
 
     this.state.interval = ref;
+    this.state.unmounted = false;
     this.setState(this.state);
   }
 
   componentWillUnmount() {
     window.removeEventListener("resize", this.handleResize.bind(this));
+    window.clearInterval(this.state.interval);
+    this.state.unmounted = true;
   }
 
   render() {
-    var MFA = this.props.fun;
+    var MFA = this.props.mfa;
     var panelType = "panel panel-default ";
     var errorMsg = "";
 
@@ -58,7 +61,7 @@ export default class Graph extends React.Component {
           <div className="container-fluid">
             <div id={this.chartId()} className="chart"></div>
             <br/>
-            <CallsTracer fun={fun} />
+            <CallsTracer mfa={MFA}/>
           </div>
         </div>
       </div>
@@ -72,33 +75,30 @@ export default class Graph extends React.Component {
   }
 
   handleClose() {
-    var fun = this.props.fun;
+    var mfa = this.props.mfa;
 
     clearInterval(this.state.interval);
 
     $.ajax({
       url: "/api/mon_stop",
-      data: { mod: fun[0], fun: fun[1], arity: fun[2] }
-    }).done(
-      () => this.props.removeGraph(fun)
-    );
+      data: { mod: mfa[0], fun: mfa[1], arity: mfa[2] }
+    }).done(() => this.props.removeGraph(mfa));
   }
 
   getData() {
-    var fun = this.props.fun;
+    var mfa = this.props.mfa;
     var lastTs = this.state.lastTs;
 
     $.ajax({
       url: "/api/data",
       data: {
-        mod: fun[0],
-        fun: fun[1],
-        arity: fun[2],
-        last_ts: lastTs
-      },
-      success: this.handleData.bind(this),
-      error: this.handleDataError.bind(this)
-    });
+        mod: mfa[0],
+        fun: mfa[1],
+        arity: mfa[2],
+        last_ts: lastTs }
+    })
+      .done(this.handleData.bind(this))
+      .fail(this.handleDataError.bind(this));
   }
 
   handleData(data) {
@@ -118,12 +118,17 @@ export default class Graph extends React.Component {
     this.state.lastTs = _.last(sortedData).time;
     this.state.error = false;
 
-    this.setState(this.state);
+    if (!this.unmounted) {
+      this.setState(this.state);
+    }
   }
 
   handleDataError(jqXHR, error) {
     this.state.error = true;
-    this.setState(this.state);
+
+    if (!this.unmounted) {
+      this.setState(this.state);
+    }
   }
 
   // Helpers
@@ -147,16 +152,16 @@ export default class Graph extends React.Component {
   }
 
   chartId() {
-    var arity = this.props.fun[2];
+    var arity = this.props.mfa[2];
 
     // Guess what? Dots in module name (and Elixir modules contains it - "Elixir.Enum":map/2) are problematic for ID.
-    var safe_module = this.props.fun[0].replace(/\./g, "-");
+    var safe_module = this.props.mfa[0].replace(/\./g, "-");
 
     // And "*" is not a valid character too for an ID.
     if (arity === "*") {
       arity = "x";
     }
 
-    return `chart_${safe_module}_${this.props.fun[1]}_${arity}`;
+    return `chart_${safe_module}_${this.props.mfa[1]}_${arity}`;
   }
 }

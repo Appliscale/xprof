@@ -1,4 +1,5 @@
 import "jquery";
+import ReactDOM from "react-dom";
 import React from "react";
 
 import "Flot";
@@ -43,7 +44,7 @@ class App extends React.Component {
   }
 }
 
-React.render(
+ReactDOM.render(
   <App/>,
   document.getElementById("main-container")
 );

@@ -22,19 +22,19 @@ export default class GraphPanel extends React.Component {
     $.ajax({
       url: "/api/mon_start",
       data: { query: query }
-    }).success(function() {
+    }).done(() => {
       this.props.clearFunctionBrowser();
       this.getFunsList();
-    }.bind(this));
+    });
   }
 
   addGraph(query) {
     this.startMonitoring(query);
   }
 
-  removeGraph(fun) {
+  removeGraph(mfa) {
     var newState = this.state;
-    var index = this.state.funs.indexOf(fun);
+    var index = this.state.funs.indexOf(mfa);
     if (index > -1) {
       newState.funs.splice(index, 1);
     }
@@ -43,10 +43,10 @@ export default class GraphPanel extends React.Component {
 
   getFunsList() {
     $.ajax({
-      url: "/api/mon_get_all",
-      success: this.handleFuns.bind(this),
-      error: this.handleFunsError.bind(this)
-    });
+      url: "/api/mon_get_all" }
+    )
+      .done(this.handleFuns.bind(this))
+      .fail(this.handleFunsError.bind(this));
   }
 
   handleFuns(data) {
@@ -56,7 +56,6 @@ export default class GraphPanel extends React.Component {
   }
 
   handleFunsError(jqXHR, error) {
-    console.error("Getting funs error: ", error);
     window.setTimeout(this.getFunsList.bind(this), 1000);
   }
 
@@ -68,7 +67,7 @@ export default class GraphPanel extends React.Component {
       graphsPanels.push(
         <div key={funs[i]} className="row">
           <div className="col-md-12">
-            <Graph removeGraph={this.removeGraph.bind(this)} fun={funs[i]}/>
+            <Graph removeGraph={this.removeGraph.bind(this)} mfa={funs[i]}/>
           </div>
         </div>
       );
