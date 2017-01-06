@@ -136,7 +136,7 @@ export default class CallsTracer extends React.Component {
     $.ajax({
       url: "/api/capture",
       data: {
-        mod: mfa[0], fun: mfa[1], arity: mfa[2],
+        mod: mfa[0].replace(/'/g, ""), fun: mfa[1], arity: mfa[2],
         threshold: threshold,
         limit: limit }
     }).done((response) => {
@@ -152,7 +152,7 @@ export default class CallsTracer extends React.Component {
     let mfa = this.props.mfa;
     $.ajax({
       url: "api/capture_stop",
-      data: { mod: mfa[0], fun: mfa[1], arity: mfa[2] }
+      data: { mod: mfa[0].replace(/'/g, ""), fun: mfa[1], arity: mfa[2] }
     }).done((response) => this.setState({ status: this.Status.STOPPED }));
   }
 
@@ -162,7 +162,7 @@ export default class CallsTracer extends React.Component {
     $.ajax({
       url: "/api/capture_data",
       data: {
-        mod: mfa[0], fun: mfa[1], arity: mfa[2],
+        mod: mfa[0].replace(/'/g, ""), fun: mfa[1], arity: mfa[2],
         offset: this.state.offset
       }
     }).done(function(data, textStatus, jqXHR) {

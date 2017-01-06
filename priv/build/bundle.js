@@ -1750,7 +1750,7 @@ webpackJsonp([0],[
 	        $.ajax({
 	          url: "/api/data",
 	          data: {
-	            mod: mfa[0],
+	            mod: mfa[0].replace(/'/g, ""),
 	            fun: mfa[1],
 	            arity: mfa[2],
 	            last_ts: lastTs }
@@ -1847,6 +1847,7 @@ webpackJsonp([0],[
 
 	        // Guess what? Dots in module name (and Elixir modules contains it - "Elixir.Enum":map/2) are problematic for ID.
 	        var safe_module = this.props.mfa[0].replace(/\./g, "-");
+	        safe_module = safe_module.replace(/'/g, "");
 
 	        // And "*" is not a valid character too for an ID.
 	        if (arity === "*") {
@@ -2149,7 +2150,7 @@ webpackJsonp([0],[
 	        $.ajax({
 	          url: "/api/capture",
 	          data: {
-	            mod: mfa[0], fun: mfa[1], arity: mfa[2],
+	            mod: mfa[0].replace(/'/g, ""), fun: mfa[1], arity: mfa[2],
 	            threshold: threshold,
 	            limit: limit }
 	        }).done(function (response) {
@@ -2172,7 +2173,7 @@ webpackJsonp([0],[
 	        var mfa = this.props.mfa;
 	        $.ajax({
 	          url: "api/capture_stop",
-	          data: { mod: mfa[0], fun: mfa[1], arity: mfa[2] }
+	          data: { mod: mfa[0].replace(/'/g, ""), fun: mfa[1], arity: mfa[2] }
 	        }).done(function (response) {
 	          return _this6.setState({ status: _this6.Status.STOPPED });
 	        });
@@ -2189,7 +2190,7 @@ webpackJsonp([0],[
 	        $.ajax({
 	          url: "/api/capture_data",
 	          data: {
-	            mod: mfa[0], fun: mfa[1], arity: mfa[2],
+	            mod: mfa[0].replace(/'/g, ""), fun: mfa[1], arity: mfa[2],
 	            offset: this.state.offset
 	          }
 	        }).done(function (data, textStatus, jqXHR) {
