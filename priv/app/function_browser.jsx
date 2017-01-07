@@ -1,5 +1,8 @@
-import React from 'react';
-import 'underscore';
+import "underscore";
+import React from "react";
+import ReactDOM from "react-dom";
+
+import Utils from "./utils.js";
 
 class ACModal extends React.Component {
   constructor(props) {
@@ -12,10 +15,11 @@ class ACModal extends React.Component {
   }
 
   componentDidUpdate() {
-    /* check if we need to scroll up because list of funs was reloaded */
-    if(this.cleared) {
-      var node = React.findDOMNode(this.refs.suggestionsPanel);
-      if(node) {
+    // Check if we need to scroll up because list of funs was reloaded.
+    if (this.cleared) {
+      var node = ReactDOM.findDOMNode(this.refs.suggestionsPanel);
+
+      if (node) {
         node.scrollTop = 0;
         this.cleared = false;
       }
@@ -27,23 +31,24 @@ class ACModal extends React.Component {
   }
 
   displayFuns(data) {
-    if(data.length == 0) {
+    if (data.length === 0) {
       this.cleared = true;
     }
+
     this.state.funs = data;
-    this.state.position = data.length == 1 ? 0 : -1;
+    this.state.position = data.length === 1 ? 0 : -1;
     this.setState(this.state);
   }
 
-  handleFunClick(fun, e) {
-    var query = ACModal.formatFun(fun);
+  handleFunClick(MFA, e) {
+    var query = Utils.formatMFA(MFA);
     this.props.addGraph(query);
   }
 
   moveHighlight(delta) {
     var targetPosition = this.state.position + delta;
 
-    if(targetPosition > 0 || targetPosition < this.state.funs.length){
+    if (targetPosition > 0 || targetPosition < this.state.funs.length) {
       this.state.position = targetPosition;
       this.setState(this.state);
     }
@@ -61,45 +66,43 @@ class ACModal extends React.Component {
     return fun;
   }
 
-  static formatFun(fun) {
-    return `${fun[0]}:${fun[1]}/${fun[2]}`
-  }
-
   render() {
-    var funs = this.state.funs;
+    var mfas = this.state.funs;
     var rows = [];
     var highlightClass = "";
     var width, height;
 
-    for (let i = 0; i < funs.length && i < 100; i++) {
-
-      if(i == this.state.position)
+    for (let i = 0; i < mfas.length && i < 100; i++) {
+      if (i === this.state.position) {
         highlightClass = "row-highlight";
-      else
+      } else {
         highlightClass = "";
+      }
 
       rows.push(
-        <tr className={highlightClass} key={funs[i]}
-            onClick={this.handleFunClick.bind(this, funs[i])}>
-          <td>{ACModal.formatFun(funs[i])}</td>
+        <tr className={highlightClass} key={mfas[i]}
+            onClick={this.handleFunClick.bind(this, mfas[i])}>
+          <td>{Utils.formatMFA(mfas[i])}</td>
         </tr>);
     }
 
     width = $("#searchBox").css("width");
     height = $("#searchBox").css("height");
 
-    if (funs.length > 0) {
+    if (mfas.length > 0) {
       return (
         <div ref="suggestionsPanel" className="panel panel-default suggestions-panel"
-             style={{top:height,width:width}}>
+             style={{ top: height, width: width }}>
           <table className="table table-striped">
             <tbody>
               {rows}
             </tbody>
           </table>
-        </div>)
-    } else
-    return (<div></div>);
+        </div>
+      );
+    } else {
+      return (<div></div>);
+    }
   }
 }
 
@@ -107,61 +110,68 @@ export default class FunctionBrowser extends React.Component {
 
   constructor(props) {
     super(props);
-    this.state = {value: ""};
+    this.state = { value: "" };
   }
 
   checkInput(input) {
-    /* for now this is mostly just a placeholder to check function browser input
-       whether it is suitable to add a graph */
-    if(input)
+    // For now this is mostly a placeholder to check function browser input, whether it is suitable to add a graph.
+
+    if (input) {
       return input;
-    else
+    } else {
       return null;
+    }
   }
 
   handleKeyDown(e) {
-    var mod = null, fun = null, arity =null;
+    var mod = null, fun = null, arity = null;
     var enteredQuery;
 
-    switch(e.keyCode) {
-      case 27: /* ESC */
-        /* erase everything */
+    switch (e.keyCode) {
+      // ESC
+      case 27:
+        // Erase everything.
         this.clear();
         break;
+
       case 13: /* RETURN */
         /* submit either selected suggestion or content of textbox  */
         e.preventDefault();
         this.submitFun(e.target.value);
         break;
+        
       case 9: /* TAB */
         /* try to complete using selected suggestion */
         e.preventDefault();
         this.completeSearch();
         break;
-      case 38: /* ARROW UP */
-        /* select next fun from the list */
+
+      // ARROW UP
+      case 38:
+        // Select next fun from the list.
         this.refs.acm.moveHighlight(-1);
         break;
-      case 40: /* ARROW DOWN */
-        /* select previous fun from the list */
+
+      // ARROW DOWN
+      case 40:
+        // Select previous fun from the list.
         this.refs.acm.moveHighlight(1);
         break;
     }
   }
 
   handleChange(event) {
-    this.setState({value: event.target.value});
-    if (event.target.value != "") {
-      $.getJSON("/api/funs", {query: event.target.value},
-                this.funsSuccess.bind(this));
-    }
-    else {
+    this.setState({ value: event.target.value });
+
+    if (event.target.value !== "") {
+      $.getJSON("/api/funs", { query: event.target.value }, this.funsSuccess.bind(this));
+    } else {
       this.refs.acm.displayFuns([]);
     }
   }
 
   getSearchBox() {
-    return React.findDOMNode(this.refs.searchBox);
+    return ReactDOM.findDOMNode(this.refs.searchBox);
   }
 
   submitFun(input) {
@@ -180,7 +190,8 @@ export default class FunctionBrowser extends React.Component {
     var highlightedFun = this.refs.acm.highlightedFun();
 
     if(highlightedFun) {
-      $(this.getSearchBox()).val(highlightedFun);
+      funStr = Utils.formatMA(highlightedFun);
+      $(this.getSearchBox()).val(funStr);
       this.refs.acm.displayFuns([]);
     } else {
       var suggestedFuns = this.refs.acm.getFuns();
@@ -197,8 +208,9 @@ export default class FunctionBrowser extends React.Component {
   }
 
   funsSuccess(data) {
-    if (this.state.value != "")
+    if (this.state.value !== "") {
       this.refs.acm.displayFuns(data);
+    }
   }
 
   commonArrayPrefix(sortedArray) {
@@ -221,18 +233,18 @@ export default class FunctionBrowser extends React.Component {
 
     return (
       <form className="navbar-form">
-        <div className="form-group" style={{display:"inline"}}>
-          <div className="input-group" style={{display:"table"}}>
-            <span className="input-group-addon" style={{width:"1%"}}>
+        <div className="form-group" style={{ display: "inline" }}>
+          <div className="input-group" style={{ display: "table" }}>
+            <span className="input-group-addon" style={{ width: "1%" }}>
               <span className="glyphicon glyphicon-search"></span></span>
-              <input id="searchBox" ref='searchBox' type="text" className="form-control"
+              <input id="searchBox" ref="searchBox" type="text" className="form-control"
                      placeholder="Function" aria-describedby="sizing-addon3"
                      value={value} onKeyDown={this.handleKeyDown.bind(this)}
-                     onChange={this.handleChange.bind(this)} autofocus="autofocus"/>
-              <ACModal ref='acm' addGraph={this.props.addGraph}></ACModal>
+                     onChange={this.handleChange.bind(this)} autoFocus="autofocus"/>
+              <ACModal ref="acm" addGraph={this.props.addGraph}></ACModal>
           </div>
         </div>
       </form>
-    )
+    );
   }
 }

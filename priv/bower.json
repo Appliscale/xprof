@@ -4,7 +4,7 @@
   "authors": [
     "Michal Niec <michal.niec@appliscale.io>"
   ],
-  "description": "Visual BEAM profiler",
+  "description": "XProf - BEAM profiler",
   "keywords": [
     "xprof"
   ],
@@ -18,11 +18,6 @@
   ],
   "dependencies": {
     "Flot": "flot#~0.8.3",
-    "bootstrap": "3.3.7",
-    "bootswatch": "3.3.7",
-    "jquery": "~2.1.4",
-    "react": "~0.13.3",
-    "underscore": "~1.8.3",
     "flot.tooltip": "0.8.7"
   }
 }

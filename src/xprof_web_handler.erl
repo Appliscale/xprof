@@ -126,6 +126,19 @@ handle_req(<<"capture">>, Req, State) ->
                                     [{<<"content-type">>,
                                       <<"application/json">>}], Json, Req),
     {ok, ResReq, State};
+handle_req(<<"capture_stop">>, Req, State) ->
+    MFA = get_mfa(Req),
+
+    lager:info("Stopping slow calls capturing for ~p", [MFA]),
+
+    {ok, ResReq} =
+        case xprof_tracer_handler:capture_stop(MFA) of
+            ok ->
+                cowboy_req:reply(204, Req);
+            {error, _Reason} ->
+                cowboy_req:reply(500, Req)
+        end,
+    {ok, ResReq, State};
 handle_req(<<"capture_data">>, Req, State) ->
     MFA  = get_mfa(Req),
     {OffsetStr, _} = cowboy_req:qs_val(<<"offset">>, Req),
@@ -135,12 +148,13 @@ handle_req(<<"capture_data">>, Req, State) ->
         case xprof_tracer_handler:get_captured_data(MFA, Offset) of
             {error, not_found} ->
                 cowboy_req:reply(404, Req);
-            {ok, {Id, Threshold, Limit}, Items} ->
+            {ok, {Id, Threshold, Limit, OriginalLimit}, Items} ->
                 ItemsJson = [{args_res2proplist(Item)} || Item <- Items],
                 Json = jsone:encode({[{capture_id, Id},
                                       {threshold, Threshold},
-                                      {limit, Limit},
-                                      {items, ItemsJson}]}),
+                                      {limit, OriginalLimit},
+                                      {items, ItemsJson},
+                                      {has_more, Offset + length(Items) < Limit}]}),
                 cowboy_req:reply(200,
                                  [{<<"content-type">>,
                                    <<"application/json">>}],
@@ -169,5 +183,5 @@ args_res2proplist([Id, Pid, CallTime, Args, Res]) ->
     [{id, Id},
      {pid, list_to_binary(io_lib:format("~p",[Pid]))},
      {call_time, CallTime},
-     {args, list_to_binary(io_lib:format("~p",[Args]))},
+     {args, list_to_binary(io_lib:format("~w",[Args]))},
      {res, list_to_binary(io_lib:format("~p",[Res]))}].

@@ -7,8 +7,10 @@ otp_release:
     - 18.3
     - 17.5
     - R16B03-1
+install:
+    ./rebar3 deps
 script:
     make test
 after_success:
     - ./rebar3 cover
-    - if [ $TRAVIS_OTP_RELEASE = "18.3" ]; then erl -noshell -pa _build/test/lib/*/ebin -eval 'ecoveralls:travis_ci("_build/test/cover/ct.coverdata"), init:stop()'; fi
+    - if [ $TRAVIS_OTP_RELEASE = "18.3" ]; then ./rebar3 coveralls send; fi

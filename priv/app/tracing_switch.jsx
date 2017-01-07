@@ -1,17 +1,17 @@
-import React from 'react';
-import 'underscore';
+import "underscore";
+import React from "react";
 
 export default class TracingSwitch extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {tracing: false};
+    this.state = { tracing: false };
   }
 
   componentDidMount() {
-    this.state.timeout = window.setTimeout(this.getTracingStatus.bind(this),1000);
+    this.state.timeout = window.setTimeout(this.getTracingStatus.bind(this), 1000);
   }
 
-  componentDidUnmount() {
+  componentWillUnmount() {
     window.clearTimeout(this.state.timeout);
   }
 
@@ -20,33 +20,36 @@ export default class TracingSwitch extends React.Component {
 
     $.ajax({
       url: "/api/trace_set",
-      data: {spec: spec}
+      data: { spec: spec }
     })
-    .error((jqXHR, errorcode) => console.error("Cant set tracing", errorcode))
-    .always(function() {
-	    clearTimeout(this.state.timeout);
-	    this.getTracingStatus()
-    }.bind(this))
+    .fail((jqXHR, textStatus, errorThrown) => console.error("Cant set tracing", errorThrown))
+    .always(() => {
+      clearTimeout(this.state.timeout);
+      this.getTracingStatus();
+    });
   }
 
   getTracingStatus() {
-    $.ajax({url: "/api/trace_status"}).done(function(data) {
-      this.state.tracing = data.tracing;
-      this.state.timeout = window.setTimeout(this.getTracingStatus.bind(this), 1000);
-      this.setState(this.state);
-    }.bind(this))
+    $.ajax({ url: "/api/trace_status" })
+      .done((data) => {
+        this.state.tracing = data.tracing;
+        this.setState(this.state);
+      })
+      .always(() =>
+        this.state.timeout = window.setTimeout(this.getTracingStatus.bind(this), 1000)
+      );
   }
 
   render() {
-    var symbol   = "glyphicon glyphicon-" + (this.state.tracing ? "pause" : "record");
+    var symbol = "glyphicon glyphicon-" + (this.state.tracing ? "pause" : "record");
     var btnColor = "btn btn-" + (this.state.tracing ? "danger" : "success");
-    var text     = this.state.tracing ? "Pause tracing" : "Trace all";
+    var text = this.state.tracing ? "Pause tracing" : "Trace all";
 
     return (
       <form className="navbar-form navbar-left" role="search">
-	<button type="button" onClick={this.handleClick.bind(this)} className={btnColor}>
-	  <span className={symbol} aria-hidden="true"></span> {text}
-	</button>
-      </form>)
+        <button type="button" onClick={this.handleClick.bind(this)} className={btnColor}>
+          <span className={symbol} aria-hidden="true"></span> {text}
+        </button>
+      </form>);
   }
 }
