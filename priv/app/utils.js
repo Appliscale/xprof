@@ -12,6 +12,7 @@ export default class Utils {
   }
 
   static formatMFA(MFA) {
+
     if (MFA.length !== 3) {
       throw new Error(`Unexpected argument passed to the formatter (MFA length: ${MFA.length}).`);
     }
@@ -32,14 +33,17 @@ export default class Utils {
       throw new Error("Function name is an empty string.");
     }
 
-    if (!Utils.can_be_unescaped_atom(MFA[0])) {
-      MFA[0] = `'${MFA[0]}'`;
+    let OutMFA = [ MFA[0], MFA[1], MFA[2] ];
+
+    if (!Utils.can_be_unescaped_atom(OutMFA[0])) {
+      OutMFA[0] = `'${OutMFA[0]}'`;
     }
 
-    if (!Utils.can_be_unescaped_atom(MFA[1])) {
-      MFA[1] = `'${MFA[1]}'`;
+    if (!Utils.can_be_unescaped_atom(OutMFA[1])) {
+      OutMFA[1] = `'${OutMFA[1]}'`;
     }
 
-    return `${MFA[0]}:${MFA[1]}/${MFA[2]}`;
+    return `${OutMFA[0]}:${OutMFA[1]}/${OutMFA[2]}`;
   }
+
 }

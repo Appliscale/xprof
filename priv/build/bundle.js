@@ -1865,6 +1865,7 @@ webpackJsonp([0],[
 	
 	        // Guess what? Dots in module name (and Elixir modules contains it - "Elixir.Enum":map/2) are problematic for ID.
 	        var safe_module = this.props.mfa[0].replace(/\./g, "-");
+	        safe_module = safe_module.replace(/'/g, "");
 	
 	        // And "*" is not a valid character too for an ID.
 	        if (arity === "*") {
@@ -2430,6 +2431,7 @@ webpackJsonp([0],[
 	    key: "formatMFA",
 	    value: function () {
 	      function formatMFA(MFA) {
+	
 	        if (MFA.length !== 3) {
 	          throw new Error("Unexpected argument passed to the formatter (MFA length: " + MFA.length + ").");
 	        }
@@ -2450,15 +2452,17 @@ webpackJsonp([0],[
 	          throw new Error("Function name is an empty string.");
 	        }
 	
-	        if (!Utils.can_be_unescaped_atom(MFA[0])) {
-	          MFA[0] = "'" + MFA[0] + "'";
+	        var OutMFA = [MFA[0], MFA[1], MFA[2]];
+	
+	        if (!Utils.can_be_unescaped_atom(OutMFA[0])) {
+	          OutMFA[0] = "'" + OutMFA[0] + "'";
 	        }
 	
-	        if (!Utils.can_be_unescaped_atom(MFA[1])) {
-	          MFA[1] = "'" + MFA[1] + "'";
+	        if (!Utils.can_be_unescaped_atom(OutMFA[1])) {
+	          OutMFA[1] = "'" + OutMFA[1] + "'";
 	        }
 	
-	        return MFA[0] + ":" + MFA[1] + "/" + MFA[2];
+	        return OutMFA[0] + ":" + OutMFA[1] + "/" + OutMFA[2];
 	      }
 	
 	      return formatMFA;
@@ -21405,8 +21409,7 @@ webpackJsonp([0],[
 	        var highlightedFun = this.refs.acm.highlightedFun();
 	
 	        if (highlightedFun) {
-	          funStr = _utils2["default"].formatMA(highlightedFun);
-	          $(this.getSearchBox()).val(funStr);
+	          $(this.getSearchBox()).val(highlightedFun);
 	          this.refs.acm.displayFuns([]);
 	        } else {
 	          var suggestedFuns = this.refs.acm.getFuns();
