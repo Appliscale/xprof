@@ -21,7 +21,7 @@ test_front_end: check_front_end
 	cd priv; $(BIN_DIR)/mocha test/.setup.js test/*.test.js
 
 webpack: test_front_end
-	cd priv; $(BIN_DIR)/webpack
+	cd priv; $(BIN_DIR)/webpack -d
 
 webpack_autoreload: bower
 	cd priv;  $(BIN_DIR)/webpack -w -d

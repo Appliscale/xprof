@@ -26,14 +26,17 @@ class ACModal extends React.Component {
     }
   }
 
+  getFuns() {
+      return this.state.funs.map(ACModal.formatFun);
+  }
+
   displayFuns(data) {
     if (data.length === 0) {
       this.cleared = true;
     }
 
     this.state.funs = data;
-    this.state.position = -1;
-
+    this.state.position = data.length === 1 ? 0 : -1;
     this.setState(this.state);
   }
 
@@ -51,12 +54,13 @@ class ACModal extends React.Component {
     }
   }
 
+  /* highlightedFun(): string | null; */
   highlightedFun() {
     var fun = null;
     var pos = this.state.position;
 
-    if (pos !== -1) {
-      fun = this.state.funs[pos];
+    if(pos != -1) {
+      fun = ACModal.formatFun(this.state.funs[pos]);
     }
 
     return fun;
@@ -130,22 +134,14 @@ export default class FunctionBrowser extends React.Component {
         this.clear();
         break;
 
-      // RETURN
-      case 13:
-        // Submit function or try to complete using selected fun.
+      case 13: /* RETURN */
+        /* submit either selected suggestion or content of textbox  */
         e.preventDefault();
-
-        enteredQuery = this.checkInput(e.target.value);
-        if (enteredQuery) {
-          this.props.addGraph(enteredQuery);
-        } else {
-          this.completeSearch();
-        }
+        this.submitFun(e.target.value);
         break;
-
-      // TAB
-      case 9:
-        // Try to complete using selected suggestion.
+        
+      case 9: /* TAB */
+        /* try to complete using selected suggestion */
         e.preventDefault();
         this.completeSearch();
         break;
@@ -178,15 +174,31 @@ export default class FunctionBrowser extends React.Component {
     return ReactDOM.findDOMNode(this.refs.searchBox);
   }
 
+  submitFun(input) {
+    var highlightedFun = this.refs.acm.highlightedFun();
+
+    if(highlightedFun && highlightedFun.startsWith(input)) {
+      this.props.addGraph(highlightedFun);
+    } else {
+      var enteredQuery = this.checkInput(input);
+      if(enteredQuery)
+        this.props.addGraph(enteredQuery);
+    }
+  }
+
   completeSearch() {
-    var highlightedMFA = this.refs.acm.highlightedFun();
-    var funStr;
+    var highlightedFun = this.refs.acm.highlightedFun();
 
-    if (highlightedMFA) {
-      funStr = Utils.formatMA(highlightedMFA);
+    if(highlightedFun) {
+      funStr = Utils.formatMA(highlightedFun);
       $(this.getSearchBox()).val(funStr);
-
       this.refs.acm.displayFuns([]);
+    } else {
+      var suggestedFuns = this.refs.acm.getFuns();
+      if(suggestedFuns.length > 0) {
+        var prefix = this.commonArrayPrefix(suggestedFuns);
+        $(this.getSearchBox()).val(prefix);
+      }
     }
   }
 
@@ -199,6 +211,20 @@ export default class FunctionBrowser extends React.Component {
     if (this.state.value !== "") {
       this.refs.acm.displayFuns(data);
     }
+  }
+
+  commonArrayPrefix(sortedArray) {
+      var string1 = sortedArray[0];
+      var string2 = sortedArray[sortedArray.length - 1];
+      return this.commonPrefix(string1, string2);
+  }
+
+  commonPrefix(string1, string2) {
+      var len = string1.length;
+      var i = 0;
+
+      while(i < len && string1.charAt(i) === string2.charAt(i)) i++;
+      return string1.substring(0, i);
   }
 
   render() {

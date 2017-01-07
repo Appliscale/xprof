@@ -52,15 +52,25 @@ defp deps do
   end
 ```
 
+## Keyboard shortcuts
+
+- **UP**/**DOWN** arrows: select previous/next item in the dropdown suggestion
+  list
+- **TAB**: if no suggetion is selected yet auto-complete to longest common
+  prefix of dropdown list items. Otherwise copy the selected item to the search
+  box and clear the dropdown list.
+- **ENTER**: start tracing either the selected suggestion if there is any or the
+  expression in the search box.
+
 ## Configuration
 
 You can configure `xprof` by changing its application variables:
 
 Key         | Default     | Description
 :-----------|:------------|:-----------
-port        |7890         |Port for the web interface
+`port`      |7890         |Port for the web interface
 
-## `xprof` flavoured match-spec funs
+## XProf flavoured match-spec funs
 
 **CAUTION: Experimental support (WIP).**
 
