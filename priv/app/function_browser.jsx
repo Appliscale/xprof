@@ -27,7 +27,7 @@ class ACModal extends React.Component {
   }
 
   getFuns() {
-      return this.state.funs.map(ACModal.formatFun);
+    return this.state.funs.map(ACModal.formatFun);
   }
 
   displayFuns(data) {
@@ -54,12 +54,12 @@ class ACModal extends React.Component {
     }
   }
 
-  /* highlightedFun(): string | null; */
+  /* Spec: highlightedFun(): string | null; */
   highlightedFun() {
     var fun = null;
     var pos = this.state.position;
 
-    if(pos != -1) {
+    if (pos !== -1) {
       fun = ACModal.formatFun(this.state.funs[pos]);
     }
 
@@ -134,14 +134,16 @@ export default class FunctionBrowser extends React.Component {
         this.clear();
         break;
 
-      case 13: /* RETURN */
-        /* submit either selected suggestion or content of textbox  */
+      // RETURN
+      case 13:
+        // Submit either selected suggestion or content of textbox
         e.preventDefault();
         this.submitFun(e.target.value);
         break;
-        
-      case 9: /* TAB */
-        /* try to complete using selected suggestion */
+
+      // TAB
+      case 9:
+        // Try to complete using selected suggestion
         e.preventDefault();
         this.completeSearch();
         break;
@@ -177,25 +179,26 @@ export default class FunctionBrowser extends React.Component {
   submitFun(input) {
     var highlightedFun = this.refs.acm.highlightedFun();
 
-    if(highlightedFun && highlightedFun.startsWith(input)) {
+    if (highlightedFun && highlightedFun.startsWith(input)) {
       this.props.addGraph(highlightedFun);
     } else {
       var enteredQuery = this.checkInput(input);
-      if(enteredQuery)
+      if (enteredQuery) {
         this.props.addGraph(enteredQuery);
+      }
     }
   }
 
   completeSearch() {
     var highlightedFun = this.refs.acm.highlightedFun();
 
-    if(highlightedFun) {
+    if (highlightedFun) {
       funStr = Utils.formatMA(highlightedFun);
       $(this.getSearchBox()).val(funStr);
       this.refs.acm.displayFuns([]);
     } else {
       var suggestedFuns = this.refs.acm.getFuns();
-      if(suggestedFuns.length > 0) {
+      if (suggestedFuns.length > 0) {
         var prefix = this.commonArrayPrefix(suggestedFuns);
         $(this.getSearchBox()).val(prefix);
       }
@@ -214,17 +217,19 @@ export default class FunctionBrowser extends React.Component {
   }
 
   commonArrayPrefix(sortedArray) {
-      var string1 = sortedArray[0];
-      var string2 = sortedArray[sortedArray.length - 1];
-      return this.commonPrefix(string1, string2);
+    var string1 = sortedArray[0];
+    var string2 = sortedArray[sortedArray.length - 1];
+    return this.commonPrefix(string1, string2);
   }
 
   commonPrefix(string1, string2) {
-      var len = string1.length;
-      var i = 0;
+    var len = string1.length;
+    var i = 0;
 
-      while(i < len && string1.charAt(i) === string2.charAt(i)) i++;
-      return string1.substring(0, i);
+    while (i < len && string1.charAt(i) === string2.charAt(i)) {
+      i++;
+    }
+    return string1.substring(0, i);
   }
 
   render() {
