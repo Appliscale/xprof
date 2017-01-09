@@ -38,10 +38,24 @@ tokens(Str) ->
             {mfa, M, F, A};
         {ok, [{atom, _, M}, {':', _},
               {atom, _, F}|Tokens], _EndLoc} when Tokens =/= [] ->
-            {clauses, M, F, [{'fun', 0}|ensure_end(Tokens)]};
+            {clauses, M, F, [{'fun', 0}|ensure_end(ensure_body(Tokens))]};
         {ok, Tokens, _EndLoc} ->
             xprof_ms:err("expression is not an xprof match-spec fun ~w", [Tokens])
     end.
+
+%% @doc Ensure the fun has at least a trivial function body "-> true".
+%% Omitting body is only allowed if there is only a single clause.
+ensure_body(Tokens) ->
+    case lists:keymember('->', 1, Tokens) of
+        true ->
+            Tokens;
+        false ->
+            Loc = get_loc(lists:last(Tokens)),
+            Tokens ++ [{'->', Loc}, {atom, Loc, true}]
+    end.
+
+get_loc({_, Loc}) -> Loc;
+get_loc({_, Loc, _}) -> Loc.
 
 %% @doc Ensure the fun is properly closed with "end."
 ensure_end(Tokens) ->
