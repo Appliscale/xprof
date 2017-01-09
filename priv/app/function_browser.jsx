@@ -193,8 +193,7 @@ export default class FunctionBrowser extends React.Component {
     var highlightedFun = this.refs.acm.highlightedFun();
 
     if (highlightedFun) {
-      funStr = Utils.formatMA(highlightedFun);
-      $(this.getSearchBox()).val(funStr);
+      $(this.getSearchBox()).val(highlightedFun);
       this.refs.acm.displayFuns([]);
     } else {
       var suggestedFuns = this.refs.acm.getFuns();

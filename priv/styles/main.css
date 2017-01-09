@@ -14,6 +14,7 @@ body {
   overflow: auto;
   text-overflow: ellipsis;
   font-family: monospace;
+  word-wrap: break-word;
 }
 
 .row-expanded div {
