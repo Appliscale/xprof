@@ -46,4 +46,19 @@ export default class Utils {
     return `${OutMFA[0]}:${OutMFA[1]}/${OutMFA[2]}`;
   }
 
+  static commonArrayPrefix(sortedArray) {
+    var string1 = sortedArray[0];
+    var string2 = sortedArray[sortedArray.length - 1];
+    return this.commonPrefix(string1, string2);
+  }
+
+  static commonPrefix(string1, string2) {
+    var len = string1.length;
+    var i = 0;
+
+    while (i < len && string1.charAt(i) === string2.charAt(i)) {
+      i++;
+    }
+    return string1.substring(0, i);
+  }
 }

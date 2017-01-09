@@ -80,3 +80,21 @@ describe("Formatting MFA should be compatible with 'Erlang' specificity", functi
     });
   });
 });
+
+describe("Find common prefix", function() {
+  it("No common prefix", function() {
+    expect(Utils.commonArrayPrefix([ "aaa", "bbb", "ccc" ])).to.be.equal("");
+  });
+
+  it("Partial common prefix", function() {
+    expect(Utils.commonArrayPrefix([ "abc", "abde", "abf" ])).to.be.equal("ab");
+  });
+
+  it("Full match", function() {
+    expect(Utils.commonArrayPrefix([ "aaa", "aaa", "aaa" ])).to.be.equal("aaa");
+  });
+
+  it("Only single element", function() {
+    expect(Utils.commonArrayPrefix([ "aaa" ])).to.be.equal("aaa");
+  });
+});
