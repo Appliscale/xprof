@@ -27,7 +27,7 @@ class ACModal extends React.Component {
   }
 
   getFuns() {
-    return this.state.funs.map(ACModal.formatFun);
+    return this.state.funs.map(Utils.formatMFA);
   }
 
   displayFuns(data) {
@@ -60,7 +60,7 @@ class ACModal extends React.Component {
     var pos = this.state.position;
 
     if (pos !== -1) {
-      fun = ACModal.formatFun(this.state.funs[pos]);
+      fun = Utils.formatMFA(this.state.funs[pos]);
     }
 
     return fun;
@@ -198,7 +198,7 @@ export default class FunctionBrowser extends React.Component {
     } else {
       var suggestedFuns = this.refs.acm.getFuns();
       if (suggestedFuns.length > 0) {
-        var prefix = this.commonArrayPrefix(suggestedFuns);
+        var prefix = Utils.commonArrayPrefix(suggestedFuns);
         $(this.getSearchBox()).val(prefix);
       }
     }
@@ -213,22 +213,6 @@ export default class FunctionBrowser extends React.Component {
     if (this.state.value !== "") {
       this.refs.acm.displayFuns(data);
     }
-  }
-
-  commonArrayPrefix(sortedArray) {
-    var string1 = sortedArray[0];
-    var string2 = sortedArray[sortedArray.length - 1];
-    return this.commonPrefix(string1, string2);
-  }
-
-  commonPrefix(string1, string2) {
-    var len = string1.length;
-    var i = 0;
-
-    while (i < len && string1.charAt(i) === string2.charAt(i)) {
-      i++;
-    }
-    return string1.substring(0, i);
   }
 
   render() {
