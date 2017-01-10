@@ -132,12 +132,12 @@ handle_info({trace_ts, _Spawner, spawn, NewProc, _MFArgs,_TimeStamp},
 
     %% trace spec could have been changed while there were late messages
     %% in the queue
-    Sampl = case TraceSpec of
+    Sample = case TraceSpec of
                 {spawner, _Pid, X} -> X;
                 _ -> 0.0
             end,
 
-    case random:uniform() < Sampl of
+    case random_uniform() < Sample of
         true ->
             catch erlang:trace(NewProc, true, [call, procs, timestamp]);
         false ->
@@ -239,3 +239,13 @@ put_pid(MFA, Pid) ->
 -spec erase_pid(xprof:mfaid()) -> pid() | undefined.
 erase_pid(MFA) ->
     erase({handler, MFA}).
+
+%% the rand module was introduced in OTP 18.0
+%% and random module deprecated in OTP 19.0
+-ifdef(rand_module).
+random_uniform() ->
+    rand:uniform().
+-else.
+random_uniform() ->
+    random:uniform().
+-endif.
