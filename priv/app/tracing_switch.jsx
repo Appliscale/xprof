@@ -4,7 +4,7 @@ import React from "react";
 export default class TracingSwitch extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { tracing: false };
+    this.state = { status: "paused" };
   }
 
   componentDidMount() {
@@ -16,7 +16,7 @@ export default class TracingSwitch extends React.Component {
   }
 
   handleClick(event) {
-    var spec = this.state.tracing ? "pause" : "all";
+    var spec = this.state.status === "running" ? "pause" : "all";
 
     $.ajax({
       url: "/api/trace_set",
@@ -32,7 +32,7 @@ export default class TracingSwitch extends React.Component {
   getTracingStatus() {
     $.ajax({ url: "/api/trace_status" })
       .done((data) => {
-        this.state.tracing = data.tracing;
+        this.state.status = data.status;
         this.setState(this.state);
       })
       .always(() =>
@@ -41,9 +41,24 @@ export default class TracingSwitch extends React.Component {
   }
 
   render() {
-    var symbol = "glyphicon glyphicon-" + (this.state.tracing ? "pause" : "record");
-    var btnColor = "btn btn-" + (this.state.tracing ? "danger" : "success");
-    var text = this.state.tracing ? "Pause tracing" : "Trace all";
+    var symbol = "glyphicon glyphicon-";
+    var btnColor = "btn btn-";
+    var text = "";
+    let status = this.state.status;
+
+    if (status === "running") {
+      text = "Pause Tracing";
+      symbol += "pause";
+      btnColor += "danger";
+    } else if (status === "paused") {
+      text = "Trace All";
+      symbol += "record";
+      btnColor += "success";
+    } else if (status === "overflow") {
+      text = "Overflow! - resume trace all";
+      symbol += "record";
+      btnColor += "warning";
+    }
 
     return (
       <form className="navbar-form navbar-left" role="search">

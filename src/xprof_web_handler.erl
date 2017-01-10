@@ -100,8 +100,8 @@ handle_req(<<"trace_set">>, Req, State) ->
     {ok, ResReq, State};
 
 handle_req(<<"trace_status">>, Req, State) ->
-    {_, Paused, _} = xprof_tracer:trace_status(),
-    Json = jsone:encode({[{tracing, not Paused}]}),
+    {_, Status} = xprof_tracer:trace_status(),
+    Json = jsone:encode({[{status, Status}]}),
     {ok, ResReq} = cowboy_req:reply(200,
                                     [{<<"content-type">>,
                                       <<"application/json">>}],

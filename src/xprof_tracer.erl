@@ -21,10 +21,9 @@
          terminate/2,
          code_change/3]).
 
--record(state, {trace_spec  = all,   %% trace specification
-                paused      = true,  %% tracing paused?
-                overflow    = false, %% tracing is paused because of overflow?
-                funs        = []     %% functions monitored by xprof
+-record(state, {trace_spec  = all,    %% trace specification
+                status      = paused, %% tracing status
+                funs        = []      %% functions monitored by xprof
                }).
 
 %% @doc Starts xprof tracer process.
@@ -108,9 +107,8 @@ handle_call({trace, PidSpec}, _From, State) ->
     NewState = setup_trace(PidSpec, State),
     {reply, ok, NewState};
 handle_call(trace_status, _From, State = #state{trace_spec=TraceSpec,
-                                                paused=Paused,
-                                                overflow=Overflow}) ->
-    {reply, {TraceSpec, Paused, Overflow}, State};
+                                                status=Status}) ->
+    {reply, {TraceSpec, Status}, State};
 handle_call(_Request, _From, State) ->
     {reply, ignored, State}.
 
@@ -158,23 +156,13 @@ code_change(_OldVsn, State, _Extra) ->
 init_tracer() ->
     erlang:trace_pattern({'_','_','_'}, false, [local]).
 
-check_for_overflow(State = #state{paused=false, overflow=true,
-                                  trace_spec=TraceSpec}) ->
-    {_, QLen} = erlang:process_info(self(), message_queue_len),
-    case QLen =< 100 of
-        true ->
-            set_trace_opts(true, TraceSpec),
-            State#state{overflow=false};
-        false ->
-            State
-    end;
-check_for_overflow(State = #state{paused=false, overflow=false,
+check_for_overflow(State = #state{status = running,
                                   trace_spec=TraceSpec}) ->
     {_, QLen} = erlang:process_info(self(), message_queue_len),
     case QLen >= 1000 of
         true ->
             set_trace_opts(false, TraceSpec),
-            State#state{overflow=true};
+            State#state{status=overflow};
         false ->
             State
     end;
@@ -183,12 +171,12 @@ check_for_overflow(State) ->
 
 setup_trace(pause, State) ->
     set_trace_opts(false, State#state.trace_spec),
-    State#state{paused = true};
+    State#state{status=paused};
 setup_trace(resume, State = #state{trace_spec=Spec}) ->
     setup_trace(Spec, State#state{trace_spec=undefined});
 setup_trace(Spec, State = #state{trace_spec=undefined}) ->
     set_trace_opts(true, Spec),
-    State#state{trace_spec=Spec, paused=false};
+    State#state{trace_spec=Spec, status=running};
 setup_trace(Spec, State) ->
     set_trace_opts(false, State#state.trace_spec),
     setup_trace(Spec, State#state{trace_spec=undefined}).
