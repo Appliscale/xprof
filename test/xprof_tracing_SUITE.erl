@@ -45,7 +45,7 @@ pid_tracing(Config) ->
 
 basic_tracing(PidSpec, Config) ->
     ok = xprof_tracer:trace(PidSpec),
-    ?assertMatch({PidSpec, false, false}, xprof_tracer:trace_status()),
+    ?assertMatch({PidSpec, running}, xprof_tracer:trace_status()),
 
     Last = get_print_current_time(),
 
@@ -63,13 +63,13 @@ basic_tracing(PidSpec, Config) ->
     ?assert(0 =< proplists:get_value(count, Items2)),
 
     xprof_tracer:trace(pause),
-    ?assertMatch({PidSpec, true, false}, xprof_tracer:trace_status()),
+    ?assertMatch({PidSpec, paused}, xprof_tracer:trace_status()),
     ok.
 
 
 spawner_tracing(Config) ->
     ok = xprof_tracer:trace({spawner, self(), 1.0}),
-    ?assertMatch({{spawner, _Pid, 1.0}, false, false},
+    ?assertMatch({{spawner, _Pid, 1.0}, running},
                  xprof_tracer:trace_status()),
 
     Last = get_print_current_time(),
@@ -88,7 +88,7 @@ spawner_tracing(Config) ->
     ?assert(0 =< proplists:get_value(count, Items2)),
 
     xprof_tracer:trace(pause),
-    ?assertMatch({{spawner, _Pid, 1.0}, true, false},
+    ?assertMatch({{spawner, _Pid, 1.0}, paused},
                  xprof_tracer:trace_status()),
     ok.
 
@@ -97,11 +97,11 @@ dead_proc_tracing(_Config) ->
     %% wait for the process to terminate
     receive {'DOWN', MRef, _, _, _} -> ok end,
     ok = xprof_tracer:trace(Pid),
-    ?assertMatch({Pid, false, false},
+    ?assertMatch({Pid, running},
                  xprof_tracer:trace_status()),
 
     ok = xprof_tracer:trace({spawner, Pid, 1.0}),
-    ?assertMatch({{spawner, Pid, 1.0}, false, false},
+    ?assertMatch({{spawner, Pid, 1.0}, running},
                  xprof_tracer:trace_status()),
     ok.
 
