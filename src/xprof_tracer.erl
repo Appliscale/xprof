@@ -158,16 +158,6 @@ code_change(_OldVsn, State, _Extra) ->
 init_tracer() ->
     erlang:trace_pattern({'_','_','_'}, false, [local]).
 
-check_for_overflow(State = #state{paused=false, overflow=true,
-                                  trace_spec=TraceSpec}) ->
-    {_, QLen} = erlang:process_info(self(), message_queue_len),
-    case QLen =< 100 of
-        true ->
-            set_trace_opts(true, TraceSpec),
-            State#state{overflow=false};
-        false ->
-            State
-    end;
 check_for_overflow(State = #state{paused=false, overflow=false,
                                   trace_spec=TraceSpec}) ->
     {_, QLen} = erlang:process_info(self(), message_queue_len),
@@ -188,7 +178,7 @@ setup_trace(resume, State = #state{trace_spec=Spec}) ->
     setup_trace(Spec, State#state{trace_spec=undefined});
 setup_trace(Spec, State = #state{trace_spec=undefined}) ->
     set_trace_opts(true, Spec),
-    State#state{trace_spec=Spec, paused=false};
+    State#state{trace_spec=Spec, paused=false, overflow=false};
 setup_trace(Spec, State) ->
     set_trace_opts(false, State#state.trace_spec),
     setup_trace(Spec, State#state{trace_spec=undefined}).
