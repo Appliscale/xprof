@@ -159,7 +159,7 @@ init_tracer() ->
 check_for_overflow(State = #state{status = running,
                                   trace_spec=TraceSpec}) ->
     {_, QLen} = erlang:process_info(self(), message_queue_len),
-    case QLen >= 1000 of
+    case QLen >= application:get_env(xprof, max_tracer_queue_len, 1000) of
         true ->
             set_trace_opts(false, TraceSpec),
             State#state{status=overflow};
