@@ -66,10 +66,10 @@ defp deps do
 
 You can configure `xprof` by changing its application variables:
 
-Key                   | Default     | Description
-:---------------------|:------------|:-----------
-`port`                | 7890        |Port for the web interface
-`max_trace_queue_len` | 1000        | Overflow protection. If main tracer proccess will have more that 1000 messages in its process queue tracing will be stopped and one needs to use trace button to continue. The purpose of this is to prevent out of memory crashes when tracer process is not able to process incomming traces it may happen whenwe trace very "hot" function.
+Key                    | Default     | Description
+:----------------------|:------------|:-----------
+`port`                 | 7890        |Port for the web interface
+`max_tracer_queue_len` | 1000        | Overflow protection. If main tracer proccess will have more than 1000 messages in its process queue tracing will be stopped and one needs to use trace button to resume. The purpose of this is to prevent out of memory crashes when tracer process is not able to process incomming traces fast enough. This may happen when we trace very "hot" function.
 
 ## XProf flavoured match-spec funs
 
