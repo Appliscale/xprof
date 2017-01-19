@@ -1,22 +1,37 @@
 -module(xprof_ms).
 
--export([fun2ms/1]).
+-export([fun2ms/1,
+         err/1, err/2, err/3
+        ]).
 
 -spec fun2ms(string()) -> {mfa, module(), atom(), integer()}
                         | {ms, module(), atom(), tuple()}
                         | {error, string()}.
 fun2ms(Str) ->
     try
-        case tokens(Str) of
+        case parse_query(Str) of
             {mfa, _M, _F, _Arity} = MFA ->
                 MFA;
-            {clauses, M, F, Tokens} ->
-                Clauses = parse(Tokens),
+            {clauses, M, F, Clauses} ->
                 MS = ms(Clauses),
                 {ms, M, F, fix_ms(MS)}
         end
     catch throw:Error ->
             Error
+    end.
+
+parse_query(Str) ->
+    case xprof_lib:get_mode() of
+        erlang ->
+            case tokens(Str) of
+                {mfa, _M, _F, _Arity} = MFA ->
+                    MFA;
+                {clauses, M, F, Tokens} ->
+                    Clauses = parse(Tokens),
+                    {clauses, M, F, Clauses}
+            end;
+        elixir ->
+            xprof_elixir_syntax:parse_query(Str)
     end.
 
 tokens(Str) ->
@@ -120,8 +135,14 @@ err(Fmt) ->
 err(Fmt, Args) ->
     throw({error, fmt(Fmt, Args)}).
 
+err({1, StartCol, _EndCol}, Mod, Err) ->
+    err({1, StartCol}, Mod, Err);
+
 err({1, Col}, Mod, Err) ->
-    throw({error, fmt("~s at column ~p", [Mod:format_error(Err), Col])}).
+    throw({error, fmt("~s at column ~p", [Mod:format_error(Err), Col])});
+
+err(1, Mod, Err) ->
+    throw({error, fmt(Mod:format_error(Err), [])}).
 
 fmt(Fmt, Args) ->
     lists:flatten(io_lib:format(Fmt, Args)).
