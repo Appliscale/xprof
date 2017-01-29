@@ -46,6 +46,16 @@ export default class Utils {
     return `${OutMFA[0]}:${OutMFA[1]}/${OutMFA[2]}`;
   }
 
+
+  static chartId(MFA) {
+    var formatted_mfa = this.formatMFA(MFA);
+
+    // Characters that have special meaning in CSS selectors are not safe in an ID.
+    // (eg ':', '.', '?', '*' or single quote itself)
+    // (A very problematic example: "'Elixir.List':'keymember?'/*")
+    return "chart_" + formatted_mfa.replace(/[^A-Za-z0-9_-]/g, "-");
+  }
+
   static commonArrayPrefix(sortedArray) {
     var string1 = sortedArray[0];
     var string2 = sortedArray[sortedArray.length - 1];

@@ -81,6 +81,45 @@ describe("Formatting MFA should be compatible with 'Erlang' specificity", functi
   });
 });
 
+describe("Generating valid id tag for the charts", function() {
+  describe("Simple Erlang modules", function() {
+    it("erlang:process_info/1", function() {
+      expect(Utils.chartId([ "erlang", "process_info", 1 ])).to.be.equal("chart_erlang-process_info-1");
+    });
+
+    it("custom_module:function/99", function() {
+      expect(Utils.chartId([ "custom_module", "function", 99 ])).to.be.equal("chart_custom_module-function-99");
+    });
+  });
+
+  describe("Match-spec function", function() {
+    it("ets:lookup/*", function() {
+      expect(Utils.chartId([ "ets", "lookup", "*" ])).to.be.equal("chart_ets-lookup--");
+    });
+  });
+
+  describe("Elixir modules", function() {
+    it("'Elixir.Enum':map/2", function() {
+      expect(Utils.chartId([ "Elixir.Enum", "map", 2 ])).to.be.equal("chart_-Elixir-Enum--map-2");
+    });
+
+    it("'Elixir.Process':'is_alive?'/1", function() {
+      expect(Utils.chartId([ "Elixir.Process", "alive?", 1 ])).to.be.equal("chart_-Elixir-Process---alive---1");
+    });
+  });
+
+  describe("Weird characters", function() {
+    it("a0@a:'Abc'/0", function() {
+      expect(Utils.chartId([ "a0@a", "Abc", 0 ])).to.be.equal("chart_a0-a--Abc--0");
+    });
+
+    it("'Erlang $!':'is_fun!'/1", function() {
+      expect(Utils.chartId([ "Erlang $!", "is_fun!", 1 ])).to.be.equal("chart_-Erlang------is_fun---1");
+    });
+  });
+
+});
+
 describe("Find common prefix", function() {
   it("No common prefix", function() {
     expect(Utils.commonArrayPrefix([ "aaa", "bbb", "ccc" ])).to.be.equal("");
