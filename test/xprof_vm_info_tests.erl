@@ -16,7 +16,7 @@ get_available_funs_test_() ->
       fun() ->
               L1 = ?M:get_available_funs(<<"xprof_vm_info">>),
               ?assert(lists:member([?M, get_available_funs, 1], L1)),
-              ?assertNot(lists:member([?M, filter_funs, 2], L1))
+              ?assertNot(lists:member([?M, filter_funs, 3], L1))
       end},
      {"Module info is filtered out",
       fun() ->
@@ -28,7 +28,7 @@ get_available_funs_test_() ->
       fun() ->
               L1 = ?M:get_available_funs(<<"xprof_vm_info:">>),
               ?assert(lists:member([?M, get_available_funs, 1], L1)),
-              ?assert(lists:member([?M, filter_funs, 2], L1))
+              ?assert(lists:member([?M, filter_funs, 3], L1))
       end},
      {"Generated functions are filtered out",
       fun() ->
@@ -75,9 +75,7 @@ weird_atoms_test_() ->
                ?assertEqual([['A.B.C', 'f?', 0],
                              ['A.B.C', 'g\'g', 0],
                              ['A.B.C', h, 1],
-                             ['A.B.C', h, 10],
-                             ['A.B.C', module_info, 0],
-                             ['A.B.C', module_info, 1]
+                             ['A.B.C', h, 10]
                             ], L2)
        end},
       {"Function name with special character",

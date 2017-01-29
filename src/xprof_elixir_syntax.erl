@@ -3,7 +3,17 @@
 %%%
 -module(xprof_elixir_syntax).
 
--export([parse_query/1]).
+-export([parse_query/1,
+
+         normalise_query/1,
+         hidden_function/1,
+         fmt_mod_and_delim/1,
+         fmt_mod/1,
+         fmt_fun_and_arity/2,
+         fmt_fun/1]).
+
+%% from elixir.hrl
+-define(is_upcase(S), (S >= $A andalso S =< $Z)).
 
 %% Elixir quoted expressions
 -type ex_quoted() :: tuple().
@@ -167,3 +177,87 @@ quoted_to_ast(Quoted) ->
     Env = maps:put(function, {ms, 0}, elixir:env_for_eval([])),
     {Ast, _NewEnv, _Scope} = elixir:quoted_to_erl(Quoted, Env),
     Ast.
+
+
+%%
+%% Functions for autocomplete
+%%
+
+%% @doc Ensure Elixir. prefix is present in front of aliases just like in the
+%% output of fmt_mod/1
+normalise_query(<<":", _/binary>> = Query) ->
+    Query;
+normalise_query(<<"Elixir.", _/binary>> = Query) ->
+    Query;
+normalise_query(<<C, _/binary>> = Query) when ?is_upcase(C) ->
+    case xprof_lib:prefix(Query, <<"Elixir.">>) of
+        true ->
+            %% Query itself is a prefix of "Elixir." - do not prepend
+            Query;
+        _ ->
+            <<"Elixir.", Query/binary>>
+    end;
+normalise_query(Query) ->
+    Query.
+
+
+hidden_function(module_info) -> true;
+hidden_function(Fun) ->
+    case atom_to_list(Fun) of
+        "__" ++ _ -> true;
+        "MACRO-" ++ _ -> true;
+        "-" ++ _ ->
+            %% filter out private functions generated for fun objects
+            %% and list comprehensions like '-filter_funs/2-fun-0-'
+            true;
+        _ -> false
+    end.
+
+fmt_mod(Mod) ->
+    case 'Elixir.Kernel':inspect(Mod) of
+        <<":", _/binary>> = ModBin ->
+            ModBin;
+        ModBin ->
+            <<"Elixir.", ModBin/binary>>
+    end.
+
+fmt_mod_and_delim(Mod) ->
+    fmt("~ts.", [fmt_mod(Mod)]).
+
+%% escape_name was only introduced after Elixir 1.4.0
+fmt_fun('') ->
+    <<":\"\"">>;
+fmt_fun(Fun) ->
+    %%'Elixir.Inspect.Function':escape_name(Fun).
+    FunStr = atom_to_list(Fun),
+    case callable_atom(FunStr) of
+        true ->
+            list_to_binary(FunStr);
+        false ->
+            fmt("\"~ts\"", [FunStr])
+    end.
+
+fmt_fun_and_arity(Fun, Arity) ->
+    fmt("~ts/~b", [fmt_fun(Fun), Arity]).
+
+fmt(Fmt, Args) ->
+    list_to_binary(io_lib:format(Fmt, Args)).
+
+callable_atom([C|T]) when
+      (C >= $a andalso C =< $z) orelse
+      C =:= $_ ->
+    callable_atom_rest(T);
+callable_atom(_) ->
+    false.
+
+callable_atom_rest([]) -> true;
+callable_atom_rest("?") -> true;
+callable_atom_rest("!") -> true;
+callable_atom_rest([C|T]) when
+      (C >= $a andalso C =< $z) orelse
+      (C >= $A andalso C =< $Z) orelse
+      (C >= $0 andalso C=< $9) orelse
+      C =:= $_ orelse C =:= $@ ->
+    callable_atom_rest(T);
+callable_atom_rest(_) ->
+    false.

@@ -4,7 +4,9 @@
          mfaspec2id/1,
          now2epoch/1,
          set_mode/1,
-         get_mode/0
+         get_mode/0,
+         prefix/2,
+         prefix_rest/2
         ]).
 
 -spec mfa2atom(xprof_tracer:mfaspec() | xprof_tracer:mfaid()) ->
@@ -50,4 +52,20 @@ detect_mode() ->
     case lists:keymember(elixir, 1, application:which_applications()) of
         true -> elixir;
         false -> erlang
+    end.
+
+-spec prefix(binary(), binary()) -> boolean().
+prefix(Prefix, Bin) ->
+    PrefixSize = byte_size(Prefix),
+    case Bin of
+        <<Prefix:PrefixSize/binary, _/binary>> -> true;
+        _ -> false
+    end.
+
+-spec prefix_rest(binary(), binary()) -> false | binary().
+prefix_rest(Prefix, Bin) ->
+    PrefixSize = byte_size(Prefix),
+    case Bin of
+        <<Prefix:PrefixSize/binary, Rest/binary>> -> Rest;
+        _ -> false
     end.
