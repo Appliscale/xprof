@@ -8,9 +8,12 @@ otp_release:
     - 17.5
     - R16B03-1
 install:
-    ./rebar3 deps
+    - ./rebar3 deps
+    - nvm install 6.2 && nvm use 6.2
+    - make bootstrap_front_end
 script:
-    make test
+    - make test
+    - make test_front_end
 after_success:
     - ./rebar3 cover
     - if [ $TRAVIS_OTP_RELEASE = "18.3" ]; then ./rebar3 coveralls send; fi
