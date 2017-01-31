@@ -3,6 +3,8 @@
 %%%
 -module(xprof_elixir_syntax).
 
+-behaviour(xprof_language).
+
 -export([parse_query/1,
 
          normalise_query/1,

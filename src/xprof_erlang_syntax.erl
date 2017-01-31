@@ -1,5 +1,9 @@
-%% Erlang specific
+%%%
+%%% @doc Module to parse and format expressions in Erlang syntax
+%%%
 -module(xprof_erlang_syntax).
+
+-behaviour(xprof_language).
 
 -export([normalise_query/1,
          hidden_function/1,
