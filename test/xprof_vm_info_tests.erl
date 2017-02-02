@@ -15,20 +15,20 @@ get_available_funs_test_() ->
      {"Only global functions are listed",
       fun() ->
               L1 = ?M:get_available_funs(<<"xprof_vm_info">>),
-              ?assert(lists:member([?M, get_available_funs, 1], L1)),
-              ?assertNot(lists:member([?M, filter_funs, 3], L1))
+              ?assert(lists:member({?M, get_available_funs, 1}, L1)),
+              ?assertNot(lists:member({?M, filter_funs, 3}, L1))
       end},
      {"Module info is filtered out",
       fun() ->
               L1 = ?M:get_available_funs(<<"xprof_vm_info">>),
-              ?assertNot(lists:member([?M, module_info, 0], L1)),
-              ?assertNot(lists:member([?M, module_info, 1], L1))
+              ?assertNot(lists:member({?M, module_info, 0}, L1)),
+              ?assertNot(lists:member({?M, module_info, 1}, L1))
       end},
      {"Local functions are also listed if query contains colon",
       fun() ->
               L1 = ?M:get_available_funs(<<"xprof_vm_info:">>),
-              ?assert(lists:member([?M, get_available_funs, 1], L1)),
-              ?assert(lists:member([?M, filter_funs, 3], L1))
+              ?assert(lists:member({?M, get_available_funs, 1}, L1)),
+              ?assert(lists:member({?M, filter_funs, 3}, L1))
       end},
      {"Generated functions are filtered out",
       fun() ->
@@ -47,18 +47,18 @@ get_available_funs_test_() ->
      {"Arity matching",
       fun() ->
               L1 = ?M:get_available_funs(<<"xprof_vm_info:get_available_funs/">>),
-              ?assertEqual([[?M, get_available_funs, 1]], L1),
+              ?assertEqual([{?M, get_available_funs, 1}], L1),
               L2 = ?M:get_available_funs(<<"xprof_vm_info:get_available_funs/1">>),
-              ?assertEqual([[?M, get_available_funs, 1]], L2),
+              ?assertEqual([{?M, get_available_funs, 1}], L2),
               L3 = ?M:get_available_funs(<<"xprof_vm_info:get_available_funs/99">>),
               ?assertEqual([], L3)
       end},
      {"Match-spec fun matching",
       fun() ->
               L1 = ?M:get_available_funs(<<"xprof_vm_info:get_available_funs(_) ->">>),
-              ?assertEqual([[?M, get_available_funs, 1]], L1),
+              ?assertEqual([{?M, get_available_funs, 1}], L1),
               L2 = ?M:get_available_funs(<<"xprof_vm_info:get_available_funs message(get_tcw())">>),
-              ?assertEqual([[?M, get_available_funs, 1]], L2)
+              ?assertEqual([{?M, get_available_funs, 1}], L2)
       end}
     ].
 
@@ -70,25 +70,25 @@ weird_atoms_test_() ->
       {"Module name with special character",
        fun() ->
                L1 = ?M:get_available_funs(<<"'A.B">>),
-               ?assertEqual([['A.B.C', h, 10]], L1),
+               ?assertEqual([{'A.B.C', h, 10}], L1),
                L2 = ?M:get_available_funs(<<"'A.B.C':">>),
-               ?assertEqual([['A.B.C', 'f?', 0],
-                             ['A.B.C', 'g\'g', 0],
-                             ['A.B.C', h, 1],
-                             ['A.B.C', h, 10]
+               ?assertEqual([{'A.B.C', 'f?', 0},
+                             {'A.B.C', 'g\'g', 0},
+                             {'A.B.C', h, 1},
+                             {'A.B.C', h, 10}
                             ], L2)
        end},
       {"Function name with special character",
        fun() ->
                L1 = ?M:get_available_funs(<<"'A.B.C':'f">>),
-               ?assertEqual([['A.B.C', 'f?', 0]], L1),
+               ?assertEqual([{'A.B.C', 'f?', 0}], L1),
                L2 = ?M:get_available_funs(<<"'A.B.C':'g">>),
-               ?assertEqual([['A.B.C', 'g\'g', 0]], L2)
+               ?assertEqual([{'A.B.C', 'g\'g', 0}], L2)
        end},
       {"Multiple arity matches",
        fun() ->
                L1 = ?M:get_available_funs(<<"'A.B.C':h/1">>),
-               ?assertEqual([['A.B.C', h, 1], ['A.B.C', h, 10]], L1)
+               ?assertEqual([{'A.B.C', h, 1}, {'A.B.C', h, 10}], L1)
        end}
      ]}.
 

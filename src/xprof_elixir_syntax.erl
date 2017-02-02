@@ -9,6 +9,7 @@
 
          normalise_query/1,
          hidden_function/1,
+         fmt_mfa/3,
          fmt_mod_and_delim/1,
          fmt_mod/1,
          fmt_fun_and_arity/2,
@@ -212,6 +213,11 @@ hidden_function(Fun) ->
             true;
         _ -> false
     end.
+
+fmt_mfa(Mod, Fun, Arity) ->
+    %% FIXME if we wouldn't want to ensure Elixir. prefix in aliases
+    %% could use: 'Elixir.Exception':format_mfa(Mod, Fun, Arity)
+    fmt("~s~s", [fmt_mod_and_delim(Mod), fmt_fun_and_arity(Fun, Arity)]).
 
 fmt_mod(Mod) ->
     case 'Elixir.Kernel':inspect(Mod) of

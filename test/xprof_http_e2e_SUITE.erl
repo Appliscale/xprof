@@ -116,7 +116,7 @@ monitor_query_with_matchspec(_Config) ->
 
 get_function_proposals_for_known_module(_Config) ->
     {200, Resp} = make_get_request("api/funs", [{"query", "dict:ne"}]),
-    ?assertEqual([[<<"dict">>,<<"new">>,0]], Resp),
+    ?assertEqual([<<"dict:new/0">>], Resp),
     ok.
 
 no_function_proposals_for_invalid_module(_Config) ->

@@ -5,6 +5,7 @@
          now2epoch/1,
          set_mode/1,
          get_mode/0,
+         get_mode_cb/0,
          prefix/2,
          prefix_rest/2
         ]).
@@ -45,6 +46,13 @@ get_mode() ->
             Mode;
         {ok, Mode} ->
             Mode
+    end.
+
+-spec get_mode_cb() -> module().
+get_mode_cb() ->
+    case get_mode() of
+        erlang -> xprof_erlang_syntax;
+        elixir -> xprof_elixir_syntax
     end.
 
 -spec detect_mode() -> xprof:mode().

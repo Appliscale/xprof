@@ -9,6 +9,7 @@
 
          normalise_query/1,
          hidden_function/1,
+         fmt_mfa/3,
          fmt_mod_and_delim/1,
          fmt_mod/1,
          fmt_fun_and_arity/2,
@@ -79,6 +80,9 @@ hidden_function(Fun) ->
             true;
         _ -> false
     end.
+
+fmt_mfa(Mod, Fun, Arity) ->
+    fmt("~w:~w/~b", [Mod, Fun, Arity]).
 
 fmt_mod(Mod) ->
     fmt("~w", [Mod]).

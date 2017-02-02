@@ -11,13 +11,9 @@
 %% matching the query.
 
 -spec get_available_funs(binary()) -> [MFA]
-  when MFA :: list(). %% [module(), atom(), arity()]
+  when MFA :: {module(), atom(), arity()}.
 get_available_funs(Query) ->
-    ModeCB =
-        case xprof_lib:get_mode() of
-            erlang -> xprof_erlang_syntax;
-            elixir -> xprof_elixir_syntax
-        end,
+    ModeCB = xprof_lib:get_mode_cb(),
 
     AllMods = get_modules(),
 
@@ -31,7 +27,7 @@ get_available_funs(Query) ->
         lists:flatmap(
           fun({Mod, FunPrefix}) ->
                   Funs = get_all_functions(Mod, ModeCB),
-                  [[Mod, Fun, Arity]
+                  [{Mod, Fun, Arity}
                    || {Fun, Arity} <- filter_funs(FunPrefix, Funs, ModeCB)]
           end, ExactMatch),
 
@@ -39,7 +35,7 @@ get_available_funs(Query) ->
     %% and return only their global/public functions
     MatchingMods = filter_mods(NormQuery, AllMods, ModeCB),
     GlobalFuns =
-        [[Mod, Fun, Arity]
+        [{Mod, Fun, Arity}
          || Mod <- MatchingMods -- ExactMods,
             {Fun, Arity} <- get_global_functions(Mod, ModeCB)],
 
