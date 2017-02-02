@@ -71,7 +71,8 @@ handle_req(<<"mon_stop">>, Req, State) ->
 
 handle_req(<<"mon_get_all">>, Req, State) ->
     Funs = xprof_tracer:all_monitored(),
-    FunsArr = [tuple_to_list(MFA) || MFA <- Funs],
+    FunsArr = [[Mod, Fun, Arity, Query]
+               || {{Mod, Fun, Arity}, Query} <- Funs],
     Json = jsone:encode(FunsArr),
     {ok, ResReq} = cowboy_req:reply(200,
                                     [{<<"content-type">>,
