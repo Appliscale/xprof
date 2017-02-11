@@ -13,7 +13,8 @@
          fmt_mod_and_delim/1,
          fmt_mod/1,
          fmt_fun_and_arity/2,
-         fmt_fun/1]).
+         fmt_fun/1,
+         fmt_term/1]).
 
 %% from elixir.hrl
 -define(is_upcase(S), (S >= $A andalso S =< $Z)).
@@ -245,6 +246,9 @@ fmt_fun(Fun) ->
 
 fmt_fun_and_arity(Fun, Arity) ->
     fmt("~ts/~b", [fmt_fun(Fun), Arity]).
+
+fmt_term(Term) ->
+    'Elixir.Kernel':inspect(Term).
 
 fmt(Fmt, Args) ->
     list_to_binary(io_lib:format(Fmt, Args)).

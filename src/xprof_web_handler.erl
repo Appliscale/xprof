@@ -161,7 +161,8 @@ handle_req(<<"capture_data">>, Req, State) ->
             {error, not_found} ->
                 cowboy_req:reply(404, Req);
             {ok, {Id, Threshold, Limit, OriginalLimit}, Items} ->
-                ItemsJson = [{args_res2proplist(Item)} || Item <- Items],
+                ModeCb = xprof_lib:get_mode_cb(),
+                ItemsJson = [{args_res2proplist(Item, ModeCb)} || Item <- Items],
                 Json = jsone:encode({[{capture_id, Id},
                                       {threshold, Threshold},
                                       {limit, OriginalLimit},
@@ -191,9 +192,9 @@ get_query(Req) ->
     {Params, _} = cowboy_req:qs_vals(Req),
     binary_to_list(proplists:get_value(<<"query">>, Params)).
 
-args_res2proplist([Id, Pid, CallTime, Args, Res]) ->
+args_res2proplist([Id, Pid, CallTime, Args, Res], ModeCb) ->
     [{id, Id},
-     {pid, list_to_binary(io_lib:format("~p",[Pid]))},
+     {pid, ModeCb:fmt_term(Pid)},
      {call_time, CallTime},
-     {args, list_to_binary(io_lib:format("~w",[Args]))},
-     {res, list_to_binary(io_lib:format("~p",[Res]))}].
+     {args, ModeCb:fmt_term(Args)},
+     {res, ModeCb:fmt_term(Res)}].

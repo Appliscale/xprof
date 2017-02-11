@@ -13,7 +13,8 @@
          fmt_mod_and_delim/1,
          fmt_mod/1,
          fmt_fun_and_arity/2,
-         fmt_fun/1]).
+         fmt_fun/1,
+         fmt_term/1]).
 
 %% @doc Parse a query string that represents either a module-function-arity
 %% or an xprof-flavoured match-spec fun in Erlang syntax.
@@ -95,6 +96,9 @@ fmt_fun(Fun) ->
 
 fmt_fun_and_arity(Fun, Arity) ->
     fmt("~w/~b", [Fun, Arity]).
+
+fmt_term(Term) ->
+    fmt("~p", [Term]).
 
 fmt(Fmt, Args) ->
     list_to_binary(io_lib:format(Fmt, Args)).

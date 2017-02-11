@@ -36,3 +36,6 @@
 
 -callback fmt_fun(Fun :: atom()) ->
     Formatted :: binary().
+
+-callback fmt_term(Term :: term()) ->
+    Formatted :: binary().
