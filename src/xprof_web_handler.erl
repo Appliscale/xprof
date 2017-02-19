@@ -39,15 +39,16 @@ handle_req(<<"mon_start">>, Req, State) ->
     Query = get_query(Req),
     lager:info("Starting monitoring via web on '~s'~n", [Query]),
 
-    Req2 =
+    {ok, ResReq} =
         case xprof_tracer:monitor(Query) of
-            ok -> Req;
-            {error, already_traced} -> Req;
+            ok ->
+                cowboy_req:reply(204, Req);
+            {error, already_traced} ->
+                cowboy_req:reply(204, Req);
             _Error ->
-                {ok, ResReq} = cowboy_req:reply(400, Req),
-                ResReq
+                cowboy_req:reply(400, Req)
         end,
-    {ok, Req2, State};
+    {ok, ResReq, State};
 
 
 handle_req(<<"mon_stop">>, Req, State) ->
@@ -56,7 +57,8 @@ handle_req(<<"mon_stop">>, Req, State) ->
     lager:info("Stopping monitoring via web on ~w:~w/~w~n",[M,F,A]),
 
     xprof_tracer:demonitor(MFA),
-    {ok, Req, State};
+    {ok, ResReq} = cowboy_req:reply(204, Req),
+    {ok, ResReq, State};
 
 handle_req(<<"mon_get_all">>, Req, State) ->
     Funs = xprof_tracer:all_monitored(),
@@ -92,7 +94,7 @@ handle_req(<<"trace_set">>, Req, State) ->
     {ok, ResReq} = case lists:member(Spec, [<<"all">>, <<"pause">>]) of
                        true ->
                            xprof_tracer:trace(list_to_atom(binary_to_list(Spec))),
-                           cowboy_req:reply(200, Req);
+                           cowboy_req:reply(204, Req);
                        false ->
                            lager:info("Wrong spec for tracing: ~p",[Spec]),
                            cowboy_req:reply(400, Req)
