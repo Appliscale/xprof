@@ -26,6 +26,8 @@
 
 -define(ONE_SEC, 1000000). %% Second in microseconds
 -define(WINDOW_SIZE, 10*60). %% 10 min window size
+%% The largest duration value that can be stored in the HDR histogram
+-define(MAX_DURATION, 30*?ONE_SEC).
 
 %% @doc Starts new process registered localy.
 -spec start_link(xprof:mfaspec()) -> {ok, pid()}.
@@ -165,7 +167,7 @@ code_change(_OldVsn, State, _Extra) ->
 init_storage(Name) ->
     ets:new(Name, [public, named_table]),
     ets:insert(Name, {capture_spec, -1, -1, -1, -1}),
-    hdr_histogram:open(1000000,3).
+    hdr_histogram:open(?MAX_DURATION, 3).
 
 maybe_make_snapshot(State = #state{name=Name, last_ts=LastTS,
                                    window_size=WindSize}) ->
@@ -256,8 +258,13 @@ record_results(Pid, CallTime, Args, Res,
                               hdr_ref = Ref,
                               capture_spec = CaptureSpec,
                               capture_counter = Count}) ->
-
-    hdr_histogram:record(Ref, CallTime),
+    if CallTime > ?MAX_DURATION ->
+            lager:error("Call ~p took ~p ms that is larger than the maximum "
+                        "that can be stored", [Name, CallTime/1000]),
+            ok = hdr_histogram:record(Ref, ?MAX_DURATION);
+       true ->
+            ok = hdr_histogram:record(Ref, CallTime)
+    end,
 
     case CaptureSpec of
         {Threshold, Limit}
