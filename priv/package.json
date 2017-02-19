@@ -36,7 +36,7 @@
     "bower": "1.8.0",
     "chai": "3.5.0",
     "css-loader": "0.23.0",
-    "enzyme": "^2.7.1",
+    "enzyme": "2.7.1",
     "eslint": "3.12.2",
     "eslint-plugin-import": "2.2.0",
     "eslint-plugin-json": "1.2.0",
