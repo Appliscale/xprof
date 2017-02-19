@@ -4,6 +4,12 @@
 
 -behavior(cowboy_http_handler).
 
+%% In case an XHR receives no content with no content-type Firefox will emit
+%% the following error: "XML Parsing Error: no root element found..."
+%% As a workaround always return a content-type of octet-stream with
+%% 204 No Content responses
+-define(HDR_NO_CONTENT, [{<<"Content-type">>, <<"application/octet-stream">>}]).
+
 %% Cowboy callbacks
 
 init(_Type, Req, _Opts) ->
@@ -42,9 +48,9 @@ handle_req(<<"mon_start">>, Req, State) ->
     {ok, ResReq} =
         case xprof_tracer:monitor(Query) of
             ok ->
-                cowboy_req:reply(204, Req);
+                cowboy_req:reply(204, ?HDR_NO_CONTENT, Req);
             {error, already_traced} ->
-                cowboy_req:reply(204, Req);
+                cowboy_req:reply(204, ?HDR_NO_CONTENT, Req);
             _Error ->
                 cowboy_req:reply(400, Req)
         end,
@@ -57,7 +63,7 @@ handle_req(<<"mon_stop">>, Req, State) ->
     lager:info("Stopping monitoring via web on ~w:~w/~w~n",[M,F,A]),
 
     xprof_tracer:demonitor(MFA),
-    {ok, ResReq} = cowboy_req:reply(204, Req),
+    {ok, ResReq} = cowboy_req:reply(204, ?HDR_NO_CONTENT, Req),
     {ok, ResReq, State};
 
 handle_req(<<"mon_get_all">>, Req, State) ->
@@ -94,7 +100,7 @@ handle_req(<<"trace_set">>, Req, State) ->
     {ok, ResReq} = case lists:member(Spec, [<<"all">>, <<"pause">>]) of
                        true ->
                            xprof_tracer:trace(list_to_atom(binary_to_list(Spec))),
-                           cowboy_req:reply(204, Req);
+                           cowboy_req:reply(204, ?HDR_NO_CONTENT, Req);
                        false ->
                            lager:info("Wrong spec for tracing: ~p",[Spec]),
                            cowboy_req:reply(400, Req)
@@ -136,7 +142,7 @@ handle_req(<<"capture_stop">>, Req, State) ->
     {ok, ResReq} =
         case xprof_tracer_handler:capture_stop(MFA) of
             ok ->
-                cowboy_req:reply(204, Req);
+                cowboy_req:reply(204, ?HDR_NO_CONTENT, Req);
             {error, not_found} ->
                 cowboy_req:reply(404, Req)
         end,
