@@ -15,10 +15,10 @@ bower: npm
 bootstrap_front_end: bower
 
 check_front_end:
-	cd priv; $(BIN_DIR)/eslint *.json app/*.jsx app/*.js test/*.js
+	cd priv; $(BIN_DIR)/eslint *.json app/*.jsx app/*.js test/*.js test/*.jsx
 
 test_front_end: check_front_end
-	cd priv; $(BIN_DIR)/mocha test/.setup.js test/*.test.js
+	cd priv; $(BIN_DIR)/mocha test/.setup.js test/*.test.js test/*.test.jsx
 
 webpack: test_front_end
 	cd priv; $(BIN_DIR)/webpack -d

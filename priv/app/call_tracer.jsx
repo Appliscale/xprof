@@ -1,7 +1,7 @@
 import "underscore";
 import React from "react";
 
-class CallsTableRow extends React.Component {
+export class CallsTableRow extends React.Component {
   constructor(props) {
     super(props);
     this.state = { expanded: false };
