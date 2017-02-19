@@ -14,6 +14,7 @@ all() ->
      capture_args_res,
      capture_args_ms,
      capture_stop,
+     long_call,
      {group, simulate_tracing}].
 
 groups() ->
@@ -276,6 +277,43 @@ capture_stop(_Config) ->
 
     xprof_tracer:trace(pause),
     xprof_tracer:demonitor(MFA),
+    ok.
+
+long_call(_Config) ->
+    application:set_env(xprof, max_duration, 100),
+
+    xprof_tracer:monitor(MFA = {?MODULE, test_fun, 1}),
+    ok = xprof_tracer:trace(self()),
+    {ok, Id} = xprof_tracer_handler:capture(MFA, 50, 1),
+
+    Last = get_print_current_time(),
+
+    test_fun(20),
+    test_fun(200),
+    ct:sleep(1000),
+
+    [StatsItems|_] = xprof_tracer:data(MFA, Last),
+    %% both calls should be recorded
+    ?assertEqual(2, proplists:get_value(count, StatsItems)),
+
+    %% minimum should be 20 ms with a bit of precision error
+    Min = proplists:get_value(min, StatsItems),
+    ?assertMatch({true, _}, {Min < 21*1000, Min}),
+
+    %% maximum should be 100 ms with a bit of precision error
+    Max = proplists:get_value(max, StatsItems),
+    ?assertMatch({true, _}, {Max > 99*1000, Max}),
+
+    %% data capturing also works for too long calls
+    {ok, {Id, 50, 1, 1}, [CapturedData]} =
+        xprof_tracer_handler:get_captured_data(MFA, 0),
+    ?assertMatch([_Num, _Pid, _Time, [200], {res, 200}], CapturedData),
+
+    xprof_tracer_handler:capture_stop(MFA),
+    xprof_tracer:trace(pause),
+    xprof_tracer:demonitor(MFA),
+
+    application:unset_env(xprof, max_duration),
     ok.
 
 %% Helpers
