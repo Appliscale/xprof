@@ -17,7 +17,7 @@
     "url": "https://github.com/appliscale/xprof/issues"
   },
   "homepage": "https://github.com/appliscale/xprof",
-  "dependencies" : {
+  "dependencies": {
     "bootswatch": "3.3.7",
     "bootstrap": "3.3.7",
     "jquery": "~2.1.4",
@@ -36,6 +36,7 @@
     "bower": "1.8.0",
     "chai": "3.5.0",
     "css-loader": "0.23.0",
+    "enzyme": "2.7.1",
     "eslint": "3.12.2",
     "eslint-plugin-import": "2.2.0",
     "eslint-plugin-json": "1.2.0",
@@ -43,6 +44,7 @@
     "file-loader": "0.8.5",
     "jsdom": "9.9.1",
     "mocha": "3.2.0",
+    "react-addons-test-utils": "15.4.1",
     "style-loader": "0.13.0",
     "url-loader": "0.5.7",
     "webpack": "1.14.0"
