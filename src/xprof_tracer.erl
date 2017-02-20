@@ -72,7 +72,7 @@ trace(PidOrSpec) ->
 
 %% @doc Returns current tracing state.
 -spec trace_status() -> {all | {spawner, pid(), float()} | pid(),
-                         Paused :: boolean(), Overflow :: boolean()}.
+                         Status :: paused | running | overflow}.
 trace_status() ->
     gen_server:call(?MODULE, trace_status).
 
