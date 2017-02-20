@@ -21,11 +21,13 @@
          terminate/2,
          code_change/3]).
 
--record(state, {mfa, name, last_ts, hdr_ref, window_size,
+-record(state, {mfa, name, last_ts, hdr_ref, window_size, max_duration,
                 capture_spec, capture_id=0, capture_counter=0}).
 
 -define(ONE_SEC, 1000000). %% Second in microseconds
 -define(WINDOW_SIZE, 10*60). %% 10 min window size
+%% The largest duration value that can be stored in the HDR histogram in ms
+-define(MAX_DURATION, 30*1000).
 
 %% @doc Starts new process registered localy.
 -spec start_link(xprof:mfaspec()) -> {ok, pid()}.
@@ -60,10 +62,15 @@ capture(MFA = {M,F,A}, Threshold, Limit) ->
     Name = xprof_lib:mfa2atom(MFA),
     gen_server:call(Name, {capture, Threshold, Limit}).
 
--spec capture_stop(xprof:mfaid()) -> ok.
+-spec capture_stop(xprof:mfaid()) -> ok | {error, not_found}.
 capture_stop(MFA) ->
     Name = xprof_lib:mfa2atom(MFA),
-    gen_server:call(Name, capture_stop).
+    try
+        gen_server:call(Name, capture_stop)
+    catch
+        exit:{noproc, _} ->
+            {error, not_found}
+    end.
 
 %% @doc
 -spec get_captured_data(mfa(), non_neg_integer()) ->
@@ -95,12 +102,15 @@ get_captured_data(MFA, Offset) ->
 %% gen_server callbacks
 
 init([MFA, Name]) ->
-    {ok, HDR} = init_storage(Name),
+    MaxDuration =
+        application:get_env(xprof, max_duration, ?MAX_DURATION) * 1000,
+    {ok, HDR} = init_storage(Name, MaxDuration),
     %% add trace pattern with args capturing turned off
     capture_args_trace_off(MFA),
     {ok, #state{mfa=MFA, hdr_ref=HDR, name=Name,
                 last_ts=os:timestamp(),
-                window_size=?WINDOW_SIZE}, 1000}.
+                window_size=?WINDOW_SIZE,
+                max_duration = MaxDuration}, 1000}.
 
 handle_call({capture, Threshold, Limit}, _From,
             State = #state{mfa = MFA}) ->
@@ -162,10 +172,10 @@ code_change(_OldVsn, State, _Extra) ->
 
 %% Internal functions
 
-init_storage(Name) ->
+init_storage(Name, MaxDuration) ->
     ets:new(Name, [public, named_table]),
     ets:insert(Name, {capture_spec, -1, -1, -1, -1}),
-    hdr_histogram:open(1000000,3).
+    hdr_histogram:open(MaxDuration * 1000, 3).
 
 maybe_make_snapshot(State = #state{name=Name, last_ts=LastTS,
                                    window_size=WindSize}) ->
@@ -254,10 +264,17 @@ record_results(Pid, CallTime, Args, Res,
                State = #state{mfa = MFA,
                               name = Name,
                               hdr_ref = Ref,
+                              max_duration = MaxDuration,
                               capture_spec = CaptureSpec,
                               capture_counter = Count}) ->
-
-    hdr_histogram:record(Ref, CallTime),
+    if CallTime > MaxDuration ->
+            lager:error("Call ~p took ~p ms that is larger than the maximum "
+                        "that can be stored (~p ms)",
+                        [Name, CallTime/1000, MaxDuration div 1000]),
+            ok = hdr_histogram:record(Ref, MaxDuration);
+       true ->
+            ok = hdr_histogram:record(Ref, CallTime)
+    end,
 
     case CaptureSpec of
         {Threshold, Limit}

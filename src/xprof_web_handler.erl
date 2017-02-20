@@ -135,8 +135,8 @@ handle_req(<<"capture_stop">>, Req, State) ->
         case xprof_tracer_handler:capture_stop(MFA) of
             ok ->
                 cowboy_req:reply(204, Req);
-            {error, _Reason} ->
-                cowboy_req:reply(500, Req)
+            {error, not_found} ->
+                cowboy_req:reply(404, Req)
         end,
     {ok, ResReq, State};
 handle_req(<<"capture_data">>, Req, State) ->
