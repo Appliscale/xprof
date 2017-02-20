@@ -8,8 +8,11 @@
                         | {ms, module(), atom(), tuple()}
                         | {error, string()}.
 fun2ms(Str) ->
+    ModeCb = xprof_lib:get_mode_cb(),
     try
-        case parse_query(Str) of
+        case ModeCb:parse_query(Str) of
+            {mfa, M, F, '*'} ->
+                {ms, M, F, fix_ms([{'_', [], []}])};
             {mfa, _M, _F, _Arity} = MFA ->
                 MFA;
             {clauses, M, F, Clauses} ->
@@ -18,55 +21,6 @@ fun2ms(Str) ->
         end
     catch throw:Error ->
             Error
-    end.
-
-parse_query(Str) ->
-    case xprof_lib:get_mode() of
-        erlang ->
-            case tokens(Str) of
-                {mfa, _M, _F, _Arity} = MFA ->
-                    MFA;
-                {clauses, M, F, Tokens} ->
-                    Clauses = parse(Tokens),
-                    {clauses, M, F, Clauses}
-            end;
-        elixir ->
-            xprof_elixir_syntax:parse_query(Str)
-    end.
-
-tokens(Str) ->
-    case erl_scan:string(Str, {1,1}) of
-        {error, {_Loc, Mod, Err}, Loc} ->
-            err(Loc, Mod, Err);
-        {ok, [{atom, _, M}, {':', _},
-              {atom, _, F}, {'/', _},
-              {integer, _, A}], _EndLoc} ->
-            {mfa, M, F, A};
-        {ok, [{atom, _, M}, {':', _},
-              {atom, _, F}|Tokens], _EndLoc} when Tokens =/= [] ->
-            {clauses, M, F, [{'fun', 0}|ensure_end(Tokens)]};
-        {ok, Tokens, _EndLoc} ->
-            err("expression is not an xprof match-spec fun ~w", [Tokens])
-    end.
-
-%% @doc Ensure the fun is properly closed with "end."
-ensure_end(Tokens) ->
-    case lists:reverse(Tokens) of
-        [{dot, _}, {'end', _}| _] -> Tokens;
-        [{dot, Loc}|T] -> lists:reverse(T, [{'end', Loc}, {dot, Loc}]);
-        [Last|_] = R ->
-            Loc = element(2, Last),
-            lists:reverse(R, [{'end', Loc}, {dot, Loc}])
-    end.
-
-parse(Tokens) ->
-    case erl_parse:parse_exprs(Tokens) of
-        {error, {Loc, Mod, Err}} ->
-            err(Loc, Mod, Err);
-        {ok, [{'fun', _Loc, {clauses, Clauses}}]} ->
-            Clauses;
-        {ok, _} ->
-            err("expression is not an xprof match-spec fun")
     end.
 
 ms(Clauses) ->

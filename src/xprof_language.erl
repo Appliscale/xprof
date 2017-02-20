@@ -4,6 +4,15 @@
 %%%
 -module(xprof_language).
 
+%% Function for start monitoring
+
+-callback parse_query(Query :: string()) ->
+    Result :: {mfa, module(), atom(), arity()}
+            | {mfa, module(), atom(), '*'}
+            | {clauses, module(), atom(), [erl_parse:abstract_clause()]}.
+
+%% Functions for autocomplete
+
 -callback normalise_query(Query :: binary()) ->
     NormQuery :: binary().
 

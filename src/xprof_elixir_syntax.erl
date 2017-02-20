@@ -26,8 +26,6 @@
 %% or an xprof-flavoured match-spec fun in Elixir syntax.
 %% In the later case the last element of the tuple is the abstract syntax tree
 %% of the clauses of the anonimous function.
--spec parse_query(string()) -> {mfa, module(), atom(), arity()}
-                             | {clauses, module(), atom(), Ast :: list()}.
 parse_query(Str) ->
     case 'Elixir.Code':string_to_quoted("(" ++ Str ++ ")") of
         {ok, Quoted} ->
