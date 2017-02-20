@@ -60,8 +60,8 @@ get_running_status_after_setting_tracing(_Config) ->
     ok.
 
 trace_set_only_accepts_all_and_pause(_Config) ->
-    ?assertMatch({200, _}, make_get_request("api/trace_set", [{"spec", "all"}])),
-    ?assertMatch({200, _}, make_get_request("api/trace_set", [{"spec", "pause"}])),
+    ?assertMatch({204, _}, make_get_request("api/trace_set", [{"spec", "all"}])),
+    ?assertMatch({204, _}, make_get_request("api/trace_set", [{"spec", "pause"}])),
     ?assertMatch({400, _}, make_get_request("api/trace_set", [{"spec", "invalid"}])),
     ok.
 
@@ -192,7 +192,7 @@ dont_receive_new_capture_data_after_stop(_Config) ->
 %% Givens
 %%
 given_tracing_all() ->
-    {200, _} = make_get_request("api/trace_set", [{"spec", "all"}]),
+    {204, _} = make_get_request("api/trace_set", [{"spec", "all"}]),
     ok.
 
 given_overload_queue_limit(Limit) ->
