@@ -62,10 +62,15 @@ capture(MFA = {M,F,A}, Threshold, Limit) ->
     Name = xprof_lib:mfa2atom(MFA),
     gen_server:call(Name, {capture, Threshold, Limit}).
 
--spec capture_stop(xprof:mfaid()) -> ok.
+-spec capture_stop(xprof:mfaid()) -> ok | {error, not_found}.
 capture_stop(MFA) ->
     Name = xprof_lib:mfa2atom(MFA),
-    gen_server:call(Name, capture_stop).
+    try
+        gen_server:call(Name, capture_stop)
+    catch
+        exit:{noproc, _} ->
+            {error, not_found}
+    end.
 
 %% @doc
 -spec get_captured_data(mfa(), non_neg_integer()) ->

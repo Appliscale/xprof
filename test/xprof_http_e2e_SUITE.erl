@@ -152,7 +152,7 @@ no_capture_data_when_not_traced(_Config) ->
 
 error_when_stopping_not_started_capture(_Config) ->
     MFA = [{"mod", "xprof_http_e2e_SUITE"}, {"fun", "long_function"}, {"arity", "0"}],
-    ?assertMatch({500, _}, make_get_request("api/capture_stop", MFA)),
+    ?assertMatch({404, _}, make_get_request("api/capture_stop", MFA)),
     ok.
 
 capture_data_when_traced_test(_Config) ->
