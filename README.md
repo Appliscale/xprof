@@ -91,13 +91,13 @@ on (that is how `xprof` measures duration)
 For example only measure the duration of `ets:lookup` on table `data`
 
 ```erlang
-ets:lookup([data, _]) -> true.
+ets:lookup(data, _) -> true.
 ```
 
-Or only capture the `important` field of a possibly big `data` record
+Or only capture the important field of a possibly big tuple
 
 ```erlang
-ets:insert([_, #data{important = I}]) -> message(I).
+ets:insert(_, Data) -> message(element(3, Data)).
 ```
 
 ## Contributing

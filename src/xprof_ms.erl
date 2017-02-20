@@ -24,13 +24,40 @@ fun2ms(Str) ->
     end.
 
 ms(Clauses) ->
+    IsEmptyArgs = case Clauses of
+                      [{clause, _, [], _, _}|_] -> true;
+                      _ -> false
+                  end,
+    ERR_HEAD = 3,
     case ms_transform:transform_from_shell(
-           dbg, Clauses, _ImportList = []) of
+           dbg, wrap_args(Clauses), _ImportList = []) of
+        {error,[{_, [{_, ms_transform, ERR_HEAD}|_]}|_], _} when IsEmptyArgs ->
+            %% A bug in ms_trasform that was only fixed in OTP 19.2 prevents
+            %% empty list as head in "dbg:fun2ms(fun([]) -> ..."
+            %% (see https://github.com/erlang/otp/commit/8db6c68b)
+            workaround_empty_args_ms(ms(workaround_empty_args_cl(Clauses)));
         {error,[{_,[{Loc,Mod,Code}|_]}|_],_} ->
             err(Loc, Mod, Code);
         MS ->
             MS
     end.
+
+wrap_args(Clauses) ->
+    [{clause, Loc, [build_list(Args)], Guards, Body}
+      ||{clause, Loc, Args, Guards, Body} <- Clauses].
+
+build_list([]) ->
+    {nil, 0};
+build_list([Arg|Args]) ->
+    Loc = element(2, Arg),
+    {cons, Loc, Arg, build_list(Args)}.
+
+workaround_empty_args_cl(Clauses) ->
+    [{clause, Loc, [{var, 0, '_'}], Guards, Body}
+      ||{clause, Loc, [], Guards, Body} <- Clauses].
+
+workaround_empty_args_ms(Ms) ->
+    [{[], G, B} || {['_'], G, B} <- Ms].
 
 %% @doc Ensure that the match-spec does not create traces that have different
 %% format than what xprof_trace_handler anticipates (ie. {message, _} directives

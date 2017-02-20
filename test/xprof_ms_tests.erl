@@ -28,9 +28,9 @@ parse_test_() ->
         ?M:fun2ms("m:f f/1, begin true"))
     ].
 
-ensure_dor_test_() ->
-    MSs = {[{'_',[],[{return_trace},{message,arity},true]}],
-           [{'_',[],[{return_trace},{message,'$_'},true]}]},
+ensure_dot_test_() ->
+    MSs = {[{['_'],[],[{return_trace},{message,arity},true]}],
+           [{['_'],[],[{return_trace},{message,'$_'},true]}]},
     [?_assertEqual(
         {ms, m, f, MSs},
         ?M:fun2ms("m:f(_) -> true")),
@@ -44,19 +44,18 @@ ensure_dor_test_() ->
 
 ms_test_() ->
     [?_assertEqual(
-        {error,
-         "dbg:fun2ms requires fun with single variable "
-         "or list parameter at column 4"},
-        ?M:fun2ms("m:f(A, B) -> {A, B}")),
-    ?_assertEqual(
        {error,
         "in fun head, only matching (=) on toplevel can be translated "
-        "into match_spec at column 8"},
-        ?M:fun2ms("m:f([A = {B, _}]) -> {A, B}"))
+        "into match_spec at column 7"},
+        ?M:fun2ms("m:f(A = {B, _}) -> {A, B}")),
+     ?_assertEqual(
+        {ms,m,f,
+         {[{[],[],[{return_trace},{message,arity},true]}],
+          [{[],[],[{return_trace},{message,'$_'},true]}]}},
+        ?M:fun2ms("m:f() -> true"))
     ].
 
 traverse_ms_test_() ->
-
     MSs =
     {%% capture args off
       [%% false -> false: no trace
@@ -75,7 +74,7 @@ traverse_ms_test_() ->
 
     [?_assertEqual(
         {ms, m, f, MSs},
-        ?M:fun2ms("m:f([a, _]) -> message(false);"
-                  "   ([b, _]) -> message(true);"
-                  "   ([_, C]) -> message(C) end."))
+        ?M:fun2ms("m:f(a, _) -> message(false);"
+                  "   (b, _) -> message(true);"
+                  "   (_, C) -> message(C) end."))
     ].

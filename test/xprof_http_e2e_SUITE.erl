@@ -111,7 +111,7 @@ stop_monitoring(_Config) ->
     ok.
 
 monitor_query_with_matchspec(_Config) ->
-    Q = "lists:delete([_, [E]]) -> true",
+    Q = "lists:delete(_, [E]) -> true",
     ?assertMatch({204, _}, make_get_request("api/mon_start", [{"query", Q}])),
     {200, Monitored}  = make_get_request("api/mon_get_all"),
     ?assertEqual([[<<"lists">>, <<"delete">>, <<"*">>, list_to_binary(Q)]],
