@@ -128,8 +128,8 @@ handle_req(<<"capture">>, Req, State) ->
     Threshold = binary_to_integer(ThresholdStr),
     Limit = binary_to_integer(LimitStr),
 
-    lager:info("Capture ~b calls to ~w:~w:~b~n exceeding ~b ms",
-               [Limit ,M,F,A,Threshold]),
+    lager:info("Capture ~b calls to ~w:~w/~w~n exceeding ~b ms",
+               [Limit, M, F, A, Threshold]),
 
     {ok, CaptureId} = xprof_tracer_handler:capture(MFA, Threshold, Limit),
     Json = jsone:encode({[{capture_id, CaptureId}]}),
