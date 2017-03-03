@@ -2,7 +2,6 @@ import "jquery";
 import ReactDOM from "react-dom";
 import React from "react";
 
-import "Flot";
 import "bootswatch/flatly/bootstrap.css";
 
 import Graph from "./graph.jsx";
