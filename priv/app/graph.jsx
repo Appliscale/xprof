@@ -1,10 +1,10 @@
 import "underscore";
 import React from "react";
-
-import FlotGraph from "./graph_flot.jsx";
+import C3Chart from "react-c3js";
 import CallsTracer from "./call_tracer.jsx";
-
 import Utils from "./utils.js";
+
+import "c3/c3.css";
 
 const UPDATE_INTERVAL = 1000;
 
@@ -14,15 +14,10 @@ const MAX_DPS = 5 * 60;
 export default class Graph extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { dps: [], error: false, lastTs: 0, unomunted: true };
+    this.state = { dps: [], error: false, lastTs: 0, unomunted: true, columns: [] };
   }
 
   componentDidMount() {
-    this.graph = new FlotGraph();
-    this.graph.init("#" + this.chartId());
-
-    window.addEventListener("resize", this.handleResize.bind(this));
-
     var ref = setInterval(this.getData.bind(this), UPDATE_INTERVAL);
     var newState = this.state;
 
@@ -32,7 +27,6 @@ export default class Graph extends React.Component {
   }
 
   componentWillUnmount() {
-    window.removeEventListener("resize", this.handleResize.bind(this));
     window.clearInterval(this.state.interval);
     this.state.unmounted = true;
   }
@@ -47,6 +41,35 @@ export default class Graph extends React.Component {
       errorMsg = <strong>  -  communication error</strong>;
     }
 
+    const data = {
+      x: "x",
+      columns: this.state.columns,
+      axes: {
+        count: "y2"
+      },
+      colors: {
+        count: "#98fb98",
+        max: "#8c2a04",
+        "99th perc": "#e24806",
+        "90th perc": "#e24806",
+        "75th perc": "#e26606",
+        "50th perc": "#e26606",
+        mean: "#ffaa00",
+        min: "#d3d004",
+      }
+    };
+
+    const point = { show: false };
+    const grid = {
+      x: { show: true },
+      y: { show: true }
+    };
+    const axis = {
+      x: { type: "timeseries", tick: { count: 10, fit: false, format: "%H:%M:%S" } },
+      y2: { show: true }
+    };
+    const transition = { duration: 0 };
+
     return (
       <div className={panelType}>
         <div className="panel-heading">
@@ -57,9 +80,8 @@ export default class Graph extends React.Component {
           <h3 className="panel-title">{Utils.formatMFA(MFA)}{errorMsg}</h3>
         </div>
         <div className="panel-body">
-
+          <C3Chart data={data} point={point} grid={grid} axis={axis} transition={transition}/>
           <div className="container-fluid">
-            <div id={this.chartId()} className="chart"></div>
             <br/>
             <CallsTracer mfa={MFA}/>
           </div>
@@ -70,13 +92,8 @@ export default class Graph extends React.Component {
 
   // Handle actions.
 
-  handleResize(e) {
-    this.graph.resize();
-  }
-
   handleClose() {
     var mfa = this.props.mfa;
-
     clearInterval(this.state.interval);
 
     $.ajax({
@@ -112,7 +129,7 @@ export default class Graph extends React.Component {
     padding = this.padData(maxAge, _.first(truncData).time);
     finalData = padding.concat(truncData);
 
-    this.graph.update(finalData);
+    this.state.columns = this.createColumns(finalData);
 
     this.state.dps = truncData;
     this.state.lastTs = _.last(sortedData).time;
@@ -151,8 +168,29 @@ export default class Graph extends React.Component {
     return data;
   }
 
-  chartId() {
-    return Utils.chartId(this.props.mfa);
+  createColumns(data) {
+    let columns = [
+      [ "x" ], [ "count" ], [ "max" ], [ "99th perc" ], [ "90th perc" ],
+      [ "75th perc" ], [ "50th perc" ], [ "mean" ], [ "min" ]
+    ];
+    let zu = function(v) {
+      if (v === undefined) {
+        return 0;
+      } else {
+        return v;
+      }
+    };
+    for (let d of data) {
+      columns[0].push(zu(d.time) * 1000);
+      columns[1].push(zu(d.count));
+      columns[2].push(zu(d.max));
+      columns[3].push(zu(d.p99));
+      columns[4].push(zu(d.p90));
+      columns[5].push(zu(d.p75));
+      columns[6].push(zu(d.p50));
+      columns[7].push(zu(d.mean));
+      columns[8].push(zu(d.min));
+    }
+    return columns;
   }
-
 }

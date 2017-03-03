@@ -7,7 +7,7 @@ var config = {
     // We split the entry into two specific chunks. Our app and vendors. Vendors
     // specify that react should be part of that chunk.
     entry: {
-      app: [ "./app/graph_flot.jsx", "./app/graph.jsx", "./app/main.jsx" ],
+      app: [ "./app/graph.jsx", "./app/main.jsx" ],
       vendors: [ "jquery", "underscore", "react", "Flot" ]
     },
     resolve: {
