@@ -48,14 +48,14 @@ export default class Graph extends React.Component {
         count: "y2"
       },
       colors: {
-        count: "#98fb98",
-        max: "#8c2a04",
-        "99th perc": "#e24806",
-        "90th perc": "#e24806",
-        "75th perc": "#e26606",
-        "50th perc": "#e26606",
-        mean: "#ffaa00",
-        min: "#d3d004",
+        "count": "#98FB98",
+        "max": "#8C2A04",
+        "99th perc": "#E24806",
+        "90th perc": "#E24806",
+        "75th perc": "#E26606",
+        "50th perc": "#E26606",
+        "mean": "#FFAA00",
+        "min": "#D3D004",
       }
     };
 
@@ -173,23 +173,23 @@ export default class Graph extends React.Component {
       [ "x" ], [ "count" ], [ "max" ], [ "99th perc" ], [ "90th perc" ],
       [ "75th perc" ], [ "50th perc" ], [ "mean" ], [ "min" ]
     ];
-    let zu = function(v) {
-      if (v === undefined) {
+    let zeroIfUndefined = (v) => {
+      if (typeof v === "undefined") {
         return 0;
       } else {
         return v;
       }
     };
-    for (let d of data) {
-      columns[0].push(zu(d.time) * 1000);
-      columns[1].push(zu(d.count));
-      columns[2].push(zu(d.max));
-      columns[3].push(zu(d.p99));
-      columns[4].push(zu(d.p90));
-      columns[5].push(zu(d.p75));
-      columns[6].push(zu(d.p50));
-      columns[7].push(zu(d.mean));
-      columns[8].push(zu(d.min));
+    for (let entry of data) {
+      columns[0].push(zeroIfUndefined(entry.time) * 1000);
+      columns[1].push(zeroIfUndefined(entry.count));
+      columns[2].push(zeroIfUndefined(entry.max));
+      columns[3].push(zeroIfUndefined(entry.p99));
+      columns[4].push(zeroIfUndefined(entry.p90));
+      columns[5].push(zeroIfUndefined(entry.p75));
+      columns[6].push(zeroIfUndefined(entry.p50));
+      columns[7].push(zeroIfUndefined(entry.mean));
+      columns[8].push(zeroIfUndefined(entry.min));
     }
     return columns;
   }
