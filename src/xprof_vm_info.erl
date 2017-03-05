@@ -13,37 +13,55 @@
 -spec get_available_funs(binary()) -> [MFA]
   when MFA :: list(). %% [module(), atom(), arity()]
 get_available_funs(Query) ->
-    case binary:split(Query, <<":">>) of
-        [ModBin, Rest] ->
-            case is_module(ModBin) of
-                {true, Mod} ->
-                    Funs = get_all_functions(Mod),
-                    %% match instead on "mod:fun/" if value seems to be a
-                    %% match-spec fun of the form "mod:fun(..."
-                    FunPrefix = re:replace(Rest, "\\(.*", "/", [{return, list}]),
-                    [[Mod, Fun, Arity]
-                     || {Fun, Arity} <- filter_funs(FunPrefix, Funs)];
-                false ->
-                    []
-            end;
-        [ModPrefix] ->
+    AllMods = get_modules(),
+    case find_mod(Query, AllMods) of
+        [{Mod, FunPrefix}] ->
+            Funs = get_all_functions(Mod),
             [[Mod, Fun, Arity]
-             || Mod <- filter_mods(binary_to_list(ModPrefix), get_modules()),
+             || {Fun, Arity} <- filter_funs(FunPrefix, Funs)];
+        [] ->
+            [[Mod, Fun, Arity]
+             || Mod <- filter_mods(Query, AllMods),
                 {Fun, Arity} <- get_global_functions(Mod)]
     end.
 
 filter_funs(Prefix, Funs) ->
     lists:filter(fun({Fun, Arity}) ->
-                         Str = lists:flatten(
-                                 [atom_to_list(Fun), $/, integer_to_list(Arity)]),
-                         lists:prefix(Prefix, Str)
+                         is_fun_arity(Prefix, Fun, Arity)
+                             orelse is_ms_fun(Prefix, Fun)
                  end, Funs).
+
+is_fun_arity(Prefix, Fun, Arity) ->
+    FunArityBin = fmt_fun_and_arity(Fun, Arity),
+    prefix(Prefix, FunArityBin).
+
+%% @doc Check if Prefix string can be a match-spec fun declaration.
+%% The heuristic is that the function name must be followed by an open
+%% parenthesis or space character.
+%% (Prefix is definitely longer than FunBin otherwise it would have been a
+%%  prefix of FunArityBin already)
+is_ms_fun(Prefix, Fun) ->
+    FunBin = fmt_fun(Fun),
+    case prefix_rest(FunBin, Prefix) of
+        <<"(", _/binary>> -> true;
+        <<" ", _/binary>> -> true;
+        _ -> false
+    end.
 
 filter_mods(Prefix, Mods) ->
     lists:filter(fun(Mod) ->
-                         Str = atom_to_list(Mod),
-                         lists:prefix(Prefix, Str)
+                         prefix(Prefix, fmt_mod(Mod))
                  end, Mods).
+
+find_mod(Query, Mods) ->
+    lists:filtermap(
+      fun(Mod) ->
+              ModBin = fmt_mod_and_delim(Mod),
+              case prefix_rest(ModBin, Query) of
+                  false -> false;
+                  Rest -> {true, {Mod, Rest}}
+              end
+      end, Mods).
 
 -spec get_global_functions(module()) -> [{atom(), arity()}].
 get_global_functions(Mod) ->
@@ -55,17 +73,38 @@ get_all_functions(Mod) ->
     %% and list comprehensions like '-filter_funs/2-fun-0-'
     [FA || FA = {F, _} <- Mod:module_info(functions), not lists:prefix("-", atom_to_list(F))].
 
-is_module(ModBin) ->
-    try list_to_existing_atom(binary_to_list(ModBin)) of
-        Mod ->
-            case code:is_loaded(Mod) of
-                {file, _} -> {true, Mod};
-                false -> false
-            end
-    catch error:badarg ->
-            false
-    end.
-
 get_modules() ->
     ModsFiles = code:all_loaded(),
     [ Mod || {Mod, _File} <- ModsFiles].
+
+-spec prefix(binary(), binary()) -> boolean().
+prefix(Prefix, Bin) ->
+    PrefixSize = byte_size(Prefix),
+    case Bin of
+        <<Prefix:PrefixSize/binary, _/binary>> -> true;
+        _ -> false
+    end.
+
+-spec prefix_rest(binary(), binary()) -> false | binary().
+prefix_rest(Prefix, Bin) ->
+    PrefixSize = byte_size(Prefix),
+    case Bin of
+        <<Prefix:PrefixSize/binary, Rest/binary>> -> Rest;
+        _ -> false
+    end.
+
+%% Erlang specific
+fmt_mod(Mod) ->
+    fmt("~w", [Mod]).
+
+fmt_mod_and_delim(Mod) ->
+    fmt("~w:", [Mod]).
+
+fmt_fun(Fun) ->
+    fmt("~w", [Fun]).
+
+fmt_fun_and_arity(Fun, Arity) ->
+    fmt("~w/~b", [Fun, Arity]).
+
+fmt(Fmt, Args) ->
+    list_to_binary(io_lib:format(Fmt, Args)).
