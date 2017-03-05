@@ -7,15 +7,10 @@ var config = {
     // We split the entry into two specific chunks. Our app and vendors. Vendors
     // specify that react should be part of that chunk.
     entry: {
-      app: [ "./app/graph_flot.jsx", "./app/graph.jsx", "./app/main.jsx" ],
-      vendors: [ "jquery", "underscore", "react", "Flot" ]
-    },
-    resolve: {
-      root: [ path.join(__dirname, "bower_components") ],
+      app: [ "./app/graph.jsx", "./app/main.jsx" ],
+      vendors: [ "jquery", "underscore", "react" ]
     },
     plugins: [
-      new webpack.ResolverPlugin(
-        new webpack.ResolverPlugin.DirectoryDescriptionFilePlugin("bower.json", [ "main" ])),
       new webpack.optimize.CommonsChunkPlugin("vendors", "vendors.js"),
       new webpack.ProvidePlugin({
         $: "jquery",
