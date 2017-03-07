@@ -10,34 +10,43 @@ run_elixir_unit_tests(Tests) ->
         false ->
             %% no Elixir in path - skip elixir tests
             [];
-        _ ->
-            {setup,
-             fun setup_elixir/0,
-             fun cleanup_elixir/1,
-             Tests}
+        Elixir ->
+            case get_elixir_ebin(Elixir) of
+                error ->
+                    [];
+                ElixirEbin ->
+                    {setup,
+                     fun() -> setup_elixir(ElixirEbin) end,
+                     fun cleanup_elixir/1,
+                     Tests}
+            end
     end.
 
-setup_elixir() ->
+setup_elixir(ElixirEbin) ->
     %% Ensure Elixir is in the code path
-    ElixirEbin =
+    ElixirEbin1 =
         case code:ensure_loaded(elixir) of
             {module, _} ->
                 %% Elixir already loaded - happy days
                 undefined;
             _ ->
-                add_elixir_to_path()
+                true = code:add_patha(ElixirEbin),
+                ElixirEbin
         end,
     {ok, Apps} = application:ensure_all_started(elixir),
-    {ElixirEbin, Apps}.
+    {ElixirEbin1, Apps}.
 
-add_elixir_to_path() ->
-    ElixirEbin =
-        string:strip(
-          ?cmd("elixir -e 'IO.puts :code.lib_dir(:elixir, :ebin)'"),
-          right,
-          $\n),
-    true = code:add_patha(ElixirEbin),
-    ElixirEbin.
+get_elixir_ebin(Elixir) ->
+    Cmd = Elixir ++ " -e 'IO.puts :code.lib_dir(:elixir, :ebin)'",
+    case eunit_lib:command(Cmd) of
+        {0, Output} ->
+            _ElixirEbin = string:strip(Output, right, $\n);
+        {Status, Output} ->
+            io:format(user,
+                      "~nfound elixir unusable - skipping elixir tests:~n"
+                      "CMD: ~p => ~p~n~s~n", [Cmd, Status, Output]),
+            error
+    end.
 
 cleanup_elixir({ElixirEbin, Apps}) ->
     [ok = application:stop(App) || App <- Apps],
