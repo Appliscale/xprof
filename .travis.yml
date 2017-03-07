@@ -1,21 +1,37 @@
-language: erlang
+language: elixir
+# We would like to use no elixir for certain erlang versions (below 18).
+# To trick travis set elixir version to 1.3.2
+# and then remove it from the path in install step.
+matrix:
+  include:
+    - otp_release: 20.0
+      elixir: 1.5.1
+    - otp_release: 19.3
+      elixir: 1.5.1
+    - otp_release: 18.3
+      elixir: 1.4.5
+    - otp_release: 17.5
+      elixir: 1.3.2
+    - otp_release: R16B03-1
+      elixir: 1.3.2
 branches:
     only:
         - master
-otp_release:
-    - 20.0
-    - 19.3
-    - 18.3
-    - 17.5
-    - R16B03-1
+        - travis_test
 cache:
     directories:
         - $HOME/.cache/rebar3
         - priv/node_modules
+
+before_script:
+    - kerl list installations
+    - kiex list
 install:
     - ./rebar3 deps
     - nvm install 6.2 && nvm use 6.2
     - make bootstrap_front_end
+    - echo $TRAVIS_ELIXIR_VERSION
+    - if [ $TRAVIS_ELIXIR_VERSION = "1.3.2" ]; then export PATH=`echo $PATH | sed 's/[^:]*kiex[^:]*://g'`; fi
 script:
     - make test
     - make test_front_end
