@@ -6,7 +6,6 @@
 -behaviour(xprof_language).
 
 -export([parse_query/1,
-
          normalise_query/1,
          hidden_function/1,
          fmt_mfa/3,
@@ -28,7 +27,6 @@ parse_query(Str) ->
             Clauses = parse(Tokens),
             {clauses, M, F, Clauses}
     end.
-
 
 tokens(Str) ->
     case erl_scan:string(Str, {1,1}) of

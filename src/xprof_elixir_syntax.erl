@@ -6,7 +6,6 @@
 -behaviour(xprof_language).
 
 -export([parse_query/1,
-
          normalise_query/1,
          hidden_function/1,
          fmt_mfa/3,
@@ -180,7 +179,6 @@ quoted_to_ast(Quoted) ->
     {Ast, _NewEnv, _Scope} = elixir:quoted_to_erl(Quoted, Env),
     Ast.
 
-
 %%
 %% Functions for autocomplete
 %%
@@ -201,7 +199,6 @@ normalise_query(<<C, _/binary>> = Query) when ?is_upcase(C) ->
     end;
 normalise_query(Query) ->
     Query.
-
 
 hidden_function(module_info) -> true;
 hidden_function(Fun) ->

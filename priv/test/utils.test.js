@@ -4,7 +4,6 @@ import { expect } from "chai";
 
 import Utils from "../app/utils.js";
 
-
 describe("Generating valid id tag for the charts", function() {
   describe("Simple Erlang modules", function() {
     it("erlang:process_info/1", function() {
@@ -41,7 +40,6 @@ describe("Generating valid id tag for the charts", function() {
       expect(Utils.chartId([ "Erlang $!", "is_fun!", 1, "'Erlang $!':'is_fun!'/1" ])).to.be.equal("chart_-Erlang------is_fun---1");
     });
   });
-
 });
 
 describe("Find common prefix", function() {

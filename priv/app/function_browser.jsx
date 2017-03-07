@@ -40,8 +40,7 @@ class ACModal extends React.Component {
     this.setState(this.state);
   }
 
-  handleFunClick(MFA, e) {
-    var query = MFA;
+  handleFunClick(query, e) {
     this.props.addGraph(query);
   }
 
