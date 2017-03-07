@@ -10,7 +10,6 @@ otp_release:
 cache:
     directories:
         - $HOME/.cache/rebar3
-        - $HOME/.cache/bower
         - priv/node_modules
 install:
     - ./rebar3 deps
