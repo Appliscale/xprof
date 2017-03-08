@@ -29,10 +29,8 @@ terminate(_Reason, _Req, _State) ->
 handle_req(<<"funs">>, Req, State) ->
     {Query, _} = cowboy_req:qs_val(<<"query">>, Req, <<"">>),
 
-    ModeCb = xprof_lib:get_mode_cb(),
     Funs = lists:sort(
-             [ModeCb:fmt_mfa(Mod, Fun, Arity)
-              || {Mod, Fun, Arity} <- xprof_vm_info:get_available_funs(Query)]),
+             xprof_vm_info:get_available_funs(Query)),
     Json = jsone:encode(Funs),
 
     lager:debug("Returning ~b functions matching phrase \"~s\"",
