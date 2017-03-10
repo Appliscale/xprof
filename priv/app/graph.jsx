@@ -66,9 +66,39 @@ export default class Graph extends React.Component {
       y: { show: true }
     };
     const axis = {
-      x: { type: "timeseries", tick: { count: 10, fit: false, format: "%H:%M:%S" } },
-      y: { min: 0, padding: { bottom: 2 }, label: { text: "Call time [ms]", position: "outer-middle" } },
-      y2: { min: 0, padding: { bottom: 2 }, show: true, label: { text: "Call count", position: "outer-middle" } }
+      x: {
+        type: "timeseries",
+        tick: {
+          // Divide the span of 5*60 seconds nicely
+          count: 12,
+          fit: false,
+          outer: false,
+          format: "%H:%M:%S" }
+      },
+      y: {
+        min: 0,
+        // Would be nice to have some paddig but it should not screw up tick positions
+        // Padding: { bottom: 5 }, // in pixels
+        padding: { bottom: 2 },
+        label: { text: "Call time", position: "outer-middle" },
+        tick: {
+          // Count: 6, // would be nice to have a bit less ticks then the default but by using count:
+          // "The position of the ticks will be calculated precisely, so the values on the ticks will not be rounded nicely."
+          outer: false,
+          format: function(d) {
+            return d3.format(".2s")(d / 100000) + "s";
+          }
+        }
+      },
+      y2: {
+        show: true,
+        min: 0,
+        padding: { bottom: 2 }, show: true,
+        label: { text: "Call count", position: "outer-middle" },
+        tick: {
+          outer: false
+        }
+      }
     };
     const transition = { duration: 0 };
 
@@ -183,20 +213,16 @@ export default class Graph extends React.Component {
       }
     };
 
-    let usToMs = (unit) => {
-      return unit / 1000.0;
-    };
-
     for (let entry of data) {
       columns[0].push(zeroIfUndefined(entry.time) * 1000);
       columns[1].push(zeroIfUndefined(entry.count));
-      columns[2].push(usToMs(zeroIfUndefined(entry.max)));
-      columns[3].push(usToMs(zeroIfUndefined(entry.p99)));
-      columns[4].push(usToMs(zeroIfUndefined(entry.p90)));
-      columns[5].push(usToMs(zeroIfUndefined(entry.p75)));
-      columns[6].push(usToMs(zeroIfUndefined(entry.p50)));
-      columns[7].push(usToMs(zeroIfUndefined(entry.mean)));
-      columns[8].push(usToMs(zeroIfUndefined(entry.min)));
+      columns[2].push(zeroIfUndefined(entry.max));
+      columns[3].push(zeroIfUndefined(entry.p99));
+      columns[4].push(zeroIfUndefined(entry.p90));
+      columns[5].push(zeroIfUndefined(entry.p75));
+      columns[6].push(zeroIfUndefined(entry.p50));
+      columns[7].push(zeroIfUndefined(entry.mean));
+      columns[8].push(zeroIfUndefined(entry.min));
     }
     return columns;
   }

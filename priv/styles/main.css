@@ -59,3 +59,15 @@ a.navbar-brand {
 .navbar-fixed-bottom-custom {
   background-color: #ECF0F1;
 }
+
+/*-- c3 customisations --*/
+#main-container .c3-grid line {
+  stroke: #ECF0F1; }
+
+#main-container .c3-xgrid,
+#main-container .c3-ygrid {
+  stroke-dasharray: none; }
+
+#main-container .c3-tooltip td {
+  border-style: none;
+}
