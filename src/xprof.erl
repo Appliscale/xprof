@@ -19,7 +19,10 @@
 %% used to register ets tables and xprof_tracer_handler gen_servers
 -type mfaname() :: atom().
 
--export_type([mfaspec/0, mfaid/0, mfaname/0]).
+%% accepted syntax mode
+-type mode() :: erlang | elixir.
+
+-export_type([mfaspec/0, mfaid/0, mfaname/0, mode/0]).
 
 
 start() ->

@@ -88,19 +88,20 @@ try_to_start_monitoring_invalid_query(_Config) ->
 monitor_valid_query(_Config) ->
     {204, _} = make_get_request("api/mon_start", [{"query", "dict:new/0"}]),
     {200, Monitored}  = make_get_request("api/mon_get_all"),
-    ?assertEqual([[<<"dict">>, <<"new">>, 0]], Monitored),
+    ?assertEqual([[<<"dict">>, <<"new">>, 0, <<"dict:new/0">>]], Monitored),
     ok.
 
 monitor_valid_query_twice(_Config) ->
     {204, _} = make_get_request("api/mon_start", [{"query", "dict:new/0"}]),
     {204, _} = make_get_request("api/mon_start", [{"query", "dict:new/0"}]),
     {200, Monitored}  = make_get_request("api/mon_get_all"),
-    ?assertEqual([[<<"dict">>, <<"new">>, 0]], Monitored),
+    ?assertEqual([[<<"dict">>, <<"new">>, 0, <<"dict:new/0">>]], Monitored),
     ok.
 
 stop_monitoring(_Config) ->
     given_traced("dict:new/0"),
-    {200, [[<<"dict">>, <<"new">>, 0]]}  = make_get_request("api/mon_get_all"),
+    {200, [[<<"dict">>, <<"new">>, 0, <<"dict:new/0">>]]} =
+        make_get_request("api/mon_get_all"),
     {204, _} = make_get_request("api/mon_stop", [
                                                  {"mod", "dict"},
                                                  {"fun", "new"},
@@ -110,13 +111,16 @@ stop_monitoring(_Config) ->
     ok.
 
 monitor_query_with_matchspec(_Config) ->
-    Q = "lists:delete([_, [E]]) -> true",
+    Q = "lists:delete(_, [E]) -> true",
     ?assertMatch({204, _}, make_get_request("api/mon_start", [{"query", Q}])),
+    {200, Monitored}  = make_get_request("api/mon_get_all"),
+    ?assertEqual([[<<"lists">>, <<"delete">>, <<"*">>, list_to_binary(Q)]],
+                 Monitored),
     ok.
 
 get_function_proposals_for_known_module(_Config) ->
     {200, Resp} = make_get_request("api/funs", [{"query", "dict:ne"}]),
-    ?assertEqual([[<<"dict">>,<<"new">>,0]], Resp),
+    ?assertEqual([<<"dict:new/0">>], Resp),
     ok.
 
 no_function_proposals_for_invalid_module(_Config) ->

@@ -27,7 +27,7 @@ class ACModal extends React.Component {
   }
 
   getFuns() {
-    return this.state.funs.map(Utils.formatMFA);
+    return this.state.funs;
   }
 
   displayFuns(data) {
@@ -40,8 +40,7 @@ class ACModal extends React.Component {
     this.setState(this.state);
   }
 
-  handleFunClick(MFA, e) {
-    var query = Utils.formatMFA(MFA);
+  handleFunClick(query, e) {
     this.props.addGraph(query);
   }
 
@@ -60,7 +59,7 @@ class ACModal extends React.Component {
     var pos = this.state.position;
 
     if (pos !== -1) {
-      fun = Utils.formatMFA(this.state.funs[pos]);
+      fun = this.state.funs[pos];
     }
 
     return fun;
@@ -82,7 +81,7 @@ class ACModal extends React.Component {
       rows.push(
         <tr className={highlightClass} key={mfas[i]}
             onClick={this.handleFunClick.bind(this, mfas[i])}>
-          <td>{Utils.formatMFA(mfas[i])}</td>
+          <td>{mfas[i]}</td>
         </tr>);
     }
 

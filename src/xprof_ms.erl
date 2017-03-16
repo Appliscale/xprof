@@ -1,17 +1,21 @@
 -module(xprof_ms).
 
--export([fun2ms/1]).
+-export([fun2ms/1,
+         err/1, err/2, err/3
+        ]).
 
 -spec fun2ms(string()) -> {mfa, module(), atom(), integer()}
                         | {ms, module(), atom(), tuple()}
                         | {error, string()}.
 fun2ms(Str) ->
+    ModeCb = xprof_lib:get_mode_cb(),
     try
-        case tokens(Str) of
+        case ModeCb:parse_query(Str) of
+            {mfa, M, F, '*'} ->
+                {ms, M, F, fix_ms([{'_', [], []}])};
             {mfa, _M, _F, _Arity} = MFA ->
                 MFA;
-            {clauses, M, F, Tokens} ->
-                Clauses = parse(Tokens),
+            {clauses, M, F, Clauses} ->
                 MS = ms(Clauses),
                 {ms, M, F, fix_ms(MS)}
         end
@@ -19,49 +23,41 @@ fun2ms(Str) ->
             Error
     end.
 
-tokens(Str) ->
-    case erl_scan:string(Str, {1,1}) of
-        {error, {_Loc, Mod, Err}, Loc} ->
-            err(Loc, Mod, Err);
-        {ok, [{atom, _, M}, {':', _},
-              {atom, _, F}, {'/', _},
-              {integer, _, A}], _EndLoc} ->
-            {mfa, M, F, A};
-        {ok, [{atom, _, M}, {':', _},
-              {atom, _, F}|Tokens], _EndLoc} when Tokens =/= [] ->
-            {clauses, M, F, [{'fun', 0}|ensure_end(Tokens)]};
-        {ok, Tokens, _EndLoc} ->
-            err("expression is not an xprof match-spec fun ~w", [Tokens])
-    end.
-
-%% @doc Ensure the fun is properly closed with "end."
-ensure_end(Tokens) ->
-    case lists:reverse(Tokens) of
-        [{dot, _}, {'end', _}| _] -> Tokens;
-        [{dot, Loc}|T] -> lists:reverse(T, [{'end', Loc}, {dot, Loc}]);
-        [Last|_] = R ->
-            Loc = element(2, Last),
-            lists:reverse(R, [{'end', Loc}, {dot, Loc}])
-    end.
-
-parse(Tokens) ->
-    case erl_parse:parse_exprs(Tokens) of
-        {error, {Loc, Mod, Err}} ->
-            err(Loc, Mod, Err);
-        {ok, [{'fun', _Loc, {clauses, Clauses}}]} ->
-            Clauses;
-        {ok, _} ->
-            err("expression is not an xprof match-spec fun")
-    end.
-
 ms(Clauses) ->
+    IsEmptyArgs = case Clauses of
+                      [{clause, _, [], _, _}|_] -> true;
+                      _ -> false
+                  end,
+    ERR_HEAD = 3,
     case ms_transform:transform_from_shell(
-           dbg, Clauses, _ImportList = []) of
+           dbg, wrap_args(Clauses), _ImportList = []) of
+        {error,[{_, [{_, ms_transform, ERR_HEAD}|_]}|_], _} when IsEmptyArgs ->
+            %% A bug in ms_trasform that was only fixed in OTP 19.2 prevents
+            %% empty list as head in "dbg:fun2ms(fun([]) -> ..."
+            %% (see https://github.com/erlang/otp/commit/8db6c68b)
+            workaround_empty_args_ms(ms(workaround_empty_args_cl(Clauses)));
         {error,[{_,[{Loc,Mod,Code}|_]}|_],_} ->
             err(Loc, Mod, Code);
         MS ->
             MS
     end.
+
+wrap_args(Clauses) ->
+    [{clause, Loc, [build_list(Args)], Guards, Body}
+      ||{clause, Loc, Args, Guards, Body} <- Clauses].
+
+build_list([]) ->
+    {nil, 0};
+build_list([Arg|Args]) ->
+    Loc = element(2, Arg),
+    {cons, Loc, Arg, build_list(Args)}.
+
+workaround_empty_args_cl(Clauses) ->
+    [{clause, Loc, [{var, 0, '_'}], Guards, Body}
+      ||{clause, Loc, [], Guards, Body} <- Clauses].
+
+workaround_empty_args_ms(Ms) ->
+    [{[], G, B} || {['_'], G, B} <- Ms].
 
 %% @doc Ensure that the match-spec does not create traces that have different
 %% format than what xprof_trace_handler anticipates (ie. {message, _} directives
@@ -120,8 +116,14 @@ err(Fmt) ->
 err(Fmt, Args) ->
     throw({error, fmt(Fmt, Args)}).
 
+err({1, StartCol, _EndCol}, Mod, Err) ->
+    err({1, StartCol}, Mod, Err);
+
 err({1, Col}, Mod, Err) ->
-    throw({error, fmt("~s at column ~p", [Mod:format_error(Err), Col])}).
+    throw({error, fmt("~s at column ~p", [Mod:format_error(Err), Col])});
+
+err(1, Mod, Err) ->
+    throw({error, fmt(Mod:format_error(Err), [])}).
 
 fmt(Fmt, Args) ->
     lists:flatten(io_lib:format(Fmt, Args)).

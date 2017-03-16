@@ -119,7 +119,9 @@ monitor_many_funs(_Config) ->
     Kids = supervisor:which_children(xprof_tracer_handler_sup),
     ?assertEqual(5, length(Kids)),
 
-    ?assertEqual(MFAs, xprof_tracer:all_monitored()),
+    %% strip formatted queries
+    AllMonitored = [MFA || {MFA, _Query} <- xprof_tracer:all_monitored()],
+    ?assertEqual(MFAs, AllMonitored),
 
     ct:log("Stop monitoring all 5 funs"),
     [xprof_tracer:demonitor(MFA) || MFA <- MFAs],
@@ -149,10 +151,10 @@ monitor_recursive_fun(_Config) ->
     ok.
 
 monitor_ms(_Config) ->
-    Query = ?MODULE_STRING ++ ":test_fun([T]) when T < 5 -> true.",
+    Query = ?MODULE_STRING ++ ":test_fun(T) when T < 5 -> true.",
     MFA = {?MODULE, test_fun, '*'},
     xprof_tracer:monitor(Query),
-    ?assertEqual([MFA], xprof_tracer:all_monitored()),
+    ?assertEqual([{MFA, list_to_binary(Query)}], xprof_tracer:all_monitored()),
 
     ok = xprof_tracer:trace(self()),
 
@@ -218,7 +220,7 @@ capture_args_res(_Config) ->
     ok.
 
 capture_args_ms(_Config) ->
-    Query = ?MODULE_STRING ++ ":test_fun([T]) -> message({time, T}).",
+    Query = ?MODULE_STRING ++ ":test_fun(T) -> message({time, T}).",
     MFA = {?MODULE, test_fun, '*'},
     xprof_tracer:monitor(Query),
     ok = xprof_tracer:trace(self()),

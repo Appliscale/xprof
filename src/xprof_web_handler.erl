@@ -29,7 +29,10 @@ terminate(_Reason, _Req, _State) ->
 handle_req(<<"funs">>, Req, State) ->
     {Query, _} = cowboy_req:qs_val(<<"query">>, Req, <<"">>),
 
-    Funs = lists:sort(xprof_vm_info:get_available_funs(Query)),
+    ModeCb = xprof_lib:get_mode_cb(),
+    Funs = lists:sort(
+             [ModeCb:fmt_mfa(Mod, Fun, Arity)
+              || {Mod, Fun, Arity} <- xprof_vm_info:get_available_funs(Query)]),
     Json = jsone:encode(Funs),
 
     lager:debug("Returning ~b functions matching phrase \"~s\"",
@@ -68,7 +71,8 @@ handle_req(<<"mon_stop">>, Req, State) ->
 
 handle_req(<<"mon_get_all">>, Req, State) ->
     Funs = xprof_tracer:all_monitored(),
-    FunsArr = [tuple_to_list(MFA) || MFA <- Funs],
+    FunsArr = [[Mod, Fun, Arity, Query]
+               || {{Mod, Fun, Arity}, Query} <- Funs],
     Json = jsone:encode(FunsArr),
     {ok, ResReq} = cowboy_req:reply(200,
                                     [{<<"content-type">>,
@@ -124,8 +128,8 @@ handle_req(<<"capture">>, Req, State) ->
     Threshold = binary_to_integer(ThresholdStr),
     Limit = binary_to_integer(LimitStr),
 
-    lager:info("Capture ~b calls to ~w:~w:~b~n exceeding ~b ms",
-               [Limit ,M,F,A,Threshold]),
+    lager:info("Capture ~b calls to ~w:~w/~w~n exceeding ~b ms",
+               [Limit, M, F, A, Threshold]),
 
     {ok, CaptureId} = xprof_tracer_handler:capture(MFA, Threshold, Limit),
     Json = jsone:encode({[{capture_id, CaptureId}]}),
@@ -157,7 +161,8 @@ handle_req(<<"capture_data">>, Req, State) ->
             {error, not_found} ->
                 cowboy_req:reply(404, Req);
             {ok, {Id, Threshold, Limit, OriginalLimit}, Items} ->
-                ItemsJson = [{args_res2proplist(Item)} || Item <- Items],
+                ModeCb = xprof_lib:get_mode_cb(),
+                ItemsJson = [{args_res2proplist(Item, ModeCb)} || Item <- Items],
                 Json = jsone:encode({[{capture_id, Id},
                                       {threshold, Threshold},
                                       {limit, OriginalLimit},
@@ -187,9 +192,9 @@ get_query(Req) ->
     {Params, _} = cowboy_req:qs_vals(Req),
     binary_to_list(proplists:get_value(<<"query">>, Params)).
 
-args_res2proplist([Id, Pid, CallTime, Args, Res]) ->
+args_res2proplist([Id, Pid, CallTime, Args, Res], ModeCb) ->
     [{id, Id},
-     {pid, list_to_binary(io_lib:format("~p",[Pid]))},
+     {pid, ModeCb:fmt_term(Pid)},
      {call_time, CallTime},
-     {args, list_to_binary(io_lib:format("~w",[Args]))},
-     {res, list_to_binary(io_lib:format("~p",[Res]))}].
+     {args, ModeCb:fmt_term(Args)},
+     {res, ModeCb:fmt_term(Res)}].
