@@ -7,13 +7,13 @@
 parse_query_test_() ->
     Tests =
         [%% arity explicitly defined
-         ?_assertEqual({mfa,'Elixir.Mod','fun',1},
+         ?_assertEqual({mfa,{'Elixir.Mod','fun',1}},
                        ?M:parse_query("Mod.fun/1")),
-         ?_assertEqual({mfa,'Elixir.Mod','fun',1},
+         ?_assertEqual({mfa,{'Elixir.Mod','fun',1}},
                        ?M:parse_query("Elixir.Mod.fun/1")),
-         ?_assertEqual({mfa,'Elixir.App.Mod','fun',1},
+         ?_assertEqual({mfa,{'Elixir.App.Mod','fun',1}},
                        ?M:parse_query("App.Mod.fun/1")),
-         ?_assertEqual({mfa,mod,'fun?',1},
+         ?_assertEqual({mfa,{mod,'fun?',1}},
                        ?M:parse_query(":mod.fun?/1")),
 
          %% full match-spec funs

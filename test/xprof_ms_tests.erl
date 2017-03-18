@@ -3,6 +3,8 @@
 -include_lib("eunit/include/eunit.hrl").
 
 -define(M, xprof_ms).
+-define(DEFAULT_MS, {[{'_', [], [{return_trace}, {message, arity}]}],
+                     [{'_', [], [{return_trace}, {message, '$_'}]}]}).
 
 tokens_test_() ->
     [?_assertEqual(
@@ -18,7 +20,7 @@ tokens_test_() ->
 
 parse_test_() ->
     [?_assertEqual(
-        {mfa, m, f, 1},
+        {ok, {{m, f, 1}, ?DEFAULT_MS}},
         ?M:fun2ms("m:f/1")),
      ?_assertEqual(
         {error,"syntax error before: '->' at column 4"},
@@ -35,13 +37,13 @@ ensure_dot_test_() ->
     MSs = {[{['_'],[],[{return_trace},{message,arity},true]}],
            [{['_'],[],[{return_trace},{message,'$_'},true]}]},
     [?_assertEqual(
-        {ms, m, f, MSs},
+        {ok, {{m, f, 1}, MSs}},
         ?M:fun2ms("m:f(_) -> true")),
      ?_assertEqual(
-        {ms, m, f, MSs},
+        {ok, {{m, f, 1}, MSs}},
         ?M:fun2ms("m:f(_) -> true.")),
      ?_assertEqual(
-        {ms, m, f, MSs},
+        {ok, {{m, f, 1}, MSs}},
         ?M:fun2ms("m:f(_) -> true end."))
     ].
 
@@ -61,10 +63,10 @@ ensure_body_test_() ->
         {error,"syntax error before: 'end' at column 19"},
         ?M:fun2ms("m:f (a) -> true;(_)")),
      ?_assertEqual(
-        {ms, m, f, MS(['_'], [])},
+        {ok, {{m, f, 1}, MS(['_'], [])}},
         ?M:fun2ms("m:f(_)")),
      ?_assertEqual(
-        {ms, m, f, MS(['$1'], [{'>','$1',1}])},
+        {ok, {{m, f, 1}, MS(['$1'], [{'>','$1',1}])}},
         ?M:fun2ms("m:f(A) when A > 1"))
     ].
 
@@ -75,9 +77,9 @@ ms_test_() ->
         "into match_spec at column 7"},
         ?M:fun2ms("m:f(A = {B, _}) -> {A, B}")),
      ?_assertEqual(
-        {ms,m,f,
-         {[{[],[],[{return_trace},{message,arity},true]}],
-          [{[],[],[{return_trace},{message,'$_'},true]}]}},
+        {ok, {{m, f, 0},
+              {[{[],[],[{return_trace},{message,arity},true]}],
+               [{[],[],[{return_trace},{message,'$_'},true]}]}}},
         ?M:fun2ms("m:f() -> true"))
     ].
 
@@ -99,7 +101,7 @@ traverse_ms_test_() ->
        {['_','$1'], [], [{return_trace},{message,'$_'},{message,'$1'}]}]},
 
     [?_assertEqual(
-        {ms, m, f, MSs},
+        {ok, {{m, f, 2}, MSs}},
         ?M:fun2ms("m:f(a, _) -> message(false);"
                   "   (b, _) -> message(true);"
                   "   (_, C) -> message(C) end."))
@@ -111,44 +113,56 @@ fun2ms_elixir_test_() ->
          fun() -> xprof_lib:set_mode(elixir) end,
          fun(_) -> application:unset_env(xprof, mode) end,
          [?_assertEqual(elixir, xprof_lib:get_mode()),
-          ?_assertEqual({mfa,'Elixir.Mod','fun',1},
+          ?_assertEqual({ok, {{'Elixir.Mod','fun',1}, ?DEFAULT_MS}},
                         ?M:fun2ms("Mod.fun/1")),
-          ?_assertMatch({ms,'Elixir.Mod','fun',
-                         {[{[], [], _}], [{[], [], _}]}},
+          ?_assertMatch({ok, {{'Elixir.Mod','fun',0},
+                              {[{[], [], _}], [{[], [], _}]}}},
                         ?M:fun2ms("Mod.fun")),
-          ?_assertMatch({ms,'Elixir.Mod','fun',
-                         {[{[data, '_'], [], _}], [{[data, '_'], [], _}]}},
+          ?_assertMatch({ok,
+                         {{'Elixir.Mod','fun',2},
+                          {[{[data, '_'], [], _}], [{[data, '_'], [], _}]}
+                         }},
                         ?M:fun2ms("Mod.fun(:data, _)")),
-          ?_assertMatch({ms,'Elixir.Mod','fun',
-                         {[{[data,'$1'], [{'>','$1',1}], _}],
-                          [{[data,'$1'], [{'>','$1',1}], _}]}},
+          ?_assertMatch({ok,
+                         {{'Elixir.Mod','fun',2},
+                          {[{[data,'$1'], [{'>','$1',1}], _}],
+                           [{[data,'$1'], [{'>','$1',1}], _}]}
+                         }},
                         ?M:fun2ms("Mod.fun(:data, a) when a > 1")),
           %% bug in Elixir up to 1.4.2
           %% https://github.com/elixir-lang/elixir/issues/5799
-          %% ?_assertMatch({ms,'Elixir.Mod','fun',
-          %%                {[{[], [{'>',2,1}], _}], _}},
+          %% ?_assertMatch({ok, {{'Elixir.Mod','fun',0},
+          %%                     {[{[], [{'>',2,1}], _}], _}}},
           %%               ?M:fun2ms("Mod.fun() when 2 > 1")),
 
           %% full match-spec funs containing "->"
-          ?_assertMatch({ms,'Elixir.Mod','fun',
-                         {[{[], [], _}],
-                          [{[],[],
-                            [{return_trace},{message,'$_'},{message,data}]}]}},
+          ?_assertMatch({ok,
+                         {{'Elixir.Mod','fun',0},
+                          {[{[], [], _}],
+                           [{[],[],
+                             [{return_trace},{message,'$_'},{message,data}]}]}
+                         }},
                         ?M:fun2ms("Mod.fun() -> message(:data)")),
-          ?_assertMatch({ms,'Elixir.Mod','fun',
-                         {[{[], [], _}],
-                          [{[],[],
-                            [{return_trace},{message,'$_'},{message,data}]}]}},
+          ?_assertMatch({ok,
+                         {{'Elixir.Mod','fun',0},
+                          {[{[], [], _}],
+                           [{[],[],
+                             [{return_trace},{message,'$_'},{message,data}]}]}
+                         }},
                         ?M:fun2ms("Mod.fun -> message(:data)")),
           %% bug in Elixir up to 1.4.2
           %% https://github.com/elixir-lang/elixir/issues/5799
-          %% ?_assertMatch({ms,'Elixir.Mod','fun',
-          %%                {[{[], [{'>',2,1}], _}], _}},
+          %% ?_assertMatch({ok,
+          %%                {{'Elixir.Mod','fun',
+          %%                  {[{[], [{'>',2,1}], _}], _}}
+          %%                }},
           %%               ?M:fun2ms("Mod.fun() when 2 > 1 -> true")),
-          ?_assertMatch({ms,'Elixir.Mod','fun',
-                         {[{[data,'$1'], [{'>','$1',1}], _}],
-                          [{[data,'$1'], [{'>','$1',1}],
-                            [{return_trace},{message,'$_'},{message,'$1'}]}]}},
+          ?_assertMatch({ok,
+                         {{'Elixir.Mod','fun',2},
+                          {[{[data,'$1'], [{'>','$1',1}], _}],
+                           [{[data,'$1'], [{'>','$1',1}],
+                             [{return_trace},{message,'$_'},{message,'$1'}]}]}
+                         }},
                         ?M:fun2ms("Mod.fun(:data, a) when a > 1 -> message(a)"))
          ]},
     xprof_test_lib:run_elixir_unit_tests(Tests).

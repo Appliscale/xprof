@@ -35,34 +35,35 @@ start_link() ->
 -spec monitor(mfa() | string()) -> ok | {error, term()}.
 monitor(Query) when is_list(Query) ->
     case xprof_ms:fun2ms(Query) of
-        {_, M, F, Thing} ->
+        {ok, MFASpec} ->
             lager:info("Starting monitoring ~s",[Query]),
             gen_server:call(
-              ?MODULE, {monitor, {M, F, Thing}, list_to_binary(Query)});
+              ?MODULE, {monitor, MFASpec, list_to_binary(Query)});
         {error, Reason} = Error ->
             lager:error(Reason),
             Error
     end;
 monitor({Mod, Fun, Arity} = MFA) ->
     lager:info("Starting monitoring ~w:~w/~b",[Mod,Fun,Arity]),
+    MFASpec = {MFA, xprof_ms:default_ms()},
     ModeCb = xprof_lib:get_mode_cb(),
     FormattedMFA = ModeCb:fmt_mfa(Mod, Fun, Arity),
-    gen_server:call(?MODULE, {monitor, MFA, FormattedMFA}).
+    gen_server:call(?MODULE, {monitor, MFASpec, FormattedMFA}).
 
 %% @doc Stops monitoring specified function calls.
--spec demonitor(xprof:mfaid()) -> ok.
+-spec demonitor(xprof:mfa_id()) -> ok.
 demonitor({Mod, Fun, Arity} = MFA) ->
     lager:info("Stopping monitoring ~w:~w/~w",[Mod,Fun,Arity]),
     gen_server:call(?MODULE, {demonitor, MFA}).
 
 %% @doc Returns list of monitored functions
--spec all_monitored() -> list({xprof:mfaid(), binary()}).
+-spec all_monitored() -> list({xprof:mfa_id(), binary()}).
 all_monitored() ->
     gen_server:call(?MODULE, all_monitored).
 
 %% @doc Returns metrics gathered for particular function.
--spec data(xprof:mfaid(), non_neg_integer()) -> list(proplists:proplist()) |
-                                          {error, not_found}.
+-spec data(xprof:mfa_id(), non_neg_integer()) -> list(proplists:proplist()) |
+                                                 {error, not_found}.
 data(MFA, TS) ->
     xprof_tracer_handler:data(MFA, TS).
 
@@ -210,25 +211,25 @@ trace(PidSpec, How, Flags) ->
 -spec send2pids(mfa(), term()) -> any().
 send2pids({M, F, _} = MFA, Msg) ->
     send2pid(MFA, Msg),
-    send2pid({M, F, '*'}, Msg),
+    send2pid({M, F, '_'}, Msg),
     ok.
 
--spec send2pid(xprof:mfaid(), term()) -> any().
+-spec send2pid(xprof:mfa_id(), term()) -> any().
 send2pid(MFA, Msg) ->
     case get_pid(MFA) of
         undefined -> ok;
         Pid -> erlang:send(Pid, Msg)
     end.
 
--spec get_pid(xprof:mfaid()) -> pid() | undefined.
+-spec get_pid(xprof:mfa_id()) -> pid() | undefined.
 get_pid(MFA) ->
     get({handler, MFA}).
 
--spec put_pid(xprof:mfaid(), pid()) -> any().
+-spec put_pid(xprof:mfa_id(), pid()) -> any().
 put_pid(MFA, Pid) ->
     put({handler, MFA}, Pid).
 
--spec erase_pid(xprof:mfaid()) -> pid() | undefined.
+-spec erase_pid(xprof:mfa_id()) -> pid() | undefined.
 erase_pid(MFA) ->
     erase({handler, MFA}).
 

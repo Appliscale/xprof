@@ -64,13 +64,13 @@ build_fn(Clauses) ->
 %% "Mod.fun Args" => "Mod.fun(Args)"
 %% "Mod.fun" => "Mod.fun()"
 -spec parse_quoted(ex_quoted())
-    -> {mfa, module(), atom(), arity()}
+    -> {mfa, mfa()}
      | {clauses, module(), atom(), [erl_parse:abstract_clause()]}.
 %% Mod.fun/Arity
 parse_quoted({'/', _, [?mfargs(ModQ, Fun, []), Arity]})
   when is_atom(Fun), is_integer(Arity) ->
     Mod = mod_to_atom(ModQ),
-    {mfa, Mod, Fun, Arity};
+    {mfa, {Mod, Fun, Arity}};
 %% "Mod.fun(Args)"
 parse_quoted(?mfargs(ModQ, Fun, Args)) when is_atom(Fun) ->
     Mod = mod_to_atom(ModQ),

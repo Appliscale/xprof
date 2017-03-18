@@ -1,33 +1,32 @@
 -module(xprof_ms).
 
 -export([fun2ms/1,
+         default_ms/0,
          err/1, err/2, err/3
         ]).
 
--spec fun2ms(string()) -> {mfa, module(), atom(), integer()}
-                        | {ms, module(), atom(), tuple()}
+-spec fun2ms(string()) -> {ok, xprof:mfa_spec()}
                         | {error, string()}.
 fun2ms(Str) ->
     ModeCb = xprof_lib:get_mode_cb(),
     try
         case ModeCb:parse_query(Str) of
-            {mfa, M, F, '*'} ->
-                {ms, M, F, fix_ms([{'_', [], []}])};
-            {mfa, _M, _F, _Arity} = MFA ->
-                MFA;
+            {mfa, MFA} ->
+                {ok, {MFA, default_ms()}};
             {clauses, M, F, Clauses} ->
+                Arity = get_arity(Clauses),
                 MS = ms(Clauses),
-                {ms, M, F, fix_ms(MS)}
+                {ok, {{M, F, Arity}, fix_ms(MS)}}
         end
     catch throw:Error ->
             Error
     end.
 
+default_ms() ->
+    fix_ms([{'_', [], []}]).
+
 ms(Clauses) ->
-    IsEmptyArgs = case Clauses of
-                      [{clause, _, [], _, _}|_] -> true;
-                      _ -> false
-                  end,
+    IsEmptyArgs = (get_arity(Clauses) =:= 0),
     ERR_HEAD = 3,
     case ms_transform:transform_from_shell(
            dbg, wrap_args(Clauses), _ImportList = []) of
@@ -41,6 +40,9 @@ ms(Clauses) ->
         MS ->
             MS
     end.
+
+get_arity([{clause, _, Args, _, _}|_]) ->
+    length(Args).
 
 wrap_args(Clauses) ->
     [{clause, Loc, [build_list(Args)], Guards, Body}

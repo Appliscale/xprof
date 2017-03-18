@@ -9,20 +9,21 @@
 -type ms() :: [tuple()].
 %% traced function with optional match-spec
 %% used to initiate tracing (both by xprof_tracer and xprof_tracer_handler)
--type mfaspec() :: mfa() | {module(), atom(), {ms(), ms()}}.
+-type mfa_spec() :: {mfa_id(), {ms(), ms()}}.
 
 %% used by gui and xprof_tracer to identify mfas
-%% arity of '*' means all arities
--type mfaid() :: {module(), atom(), arity() | '*'}.
+%% arity of '_' means all arities
+%% similar to type erlang:trace_pattern_mfa()
+-type mfa_id() :: {module(), atom(), arity() | '_'}.
 
-%% derived from mfaid
+%% derived from mfa_id
 %% used to register ets tables and xprof_tracer_handler gen_servers
--type mfaname() :: atom().
+-type mfa_name() :: atom().
 
 %% accepted syntax mode
 -type mode() :: erlang | elixir.
 
--export_type([mfaspec/0, mfaid/0, mfaname/0, mode/0]).
+-export_type([mfa_spec/0, mfa_id/0, mfa_name/0, mode/0]).
 
 
 start() ->

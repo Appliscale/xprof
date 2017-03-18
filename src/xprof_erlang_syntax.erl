@@ -21,7 +21,7 @@
 %% of the clauses of the anonimous function.
 parse_query(Str) ->
     case tokens(Str) of
-        {mfa, _M, _F, _Arity} = MFA ->
+        {mfa, _} = MFA ->
             MFA;
         {clauses, M, F, Tokens} ->
             Clauses = parse(Tokens),
@@ -35,7 +35,7 @@ tokens(Str) ->
         {ok, [{atom, _, M}, {':', _},
               {atom, _, F}, {'/', _},
               {integer, _, A}], _EndLoc} ->
-            {mfa, M, F, A};
+            {mfa, {M, F, A}};
         {ok, [{atom, _, M}, {':', _},
               {atom, _, F}|Tokens], _EndLoc} when Tokens =/= [] ->
             {clauses, M, F, [{'fun', 0}|ensure_end(ensure_body(Tokens))]};
