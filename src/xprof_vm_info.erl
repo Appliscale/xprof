@@ -10,8 +10,7 @@
 %% (excluding generated local functions) are listed of that particular module
 %% matching the query.
 
--spec get_available_funs(binary()) -> [MFA]
-  when MFA :: {module(), atom(), arity()}.
+-spec get_available_funs(binary()) -> [MFA :: binary()].
 get_available_funs(Query) ->
     ModeCB = xprof_lib:get_mode_cb(),
 
@@ -27,19 +26,17 @@ get_available_funs(Query) ->
         lists:flatmap(
           fun({Mod, FunPrefix}) ->
                   Funs = get_all_functions(Mod, ModeCB),
-                  [{Mod, Fun, Arity}
+                  [ModeCB:fmt_mfa(Mod, Fun, Arity)
                    || {Fun, Arity} <- filter_funs(FunPrefix, Funs, ModeCB)]
           end, ExactMatch),
 
     %% find modules which query is a partial prefix of
-    %% and return only their global/public functions
     MatchingMods = filter_mods(NormQuery, AllMods, ModeCB),
-    GlobalFuns =
-        [{Mod, Fun, Arity}
-         || Mod <- MatchingMods -- ExactMods,
-            {Fun, Arity} <- get_global_functions(Mod, ModeCB)],
+    IncompleteMods =
+        [ModeCB:fmt_mod_and_delim(Mod)
+         || Mod <- MatchingMods -- ExactMods],
 
-    AllFuns ++ GlobalFuns.
+    AllFuns ++ IncompleteMods.
 
 
 find_mods(Query, AllMods, ModeCB) ->
@@ -79,11 +76,6 @@ is_ms_fun(Prefix, Fun, ModeCB) ->
         <<" ", _/binary>> -> true;
         _ -> false
     end.
-
--spec get_global_functions(module(), module()) -> [{atom(), arity()}].
-get_global_functions(Mod, ModeCB) ->
-    [FA || FA = {F, _} <- Mod:module_info(exports),
-           not ModeCB:hidden_function(F)].
 
 -spec get_all_functions(module(), module()) -> [{atom(), arity()}].
 get_all_functions(Mod, ModeCB) ->

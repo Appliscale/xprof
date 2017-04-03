@@ -145,6 +145,8 @@ export default class FunctionBrowser extends React.Component {
         // Try to complete using selected suggestion
         e.preventDefault();
         this.completeSearch();
+        // Refetch list of functions
+        this.handleChange(e);
         break;
 
       // ARROW UP
@@ -192,14 +194,20 @@ export default class FunctionBrowser extends React.Component {
     var highlightedFun = this.refs.acm.highlightedFun();
 
     if (highlightedFun) {
-      $(this.getSearchBox()).val(highlightedFun);
-      this.refs.acm.displayFuns([]);
+      this.maybeSetSearchBox(highlightedFun);
     } else {
       var suggestedFuns = this.refs.acm.getFuns();
       if (suggestedFuns.length > 0) {
         var prefix = Utils.commonArrayPrefix(suggestedFuns);
-        $(this.getSearchBox()).val(prefix);
+        this.maybeSetSearchBox(prefix);
       }
+    }
+  }
+
+  maybeSetSearchBox(newValue) {
+    // Don't modify search box content if it is not a prefix of the new value, don't want to overwrite a match-spec fun (for which there are still suggestions) that is being edited with some arity.
+    if (newValue.startsWith(this.getSearchBox().value)) {
+      this.getSearchBox().value = newValue;
     }
   }
 
