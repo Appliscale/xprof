@@ -21,11 +21,14 @@ parse_test_() ->
         {mfa, m, f, 1},
         ?M:fun2ms("m:f/1")),
      ?_assertEqual(
-        {error,"syntax error before: 'end' at column 4"},
+        {error,"syntax error before: '->' at column 4"},
         ?M:fun2ms("m:f(")),
      ?_assertEqual(
+        {error,"syntax error before: '.' at column 16"},
+        ?M:fun2ms("m:f() -> begin true")),
+     ?_assertEqual(
         {error,"expression is not an xprof match-spec fun"},
-        ?M:fun2ms("m:f f/1, begin true"))
+        ?M:fun2ms("m:f f/1, case T of true"))
     ].
 
 ensure_dot_test_() ->
@@ -40,6 +43,29 @@ ensure_dot_test_() ->
      ?_assertEqual(
         {ms, m, f, MSs},
         ?M:fun2ms("m:f(_) -> true end."))
+    ].
+
+ensure_body_test_() ->
+    MS = fun(Args, Guards) ->
+                 {[{Args,Guards,[{return_trace},{message,arity},true]}],
+                  [{Args,Guards,[{return_trace},{message,'$_'},true]}]
+                 }
+         end,
+    [?_assertEqual(
+        {error,"syntax error before: '->' at column 5"},
+        ?M:fun2ms("m:f -> true")),
+     ?_assertEqual(
+        {error,"syntax error before: '->' at column 7"},
+        ?M:fun2ms("m:f ( -> true")),
+     ?_assertEqual(
+        {error,"syntax error before: 'end' at column 19"},
+        ?M:fun2ms("m:f (a) -> true;(_)")),
+     ?_assertEqual(
+        {ms, m, f, MS(['_'], [])},
+        ?M:fun2ms("m:f(_)")),
+     ?_assertEqual(
+        {ms, m, f, MS(['$1'], [{'>','$1',1}])},
+        ?M:fun2ms("m:f(A) when A > 1"))
     ].
 
 ms_test_() ->
@@ -123,8 +149,6 @@ fun2ms_elixir_test_() ->
                          {[{[data,'$1'], [{'>','$1',1}], _}],
                           [{[data,'$1'], [{'>','$1',1}],
                             [{return_trace},{message,'$_'},{message,'$1'}]}]}},
-                        ?M:fun2ms("Mod.fun(:data, a) when a > 1 -> message(a)")),
-
-          ?_assert(true)
+                        ?M:fun2ms("Mod.fun(:data, a) when a > 1 -> message(a)"))
          ]},
     xprof_test_lib:run_elixir_unit_tests(Tests).
