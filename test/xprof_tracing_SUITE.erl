@@ -152,7 +152,7 @@ monitor_recursive_fun(_Config) ->
 
 monitor_ms(_Config) ->
     Query = ?MODULE_STRING ++ ":test_fun(T) when T < 5 -> true.",
-    MFA = {?MODULE, test_fun, '*'},
+    MFA = {?MODULE, test_fun, 1},
     xprof_tracer:monitor(Query),
     ?assertEqual([{MFA, list_to_binary(Query)}], xprof_tracer:all_monitored()),
 
@@ -221,7 +221,7 @@ capture_args_res(_Config) ->
 
 capture_args_ms(_Config) ->
     Query = ?MODULE_STRING ++ ":test_fun(T) -> message({time, T}).",
-    MFA = {?MODULE, test_fun, '*'},
+    MFA = {?MODULE, test_fun, 1},
     xprof_tracer:monitor(Query),
     ok = xprof_tracer:trace(self()),
 

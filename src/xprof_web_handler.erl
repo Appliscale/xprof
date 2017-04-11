@@ -175,13 +175,13 @@ handle_req(<<"capture_data">>, Req, State) ->
 
 %% Helpers
 
--spec get_mfa(cowboy:req()) -> xprof:mfaid().
+-spec get_mfa(cowboy:req()) -> xprof:mfa_id().
 get_mfa(Req) ->
     {Params, _} = cowboy_req:qs_vals(Req),
     {list_to_atom(binary_to_list(proplists:get_value(<<"mod">>, Params))),
      list_to_atom(binary_to_list(proplists:get_value(<<"fun">>, Params))),
      case proplists:get_value(<<"arity">>, Params) of
-         <<"*">> -> '*';
+         <<"_">> -> '_';
          Arity -> binary_to_integer(Arity)
      end}.
 

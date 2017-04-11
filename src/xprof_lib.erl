@@ -1,6 +1,7 @@
 -module(xprof_lib).
 
--export([mfa2atom/1,
+-export([mfaspec2atom/1,
+         mfa2atom/1,
          mfaspec2id/1,
          now2epoch/1,
          set_mode/1,
@@ -10,25 +11,21 @@
          prefix_rest/2
         ]).
 
--spec mfa2atom(xprof_tracer:mfaspec() | xprof_tracer:mfaid()) ->
-                      xprof_tracer:mfaname().
-mfa2atom({M, F, {_MSOff, _MSOn}}) ->
-    mfa2atom({M, F, '*'});
-mfa2atom({M, F, '*'}) ->
+-spec mfaspec2atom(xprof:mfa_spec()) -> xprof:mfa_name().
+mfaspec2atom({MFAId, {_MSOff, _MSOn}}) ->
+    mfa2atom(MFAId).
+
+-spec mfa2atom(xprof:mfa_id()) -> xprof:mfa_name().
+mfa2atom({M, F, '_'}) ->
     list_to_atom(string:join(["xprof_", atom_to_list(M),
-                              atom_to_list(F), "*"], "_"));
+                              atom_to_list(F), "_"], "_"));
 mfa2atom({M,F,A}) ->
     list_to_atom(string:join(["xprof_", atom_to_list(M),
                               atom_to_list(F), integer_to_list(A)], "_")).
 
-
--spec mfaspec2id(xprof:mfaspec()) -> xprof:mfaid().
-mfaspec2id({M, F, {_, _}})
-  when is_atom(M), is_atom(F) ->
-    {M, F, '*'};
-mfaspec2id({M, F, A} = MFA)
-  when is_atom(M), is_atom(F), is_integer(A) ->
-    MFA.
+-spec mfaspec2id(xprof:mfa_spec()) -> xprof:mfa_id().
+mfaspec2id({MFAId, {_, _}}) ->
+    MFAId.
 
 now2epoch({MS, S, _US}) ->
     MS * 1000000 + S.
