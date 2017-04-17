@@ -189,8 +189,7 @@ The WebUI uses
 
 * *React.js*
 * *ECMAScript 6* (with elements from *7th* version).
-* *Bootstap*
-* *Bower*
+* *Bootstrap*
 * *Webpack*
 
 All sources are in _priv_ directory. The _app_ folder contains the sources and
