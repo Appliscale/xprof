@@ -12,8 +12,12 @@
 %% API
 
 start(_StartType, _StartArgs) ->
-    start_cowboy(),
-    xprof_sup:start_link().
+    case start_cowboy() of
+        {ok, _} ->
+            xprof_sup:start_link();
+        {error, _} = Error ->
+            Error
+    end.
 
 stop(_State) ->
     stop_cowboy(),
