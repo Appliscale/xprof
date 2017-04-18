@@ -300,11 +300,11 @@ long_call(_Config) ->
 
     %% minimum should be 20 ms with a bit of precision error
     Min = proplists:get_value(min, StatsItems),
-    ?assertMatch({true, _}, {Min < 21*1000, Min}),
+    ?assertMatch({true, _}, {Min < 22*1000, Min}),
 
     %% maximum should be 100 ms with a bit of precision error
     Max = proplists:get_value(max, StatsItems),
-    ?assertMatch({true, _}, {Max > 99*1000, Max}),
+    ?assertMatch({true, _}, {Max > 98*1000, Max}),
 
     %% data capturing also works for too long calls
     {ok, {Id, 50, 1, 1}, [CapturedData]} =

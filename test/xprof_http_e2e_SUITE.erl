@@ -73,7 +73,10 @@ get_overflow_status_after_hitting_overload(_Config) ->
     given_traced("dict:new/0"),
 
     %% when
+    %% freeze the tracer process while it receives many trace messages
+    sys:suspend(xprof_tracer),
     dict:new(), dict:new(), dict:new(),
+    sys:resume(xprof_tracer),
     {HTTPCode, JSON} = make_get_request("api/trace_status"),
 
     %% then
