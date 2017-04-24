@@ -1,6 +1,6 @@
 {application, xprof,
  [{description, "Visual BEAM profiler"}
- ,{vsn, "1.1.0"}
+ ,{vsn, "1.2.0"}
  ,{registered, []}
  ,{mod, {'xprof_app', []}}
  ,{applications,
@@ -8,6 +8,10 @@
    ,stdlib
    ,cowboy
    ,lager
+   ,jsone
+   ,hdr_histogram
+   ,edown
+   ,fqc
    ]}
  ,{env,[]}
  ,{modules, []}
