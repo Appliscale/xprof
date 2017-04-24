@@ -43,6 +43,7 @@ export default class Graph extends React.Component {
 
     const data = {
       x: "x",
+      hide: [ "max", "90th perc", "75th perc", "50th perc" ],
       columns: this.state.columns,
       axes: {
         count: "y2"
@@ -66,7 +67,8 @@ export default class Graph extends React.Component {
     };
     const axis = {
       x: { type: "timeseries", tick: { count: 10, fit: false, format: "%H:%M:%S" } },
-      y2: { show: true }
+      y: { min: 0, padding: { bottom: 2 }, label: { text: "Call time [ms]", position: "outer-middle" } },
+      y2: { min: 0, padding: { bottom: 2 }, show: true, label: { text: "Call count", position: "outer-middle" } }
     };
     const transition = { duration: 0 };
 
@@ -180,16 +182,21 @@ export default class Graph extends React.Component {
         return v;
       }
     };
+
+    let usToMs = (unit) => {
+      return unit / 1000.0;
+    };
+
     for (let entry of data) {
       columns[0].push(zeroIfUndefined(entry.time) * 1000);
       columns[1].push(zeroIfUndefined(entry.count));
-      columns[2].push(zeroIfUndefined(entry.max));
-      columns[3].push(zeroIfUndefined(entry.p99));
-      columns[4].push(zeroIfUndefined(entry.p90));
-      columns[5].push(zeroIfUndefined(entry.p75));
-      columns[6].push(zeroIfUndefined(entry.p50));
-      columns[7].push(zeroIfUndefined(entry.mean));
-      columns[8].push(zeroIfUndefined(entry.min));
+      columns[2].push(usToMs(zeroIfUndefined(entry.max)));
+      columns[3].push(usToMs(zeroIfUndefined(entry.p99)));
+      columns[4].push(usToMs(zeroIfUndefined(entry.p90)));
+      columns[5].push(usToMs(zeroIfUndefined(entry.p75)));
+      columns[6].push(usToMs(zeroIfUndefined(entry.p50)));
+      columns[7].push(usToMs(zeroIfUndefined(entry.mean)));
+      columns[8].push(usToMs(zeroIfUndefined(entry.min)));
     }
     return columns;
   }
