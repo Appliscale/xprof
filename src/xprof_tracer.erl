@@ -21,9 +21,9 @@
          terminate/2,
          code_change/3]).
 
--record(state, {trace_spec  = all,    %% trace specification
-                status      = paused, %% tracing status
-                funs        = []      %% functions monitored by xprof
+-record(state, {trace_spec  = all,         %% trace specification
+                status      = initialized, %% tracing status
+                funs        = []           %% functions monitored by xprof
                }).
 
 %% @doc Starts xprof tracer process.
@@ -76,7 +76,7 @@ trace(PidOrSpec) ->
 
 %% @doc Returns current tracing state.
 -spec trace_status() -> {all | {spawner, pid(), float()} | pid(),
-                         Status :: paused | running | overflow}.
+                         Status :: paused | running | overflow | initialized}.
 trace_status() ->
     gen_server:call(?MODULE, trace_status).
 
@@ -96,7 +96,8 @@ handle_call({monitor, MFASpec, Query}, _From, State) ->
             {ok, Pid} = supervisor:start_child(xprof_tracer_handler_sup, [MFASpec]),
             put_pid(MFAId, Pid),
             %% funs stored in the order of start monitoring
-            {reply, ok, State#state{funs = State#state.funs ++ [{MFAId, Query}]}}
+            NState = setup_trace_all_if_initialized(State),
+            {reply, ok, NState#state{funs = State#state.funs ++ [{MFAId, Query}]}}
     end;
 handle_call({demonitor, MFA}, _From, State) ->
     xprof_tracer_handler:trace_mfa_off(MFA),
@@ -172,6 +173,11 @@ check_for_overflow(State = #state{status = running,
             State
     end;
 check_for_overflow(State) ->
+    State.
+
+setup_trace_all_if_initialized(#state{status = initialized} = State) ->
+    setup_trace(all, State);
+setup_trace_all_if_initialized(State) ->
     State.
 
 setup_trace(pause, State) ->
