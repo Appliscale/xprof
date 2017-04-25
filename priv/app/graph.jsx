@@ -43,6 +43,7 @@ export default class Graph extends React.Component {
 
     const data = {
       x: "x",
+      hide: [ "max", "90th perc", "75th perc", "50th perc" ],
       columns: this.state.columns,
       axes: {
         count: "y2"
@@ -65,8 +66,39 @@ export default class Graph extends React.Component {
       y: { show: true }
     };
     const axis = {
-      x: { type: "timeseries", tick: { count: 10, fit: false, format: "%H:%M:%S" } },
-      y2: { show: true }
+      x: {
+        type: "timeseries",
+        tick: {
+          // Divide the span of 5*60 seconds nicely
+          count: 12,
+          fit: false,
+          outer: false,
+          format: "%H:%M:%S" }
+      },
+      y: {
+        min: 0,
+        // Would be nice to have some paddig but it should not screw up tick positions
+        // Padding: { bottom: 5 }, // in pixels
+        padding: { bottom: 2 },
+        label: { text: "Call time", position: "outer-middle" },
+        tick: {
+          // Count: 6, // would be nice to have a bit less ticks then the default but by using count:
+          // "The position of the ticks will be calculated precisely, so the values on the ticks will not be rounded nicely."
+          outer: false,
+          format: function(d) {
+            return d3.format(".2s")(d / 100000) + "s";
+          }
+        }
+      },
+      y2: {
+        show: true,
+        min: 0,
+        padding: { bottom: 2 }, show: true,
+        label: { text: "Call count", position: "outer-middle" },
+        tick: {
+          outer: false
+        }
+      }
     };
     const transition = { duration: 0 };
 
@@ -180,6 +212,7 @@ export default class Graph extends React.Component {
         return v;
       }
     };
+
     for (let entry of data) {
       columns[0].push(zeroIfUndefined(entry.time) * 1000);
       columns[1].push(zeroIfUndefined(entry.count));
