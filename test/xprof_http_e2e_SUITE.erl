@@ -26,8 +26,8 @@ all() ->
      capture_data_when_traced_test,
      error_when_stopping_not_started_capture,
      dont_receive_new_capture_data_after_stop,
-     in_this_project_should_detect_erlang_in_this_project,
-     but_it_should_return_elixir_if_set_as_a_setting
+     in_this_project_we_should_detect_erlang,
+     but_it_should_return_elixir_if_it_is_forced_as_setting
     ].
 
 init_per_suite(Config) ->
@@ -196,12 +196,12 @@ dont_receive_new_capture_data_after_stop(_Config) ->
     ?assertEqual(2, length(proplists:get_value(<<"items">>, Data))),
     ok.
 
-in_this_project_should_detect_erlang_in_this_project(_Config) ->
+in_this_project_we_should_detect_erlang(_Config) ->
     {200, Mode} = make_get_request("api/mode"),
     ?assertEqual([{<<"mode">>, <<"erlang">>}], Mode),
     ok.
 
-but_it_should_return_elixir_if_set_as_a_setting(_Config) ->
+but_it_should_return_elixir_if_it_is_forced_as_setting(_Config) ->
     given_elixir_mode_is_set(),
     {200, Mode} = make_get_request("api/mode"),
     ?assertEqual([{<<"mode">>, <<"elixir">>}], Mode),
