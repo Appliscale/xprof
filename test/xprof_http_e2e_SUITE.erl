@@ -9,7 +9,7 @@
 
 all() ->
     [
-     get_paused_trace_status_on_start,
+     get_initialized_trace_status_on_start,
      get_running_status_after_setting_tracing,
      trace_set_only_accepts_all_and_pause,
      try_to_start_monitoring_invalid_query,
@@ -44,10 +44,10 @@ end_per_testcase(_TestCase, _Config) ->
     given_overload_queue_limit(1000),
     ok.
 
-get_paused_trace_status_on_start(_Config) ->
+get_initialized_trace_status_on_start(_Config) ->
     {HTTPCode, JSON} = make_get_request("api/trace_status"),
     ?assertEqual(200, HTTPCode),
-    ?assertEqual([{<<"status">>, <<"paused">>}], JSON),
+    ?assertEqual([{<<"status">>, <<"initialized">>}], JSON),
     ok.
 
 get_running_status_after_setting_tracing(_Config) ->

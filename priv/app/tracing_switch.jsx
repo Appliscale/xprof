@@ -50,7 +50,7 @@ export default class TracingSwitch extends React.Component {
       text = "Pause Tracing";
       symbol += "pause";
       btnColor += "danger";
-    } else if (status === "paused") {
+    } else if (status === "paused" || status === "initialized") {
       text = "Trace All";
       symbol += "record";
       btnColor += "success";
