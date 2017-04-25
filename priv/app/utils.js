@@ -23,4 +23,27 @@ export default class Utils {
     }
     return string1.substring(0, i);
   }
+
+  static getLanguageGuides(mode) {
+    if (!mode) {
+      return {
+        language: null,
+        type: null,
+        example: null
+      };
+    } else if (mode === "elixir") {
+      return {
+        language: "Elixir",
+        type: "query",
+        example: "Elixir.Enum.member?(_, :test)"
+      };
+    } else {
+      return {
+        language: "Erlang",
+        type: "trace pattern",
+        example: "ets:lookup(data, _)"
+      };
+
+    }
+  }
 }

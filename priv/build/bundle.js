@@ -46,6 +46,8 @@ webpackJsonp([0],[
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 	
+	function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 	
 	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
@@ -97,6 +99,8 @@ webpackJsonp([0],[
 	    key: "render",
 	    value: function () {
 	      function render() {
+	        var _y;
+	
 	        var MFA = this.props.mfa;
 	        var panelType = "panel panel-default ";
 	        var errorMsg = "";
@@ -112,6 +116,7 @@ webpackJsonp([0],[
 	
 	        var data = {
 	          x: "x",
+	          hide: ["max", "90th perc", "75th perc", "50th perc"],
 	          columns: this.state.columns,
 	          axes: {
 	            count: "y2"
@@ -134,8 +139,40 @@ webpackJsonp([0],[
 	          y: { show: true }
 	        };
 	        var axis = {
-	          x: { type: "timeseries", tick: { count: 10, fit: false, format: "%H:%M:%S" } },
-	          y2: { show: true }
+	          x: {
+	            type: "timeseries",
+	            tick: {
+	              // Divide the span of 5*60 seconds nicely
+	              count: 12,
+	              fit: false,
+	              outer: false,
+	              format: "%H:%M:%S" }
+	          },
+	          y: {
+	            min: 0,
+	            // Would be nice to have some paddig but it should not screw up tick positions
+	            // Padding: { bottom: 5 }, // in pixels
+	            padding: { bottom: 2 },
+	            label: { text: "Call time", position: "outer-middle" },
+	            tick: {
+	              // Count: 6, // would be nice to have a bit less ticks then the default but by using count:
+	              // "The position of the ticks will be calculated precisely, so the values on the ticks will not be rounded nicely."
+	              outer: false,
+	              format: function () {
+	                function format(d) {
+	                  return d3.format(".2s")(d / 100000) + "s";
+	                }
+	
+	                return format;
+	              }()
+	            }
+	          },
+	          y2: (_y = {
+	            show: true,
+	            min: 0,
+	            padding: { bottom: 2 } }, _defineProperty(_y, "show", true), _defineProperty(_y, "label", { text: "Call count", position: "outer-middle" }), _defineProperty(_y, "tick", {
+	            outer: false
+	          }), _y)
 	        };
 	        var transition = { duration: 0 };
 	
@@ -316,6 +353,7 @@ webpackJsonp([0],[
 	
 	          return zeroIfUndefined;
 	        }();
+	
 	        var _iteratorNormalCompletion = true;
 	        var _didIteratorError = false;
 	        var _iteratorError = undefined;
@@ -37000,6 +37038,33 @@ webpackJsonp([0],[
 	
 	      return commonPrefix;
 	    }()
+	  }, {
+	    key: "getLanguageGuides",
+	    value: function () {
+	      function getLanguageGuides(mode) {
+	        if (!mode) {
+	          return {
+	            language: null,
+	            type: null,
+	            example: null
+	          };
+	        } else if (mode === "elixir") {
+	          return {
+	            language: "Elixir",
+	            type: "query",
+	            example: "Elixir.Enum.member?(_, :test)"
+	          };
+	        } else {
+	          return {
+	            language: "Erlang",
+	            type: "trace pattern",
+	            example: "ets:lookup(data, _)"
+	          };
+	        }
+	      }
+	
+	      return getLanguageGuides;
+	    }()
 	  }]);
 	
 	  return Utils;
@@ -37376,7 +37441,7 @@ webpackJsonp([0],[
   \**********************/
 /***/ function(module, exports, __webpack_require__) {
 
-	"use strict";
+	/* WEBPACK VAR INJECTION */(function($) {"use strict";
 	
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 	
@@ -37408,6 +37473,10 @@ webpackJsonp([0],[
 	
 	var _function_browser2 = _interopRequireDefault(_function_browser);
 	
+	var _utils = __webpack_require__(/*! ./utils.js */ 190);
+	
+	var _utils2 = _interopRequireDefault(_utils);
+	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -37422,10 +37491,29 @@ webpackJsonp([0],[
 	  function App(props) {
 	    _classCallCheck(this, App);
 	
-	    return _possibleConstructorReturn(this, (App.__proto__ || Object.getPrototypeOf(App)).call(this, props));
+	    var _this = _possibleConstructorReturn(this, (App.__proto__ || Object.getPrototypeOf(App)).call(this, props));
+	
+	    _this.state = {
+	      mode: null
+	    };
+	
+	    $.getJSON("/api/mode", {}, _this.modeSuccess.bind(_this));
+	    return _this;
 	  }
 	
 	  _createClass(App, [{
+	    key: "modeSuccess",
+	    value: function () {
+	      function modeSuccess(data) {
+	        this.state.mode = data.mode;
+	        this.setState(this.state);
+	
+	        $("#favicon").attr("href", "img/xprof_icon_" + this.state.mode + ".png");
+	      }
+	
+	      return modeSuccess;
+	    }()
+	  }, {
 	    key: "addGraph",
 	    value: function () {
 	      function addGraph(query) {
@@ -37447,6 +37535,8 @@ webpackJsonp([0],[
 	    key: "render",
 	    value: function () {
 	      function render() {
+	        var guides = _utils2["default"].getLanguageGuides(this.state.mode);
+	
 	        return _react2["default"].createElement(
 	          "div",
 	          { className: "container-fluid" },
@@ -37466,7 +37556,7 @@ webpackJsonp([0],[
 	              "div",
 	              { className: "navbar-collapse collapse", id: "navbar-collapsible" },
 	              _react2["default"].createElement(_tracing_switch2["default"], null),
-	              _react2["default"].createElement(_function_browser2["default"], { ref: "functionBrowser", addGraph: this.addGraph.bind(this) })
+	              _react2["default"].createElement(_function_browser2["default"], { ref: "functionBrowser", addGraph: this.addGraph.bind(this), language: guides.language, type: guides.type, example: guides.example })
 	            )
 	          ),
 	          _react2["default"].createElement(_graph_panel2["default"], { ref: "graphPanel", clearFunctionBrowser: this.clearFunctionBrowser.bind(this) })
@@ -37481,6 +37571,7 @@ webpackJsonp([0],[
 	}(_react2["default"].Component);
 	
 	_reactDom2["default"].render(_react2["default"].createElement(App, null), document.getElementById("main-container"));
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(/*! jquery */ 2)))
 
 /***/ },
 /* 196 */
@@ -37682,7 +37773,7 @@ webpackJsonp([0],[
 	          text = "Pause Tracing";
 	          symbol += "pause";
 	          btnColor += "danger";
-	        } else if (status === "paused") {
+	        } else if (status === "paused" || status === "initialized") {
 	          text = "Trace All";
 	          symbol += "record";
 	          btnColor += "success";
@@ -38252,8 +38343,12 @@ webpackJsonp([0],[
 	    key: "render",
 	    value: function () {
 	      function render() {
-	        var autocomp = null;
 	        var value = this.state.value;
+	        var prompt = "Hello BEAMer! Please specify your trace pattern here.";
+	
+	        if (!!this.props.language && !!this.props.type && !!this.props.example) {
+	          prompt = "Hello BEAMer! I have detected that you are using an " + this.props.language + " project, please specify your " + this.props.type + " here e.g. " + this.props.example;
+	        }
 	
 	        return _react2["default"].createElement(
 	          "form",
@@ -38270,8 +38365,9 @@ webpackJsonp([0],[
 	                _react2["default"].createElement("span", { className: "glyphicon glyphicon-search" })
 	              ),
 	              _react2["default"].createElement("input", { id: "searchBox", ref: "searchBox", type: "text", className: "form-control",
-	                placeholder: "Function", "aria-describedby": "sizing-addon3",
-	                value: value, onKeyDown: this.handleKeyDown.bind(this),
+	                placeholder: prompt,
+	                "aria-describedby": "sizing-addon3",
+	                autoComplete: "off", value: value, onKeyDown: this.handleKeyDown.bind(this),
 	                onChange: this.handleChange.bind(this), autoFocus: "autofocus" }),
 	              _react2["default"].createElement(ACModal, { ref: "acm", addGraph: this.props.addGraph })
 	            )

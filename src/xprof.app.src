@@ -10,8 +10,6 @@
    ,lager
    ,jsone
    ,hdr_histogram
-   ,edown
-   ,fqc
    ]}
  ,{env,[]}
  ,{modules, []}

@@ -20,14 +20,16 @@ init([]) ->
     RestartStrategy = simple_one_for_one,
     MaxRestarts = 0,
     MaxSecondsBetweenRestarts = 1,
-    
+
     SupFlags = {RestartStrategy, MaxRestarts, MaxSecondsBetweenRestarts},
-    
-    Child = {xprof_tracer_handler,
-	     {xprof_tracer_handler, start_link, []},
-	     permanent,
-	     5000,
-	     worker,
-	     [xprof_tracer_handler]},
-    
+
+    Child = {
+        xprof_tracer_handler,
+            {xprof_tracer_handler, start_link, []},
+            permanent,
+            5000,
+            worker,
+            [xprof_tracer_handler]
+        },
+
     {ok, {SupFlags, [Child]}}.

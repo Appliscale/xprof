@@ -19,18 +19,20 @@ start_link() ->
 %% Supervisor callbacks
 
 init([]) ->
-    TraceHandlerSup = 
-	{xprof_tracer_handler_sup,
-	 {xprof_tracer_handler_sup, start_link, []},
-	 permanent,
-	 5000,
-	 supervisor,
-	 [xprof_tracer_handler_sup]},
-    Tracer = 
-	{xprof_tracer,
-	 {xprof_tracer, start_link, []},
-	 permanent,
-	 5000,
-	 worker,
-	 [xprof_tracer]},
+    TraceHandlerSup =
+        {xprof_tracer_handler_sup,
+            {xprof_tracer_handler_sup, start_link, []},
+            permanent,
+            5000,
+            supervisor,
+            [xprof_tracer_handler_sup]
+        },
+    Tracer =
+        {xprof_tracer,
+            {xprof_tracer, start_link, []},
+            permanent,
+            5000,
+            worker,
+            [xprof_tracer]
+        },
     {ok, { {rest_for_one, 0, 1}, [TraceHandlerSup, Tracer]} }.

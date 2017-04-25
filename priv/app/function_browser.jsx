@@ -223,8 +223,12 @@ export default class FunctionBrowser extends React.Component {
   }
 
   render() {
-    var autocomp = null;
-    var value = this.state.value;
+    let value = this.state.value;
+    let prompt = "Hello BEAMer! Please specify your trace pattern here.";
+
+    if (!!this.props.language && !!this.props.type && !!this.props.example) {
+      prompt = `Hello BEAMer! I have detected that you are using an ${this.props.language} project, please specify your ${this.props.type} here e.g. ${this.props.example}`;
+    }
 
     return (
       <form className="navbar-form">
@@ -233,8 +237,9 @@ export default class FunctionBrowser extends React.Component {
             <span className="input-group-addon" style={{ width: "1%" }}>
               <span className="glyphicon glyphicon-search"></span></span>
               <input id="searchBox" ref="searchBox" type="text" className="form-control"
-                     placeholder="Function" aria-describedby="sizing-addon3"
-                     value={value} onKeyDown={this.handleKeyDown.bind(this)}
+                     placeholder={prompt}
+                     aria-describedby="sizing-addon3"
+                     autoComplete="off" value={value} onKeyDown={this.handleKeyDown.bind(this)}
                      onChange={this.handleChange.bind(this)} autoFocus="autofocus"/>
               <ACModal ref="acm" addGraph={this.props.addGraph}></ACModal>
           </div>
