@@ -9,7 +9,7 @@
    ,cowboy
    ,lager
    ,jsone
-   ,hdr_histogram
+   ,customized_hdr_histogram
    ]}
  ,{env,[]}
  ,{modules, []}
