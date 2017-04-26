@@ -1,6 +1,6 @@
 {
   "name": "xprof",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "XProf - BEAM profiler",
   "repository": {
     "type": "git",
@@ -20,6 +20,7 @@
   "dependencies": {
     "bootstrap": "3.3.7",
     "bootswatch": "3.3.7",
+    "c3": "0.4.11",
     "jquery": "2.1.4",
     "react": "15.4.1",
     "react-bootstrap": "0.30.7",

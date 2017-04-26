@@ -42,6 +42,7 @@ handle_req(<<"funs">>, Req, State) ->
                                   Json,
                                   Req),
     {ok, Req2, State};
+
 handle_req(<<"mon_start">>, Req, State) ->
     Query = get_query(Req),
     lager:info("Starting monitoring via web on '~s'~n", [Query]),
@@ -136,6 +137,7 @@ handle_req(<<"capture">>, Req, State) ->
                                     [{<<"content-type">>,
                                       <<"application/json">>}], Json, Req),
     {ok, ResReq, State};
+
 handle_req(<<"capture_stop">>, Req, State) ->
     MFA = get_mfa(Req),
 
@@ -149,6 +151,7 @@ handle_req(<<"capture_stop">>, Req, State) ->
                 cowboy_req:reply(404, Req)
         end,
     {ok, ResReq, State};
+
 handle_req(<<"capture_data">>, Req, State) ->
     MFA  = get_mfa(Req),
     {OffsetStr, _} = cowboy_req:qs_val(<<"offset">>, Req),
@@ -171,6 +174,15 @@ handle_req(<<"capture_data">>, Req, State) ->
                                    <<"application/json">>}],
                                  Json, Req)
         end,
+    {ok, ResReq, State};
+
+handle_req(<<"mode">>, Req, State) ->
+    Mode = xprof_lib:get_mode(),
+    Json = jsone:encode({[{mode, Mode}]}),
+    {ok, ResReq} = cowboy_req:reply(200,
+                                    [{<<"content-type">>,
+                                      <<"application/json">>}],
+                                    Json, Req),
     {ok, ResReq, State}.
 
 %% Helpers

@@ -8,10 +8,24 @@ import Graph from "./graph.jsx";
 import TracingSwitch from "./tracing_switch.jsx";
 import GraphPanel from "./graph_panel.jsx";
 import FunctionBrowser from "./function_browser.jsx";
+import Utils from "./utils.js";
 
 class App extends React.Component {
   constructor(props) {
     super(props);
+
+    this.state = {
+      mode: null
+    };
+
+    $.getJSON("/api/mode", {}, this.modeSuccess.bind(this));
+  }
+
+  modeSuccess(data) {
+    this.state.mode = data.mode;
+    this.setState(this.state);
+
+    $("#favicon").attr("href", `img/xprof_icon_${this.state.mode}.png`);
   }
 
   addGraph(query) {
@@ -23,6 +37,8 @@ class App extends React.Component {
   }
 
   render() {
+    let guides = Utils.getLanguageGuides(this.state.mode);
+
     return (
       <div className="container-fluid">
         <nav className="navbar navbar-default navbar-fixed-top">
@@ -34,7 +50,7 @@ class App extends React.Component {
 
           <div className="navbar-collapse collapse" id="navbar-collapsible">
             <TracingSwitch/>
-            <FunctionBrowser ref="functionBrowser" addGraph={this.addGraph.bind(this)}/>
+            <FunctionBrowser ref="functionBrowser" addGraph={this.addGraph.bind(this)} language={guides.language} type={guides.type} example={guides.example} />
           </div>
         </nav>
         <GraphPanel ref="graphPanel" clearFunctionBrowser={this.clearFunctionBrowser.bind(this)}/>

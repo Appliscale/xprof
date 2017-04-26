@@ -25,7 +25,9 @@ all() ->
      no_capture_data_when_not_traced,
      capture_data_when_traced_test,
      error_when_stopping_not_started_capture,
-     dont_receive_new_capture_data_after_stop
+     dont_receive_new_capture_data_after_stop,
+     in_this_project_we_should_detect_erlang,
+     but_it_should_return_elixir_if_it_is_forced_as_setting
     ].
 
 init_per_suite(Config) ->
@@ -64,7 +66,6 @@ trace_set_only_accepts_all_and_pause(_Config) ->
     ?assertMatch({204, _}, make_get_request("api/trace_set", [{"spec", "pause"}])),
     ?assertMatch({400, _}, make_get_request("api/trace_set", [{"spec", "invalid"}])),
     ok.
-
 
 get_overflow_status_after_hitting_overload(_Config) ->
     %% given
@@ -195,6 +196,18 @@ dont_receive_new_capture_data_after_stop(_Config) ->
     ?assertEqual(2, length(proplists:get_value(<<"items">>, Data))),
     ok.
 
+in_this_project_we_should_detect_erlang(_Config) ->
+    {200, Mode} = make_get_request("api/mode"),
+    ?assertEqual([{<<"mode">>, <<"erlang">>}], Mode),
+    ok.
+
+but_it_should_return_elixir_if_it_is_forced_as_setting(_Config) ->
+    given_elixir_mode_is_set(),
+    {200, Mode} = make_get_request("api/mode"),
+    ?assertEqual([{<<"mode">>, <<"elixir">>}], Mode),
+    restore_default_mode(),
+    ok.
+
 %%
 %% Givens
 %%
@@ -204,6 +217,9 @@ given_tracing_all() ->
 
 given_overload_queue_limit(Limit) ->
     application:set_env(xprof, max_tracer_queue_len, Limit).
+
+given_elixir_mode_is_set() ->
+    application:set_env(xprof, mode, elixir).
 
 given_traced(Fun) ->
     {204, _} = make_get_request("api/mon_start", [{"query", Fun}]),
@@ -221,6 +237,9 @@ given_capture_slow_calls_of(Mod, Fun, Arity, Threshold, Limit) ->
 %%
 %% Helpers
 %%
+restore_default_mode() ->
+    application:set_env(xprof, mode, erlang).
+
 long_function() ->
     timer:sleep(50).
 

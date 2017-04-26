@@ -59,3 +59,21 @@ describe("Find common prefix", function() {
     expect(Utils.commonArrayPrefix([ "aaa" ])).to.be.equal("aaa");
   });
 });
+
+describe("Provide language dependent guides based on mode", function() {
+  it("No mode provided", function() {
+    expect(Utils.getLanguageGuides(null).language).to.be.equal(null);
+  });
+
+  it("Elixir mode", function() {
+    expect(Utils.getLanguageGuides("elixir").language).to.be.equal("Elixir");
+  });
+
+  it("Erlang mode", function() {
+    expect(Utils.getLanguageGuides("erlang").language).to.be.equal("Erlang");
+  });
+
+  it("For unknown we assume Erlang too", function() {
+    expect(Utils.getLanguageGuides("foobar").language).to.be.equal("Erlang");
+  });
+});

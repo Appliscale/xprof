@@ -34,7 +34,7 @@ body {
   box-shadow: 10px 0 50px #888888 !important;
   position: absolute !important;
   max-height: 500px;
-  overflow: scroll;
+  overflow: auto;
 }
 
 a.navbar-brand {
@@ -60,7 +60,8 @@ a.navbar-brand {
   background-color: #ECF0F1;
 }
 
-/*-- c3 customisations --*/
+/* C3 customizations. */
+
 #main-container .c3-grid line {
   stroke: #ECF0F1; }
 
@@ -70,4 +71,10 @@ a.navbar-brand {
 
 #main-container .c3-tooltip td {
   border-style: none;
+}
+
+/* UI legibility improvements. */
+
+input#searchBox {
+  border-color: transparent;
 }

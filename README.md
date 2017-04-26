@@ -1,4 +1,4 @@
-XProf [![Build Status](https://travis-ci.org/Appliscale/xprof.svg?branch=master)](https://travis-ci.org/Appliscale/xprof) [![Coverage Status](https://coveralls.io/repos/github/Appliscale/xprof/badge.svg?branch=master)](https://coveralls.io/github/Appliscale/xprof?branch=master)
+XProf [![Build Status](https://travis-ci.org/Appliscale/xprof.svg?branch=master)](https://travis-ci.org/Appliscale/xprof) [![Coverage Status](https://coveralls.io/repos/github/Appliscale/xprof/badge.svg?branch=master)](https://coveralls.io/github/Appliscale/xprof?branch=master) [![Hex.pm](https://img.shields.io/hexpm/v/xprof.svg?style=flat-square)](https://hex.pm/packages/xprof) [![Hex.pm](https://img.shields.io/hexpm/dt/xprof.svg?style=flat-square)](https://hex.pm/packages/xprof)
 =====
 
 *XProf* is a profiler that allows you to track execution time of Erlang
@@ -42,7 +42,7 @@ Example rebar2 config entry:
 
 {deps, [
        ...
-       {xprof, "1.1.0"}
+       {xprof, "1.2.0"}
 ]}.
 ```
 
@@ -52,7 +52,7 @@ Example rebar2 config entry:
 defp deps do
     [
       ...
-      {:xprof, "~> 1.1.0"}
+      {:xprof, "~> 1.2.0"}
     ]
   end
 ```
