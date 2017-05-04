@@ -1,7 +1,7 @@
 XProf [![Build Status](https://travis-ci.org/Appliscale/xprof.svg?branch=master)](https://travis-ci.org/Appliscale/xprof) [![Coverage Status](https://coveralls.io/repos/github/Appliscale/xprof/badge.svg?branch=master)](https://coveralls.io/github/Appliscale/xprof?branch=master) [![Hex.pm](https://img.shields.io/hexpm/v/xprof.svg?style=flat-square)](https://hex.pm/packages/xprof) [![Hex.pm](https://img.shields.io/hexpm/dt/xprof.svg?style=flat-square)](https://hex.pm/packages/xprof)
 =====
 
-*XProf* is a profiler that allows you to track execution time of Erlang
+*XProf* is a profiler that allows you to track execution time of Elixir / Erlang
 functions. It's also able to capture arguments and results of a function calls
 that lasted longer than given number of milliseconds.
 
