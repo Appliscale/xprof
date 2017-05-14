@@ -23,7 +23,8 @@
 
 -record(state, {trace_spec  = all,         %% trace specification
                 status      = initialized, %% tracing status
-                funs        = []           %% functions monitored by xprof
+                funs        = [],          %% functions monitored by xprof
+                max_queue_len              %% maximum message queue length for overload protection
                }).
 
 %% @doc Starts xprof tracer process.
@@ -85,7 +86,8 @@ trace_status() ->
 
 init([]) ->
     init_tracer(),
-    {ok, #state{}}.
+    MaxQueueLen = application:get_env(xprof, max_tracer_queue_len, 1000),
+    {ok, #state{max_queue_len = MaxQueueLen}}.
 
 handle_call({monitor, MFASpec, Query}, _From, State) ->
     MFAId = xprof_lib:mfaspec2id(MFASpec),
@@ -161,9 +163,10 @@ init_tracer() ->
     erlang:trace_pattern({'_','_','_'}, false, [local]).
 
 check_for_overflow(State = #state{status = running,
-                                  trace_spec=TraceSpec}) ->
+                                  trace_spec = TraceSpec,
+                                  max_queue_len = MaxQueueLen}) ->
     {_, QLen} = erlang:process_info(self(), message_queue_len),
-    case QLen >= application:get_env(xprof, max_tracer_queue_len, 1000) of
+    case QLen >= MaxQueueLen of
         true ->
             set_trace_opts(false, TraceSpec),
             State#state{status=overflow};
