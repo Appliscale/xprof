@@ -121,12 +121,10 @@ handle_call(_Request, _From, State) ->
 handle_cast(_Msg, State) ->
     {noreply, State}.
 
-handle_info(Msg = {trace_ts, _TracedPid, call, MFA, _Args, _StartTime}, State) ->
-    NewState = check_for_overflow(State),
-    send2pids(MFA, Msg),
-    {noreply, NewState};
-handle_info(Msg = {trace_ts, _TracedPid, return_from, MFA , _Res, _StartTime},
-            State) ->
+handle_info(Msg = {trace_ts, _TracedPid, Tag, MFA, _TraceTerm, _StartTime}, State)
+  when Tag =:= call;
+       Tag =:= return_from;
+       Tag =:= exception_from ->
     NewState = check_for_overflow(State),
     send2pids(MFA, Msg),
     {noreply, NewState};

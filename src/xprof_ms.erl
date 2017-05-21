@@ -79,7 +79,7 @@ workaround_empty_args_ms(Ms) ->
 
 %% - For the general case when the match-spec body does not contain any message
 %% directive a default message ({message, arity} or {message, '$_'}) is inserted
-%% as the first action of the body as well as enabling return_trace
+%% as the first action of the body as well as enabling exception_trace
 
 fix_ms(MS) ->
     {traverse_ms(MS, _CaptureOff = false),
@@ -92,7 +92,7 @@ traverse_ms(MS, Capture) ->
             true -> '$_'
         end,
     [{Head, Condition,
-      [{return_trace},{message, DefaultMsg}|traverse_ms_c(Body, Capture)]}
+      [{exception_trace},{message, DefaultMsg}|traverse_ms_c(Body, Capture)]}
      || {Head, Condition, Body} <- MS].
 
 %% @doc traverse a match-spec clause

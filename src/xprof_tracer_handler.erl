@@ -146,14 +146,16 @@ handle_info({trace_ts, Pid, call, _MFA, Args, StartTime}, State) ->
 
     {Timeout, NewState} = maybe_make_snapshot(State),
     {noreply, NewState, Timeout};
-handle_info({trace_ts, Pid, return_from, _MFA, Ret, EndTime}, State) ->
+handle_info({trace_ts, Pid, Tag, _MFA, RetOrExc, EndTime}, State)
+  when Tag =:= return_from;
+       Tag =:= exception_from ->
 
     NewState = case get_ts_args(Pid) of
                    undefined ->
                        State;
                    {StartTime, Args} ->
                        CallTime = timer:now_diff(EndTime, StartTime),
-                       record_results(Pid, CallTime, Args, Ret, State)
+                       record_results(Pid, CallTime, Args, RetOrExc, State)
                end,
 
     {Timeout, NewState2} = maybe_make_snapshot(NewState),
