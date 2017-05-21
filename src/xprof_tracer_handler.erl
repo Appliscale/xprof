@@ -278,7 +278,9 @@ record_results(Pid, CallTime, Args, Res,
 
     case CaptureSpec of
         {Threshold, Limit}
-          when CallTime > Threshold * 1000 andalso Count =< Limit ->
+          when CallTime > Threshold * 1000 andalso
+               Count =< Limit andalso
+               Args =/= arity ->
             ets:insert(Name, {{args_res, Count},
                               {Pid, CallTime, Args, Res}}),
             %% reached limit - turn off args tracing
