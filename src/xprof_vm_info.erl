@@ -79,9 +79,12 @@ is_ms_fun(Prefix, Fun, ModeCB) ->
 
 -spec get_all_functions(module(), module()) -> [{atom(), arity()}].
 get_all_functions(Mod, ModeCB) ->
-    [FA || FA = {F, _} <- Mod:module_info(functions),
+    Exports = lists:sort(Mod:module_info(exports)),
+    AllFuns = lists:sort(Mod:module_info(functions)),
+    Locals = ordsets:subtract(AllFuns, Exports),
+    [FA || FA = {F, _} <- Exports ++ Locals,
            not ModeCB:hidden_function(F)].
 
 get_modules() ->
-    ModsFiles = code:all_loaded(),
+    ModsFiles = lists:sort(code:all_loaded()),
     [ Mod || {Mod, _File} <- ModsFiles].

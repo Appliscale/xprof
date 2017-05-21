@@ -30,6 +30,12 @@ get_available_funs_test_() ->
               ?assert(lists:member(<<"xprof_vm_info:get_available_funs/1">>, L1)),
               ?assert(lists:member(<<"xprof_vm_info:filter_funs/3">>, L1))
       end},
+     {"Local functions are listed after exported ones",
+      fun() ->
+              L1 = ?M:get_available_funs(<<"xprof_vm_info:">>),
+              ?assertMatch([<<"xprof_vm_info:get_available_funs/1">>|_], L1),
+              ?assert(lists:member(<<"xprof_vm_info:filter_funs/3">>, L1))
+      end},
      {"Generated functions are filtered out",
       fun() ->
               ?assertEqual([], ?M:get_available_funs(<<"xprof_vm_info:'-">>))
@@ -81,6 +87,15 @@ get_available_funs_elixir_test_() ->
                   L1 = ?M:get_available_funs(<<"System.">>),
                   ?assert(lists:member(<<"Elixir.System.cmd/3">>, L1)),
                   ?assert(lists:member(<<"Elixir.System.do_cmd/3">>, L1))
+          end},
+         {"Local functions are listed after exported ones",
+          fun() ->
+                  L1 = ?M:get_available_funs(<<"System.">>),
+                  PosExp = 'Elixir.Enum':find_index(
+                             L1, fun(E) -> E =:= <<"System.cmd/3">> end),
+                  PosLoc = 'Elixir.Enum':find_index(
+                             L1, fun(E) -> E =:= <<"System.do_cmd/3">> end),
+                  ?assert(PosExp < PosLoc)
           end},
          {"Generated functions are filtered out",
           fun() ->
@@ -136,10 +151,10 @@ weird_atoms_test_() ->
                L1 = ?M:get_available_funs(<<"'A.B">>),
                ?assertEqual([<<"'A.B.C':">>], L1),
                L2 = ?M:get_available_funs(<<"'A.B.C':">>),
-               ?assertEqual([<<"'A.B.C':'f?'/0">>,
+               ?assertEqual([<<"'A.B.C':h/10">>,
+                             <<"'A.B.C':'f?'/0">>,
                              <<"'A.B.C':'g\\'g'/0">>,
-                             <<"'A.B.C':h/1">>,
-                             <<"'A.B.C':h/10">>
+                             <<"'A.B.C':h/1">>
                             ], L2)
        end},
       {"Function name with special character",
@@ -152,7 +167,7 @@ weird_atoms_test_() ->
       {"Multiple arity matches",
        fun() ->
                L1 = ?M:get_available_funs(<<"'A.B.C':h/1">>),
-               ?assertEqual([<<"'A.B.C':h/1">>, <<"'A.B.C':h/10">>], L1)
+               ?assertEqual([<<"'A.B.C':h/10">>, <<"'A.B.C':h/1">>], L1)
        end}
      ]}.
 
