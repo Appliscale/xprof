@@ -74,8 +74,8 @@ get_available_funs_elixir_test_() ->
           fun() ->
                   ?assertEqual(elixir, xprof_lib:get_mode()),
                   L1 = ?M:get_available_funs(<<"System">>),
-                  ?assert(lists:member(<<"Elixir.System.">>, L1)),
-                  ?assertNot(lists:member(<<"Elixir.System.cmd/3">>, L1))
+                  ?assert(lists:member(<<"System.">>, L1)),
+                  ?assertNot(lists:member(<<"System.cmd/3">>, L1))
           end},
          {"Module info is filtered out",
           fun() ->
@@ -85,8 +85,8 @@ get_available_funs_elixir_test_() ->
          {"Local functions are also listed if query contains dot",
           fun() ->
                   L1 = ?M:get_available_funs(<<"System.">>),
-                  ?assert(lists:member(<<"Elixir.System.cmd/3">>, L1)),
-                  ?assert(lists:member(<<"Elixir.System.do_cmd/3">>, L1))
+                  ?assert(lists:member(<<"System.cmd/3">>, L1)),
+                  ?assert(lists:member(<<"System.do_cmd/3">>, L1))
           end},
          {"Local functions are listed after exported ones",
           fun() ->
@@ -105,12 +105,10 @@ get_available_funs_elixir_test_() ->
           end},
          {"Module with Elixir prefix",
           fun() ->
-                  L1 = ?M:get_available_funs(<<"Elix">>),
-                  ?assert(lists:member(<<"Elixir.System.">>, L1)),
-                  ?assertEqual([<<"Elixir.System.">>],
-                               ?M:get_available_funs(<<"Elixir.System">>)),
-                  ?assertEqual([<<"Elixir.System.cwd/0">>],
-                               ?M:get_available_funs(<<"Elixir.System.cwd/">>))
+                  ?assertEqual([], ?M:get_available_funs(<<"Elix">>)),
+                  ?assertEqual([], ?M:get_available_funs(<<"Elixir.">>)),
+                  ?assertEqual([], ?M:get_available_funs(<<"Elixir.System">>)),
+                  ?assertEqual([], ?M:get_available_funs(<<"Elixir.System.cwd/">>))
           end},
          {"Erlang module",
           fun() ->
@@ -126,18 +124,18 @@ get_available_funs_elixir_test_() ->
          {"Arity matching",
           fun() ->
                   L1 = ?M:get_available_funs(<<"System.cmd/">>),
-                  ?assertEqual([<<"Elixir.System.cmd/2">>, <<"Elixir.System.cmd/3">>], L1),
+                  ?assertEqual([<<"System.cmd/2">>, <<"System.cmd/3">>], L1),
                   L2 = ?M:get_available_funs(<<"System.cmd/3">>),
-                  ?assertEqual([<<"Elixir.System.cmd/3">>], L2),
+                  ?assertEqual([<<"System.cmd/3">>], L2),
                   L3 = ?M:get_available_funs(<<"System.cmd/99">>),
                   ?assertEqual([], L3)
           end},
          {"Match-spec fun matching",
           fun() ->
                   L1 = ?M:get_available_funs(<<"System.delete_env(_) ->">>),
-                  ?assertEqual([<<"Elixir.System.delete_env/1">>], L1),
+                  ?assertEqual([<<"System.delete_env/1">>], L1),
                   L2 = ?M:get_available_funs(<<"System.delete_env _ -> message(get_tcw())">>),
-                  ?assertEqual([<<"Elixir.System.delete_env/1">>], L2)
+                  ?assertEqual([<<"System.delete_env/1">>], L2)
           end}],
     xprof_test_lib:run_elixir_unit_tests(Tests).
 

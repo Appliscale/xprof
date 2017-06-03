@@ -16,11 +16,9 @@ get_available_funs(Query) ->
 
     AllMods = get_modules(),
 
-    NormQuery = ModeCB:normalise_query(Query),
-
     %% find the module which is fully writen out in the query
     %% and return all its functions
-    ExactMatch = find_mods(NormQuery, AllMods, ModeCB),
+    ExactMatch = find_mods(Query, AllMods, ModeCB),
     ExactMods = [Mod||{Mod, _} <- ExactMatch],
     AllFuns =
         lists:flatmap(
@@ -31,7 +29,7 @@ get_available_funs(Query) ->
           end, ExactMatch),
 
     %% find modules which query is a partial prefix of
-    MatchingMods = filter_mods(NormQuery, AllMods, ModeCB),
+    MatchingMods = filter_mods(Query, AllMods, ModeCB),
     IncompleteMods =
         [ModeCB:fmt_mod_and_delim(Mod)
          || Mod <- MatchingMods -- ExactMods],
