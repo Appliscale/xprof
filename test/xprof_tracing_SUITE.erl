@@ -119,8 +119,11 @@ monitor_crashing_fun(_Config) ->
     maybe_crash_test_fun(false),
     ct:sleep(2000),
 
-    [Items1|_] = xprof_tracer:data(MFA, Last),
-    ?assertEqual(3, proplists:get_value(count, Items1)),
+    Items = xprof_tracer:data(MFA, Last - 1),
+    %% it is possible that the 3 function calls are spread
+    %% across multiple snapshots
+    ?assertEqual(3, lists:sum([proplists:get_value(count, Item)
+                               || Item <- Items])),
 
     xprof_tracer:trace(pause),
     xprof_tracer:demonitor(MFA),
