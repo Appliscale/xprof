@@ -80,6 +80,7 @@ parse(Tokens) ->
 %% Functions for autocomplete
 %%
 
+hidden_function(behaviour_info) -> true;
 hidden_function(module_info) -> true;
 hidden_function(Fun) ->
     case atom_to_list(Fun) of

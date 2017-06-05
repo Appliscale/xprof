@@ -38,7 +38,8 @@ get_available_funs_test_() ->
       end},
      {"Generated functions are filtered out",
       fun() ->
-              ?assertEqual([], ?M:get_available_funs(<<"xprof_vm_info:'-">>))
+              ?assertEqual([], ?M:get_available_funs(<<"xprof_vm_info:'-">>)),
+              ?assertEqual([], ?M:get_available_funs(<<"gen_server:behaviour_info">>))
       end},
      {"No module matches query",
       fun() ->
@@ -101,7 +102,8 @@ get_available_funs_elixir_test_() ->
           fun() ->
                   ?assertEqual([], ?M:get_available_funs(<<"System.\"-">>)),
                   {module, _} = code:ensure_loaded('Elixir.Macro'),
-                  ?assertEqual([], ?M:get_available_funs(<<"Macro.\"MACRO-binary_ops\"">>))
+                  ?assertEqual([], ?M:get_available_funs(<<"Macro.\"MACRO-binary_ops\"">>)),
+                  ?assertEqual([], ?M:get_available_funs(<<"GenServer.behaviour_info">>))
           end},
          {"Module with Elixir prefix",
           fun() ->
