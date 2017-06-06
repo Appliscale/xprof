@@ -1,6 +1,6 @@
 {application, xprof,
  [{description, "Visual BEAM profiler"}
- ,{vsn, "1.2.0"}
+ ,{vsn, "1.2.1"}
  ,{registered, []}
  ,{mod, {'xprof_app', []}}
  ,{applications,

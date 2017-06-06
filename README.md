@@ -43,7 +43,7 @@ Example rebar2 config entry:
 
 {deps, [
        ...
-       {xprof, "1.2.0"}
+       {xprof, "1.2.1"}
 ]}.
 ```
 
@@ -53,7 +53,7 @@ Example rebar2 config entry:
 defp deps do
     [
       ...
-      {:xprof, "~> 1.2.0"}
+      {:xprof, "~> 1.2.1"}
     ]
   end
 ```
