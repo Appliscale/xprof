@@ -10990,13 +10990,13 @@
 	};
 	
 	module.exports = React;
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(/*! ./../../webpack/~/node-libs-browser/~/process/browser.js */ 6)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(/*! ./../../process/browser.js */ 6)))
 
 /***/ },
 /* 6 */
-/*!**********************************************************!*\
-  !*** (webpack)/~/node-libs-browser/~/process/browser.js ***!
-  \**********************************************************/
+/*!******************************!*\
+  !*** ./~/process/browser.js ***!
+  \******************************/
 /***/ function(module, exports) {
 
 	// shim for using process in browser
@@ -11183,20 +11183,13 @@
 
 /***/ },
 /* 7 */
-/*!******************************************!*\
-  !*** ./~/react/~/object-assign/index.js ***!
-  \******************************************/
+/*!**********************************!*\
+  !*** ./~/object-assign/index.js ***!
+  \**********************************/
 /***/ function(module, exports) {
 
-	/*
-	object-assign
-	(c) Sindre Sorhus
-	@license MIT
-	*/
-	
 	'use strict';
 	/* eslint-disable no-unused-vars */
-	var getOwnPropertySymbols = Object.getOwnPropertySymbols;
 	var hasOwnProperty = Object.prototype.hasOwnProperty;
 	var propIsEnumerable = Object.prototype.propertyIsEnumerable;
 	
@@ -11217,7 +11210,7 @@
 			// Detect buggy property enumeration order in older V8 versions.
 	
 			// https://bugs.chromium.org/p/v8/issues/detail?id=4118
-			var test1 = new String('abc');  // eslint-disable-line no-new-wrappers
+			var test1 = new String('abc');  // eslint-disable-line
 			test1[5] = 'de';
 			if (Object.getOwnPropertyNames(test1)[0] === '5') {
 				return false;
@@ -11246,7 +11239,7 @@
 			}
 	
 			return true;
-		} catch (err) {
+		} catch (e) {
 			// We don't expect any of the above to throw, but better to be safe.
 			return false;
 		}
@@ -11266,8 +11259,8 @@
 				}
 			}
 	
-			if (getOwnPropertySymbols) {
-				symbols = getOwnPropertySymbols(from);
+			if (Object.getOwnPropertySymbols) {
+				symbols = Object.getOwnPropertySymbols(from);
 				for (var i = 0; i < symbols.length; i++) {
 					if (propIsEnumerable.call(from, symbols[i])) {
 						to[symbols[i]] = from[symbols[i]];
@@ -11608,7 +11601,7 @@
 	};
 	
 	module.exports = PooledClass;
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(/*! ./../../webpack/~/node-libs-browser/~/process/browser.js */ 6)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(/*! ./../../process/browser.js */ 6)))
 
 /***/ },
 /* 10 */
@@ -11658,9 +11651,9 @@
 
 /***/ },
 /* 11 */
-/*!*****************************************!*\
-  !*** ./~/react/~/fbjs/lib/invariant.js ***!
-  \*****************************************/
+/*!*********************************!*\
+  !*** ./~/fbjs/lib/invariant.js ***!
+  \*********************************/
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -11718,7 +11711,7 @@
 	}
 	
 	module.exports = invariant;
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(/*! ./../../../../webpack/~/node-libs-browser/~/process/browser.js */ 6)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(/*! ./../../process/browser.js */ 6)))
 
 /***/ },
 /* 12 */
@@ -12067,7 +12060,7 @@
 	};
 	
 	module.exports = ReactElement;
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(/*! ./../../webpack/~/node-libs-browser/~/process/browser.js */ 6)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(/*! ./../../process/browser.js */ 6)))
 
 /***/ },
 /* 13 */
@@ -12109,9 +12102,9 @@
 
 /***/ },
 /* 14 */
-/*!***************************************!*\
-  !*** ./~/react/~/fbjs/lib/warning.js ***!
-  \***************************************/
+/*!*******************************!*\
+  !*** ./~/fbjs/lib/warning.js ***!
+  \*******************************/
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -12180,13 +12173,13 @@
 	}
 	
 	module.exports = warning;
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(/*! ./../../../../webpack/~/node-libs-browser/~/process/browser.js */ 6)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(/*! ./../../process/browser.js */ 6)))
 
 /***/ },
 /* 15 */
-/*!*********************************************!*\
-  !*** ./~/react/~/fbjs/lib/emptyFunction.js ***!
-  \*********************************************/
+/*!*************************************!*\
+  !*** ./~/fbjs/lib/emptyFunction.js ***!
+  \*************************************/
 /***/ function(module, exports) {
 
 	"use strict";
@@ -12260,7 +12253,7 @@
 	}
 	
 	module.exports = canDefineProperty;
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(/*! ./../../webpack/~/node-libs-browser/~/process/browser.js */ 6)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(/*! ./../../process/browser.js */ 6)))
 
 /***/ },
 /* 17 */
@@ -12471,7 +12464,7 @@
 	}
 	
 	module.exports = traverseAllChildren;
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(/*! ./../../webpack/~/node-libs-browser/~/process/browser.js */ 6)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(/*! ./../../process/browser.js */ 6)))
 
 /***/ },
 /* 19 */
@@ -12711,7 +12704,7 @@
 	}
 	
 	module.exports = ReactComponent;
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(/*! ./../../webpack/~/node-libs-browser/~/process/browser.js */ 6)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(/*! ./../../process/browser.js */ 6)))
 
 /***/ },
 /* 22 */
@@ -12815,13 +12808,13 @@
 	};
 	
 	module.exports = ReactNoopUpdateQueue;
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(/*! ./../../webpack/~/node-libs-browser/~/process/browser.js */ 6)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(/*! ./../../process/browser.js */ 6)))
 
 /***/ },
 /* 23 */
-/*!*******************************************!*\
-  !*** ./~/react/~/fbjs/lib/emptyObject.js ***!
-  \*******************************************/
+/*!***********************************!*\
+  !*** ./~/fbjs/lib/emptyObject.js ***!
+  \***********************************/
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -12843,7 +12836,7 @@
 	}
 	
 	module.exports = emptyObject;
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(/*! ./../../../../webpack/~/node-libs-browser/~/process/browser.js */ 6)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(/*! ./../../process/browser.js */ 6)))
 
 /***/ },
 /* 24 */
@@ -13617,7 +13610,7 @@
 	};
 	
 	module.exports = ReactClass;
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(/*! ./../../webpack/~/node-libs-browser/~/process/browser.js */ 6)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(/*! ./../../process/browser.js */ 6)))
 
 /***/ },
 /* 26 */
@@ -13650,7 +13643,7 @@
 	}
 	
 	module.exports = ReactPropTypeLocationNames;
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(/*! ./../../webpack/~/node-libs-browser/~/process/browser.js */ 6)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(/*! ./../../process/browser.js */ 6)))
 
 /***/ },
 /* 27 */
@@ -13828,7 +13821,7 @@
 	};
 	
 	module.exports = ReactDOMFactories;
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(/*! ./../../webpack/~/node-libs-browser/~/process/browser.js */ 6)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(/*! ./../../process/browser.js */ 6)))
 
 /***/ },
 /* 28 */
@@ -14063,7 +14056,7 @@
 	};
 	
 	module.exports = ReactElementValidator;
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(/*! ./../../webpack/~/node-libs-browser/~/process/browser.js */ 6)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(/*! ./../../process/browser.js */ 6)))
 
 /***/ },
 /* 29 */
@@ -14405,7 +14398,7 @@
 	};
 	
 	module.exports = ReactComponentTreeHook;
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(/*! ./../../webpack/~/node-libs-browser/~/process/browser.js */ 6)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(/*! ./../../process/browser.js */ 6)))
 
 /***/ },
 /* 30 */
@@ -14500,7 +14493,7 @@
 	}
 	
 	module.exports = checkReactTypeSpec;
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(/*! ./../../webpack/~/node-libs-browser/~/process/browser.js */ 6)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(/*! ./../../process/browser.js */ 6)))
 
 /***/ },
 /* 31 */
@@ -14966,7 +14959,7 @@
 	}
 	
 	module.exports = ReactPropTypes;
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(/*! ./../../webpack/~/node-libs-browser/~/process/browser.js */ 6)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(/*! ./../../process/browser.js */ 6)))
 
 /***/ },
 /* 33 */
@@ -15033,7 +15026,7 @@
 	}
 	
 	module.exports = onlyChild;
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(/*! ./../../webpack/~/node-libs-browser/~/process/browser.js */ 6)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(/*! ./../../process/browser.js */ 6)))
 
 /***/ }
 /******/ ]);
