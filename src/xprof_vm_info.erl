@@ -16,11 +16,9 @@ get_available_funs(Query) ->
 
     AllMods = get_modules(),
 
-    NormQuery = ModeCB:normalise_query(Query),
-
     %% find the module which is fully writen out in the query
     %% and return all its functions
-    ExactMatch = find_mods(NormQuery, AllMods, ModeCB),
+    ExactMatch = find_mods(Query, AllMods, ModeCB),
     ExactMods = [Mod||{Mod, _} <- ExactMatch],
     AllFuns =
         lists:flatmap(
@@ -31,7 +29,7 @@ get_available_funs(Query) ->
           end, ExactMatch),
 
     %% find modules which query is a partial prefix of
-    MatchingMods = filter_mods(NormQuery, AllMods, ModeCB),
+    MatchingMods = filter_mods(Query, AllMods, ModeCB),
     IncompleteMods =
         [ModeCB:fmt_mod_and_delim(Mod)
          || Mod <- MatchingMods -- ExactMods],
@@ -79,9 +77,12 @@ is_ms_fun(Prefix, Fun, ModeCB) ->
 
 -spec get_all_functions(module(), module()) -> [{atom(), arity()}].
 get_all_functions(Mod, ModeCB) ->
-    [FA || FA = {F, _} <- Mod:module_info(functions),
+    Exports = lists:sort(Mod:module_info(exports)),
+    AllFuns = lists:sort(Mod:module_info(functions)),
+    Locals = ordsets:subtract(AllFuns, Exports),
+    [FA || FA = {F, _} <- Exports ++ Locals,
            not ModeCB:hidden_function(F)].
 
 get_modules() ->
-    ModsFiles = code:all_loaded(),
+    ModsFiles = lists:sort(code:all_loaded()),
     [ Mod || {Mod, _File} <- ModsFiles].

@@ -6,7 +6,6 @@
 -behaviour(xprof_language).
 
 -export([parse_query/1,
-         normalise_query/1,
          hidden_function/1,
          fmt_mfa/3,
          fmt_mod_and_delim/1,
@@ -81,9 +80,7 @@ parse(Tokens) ->
 %% Functions for autocomplete
 %%
 
-normalise_query(Query) ->
-    Query.
-
+hidden_function(behaviour_info) -> true;
 hidden_function(module_info) -> true;
 hidden_function(Fun) ->
     case atom_to_list(Fun) of

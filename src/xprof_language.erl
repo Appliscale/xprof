@@ -12,9 +12,6 @@
 
 %% Functions for autocomplete
 
--callback normalise_query(Query :: binary()) ->
-    NormQuery :: binary().
-
 %% Return whether a function should be excluded from the autocomplete list
 -callback hidden_function(Fun :: atom()) ->
     boolean().

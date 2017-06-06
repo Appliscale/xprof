@@ -6,7 +6,6 @@
 -behaviour(xprof_language).
 
 -export([parse_query/1,
-         normalise_query/1,
          hidden_function/1,
          fmt_mfa/3,
          fmt_mod_and_delim/1,
@@ -183,23 +182,7 @@ quoted_to_ast(Quoted) ->
 %% Functions for autocomplete
 %%
 
-%% @doc Ensure Elixir. prefix is present in front of aliases just like in the
-%% output of fmt_mod/1
-normalise_query(<<":", _/binary>> = Query) ->
-    Query;
-normalise_query(<<"Elixir.", _/binary>> = Query) ->
-    Query;
-normalise_query(<<C, _/binary>> = Query) when ?is_upcase(C) ->
-    case xprof_lib:prefix(Query, <<"Elixir.">>) of
-        true ->
-            %% Query itself is a prefix of "Elixir." - do not prepend
-            Query;
-        _ ->
-            <<"Elixir.", Query/binary>>
-    end;
-normalise_query(Query) ->
-    Query.
-
+hidden_function(behaviour_info) -> true;
 hidden_function(module_info) -> true;
 hidden_function(Fun) ->
     case atom_to_list(Fun) of
@@ -213,17 +196,10 @@ hidden_function(Fun) ->
     end.
 
 fmt_mfa(Mod, Fun, Arity) ->
-    %% FIXME if we wouldn't want to ensure Elixir. prefix in aliases
-    %% could use: 'Elixir.Exception':format_mfa(Mod, Fun, Arity)
-    fmt("~s~s", [fmt_mod_and_delim(Mod), fmt_fun_and_arity(Fun, Arity)]).
+    'Elixir.Exception':format_mfa(Mod, Fun, Arity).
 
 fmt_mod(Mod) ->
-    case 'Elixir.Kernel':inspect(Mod) of
-        <<":", _/binary>> = ModBin ->
-            ModBin;
-        ModBin ->
-            <<"Elixir.", ModBin/binary>>
-    end.
+    'Elixir.Kernel':inspect(Mod).
 
 fmt_mod_and_delim(Mod) ->
     fmt("~ts.", [fmt_mod(Mod)]).

@@ -35,7 +35,7 @@ export default class Utils {
       return {
         language: "Elixir",
         type: "query",
-        example: "Elixir.Enum.member?(_, :test)"
+        example: "Enum.member?(_, :test)"
       };
     } else {
       return {
