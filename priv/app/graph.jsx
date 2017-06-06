@@ -86,7 +86,7 @@ export default class Graph extends React.Component {
           // "The position of the ticks will be calculated precisely, so the values on the ticks will not be rounded nicely."
           outer: false,
           format: function(d) {
-            return d3.format(".2s")(d / 100000) + "s";
+            return d3.format(".2s")(d / 1000000) + "s";
           }
         }
       },

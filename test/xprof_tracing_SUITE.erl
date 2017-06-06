@@ -10,9 +10,11 @@
 all() ->
     [monitor_many_funs,
      monitor_recursive_fun,
+     monitor_crashing_fun,
      monitor_ms,
      capture_args_res,
      capture_args_ms,
+     capture_exception,
      capture_stop,
      long_call,
      {group, simulate_tracing}].
@@ -105,6 +107,28 @@ dead_proc_tracing(_Config) ->
     ?assertMatch({{spawner, Pid, 1.0}, running},
                  xprof_tracer:trace_status()),
     ok.
+
+monitor_crashing_fun(_Config) ->
+    xprof_tracer:monitor(MFA = {?MODULE, maybe_crash_test_fun, 1}),
+    ok = xprof_tracer:trace(self()),
+
+    Last = get_print_current_time(),
+
+    maybe_crash_test_fun(false),
+    catch maybe_crash_test_fun(true),
+    maybe_crash_test_fun(false),
+    ct:sleep(2000),
+
+    Items = xprof_tracer:data(MFA, Last - 1),
+    %% it is possible that the 3 function calls are spread
+    %% across multiple snapshots
+    ?assertEqual(3, lists:sum([proplists:get_value(count, Item)
+                               || Item <- Items])),
+
+    xprof_tracer:trace(pause),
+    xprof_tracer:demonitor(MFA),
+    ok.
+
 
 monitor_many_funs(_Config) ->
     MFAs = [{code, all_loaded, 0}, {?MODULE, test_fun, 0},
@@ -248,6 +272,26 @@ capture_args_ms(_Config) ->
     xprof_tracer:demonitor(MFA),
     ok.
 
+capture_exception(_Config) ->
+    xprof_tracer:monitor(MFA = {?MODULE, maybe_crash_test_fun, 1}),
+    ok = xprof_tracer:trace(self()),
+
+    %% Start first capture
+    {ok, Id} = xprof_tracer_handler:capture(MFA, 1, 3),
+
+    catch maybe_crash_test_fun(true),
+
+    ct:sleep(10), %% Let trace messages reach the process
+
+    {ok, {Id, 1, 3, 3}, [Item1]} =
+        xprof_tracer_handler:get_captured_data(MFA,0),
+
+    ?assertMatch([_Num, _Pid, _Time, [true], {throw, test_crash}], Item1),
+
+    xprof_tracer:trace(pause),
+    xprof_tracer:demonitor(MFA),
+    ok.
+
 capture_stop(_Config) ->
     xprof_tracer:monitor(MFA = {?MODULE, test_fun, 1}),
     ok = xprof_tracer:trace(self()),
@@ -335,6 +379,12 @@ recursive_test_fun(0) ->
 recursive_test_fun(N) ->
     timer:sleep(10),
     recursive_test_fun(N - 1).
+
+maybe_crash_test_fun(false) ->
+    ok;
+maybe_crash_test_fun(true) ->
+    timer:sleep(10),
+    throw(test_crash).
 
 get_print_current_time() ->
     {MS,S,_} = os:timestamp(),

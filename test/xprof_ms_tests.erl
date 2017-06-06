@@ -3,8 +3,8 @@
 -include_lib("eunit/include/eunit.hrl").
 
 -define(M, xprof_ms).
--define(DEFAULT_MS, {[{'_', [], [{return_trace}, {message, arity}]}],
-                     [{'_', [], [{return_trace}, {message, '$_'}]}]}).
+-define(DEFAULT_MS, {[{'_', [], [{exception_trace}, {message, arity}]}],
+                     [{'_', [], [{exception_trace}, {message, '$_'}]}]}).
 
 tokens_test_() ->
     [?_assertEqual(
@@ -34,8 +34,8 @@ parse_test_() ->
     ].
 
 ensure_dot_test_() ->
-    MSs = {[{['_'],[],[{return_trace},{message,arity},true]}],
-           [{['_'],[],[{return_trace},{message,'$_'},true]}]},
+    MSs = {[{['_'],[],[{exception_trace},{message,arity},true]}],
+           [{['_'],[],[{exception_trace},{message,'$_'},true]}]},
     [?_assertEqual(
         {ok, {{m, f, 1}, MSs}},
         ?M:fun2ms("m:f(_) -> true")),
@@ -49,8 +49,8 @@ ensure_dot_test_() ->
 
 ensure_body_test_() ->
     MS = fun(Args, Guards) ->
-                 {[{Args,Guards,[{return_trace},{message,arity},true]}],
-                  [{Args,Guards,[{return_trace},{message,'$_'},true]}]
+                 {[{Args,Guards,[{exception_trace},{message,arity},true]}],
+                  [{Args,Guards,[{exception_trace},{message,'$_'},true]}]
                  }
          end,
     [?_assertEqual(
@@ -78,8 +78,8 @@ ms_test_() ->
         ?M:fun2ms("m:f(A = {B, _}) -> {A, B}")),
      ?_assertEqual(
         {ok, {{m, f, 0},
-              {[{[],[],[{return_trace},{message,arity},true]}],
-               [{[],[],[{return_trace},{message,'$_'},true]}]}}},
+              {[{[],[],[{exception_trace},{message,arity},true]}],
+               [{[],[],[{exception_trace},{message,'$_'},true]}]}}},
         ?M:fun2ms("m:f() -> true"))
     ].
 
@@ -87,18 +87,18 @@ traverse_ms_test_() ->
     MSs =
     {%% capture args off
       [%% false -> false: no trace
-       {[a,'_'], [], [{return_trace},{message,arity},{message,false}]},
+       {[a,'_'], [], [{exception_trace},{message,arity},{message,false}]},
        %% true -> arity: trace without args
-       {[b,'_'], [], [{return_trace},{message,arity},{message,arity}]},
+       {[b,'_'], [], [{exception_trace},{message,arity},{message,arity}]},
        %% custom msg -> arity: trace without args
-       {['_','$1'], [], [{return_trace},{message,arity},{message,arity}]}],
+       {['_','$1'], [], [{exception_trace},{message,arity},{message,arity}]}],
       %% capture args on
       [%% false -> false: no trace
-       {[a,'_'], [], [{return_trace},{message,'$_'},{message,false}]},
+       {[a,'_'], [], [{exception_trace},{message,'$_'},{message,false}]},
        %% true -> '$_' aka object(): trace with all args
-       {[b,'_'], [], [{return_trace},{message,'$_'},{message,'$_'}]},
+       {[b,'_'], [], [{exception_trace},{message,'$_'},{message,'$_'}]},
        %% custom msg -> custom msg: trace with one arg only
-       {['_','$1'], [], [{return_trace},{message,'$_'},{message,'$1'}]}]},
+       {['_','$1'], [], [{exception_trace},{message,'$_'},{message,'$1'}]}]},
 
     [?_assertEqual(
         {ok, {{m, f, 2}, MSs}},
@@ -140,14 +140,14 @@ fun2ms_elixir_test_() ->
                          {{'Elixir.Mod','fun',0},
                           {[{[], [], _}],
                            [{[],[],
-                             [{return_trace},{message,'$_'},{message,data}]}]}
+                             [{exception_trace},{message,'$_'},{message,data}]}]}
                          }},
                         ?M:fun2ms("Mod.fun() -> message(:data)")),
           ?_assertMatch({ok,
                          {{'Elixir.Mod','fun',0},
                           {[{[], [], _}],
                            [{[],[],
-                             [{return_trace},{message,'$_'},{message,data}]}]}
+                             [{exception_trace},{message,'$_'},{message,data}]}]}
                          }},
                         ?M:fun2ms("Mod.fun -> message(:data)")),
           %% bug in Elixir up to 1.4.2
@@ -161,7 +161,7 @@ fun2ms_elixir_test_() ->
                          {{'Elixir.Mod','fun',2},
                           {[{[data,'$1'], [{'>','$1',1}], _}],
                            [{[data,'$1'], [{'>','$1',1}],
-                             [{return_trace},{message,'$_'},{message,'$1'}]}]}
+                             [{exception_trace},{message,'$_'},{message,'$1'}]}]}
                          }},
                         ?M:fun2ms("Mod.fun(:data, a) when a > 1 -> message(a)"))
          ]},

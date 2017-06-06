@@ -2,8 +2,9 @@ XProf [![Build Status](https://travis-ci.org/Appliscale/xprof.svg?branch=master)
 =====
 
 *XProf* is a profiler that allows you to track execution time of Elixir / Erlang
-functions. It's also able to capture arguments and results of a function calls
-that lasted longer than given number of milliseconds.
+functions. It's also able to capture arguments and results (return value or
+exception) of function calls that lasted longer than given number of
+milliseconds.
 
 ## Goal
 
@@ -108,8 +109,8 @@ definition) but both can be omitted. In Elixir syntax no `end` keyword should be
 placed at the end of the expression (unlike when defining a function or fun
 object).
 
-The `return_trace` switch is always implicitly on (as that is how `xprof`
-measures duration)
+The `return_trace`/`exception_trace` switches are always implicitly on (as that
+is how `xprof` measures duration)
 
 Let's see some examples to make sense of all this.
 
