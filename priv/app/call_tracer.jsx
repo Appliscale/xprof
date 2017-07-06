@@ -206,10 +206,10 @@ export default class CallsTracer extends React.Component {
     return true;
   }
 
-  isPostiveIntegerSmallerThan(value, upperLimit) {
+  isIntegerInRange(value, lowerLimit, upperLimit) {
     const numVal = Number(value);
     if (Number.isInteger(numVal)) {
-      return numVal <= upperLimit && numVal > 0;
+      return numVal <= upperLimit && numVal >= lowerLimit;
     }
 
     return false;
@@ -218,13 +218,13 @@ export default class CallsTracer extends React.Component {
   render() {
     let error = false;
     const limit = this.state.limit_value;
-    if (limit && !this.isPostiveIntegerSmallerThan(limit, 100)) {
+    if (limit && !this.isIntegerInRange(limit, 1, 100)) {
       var limitClass = "has-error";
       error = true;
     }
 
     const threshold = this.state.threshold_value;
-    if (threshold && !this.isPostiveIntegerSmallerThan(threshold, 1000000)) {
+    if (threshold && !this.isIntegerInRange(threshold, 0, 1000000)) {
       var thresholdClass = "has-error";
       error = true;
     }
@@ -245,7 +245,7 @@ export default class CallsTracer extends React.Component {
                 <div className="input-group-addon">Treshold</div>
                 <span className={thresholdClass}>
                 <input ref="thresholdInput" type="text" className="form-control"
-                  id="tresholdInput" placeholder={"1 - 1000000"}
+                  id="tresholdInput" placeholder={"0 - 1000000"}
                   value={this.state.threshold_value || ""}
                   onChange={this.handleChange.bind(this, "threshold")}
                   disabled={started}/>
