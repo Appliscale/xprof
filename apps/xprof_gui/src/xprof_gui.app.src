@@ -1,6 +1,6 @@
-{application, xprof,
- [{description, "Visual BEAM profiler"}
- ,{vsn, "1.3.0"}
+{application, xprof_gui,
+ [{description, "Visual BEAM profiler GUI"}
+ ,{vsn, "2.0.0-snapshot"}
  ,{registered, []}
  ,{mod, {'xprof_app', []}}
  ,{applications,
@@ -9,7 +9,6 @@
    ,cowboy
    ,lager
    ,jsone
-   ,customized_hdr_histogram
    ]}
  ,{env,[]}
  ,{modules, []}

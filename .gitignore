@@ -24,6 +24,7 @@ dialyzer.actual
 dialyzer.expected.filtered
 
 doc
+apps/*/doc
 .edts
 
 cover/
