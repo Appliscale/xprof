@@ -2,7 +2,7 @@
  [{description, "Visual BEAM profiler GUI"}
  ,{vsn, "2.0.0-snapshot"}
  ,{registered, []}
- ,{mod, {'xprof_app', []}}
+ ,{mod, {'xprof_gui_app', []}}
  ,{applications,
    [kernel
    ,stdlib

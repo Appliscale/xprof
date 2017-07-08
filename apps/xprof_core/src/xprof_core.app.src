@@ -2,7 +2,7 @@
  [{description, "Visual BEAM profiler tracer core"}
  ,{vsn, "2.0.0-snapshot"}
  ,{registered, []}
- ,{mod, {'xprof_app', []}}
+ ,{mod, {'xprof_core_app', []}}
  ,{applications,
    [kernel
    ,stdlib

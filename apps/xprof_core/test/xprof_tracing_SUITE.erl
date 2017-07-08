@@ -49,11 +49,11 @@ groups() ->
       [spawner_tracing, all_tracing, pid_tracing, dead_proc_tracing]}].
 
 init_per_suite(Config) ->
-    {ok, _} = xprof:start(),
+    {ok, _} = application:ensure_all_started(xprof_core),
     Config.
 
 end_per_suite(_Config) ->
-    xprof:stop(),
+    application:stop(xprof_core),
     ok.
 
 init_per_group( simulate_tracing, Config) ->

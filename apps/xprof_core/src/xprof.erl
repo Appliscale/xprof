@@ -1,10 +1,6 @@
 %% @doc XProf visual profiler
 -module(xprof).
 
--export([start/0, stop/0]).
-
--include("xprof.hrl").
-
 %% match-spec
 -type ms() :: [tuple()].
 %% traced function with optional match-spec
@@ -24,10 +20,3 @@
 -type mode() :: erlang | elixir.
 
 -export_type([mfa_spec/0, mfa_id/0, mfa_name/0, mode/0]).
-
-
-start() ->
-    application:ensure_all_started(?APP).
-
-stop() ->
-    application:stop(?APP).
