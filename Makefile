@@ -3,6 +3,9 @@ BIN_DIR:=node_modules/.bin
 compile:
 	./rebar3 compile
 
+xref:
+	./rebar3 xref
+
 dev: compile webpack
 	./rebar3 as dev shell
 
