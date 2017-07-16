@@ -23,7 +23,8 @@ init(Req0, State) ->
 %% Handling different HTTP requests
 
 handle_req(<<"funs">>, Req) ->
-    {Query, _} = cowboy_req:qs_val(<<"query">>, Req, <<"">>),
+    Qs = cowboy_req:parse_qs(Req),
+    Query = proplists:get_value(<<"query">>, Qs, <<"">>),
 
     Funs = xprof_vm_info:get_available_funs(Query),
     Json = jsone:encode(Funs),
@@ -57,7 +58,8 @@ handle_req(<<"mon_get_all">>, Req) ->
     cowboy_req:reply(200, #{<<"content-type">> => <<"application/json">>}, Json, Req);
 handle_req(<<"data">>, Req) ->
     MFA = get_mfa(Req),
-    {LastTS, _} = cowboy_req:qs_val(<<"last_ts">>, Req, <<"0">>),
+    Qs = cowboy_req:parse_qs(Req),
+    LastTS = proplists:get_value(<<"last_ts">>, Qs, <<"0">>),
 
     case xprof_tracer:data(MFA, binary_to_integer(LastTS)) of
         {error, not_found} ->
@@ -68,7 +70,8 @@ handle_req(<<"data">>, Req) ->
             cowboy_req:reply(200, #{<<"content-type">> => <<"application/json">>}, Json, Req)
     end;
 handle_req(<<"trace_set">>, Req) ->
-    {Spec, _} = cowboy_req:qs_val(<<"spec">>, Req),
+    Qs = cowboy_req:parse_qs(Req),
+    Spec = proplists:get_value(<<"spec">>, Qs),
     case lists:member(Spec, [<<"all">>, <<"pause">>]) of
         true ->
             xprof_tracer:trace(list_to_atom(binary_to_list(Spec))),
@@ -83,10 +86,8 @@ handle_req(<<"trace_status">>, Req) ->
     cowboy_req:reply(200, #{<<"content-type">> => <<"application/json">>}, Json, Req);
 handle_req(<<"capture">>, Req) ->
     MFA = {M,F,A} = get_mfa(Req),
-    {ThresholdStr, _} = cowboy_req:qs_val(<<"threshold">>, Req),
-    {LimitStr, _} = cowboy_req:qs_val(<<"limit">>, Req),
-    Threshold = binary_to_integer(ThresholdStr),
-    Limit = binary_to_integer(LimitStr),
+    #{threshold := Threshold,
+      limit := Limit} = cowboy_req:match_qs([{threshold, int}, {limit, int}], Req),
 
     lager:info("Capture ~b calls to ~w:~w/~w~n exceeding ~b ms",
                [Limit, M, F, A, Threshold]),
@@ -108,8 +109,8 @@ handle_req(<<"capture_stop">>, Req) ->
     end;
 handle_req(<<"capture_data">>, Req) ->
     MFA  = get_mfa(Req),
-    {OffsetStr, _} = cowboy_req:qs_val(<<"offset">>, Req),
-    Offset = binary_to_integer(OffsetStr),
+
+    #{offset := Offset} = cowboy_req:match_qs([{offset, int}], Req),
     case xprof_tracer_handler:get_captured_data(MFA, Offset) of
         {error, not_found} ->
             cowboy_req:reply(404, Req);
@@ -132,18 +133,18 @@ handle_req(<<"mode">>, Req) ->
 
 -spec get_mfa(cowboy:req()) -> xprof:mfa_id().
 get_mfa(Req) ->
-    Params = cowboy_req:parse_qs(Req),
-    {binary_to_atom(proplists:get_value(<<"mod">>, Params), latin1),
-     binary_to_atom(proplists:get_value(<<"fun">>, Params), latin1),
-     case proplists:get_value(<<"arity">>, Params) of
+    Qs = cowboy_req:parse_qs(Req),
+    {binary_to_atom(proplists:get_value(<<"mod">>, Qs), latin1),
+     binary_to_atom(proplists:get_value(<<"fun">>, Qs), latin1),
+     case proplists:get_value(<<"arity">>, Qs) of
          <<"_">> -> '_';
          Arity -> binary_to_integer(Arity)
      end}.
 
 -spec get_query(cowboy:req()) -> string().
 get_query(Req) ->
-    Params = cowboy_req:parse_qs(Req),
-    binary_to_list(proplists:get_value(<<"query">>, Params)).
+    Qs = cowboy_req:parse_qs(Req),
+    binary_to_list(proplists:get_value(<<"query">>, Qs)).
 
 args_res2proplist([Id, Pid, CallTime, Args, Res], ModeCb) ->
     [{id, Id},
