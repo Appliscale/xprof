@@ -1,4 +1,4 @@
-XProf [![Build Status](https://travis-ci.org/Appliscale/xprof.svg?branch=master)](https://travis-ci.org/Appliscale/xprof) [![Coverage Status](https://coveralls.io/repos/github/Appliscale/xprof/badge.svg?branch=master)](https://coveralls.io/github/Appliscale/xprof?branch=master) [![Hex.pm](https://img.shields.io/hexpm/v/xprof.svg?style=flat-square)](https://hex.pm/packages/xprof) [![Hex.pm](https://img.shields.io/hexpm/dt/xprof.svg?style=flat-square)](https://hex.pm/packages/xprof)
+XProf [![Build Status](https://travis-ci.org/Appliscale/xprof.svg?branch=master)](https://travis-ci.org/Appliscale/xprof) [![Coverage Status](https://coveralls.io/repos/github/Appliscale/xprof/badge.svg?branch=master)](https://coveralls.io/github/Appliscale/xprof?branch=master) [![Hex.pm](https://img.shields.io/hexpm/v/xprof.svg?style=flat-square)](https://hex.pm/packages/xprof) [![Hex.pm](https://img.shields.io/hexpm/dt/xprof.svg?style=flat-square)](https://hex.pm/packages/xprof) [![Gitter](https://badges.gitter.im/Appliscale/xprof.svg)](https://gitter.im/Appliscale/xprof?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 =====
 
 *XProf* is a profiler that allows you to track execution time of Elixir / Erlang
@@ -13,9 +13,19 @@ concurrent and utilized BE systems. It's often the case that high latency or big
 CPU usage is caused by very specific requests that are triggering
 inefficient code. Finding this code is usually pretty difficult.
 
-## How to use it
+## How does it look like
 
-![Demo](xprof_demo.gif)
+Click the image below to watch a short demo investigating the `TryMe`
+application with XProf. The function `nap` sometimes takes way too much time (as
+you would guess from the name, it takes a bit of sleep). In the video we:
+- observe call count and duration percentiles
+- capture arguments and return values of a few long calls
+- apply a match spec to filter out "long" calls
+- compare two functions
+
+[![XProf Demo](xprof_demo_1.2.1_screenshot.png)](https://youtu.be/CRPC6zloDS0 "XProf Demo")
+
+## How to use it
 
 1. Add `xprof` to your build tool config file (and optionally also to the
    release config file such as `reltool.config` in order to include it in your
@@ -27,19 +37,10 @@ inefficient code. Finding this code is usually pretty difficult.
 5. Type in function that you would like to start tracing.
 6. Start tracing clicking green button.
 
-Example rebar2 config entry:
+The preferred way is to add the `xprof` *Hex* package as a dependency to you rebar3 config or Mix project file:
 
 ```erlang
-{deps, [
-       ...
-       {xprof, ".*", {git, "https://github.com/appliscale/xprof.git"}}
-]}.
-```
-
-`xprof` is available on *Hex* package manager, so you are able to use it also in the following way:
-
-```erlang
-%% It is possible only with newest version of `rebar3` (at least `3.3.3`):
+%% rebar.config (at least version `3.3.3` is required):
 
 {deps, [
        ...
@@ -48,7 +49,7 @@ Example rebar2 config entry:
 ```
 
 ```elixir
-# Inside `mix.exs`:
+# `mix.exs`:
 
 defp deps do
     [
@@ -56,6 +57,15 @@ defp deps do
       {:xprof, "~> 1.2.1"}
     ]
   end
+```
+
+You can also fetch from the github repository:
+
+```erlang
+{deps, [
+       ...
+       {xprof, {git, "https://github.com/appliscale/xprof.git", {tag, "1.2.1"}}}
+]}.
 ```
 
 ## Keyboard shortcuts
