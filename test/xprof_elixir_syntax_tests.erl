@@ -114,3 +114,17 @@ parse_query_test_() ->
                        ?M:parse_query("App.Mod.fun(a) when a < 1 when a > 10"))
         ],
     xprof_test_lib:run_elixir_unit_tests(Tests).
+
+fmt_test_() ->
+    Tests =
+        [?_assertEqual(<<"** (MatchError) no match of right hand side value: :dummy">>,
+                       ?M:fmt_exception(error, {badmatch, dummy})),
+         ?_assertEqual(<<"** (throw) :dummy">>,
+                       ?M:fmt_exception(throw, dummy)),
+         ?_assertEqual(<<"** (exit) exited in: :gen_server.call(:server, :msg)\n    "
+                         "** (EXIT) no process: the process is not alive or "
+                         "there's no process currently associated with the given name, "
+                         "possibly because its application isn't started">>,
+                       ?M:fmt_exception(exit, {noproc, {gen_server, call, [server, msg]}}))
+        ],
+    xprof_test_lib:run_elixir_unit_tests(Tests).

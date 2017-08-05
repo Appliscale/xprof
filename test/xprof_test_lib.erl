@@ -25,9 +25,9 @@ run_elixir_unit_tests(Tests) ->
 setup_elixir(ElixirEbin) ->
     %% Ensure Elixir is in the code path
     ElixirEbin1 =
-        case code:ensure_loaded(elixir) of
-            {module, _} ->
-                %% Elixir already loaded - happy days
+        case lists:member(ElixirEbin, code:get_path()) of
+            true ->
+                %% Elixir already in path - happy days
                 undefined;
             _ ->
                 true = code:add_patha(ElixirEbin),

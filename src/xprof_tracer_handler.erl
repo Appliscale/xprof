@@ -155,7 +155,7 @@ handle_info({trace_ts, Pid, Tag, _MFA, RetOrExc, EndTime}, State)
                        State;
                    {StartTime, Args} ->
                        CallTime = timer:now_diff(EndTime, StartTime),
-                       record_results(Pid, CallTime, Args, RetOrExc, State)
+                       record_results(Pid, CallTime, Args, {Tag, RetOrExc}, State)
                end,
 
     {Timeout, NewState2} = maybe_make_snapshot(NewState),

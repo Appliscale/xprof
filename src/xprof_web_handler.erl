@@ -206,4 +206,9 @@ args_res2proplist([Id, Pid, CallTime, Args, Res], ModeCb) ->
      {pid, ModeCb:fmt_term(Pid)},
      {call_time, CallTime},
      {args, ModeCb:fmt_term(Args)},
-     {res, ModeCb:fmt_term(Res)}].
+     {res, format_result(Res, ModeCb)}].
+
+format_result({return_from, Term}, ModeCb) ->
+    ModeCb:fmt_term(Term);
+format_result({exception_from, {Class, Reason}}, ModeCb) ->
+    ModeCb:fmt_exception(Class, Reason).
