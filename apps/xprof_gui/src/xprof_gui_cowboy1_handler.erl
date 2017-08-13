@@ -1,6 +1,8 @@
 %%% @doc Cowboy 1.x compatible HTTP handler
 -module(xprof_gui_cowboy1_handler).
 
+-ifdef(COWBOY_VERSION_1).
+
 -behavior(cowboy_http_handler).
 
 %% xprof_gui_app callback
@@ -48,3 +50,5 @@ handle(Req0, State) ->
 
 terminate(_Reason, _Req, _State) ->
     ok.
+
+-endif.

@@ -1,0 +1,12 @@
+case os:getenv("COWBOY_VERSION") of
+    "1" ++ _ ->
+        ErlOpts = proplists:get_value(erl_opts, CONFIG, []),
+        NewErlOpts = {erl_opts, [{d, 'COWBOY_VERSION_1'}|ErlOpts]},
+        Config2 = lists:keystore(erl_opts, 1, CONFIG, NewErlOpts),
+
+        Deps = proplists:get_value(deps, CONFIG, []),
+        NewDeps = {deps, lists:keystore(cowboy, 1, Deps, {cowboy, "1.1.2"})},
+        lists:keystore(deps, 1, Config2, NewDeps);
+    _ ->
+        CONFIG
+end.
