@@ -36532,18 +36532,18 @@ webpackJsonp([0],[
 	      return handleChange;
 	    }()
 	  }, {
-	    key: "isPostiveIntegerSmallerThan",
+	    key: "isIntegerInRange",
 	    value: function () {
-	      function isPostiveIntegerSmallerThan(value, upperLimit) {
+	      function isIntegerInRange(value, lowerLimit, upperLimit) {
 	        var numVal = Number(value);
 	        if (Number.isInteger(numVal)) {
-	          return numVal <= upperLimit && numVal > 0;
+	          return numVal <= upperLimit && numVal >= lowerLimit;
 	        }
 	
 	        return false;
 	      }
 	
-	      return isPostiveIntegerSmallerThan;
+	      return isIntegerInRange;
 	    }()
 	  }, {
 	    key: "render",
@@ -36551,13 +36551,13 @@ webpackJsonp([0],[
 	      function render() {
 	        var error = false;
 	        var limit = this.state.limit_value;
-	        if (limit && !this.isPostiveIntegerSmallerThan(limit, 100)) {
+	        if (limit && !this.isIntegerInRange(limit, 1, 100)) {
 	          var limitClass = "has-error";
 	          error = true;
 	        }
 	
 	        var threshold = this.state.threshold_value;
-	        if (threshold && !this.isPostiveIntegerSmallerThan(threshold, 1000000)) {
+	        if (threshold && !this.isIntegerInRange(threshold, 0, 1000000)) {
 	          var thresholdClass = "has-error";
 	          error = true;
 	        }
@@ -36595,7 +36595,7 @@ webpackJsonp([0],[
 	                    "span",
 	                    { className: thresholdClass },
 	                    _react2["default"].createElement("input", { ref: "thresholdInput", type: "text", className: "form-control",
-	                      id: "tresholdInput", placeholder: "1 - 1000000",
+	                      id: "tresholdInput", placeholder: "0 - 1000000",
 	                      value: this.state.threshold_value || "",
 	                      onChange: this.handleChange.bind(this, "threshold"),
 	                      disabled: started })
