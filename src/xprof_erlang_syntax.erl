@@ -12,6 +12,7 @@
          fmt_mod/1,
          fmt_fun_and_arity/2,
          fmt_fun/1,
+         fmt_exception/2,
          fmt_term/1]).
 
 %% @doc Parse a query string that represents either a module-function-arity
@@ -105,6 +106,19 @@ fmt_fun(Fun) ->
 
 fmt_fun_and_arity(Fun, Arity) ->
     fmt("~w/~b", [Fun, Arity]).
+
+fmt_exception(Class, Reason) ->
+    Stacktrace = [],
+    SkipFun = fun(_M, _F, _A) -> false end,
+    PrettyFun = fun(Term, _Indent) -> io_lib:format("~w", [Term]) end,
+    Encoding = case lists:keyfind(encoding, 1, io:getopts()) of
+                   {_, Enc} -> Enc;
+                   _ -> latin1
+               end,
+
+    list_to_binary(
+      ["** "|lib:format_exception(1, Class, Reason, Stacktrace,
+                                  SkipFun, PrettyFun, Encoding)]).
 
 fmt_term(Term) ->
     fmt("~p", [Term]).

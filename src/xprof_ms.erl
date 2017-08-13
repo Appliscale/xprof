@@ -111,13 +111,15 @@ traverse_ms_c([], _) ->
 traverse_ms_c(Other, _) ->
     Other.
 
-
+-spec err(string()) -> no_return().
 err(Fmt) ->
     throw({error, fmt(Fmt, [])}).
 
+-spec err(string(), list()) -> no_return().
 err(Fmt, Args) ->
     throw({error, fmt(Fmt, Args)}).
 
+-spec err(tuple() | integer(), module(), term()) -> no_return().
 err({1, StartCol, _EndCol}, Mod, Err) ->
     err({1, StartCol}, Mod, Err);
 

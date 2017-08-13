@@ -12,6 +12,7 @@
          fmt_mod/1,
          fmt_fun_and_arity/2,
          fmt_fun/1,
+         fmt_exception/2,
          fmt_term/1]).
 
 %% from elixir.hrl
@@ -219,6 +220,13 @@ fmt_fun(Fun) ->
 
 fmt_fun_and_arity(Fun, Arity) ->
     fmt("~ts/~b", [fmt_fun(Fun), Arity]).
+
+fmt_exception(Class, Reason) ->
+    %% Enforce empty stacktrace
+    %% (Elixir is in some cases smart enough to figure out
+    %%  current process's stacktrace)
+    Stacktrace = [],
+    'Elixir.Exception':format(Class, Reason, Stacktrace).
 
 fmt_term(Term) ->
     'Elixir.Kernel':inspect(Term).

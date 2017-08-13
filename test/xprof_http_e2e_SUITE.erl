@@ -24,6 +24,7 @@ all() ->
      get_data_for_traced_fun,
      no_capture_data_when_not_traced,
      capture_data_when_traced_test,
+     capture_data_with_formatted_exception_test,
      error_when_stopping_not_started_capture,
      dont_receive_new_capture_data_after_stop,
      in_this_project_we_should_detect_erlang,
@@ -196,6 +197,22 @@ dont_receive_new_capture_data_after_stop(_Config) ->
     ?assertEqual(2, length(proplists:get_value(<<"items">>, Data))),
     ok.
 
+capture_data_with_formatted_exception_test(_Config) ->
+    given_capture_slow_calls_of("xprof_http_e2e_SUITE", "crash_function", 0, 10, 10),
+    %% call function once
+    catch crash_function(),
+    {200, Data} = make_get_request("api/capture_data",
+                                   [
+                                    {"mod", "xprof_http_e2e_SUITE"},
+                                    {"fun", "crash_function"},
+                                    {"arity", "0"},
+                                    {"offset", "0"}
+                                   ]),
+    ?assertMatch([<<"** exception error: no match of right hand side value ok">>],
+                 [proplists:get_value(<<"res">>, Item)
+                  || Item <- proplists:get_value(<<"items">>, Data)]),
+    ok.
+
 in_this_project_we_should_detect_erlang(_Config) ->
     {200, Mode} = make_get_request("api/mode"),
     ?assertEqual([{<<"mode">>, <<"erlang">>}], Mode),
@@ -242,6 +259,9 @@ restore_default_mode() ->
 
 long_function() ->
     timer:sleep(50).
+
+crash_function() ->
+    dummy = timer:sleep(50).
 
 make_get_request(Path) ->
     make_get_request(Path, []).

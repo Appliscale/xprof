@@ -33,5 +33,8 @@
 -callback fmt_fun(Fun :: atom()) ->
     Formatted :: binary().
 
+-callback fmt_exception(Class :: throw | error | exit, Reason :: term()) ->
+    Formatted :: binary().
+
 -callback fmt_term(Term :: term()) ->
     Formatted :: binary().
