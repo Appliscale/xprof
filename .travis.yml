@@ -1,12 +1,10 @@
 language: erlang
 branches:
     only:
-        - master
+        - cowboy_2.0
 otp_release:
+    - 20.0
     - 19.2
-    - 18.3
-    - 17.5
-    - R16B03-1
 cache:
     directories:
         - $HOME/.cache/rebar3
