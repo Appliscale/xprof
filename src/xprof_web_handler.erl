@@ -14,7 +14,7 @@
 
 init(Req0, State) ->
     What = cowboy_req:binding(what, Req0),
-    {ok, Req} = handle_req(What, Req0),
+    Req = handle_req(What, Req0),
     {ok, Req, State}.
 
 
