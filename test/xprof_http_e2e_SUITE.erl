@@ -38,13 +38,18 @@ init_per_suite(Config) ->
 end_per_suite(_Config) ->
     ok.
 
-init_per_testcase(_TestCase, Config) ->
+init_per_testcase(TestCase, Config) ->
+    case TestCase of
+        get_overflow_status_after_hitting_overload ->
+            given_overload_queue_limit(1);
+        _ ->
+            given_overload_queue_limit(1000)
+    end,
     {ok, _} = xprof:start(),
     Config.
 
 end_per_testcase(_TestCase, _Config) ->
     xprof:stop(),
-    given_overload_queue_limit(1000),
     ok.
 
 get_initialized_trace_status_on_start(_Config) ->
@@ -71,7 +76,6 @@ trace_set_only_accepts_all_and_pause(_Config) ->
 get_overflow_status_after_hitting_overload(_Config) ->
     %% given
     given_tracing_all(),
-    given_overload_queue_limit(1),
     given_traced("dict:new/0"),
 
     %% when
