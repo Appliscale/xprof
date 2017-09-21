@@ -247,8 +247,7 @@ put_ts_args(Pid, StartTime, Args, IgnoreRecursion) ->
     put({Pid, call_depth}, CD),
     case CD =:= 1 orelse not IgnoreRecursion of
         true ->
-            put({Pid, CD, args}, Args),
-            put({Pid, CD, ts}, StartTime);
+            put({Pid, CD, ts_args}, {StartTime, Args});
         false ->
             ok
     end.
@@ -262,14 +261,12 @@ get_ts_args(Pid, IgnoreRecursion) ->
             undefined;
         1 ->
             erase({Pid, call_depth}),
-            StartTime = erase({Pid, 1, ts}),
-            {StartTime, erase({Pid, 1, args})};
+            erase({Pid, 1, ts_args});
         CD when CD > 1 ->
             put({Pid, call_depth}, CD - 1),
             case IgnoreRecursion of
                 false ->
-                    StartTime = erase({Pid, CD, ts}),
-                    {StartTime, erase({Pid, CD, args})};
+                    erase({Pid, CD, ts_args});
                 true ->
                     undefined
             end
