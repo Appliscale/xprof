@@ -89,7 +89,7 @@ get_captured_data(MFA, Offset) ->
                                          {{args_res, '$1'},
                                           {'$2', '$3','$4','$5'}},
                                          [{'>','$1',Offset}],
-                                         [['$1', '$2', '$3', '$4', '$5']]
+                                         [{{'$1', '$2', '$3', '$4', '$5'}}]
                                        }])),
 
         Res = ets:lookup(Name, capture_spec),

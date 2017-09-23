@@ -267,8 +267,8 @@ capture_args_res(_Config) ->
     {ok, {Id, 20, 3, 3}, [Item1, Item2]} =
         xprof_tracer_handler:get_captured_data(MFA,0),
 
-    ?assertMatch([_Num, _Pid, _Time, [25], {return_from, {res, 25}}], Item1),
-    ?assertMatch([_Num, _Pid, _Time, [33], {return_from, {res, 33}}], Item2),
+    ?assertMatch({_Num, _Pid, _Time, [25], {return_from, {res, 25}}}, Item1),
+    ?assertMatch({_Num, _Pid, _Time, [33], {return_from, {res, 33}}}, Item2),
 
     test_fun(5),
     test_fun(7),
@@ -277,10 +277,10 @@ capture_args_res(_Config) ->
     ct:sleep(10), %% Let trace messages reach the process
 
     {ok, {Id, 20, 3, 3}, [Item3]} = xprof_tracer_handler:get_captured_data(MFA, 2),
-    ?assertMatch([_Num, _Pid, _Time, [40], {return_from, {res, 40}}], Item3),
+    ?assertMatch({_Num, _Pid, _Time, [40], {return_from, {res, 40}}}, Item3),
 
     {ok, {Id, 20, 3, 3}, [Item1, Item2, Item3]} =
-        xprof_tracer_handler:get_captured_data(MFA,0),
+        xprof_tracer_handler:get_captured_data(MFA, 0),
 
     %% Start new capture session
     {ok, Id2} = xprof_tracer_handler:capture(MFA, 21, 4),
@@ -313,8 +313,8 @@ capture_args_ms(_Config) ->
         xprof_tracer_handler:get_captured_data(MFA,0),
 
     %% message defined in match-spec in place of args
-    ?assertMatch([_Num, _Pid, _Time, {time, 25}, {return_from, {res, 25}}], Item1),
-    ?assertMatch([_Num, _Pid, _Time, {time, 33}, {return_from, {res, 33}}], Item2),
+    ?assertMatch({_Num, _Pid, _Time, {time, 25}, {return_from, {res, 25}}}, Item1),
+    ?assertMatch({_Num, _Pid, _Time, {time, 33}, {return_from, {res, 33}}}, Item2),
 
     xprof_tracer:trace(pause),
     xprof_tracer:demonitor(MFA),
@@ -334,8 +334,8 @@ capture_exception(_Config) ->
     {ok, {Id, 1, 3, 3}, [Item1]} =
         xprof_tracer_handler:get_captured_data(MFA,0),
 
-    ?assertMatch([_Num, _Pid, _Time,
-                  [true], {exception_from, {throw, test_crash}}], Item1),
+    ?assertMatch({_Num, _Pid, _Time,
+                  [true], {exception_from, {throw, test_crash}}}, Item1),
 
     xprof_tracer:trace(pause),
     xprof_tracer:demonitor(MFA),
@@ -357,8 +357,8 @@ capture_stop(_Config) ->
     {ok, {Id, 20, 5, 5}, [Item1, Item2]} =
         xprof_tracer_handler:get_captured_data(MFA, 0),
 
-    ?assertMatch([_Num, _Pid, _Time, [25], {return_from, {res, 25}}], Item1),
-    ?assertMatch([_Num, _Pid, _Time, [33], {return_from, {res, 33}}], Item2),
+    ?assertMatch({_Num, _Pid, _Time, [25], {return_from, {res, 25}}}, Item1),
+    ?assertMatch({_Num, _Pid, _Time, [33], {return_from, {res, 33}}}, Item2),
 
     xprof_tracer_handler:capture_stop(MFA),
 
@@ -402,7 +402,7 @@ long_call(_Config) ->
     %% data capturing also works for too long calls
     {ok, {Id, 50, 1, 1}, [CapturedData]} =
         xprof_tracer_handler:get_captured_data(MFA, 0),
-    ?assertMatch([_Num, _Pid, _Time, [200], {return_from, {res, 200}}],
+    ?assertMatch({_Num, _Pid, _Time, [200], {return_from, {res, 200}}},
                  CapturedData),
 
     xprof_tracer_handler:capture_stop(MFA),

@@ -201,7 +201,7 @@ get_query(Req) ->
     {Params, _} = cowboy_req:qs_vals(Req),
     binary_to_list(proplists:get_value(<<"query">>, Params)).
 
-args_res2proplist([Id, Pid, CallTime, Args, Res], ModeCb) ->
+args_res2proplist({Id, Pid, CallTime, Args, Res}, ModeCb) ->
     [{id, Id},
      {pid, ModeCb:fmt_term(Pid)},
      {call_time, CallTime},
