@@ -121,10 +121,17 @@ fmt_test_() ->
                        ?M:fmt_exception(error, {badmatch, dummy})),
          ?_assertEqual(<<"** (throw) :dummy">>,
                        ?M:fmt_exception(throw, dummy)),
-         ?_assertEqual(<<"** (exit) exited in: :gen_server.call(:server, :msg)\n    "
-                         "** (EXIT) no process: the process is not alive or "
-                         "there's no process currently associated with the given name, "
-                         "possibly because its application isn't started">>,
+         ?_assertEqual(case xprof_test_lib:is_elixir_version(">= 1.4.0")  of
+                           true ->
+                               %% in version 1.4.0 the exception description was improved
+                               <<"** (exit) exited in: :gen_server.call(:server, :msg)\n    "
+                                 "** (EXIT) no process: the process is not alive or "
+                                 "there's no process currently associated with the given name, "
+                                 "possibly because its application isn't started">>;
+                           false ->
+                               <<"** (exit) exited in: :gen_server.call(:server, :msg)\n    "
+                                 "** (EXIT) no process">>
+                       end,
                        ?M:fmt_exception(exit, {noproc, {gen_server, call, [server, msg]}}))
         ],
     xprof_test_lib:run_elixir_unit_tests(Tests).
