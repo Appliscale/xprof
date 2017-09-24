@@ -76,12 +76,12 @@ capture_stop(MFA) ->
 %% @doc
 -spec get_captured_data(xprof:mfa_id(), non_neg_integer()) ->
                                empty | {ok,
-                                        {Id :: non_neg_integer(),
+                                        {Index :: non_neg_integer(),
                                          Threshold :: non_neg_integer(),
-                                         Limit :: non_neg_integer(),
-                                         OrigLimit :: non_neg_integer()
-                                        },list(any())}.
-get_captured_data(MFA, Offset) ->
+                                         OrigLimit :: non_neg_integer(),
+                                         HasMore :: boolean()
+                                        }, [tuple()]}.
+get_captured_data(MFA, Offset) when Offset >= 0 ->
     Name = xprof_lib:mfa2atom(MFA),
     try
         Items = lists:sort(ets:select(Name,
@@ -93,8 +93,9 @@ get_captured_data(MFA, Offset) ->
                                        }])),
 
         Res = ets:lookup(Name, capture_spec),
-        [{capture_spec, Id, Threshold, Limit, OrigLimit}] = Res,
-        {ok, {Id, Threshold, Limit, OrigLimit}, Items}
+        [{capture_spec, Index, Threshold, Limit, OrigLimit}] = Res,
+        HasMore = Offset + length(Items) < Limit,
+        {ok, {Index, Threshold, OrigLimit, HasMore}, Items}
     catch error:badarg ->
             {error, not_found}
     end.

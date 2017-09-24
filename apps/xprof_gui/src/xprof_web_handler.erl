@@ -157,17 +157,15 @@ handle_req(<<"capture_data">>, Req, State) ->
     Offset = binary_to_integer(OffsetStr),
 
     {ok, ResReq} =
-        case xprof_core:get_captured_data(MFA, Offset) of
+        case xprof_core:get_captured_data_pp(MFA, Offset) of
             {error, not_found} ->
                 cowboy_req:reply(404, Req);
-            {ok, {Id, Threshold, Limit, OriginalLimit}, Items} ->
-                ModeCb = xprof_lib:get_mode_cb(),
-                ItemsJson = [{args_res2proplist(Item, ModeCb)} || Item <- Items],
+            {ok, {Id, Threshold, Limit, HasMore}, Items} ->
                 Json = jsone:encode({[{capture_id, Id},
                                       {threshold, Threshold},
-                                      {limit, OriginalLimit},
-                                      {items, ItemsJson},
-                                      {has_more, Offset + length(Items) < Limit}]}),
+                                      {limit, Limit},
+                                      {items, Items},
+                                      {has_more, HasMore}]}),
                 cowboy_req:reply(200,
                                  [{<<"content-type">>,
                                    <<"application/json">>}],
@@ -200,15 +198,3 @@ get_mfa(Req) ->
 get_query(Req) ->
     {Query, _} = cowboy_req:qs_val(<<"query">>, Req, <<"">>),
     Query.
-
-args_res2proplist({Id, Pid, CallTime, Args, Res}, ModeCb) ->
-    [{id, Id},
-     {pid, ModeCb:fmt_term(Pid)},
-     {call_time, CallTime},
-     {args, ModeCb:fmt_term(Args)},
-     {res, format_result(Res, ModeCb)}].
-
-format_result({return_from, Term}, ModeCb) ->
-    ModeCb:fmt_term(Term);
-format_result({exception_from, {Class, Reason}}, ModeCb) ->
-    ModeCb:fmt_exception(Class, Reason).

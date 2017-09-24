@@ -13,6 +13,7 @@
 
          capture/3,
          capture_stop/1,
+         get_captured_data_pp/2,
          get_captured_data/2,
 
          set_mode/1,
@@ -102,19 +103,52 @@ capture(MFA, Threshold, Limit) ->
 capture_stop(MFA) ->
     xprof_tracer_handler:capture_stop(MFA).
 
+%% @doc Return captured arguments and return values formatted according to the
+%% active syntax mode.
+%% @see get_captured_data/2
+-spec get_captured_data_pp(xprof:mfa_id(), Offset :: non_neg_integer()) ->
+                               {ok, CaptureSpec, Items} | {error, not_found}
+  when CaptureSpec :: {CaptureId :: non_neg_integer(),
+                       Threshold :: non_neg_integer(),
+                       Limit :: non_neg_integer(),
+                       HasMore :: boolean()
+                      },
+       Items :: [{proplists:proplist()}].
+get_captured_data_pp(MFA, Offset) ->
+    case xprof_core:get_captured_data(MFA, Offset) of
+        {ok, CaptureSpec, Items} ->
+            ModeCb = xprof_lib:get_mode_cb(),
+            ItemsJson = [{args_res2proplist(Item, ModeCb)} || Item <- Items],
+            {ok, CaptureSpec, ItemsJson};
+        Error ->
+            Error
+    end.
+
+args_res2proplist({Index, Pid, CallTime, Args, Res}, ModeCb) ->
+    [{id, Index},
+     {pid, ModeCb:fmt_term(Pid)},
+     {call_time, CallTime},
+     {args, ModeCb:fmt_term(Args)},
+     {res, format_result(Res, ModeCb)}].
+
+format_result({return_from, Term}, ModeCb) ->
+    ModeCb:fmt_term(Term);
+format_result({exception_from, {Class, Reason}}, ModeCb) ->
+    ModeCb:fmt_exception(Class, Reason).
+
 %% @doc Return captured arguments and return values.
-%% @param Offset The `Offset' argument is the
-%% item index last seen by the caller, only items newer than that will be
-%% returned. An offset of 0 will return all data.
-%% @returns The returned `Limit' is the
-%% remaining number of long calls to be captured while `OrigLimit' is the
-%% original limit given to the `capture/3' call.
+%%
+%% The `Offset' argument is the item index last seen by the caller, only items
+%% newer than that will be returned. An offset of 0 will return all data.
+%%
+%% The returned `HasMore' indicates whether capturing is still ongoing or it has
+%% been stopped either manually or by reaching the limit.
 -spec get_captured_data(xprof:mfa_id(), Offset :: non_neg_integer()) ->
                                {ok, CaptureSpec, [Item]} | {error, not_found}
   when CaptureSpec :: {CaptureId :: non_neg_integer(),
                        Threshold :: non_neg_integer(),
                        Limit :: non_neg_integer(),
-                       OrigLimit :: non_neg_integer()
+                       HasMore :: boolean()
                       },
        Item :: {Index :: non_neg_integer(),
                 CallingProcess :: pid(),
