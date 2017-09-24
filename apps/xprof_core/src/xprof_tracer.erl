@@ -9,8 +9,7 @@
          trace/1,
          monitor/1, demonitor/1,
          all_monitored/0,
-         trace_status/0,
-         data/2]).
+         trace_status/0]).
 
 %% gen_server callbacks
 
@@ -61,12 +60,6 @@ demonitor({Mod, Fun, Arity} = MFA) ->
 -spec all_monitored() -> list({xprof:mfa_id(), binary()}).
 all_monitored() ->
     gen_server:call(?MODULE, all_monitored).
-
-%% @doc Returns metrics gathered for particular function.
--spec data(xprof:mfa_id(), non_neg_integer()) -> list(proplists:proplist()) |
-                                                 {error, not_found}.
-data(MFA, TS) ->
-    xprof_tracer_handler:data(MFA, TS).
 
 %% @doc Turns on or resumes tracing for a process specified by pid, all
 %% processes or processes that are spawned by specified spawner pid.

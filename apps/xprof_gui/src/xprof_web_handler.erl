@@ -27,9 +27,9 @@ terminate(_Reason, _Req, _State) ->
 %% Handling different HTTP requests
 
 handle_req(<<"funs">>, Req, State) ->
-    {Query, _} = cowboy_req:qs_val(<<"query">>, Req, <<"">>),
+    Query = get_query(Req),
 
-    Funs = xprof_vm_info:get_available_funs(Query),
+    Funs = xprof_core:get_matching_mfas_pp(Query),
     Json = jsone:encode(Funs),
 
     lager:debug("Returning ~b functions matching phrase \"~s\"",
@@ -47,7 +47,7 @@ handle_req(<<"mon_start">>, Req, State) ->
     lager:info("Starting monitoring via web on '~s'~n", [Query]),
 
     {ok, ResReq} =
-        case xprof_tracer:monitor(Query) of
+        case xprof_core:monitor_pp(Query) of
             ok ->
                 cowboy_req:reply(204, ?HDR_NO_CONTENT, Req);
             {error, already_traced} ->
@@ -59,16 +59,16 @@ handle_req(<<"mon_start">>, Req, State) ->
 
 
 handle_req(<<"mon_stop">>, Req, State) ->
-    MFA = {M,F,A} = get_mfa(Req),
+    MFA = {M, F, A} = get_mfa(Req),
 
-    lager:info("Stopping monitoring via web on ~w:~w/~w~n",[M,F,A]),
+    lager:info("Stopping monitoring via web on ~w:~w/~w~n",[M, F, A]),
 
-    xprof_tracer:demonitor(MFA),
+    xprof_core:demonitor(MFA),
     {ok, ResReq} = cowboy_req:reply(204, ?HDR_NO_CONTENT, Req),
     {ok, ResReq, State};
 
 handle_req(<<"mon_get_all">>, Req, State) ->
-    Funs = xprof_tracer:all_monitored(),
+    Funs = xprof_core:get_all_monitored(),
     FunsArr = [[Mod, Fun, Arity, Query]
                || {{Mod, Fun, Arity}, Query} <- Funs],
     Json = jsone:encode(FunsArr),
@@ -83,7 +83,7 @@ handle_req(<<"data">>, Req, State) ->
     {LastTS, _} = cowboy_req:qs_val(<<"last_ts">>, Req, <<"0">>),
 
     {ok, ResReq} =
-        case xprof_tracer:data(MFA, binary_to_integer(LastTS)) of
+        case xprof_core:get_data(MFA, binary_to_integer(LastTS)) of
             {error, not_found} ->
                 cowboy_req:reply(404, Req);
             Vals ->
@@ -101,7 +101,7 @@ handle_req(<<"trace_set">>, Req, State) ->
 
     {ok, ResReq} = case lists:member(Spec, [<<"all">>, <<"pause">>]) of
                        true ->
-                           xprof_tracer:trace(list_to_atom(binary_to_list(Spec))),
+                           xprof_core:trace(list_to_atom(binary_to_list(Spec))),
                            cowboy_req:reply(204, ?HDR_NO_CONTENT, Req);
                        false ->
                            lager:info("Wrong spec for tracing: ~p",[Spec]),
@@ -110,7 +110,7 @@ handle_req(<<"trace_set">>, Req, State) ->
     {ok, ResReq, State};
 
 handle_req(<<"trace_status">>, Req, State) ->
-    {_, Status} = xprof_tracer:trace_status(),
+    {_, Status} = xprof_core:get_trace_status(),
     Json = jsone:encode({[{status, Status}]}),
     {ok, ResReq} = cowboy_req:reply(200,
                                     [{<<"content-type">>,
@@ -129,7 +129,7 @@ handle_req(<<"capture">>, Req, State) ->
     lager:info("Capture ~b calls to ~w:~w/~w~n exceeding ~b ms",
                [Limit, M, F, A, Threshold]),
 
-    {ok, CaptureId} = xprof_tracer_handler:capture(MFA, Threshold, Limit),
+    {ok, CaptureId} = xprof_core:capture(MFA, Threshold, Limit),
     Json = jsone:encode({[{capture_id, CaptureId}]}),
 
     {ok, ResReq} = cowboy_req:reply(200,
@@ -143,7 +143,7 @@ handle_req(<<"capture_stop">>, Req, State) ->
     lager:info("Stopping slow calls capturing for ~p", [MFA]),
 
     {ok, ResReq} =
-        case xprof_tracer_handler:capture_stop(MFA) of
+        case xprof_core:capture_stop(MFA) of
             ok ->
                 cowboy_req:reply(204, ?HDR_NO_CONTENT, Req);
             {error, not_found} ->
@@ -157,7 +157,7 @@ handle_req(<<"capture_data">>, Req, State) ->
     Offset = binary_to_integer(OffsetStr),
 
     {ok, ResReq} =
-        case xprof_tracer_handler:get_captured_data(MFA, Offset) of
+        case xprof_core:get_captured_data(MFA, Offset) of
             {error, not_found} ->
                 cowboy_req:reply(404, Req);
             {ok, {Id, Threshold, Limit, OriginalLimit}, Items} ->
@@ -176,7 +176,7 @@ handle_req(<<"capture_data">>, Req, State) ->
     {ok, ResReq, State};
 
 handle_req(<<"mode">>, Req, State) ->
-    Mode = xprof_lib:get_mode(),
+    Mode = xprof_core:get_mode(),
     Json = jsone:encode({[{mode, Mode}]}),
     {ok, ResReq} = cowboy_req:reply(200,
                                     [{<<"content-type">>,
@@ -196,10 +196,10 @@ get_mfa(Req) ->
          Arity -> binary_to_integer(Arity)
      end}.
 
--spec get_query(cowboy:req()) -> string().
+-spec get_query(cowboy:req()) -> binary().
 get_query(Req) ->
-    {Params, _} = cowboy_req:qs_vals(Req),
-    binary_to_list(proplists:get_value(<<"query">>, Params)).
+    {Query, _} = cowboy_req:qs_val(<<"query">>, Req, <<"">>),
+    Query.
 
 args_res2proplist({Id, Pid, CallTime, Args, Res}, ModeCb) ->
     [{id, Id},
