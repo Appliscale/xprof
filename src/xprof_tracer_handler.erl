@@ -21,7 +21,8 @@
          terminate/2,
          code_change/3]).
 
--record(state, {mfa, name, last_ts, hdr_ref, window_size, max_duration,
+-record(state, {mfa, name, last_ts, hdr_ref,
+                window_size, max_duration, ignore_recursion,
                 capture_spec, capture_id=0, capture_counter=0}).
 
 -define(ONE_SEC, 1000000). %% Second in microseconds
@@ -102,15 +103,16 @@ get_captured_data(MFA, Offset) ->
 %% gen_server callbacks
 
 init([MFASpec, Name]) ->
-    MaxDuration =
-        application:get_env(xprof, max_duration, ?MAX_DURATION) * 1000,
+    MaxDuration = application:get_env(xprof, max_duration, ?MAX_DURATION) * 1000,
+    IgnoreRecursion = application:get_env(xprof, ignore_recursion, true),
     {ok, HDR} = init_storage(Name, MaxDuration),
     %% add trace pattern with args capturing turned off
     capture_args_trace_off(MFASpec),
     {ok, #state{mfa=MFASpec, hdr_ref=HDR, name=Name,
                 last_ts=os:timestamp(),
                 window_size=?WINDOW_SIZE,
-                max_duration = MaxDuration}, 1000}.
+                max_duration = MaxDuration,
+                ignore_recursion = IgnoreRecursion}, 1000}.
 
 handle_call({capture, Threshold, Limit}, _From,
             State = #state{mfa = MFA}) ->
@@ -142,7 +144,7 @@ handle_cast(_Msg, State) ->
     {noreply, State}.
 
 handle_info({trace_ts, Pid, call, _MFA, Args, StartTime}, State) ->
-    put_ts_args(Pid, StartTime, Args),
+    put_ts_args(Pid, StartTime, Args, State#state.ignore_recursion),
 
     {Timeout, NewState} = maybe_make_snapshot(State),
     {noreply, NewState, Timeout};
@@ -150,7 +152,7 @@ handle_info({trace_ts, Pid, Tag, _MFA, RetOrExc, EndTime}, State)
   when Tag =:= return_from;
        Tag =:= exception_from ->
 
-    NewState = case get_ts_args(Pid) of
+    NewState = case get_ts_args(Pid, State#state.ignore_recursion) of
                    undefined ->
                        State;
                    {StartTime, Args} ->
@@ -236,31 +238,40 @@ init_new_capture_in_ets(State) ->
                        }]),
     ets:insert(Name, {capture_spec, Id, Threshold, Limit, Limit}).
 
-%% @doc Count the depth of recursion in this process
-put_ts_args(Pid, StartTime, Args) ->
-    case get({Pid, call_count}) of
-        undefined ->
-            put({Pid, args}, Args),
-            put({Pid, ts}, StartTime),
-            put({Pid, call_count}, 1);
-        CC ->
-            put({Pid, call_count}, CC + 1)
+put_ts_args(Pid, StartTime, Args, IgnoreRecursion) ->
+    %% Count the depth of recursion in this process
+    CD = case get({Pid, call_depth}) of
+             undefined -> 1;
+             CallDepth -> CallDepth + 1
+         end,
+    put({Pid, call_depth}, CD),
+    case CD =:= 1 orelse not IgnoreRecursion of
+        true ->
+            put({Pid, CD, ts_args}, {StartTime, Args});
+        false ->
+            ok
     end.
 
-%% @doc Only return start time of the outermost call
-get_ts_args(Pid) ->
-    case get({Pid, call_count}) of
+%% @doc If IgnoreRecursion is true only return start time and args
+%% of the outermost call
+get_ts_args(Pid, IgnoreRecursion) ->
+    case get({Pid, call_depth}) of
         undefined ->
             %% we missed the call of this function
             undefined;
         1 ->
-            erase({Pid, call_count}),
-            StartTime = erase({Pid, ts}),
-            {StartTime, erase({Pid, args})};
-        CC when CC > 1 ->
-            put({Pid, call_count}, CC - 1),
-            undefined
+            erase({Pid, call_depth}),
+            erase({Pid, 1, ts_args});
+        CD when CD > 1 ->
+            put({Pid, call_depth}, CD - 1),
+            case IgnoreRecursion of
+                false ->
+                    erase({Pid, CD, ts_args});
+                true ->
+                    undefined
+            end
     end.
+
 
 record_results(Pid, CallTime, Args, Res,
                State = #state{mfa = MFA,

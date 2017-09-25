@@ -10,6 +10,7 @@
 all() ->
     [monitor_many_funs,
      monitor_recursive_fun,
+     monitor_keep_recursive_fun,
      monitor_crashing_fun,
      monitor_ms,
      capture_args_res,
@@ -172,6 +173,28 @@ monitor_recursive_fun(_Config) ->
 
     xprof_tracer:trace(pause),
     xprof_tracer:demonitor(MFA),
+    ok.
+
+monitor_keep_recursive_fun(_Config) ->
+    application:set_env(xprof, ignore_recursion, false),
+    xprof_tracer:monitor(MFA = {?MODULE, recursive_test_fun, 1}),
+    ok = xprof_tracer:trace(self()),
+
+    Last = get_print_current_time(),
+
+    recursive_test_fun(10),
+    ct:sleep(1000),
+
+    %% all 10 samples are recorded
+    [Items1|_] = xprof_tracer:data(MFA, Last),
+    ?assertEqual(10, proplists:get_value(count, Items1)),
+
+    %% the duration of the innermost call is around 10 ms
+    ?assert(20 > (proplists:get_value(min, Items1) div 1000)),
+
+    xprof_tracer:trace(pause),
+    xprof_tracer:demonitor(MFA),
+    application:unset_env(xprof, ignore_recursion),
     ok.
 
 monitor_ms(_Config) ->
@@ -376,7 +399,8 @@ test_fun(Time) ->
 spawn_test_fun() ->
     spawn(fun() -> test_fun() end).
 
-recursive_test_fun(0) ->
+recursive_test_fun(1) ->
+    timer:sleep(10),
     ok;
 recursive_test_fun(N) ->
     timer:sleep(10),
