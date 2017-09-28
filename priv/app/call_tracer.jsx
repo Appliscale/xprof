@@ -53,8 +53,8 @@ class CallsTable extends React.Component {
             <th></th>
             <th>Call time</th>
             <th>Pid</th>
-            <th>Args</th>
-            <th>Response</th>
+            <th>Function arguments</th>
+            <th>Return value</th>
           </tr>
         </thead>
         <tbody>
