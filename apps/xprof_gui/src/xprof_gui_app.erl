@@ -58,7 +58,7 @@ start_cowboy() ->
                       [{env, [{dispatch, Dispatch}]}]).
 
 cowboy_routes() ->
-    [{'_', [{"/api/:what", xprof_web_handler, []},
+    [{'_', [{"/api/:what", xprof_gui_cowboy1_handler, []},
             {"/build/[...]", cowboy_static, {priv_dir, ?APP, "build"}},
             {"/styles/[...]", cowboy_static, {priv_dir, ?APP, "styles"}},
             {"/img/[...]", cowboy_static, {priv_dir, ?APP, "img"}},

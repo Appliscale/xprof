@@ -1,8 +1,8 @@
--module(xprof_ms_tests).
+-module(xprof_core_ms_tests).
 
 -include_lib("eunit/include/eunit.hrl").
 
--define(M, xprof_ms).
+-define(M, xprof_core_ms).
 -define(DEFAULT_MS, {[{'_', [], [{exception_trace}, {message, arity}]}],
                      [{'_', [], [{exception_trace}, {message, '$_'}]}]}).
 
@@ -110,9 +110,9 @@ traverse_ms_test_() ->
 fun2ms_elixir_test_() ->
     Tests =
         {setup,
-         fun() -> xprof_lib:set_mode(elixir) end,
+         fun() -> xprof_core_lib:set_mode(elixir) end,
          fun(_) -> application:unset_env(xprof, mode) end,
-         [?_assertEqual(elixir, xprof_lib:get_mode()),
+         [?_assertEqual(elixir, xprof_core_lib:get_mode()),
           ?_assertEqual({ok, {{'Elixir.Mod','fun',1}, ?DEFAULT_MS}},
                         ?M:fun2ms("Mod.fun/1")),
           ?_assertMatch({ok, {{'Elixir.Mod','fun',0},
@@ -165,4 +165,4 @@ fun2ms_elixir_test_() ->
                          }},
                         ?M:fun2ms("Mod.fun(:data, a) when a > 1 -> message(a)"))
          ]},
-    xprof_test_lib:run_elixir_unit_tests(Tests).
+    xprof_core_test_lib:run_elixir_unit_tests(Tests).

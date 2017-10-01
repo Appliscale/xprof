@@ -11,7 +11,7 @@
 %% Application callbacks
 
 start(_StartType, _StartArgs) ->
-    xprof_sup:start_link().
+    xprof_core_sup:start_link().
 
 stop(_State) ->
     ok.

@@ -1,7 +1,7 @@
 %% -*- erlang-indent-level: 4;indent-tabs-mode: nil -*-
 %% ex: ts=4 sw=4 et
 
--module(xprof_tracer).
+-module(xprof_core_tracer).
 
 -behaviour(gen_server).
 
@@ -34,7 +34,7 @@ start_link() ->
 %% @doc Starts monitoring specified function calls.
 -spec monitor(mfa() | string()) -> ok | {error, term()}.
 monitor(Query) when is_list(Query) ->
-    case xprof_ms:fun2ms(Query) of
+    case xprof_core_ms:fun2ms(Query) of
         {ok, MFASpec} ->
             lager:info("Starting monitoring ~s",[Query]),
             gen_server:call(
@@ -45,8 +45,8 @@ monitor(Query) when is_list(Query) ->
     end;
 monitor({Mod, Fun, Arity} = MFA) ->
     lager:info("Starting monitoring ~w:~w/~b",[Mod,Fun,Arity]),
-    MFASpec = {MFA, xprof_ms:default_ms()},
-    ModeCb = xprof_lib:get_mode_cb(),
+    MFASpec = {MFA, xprof_core_ms:default_ms()},
+    ModeCb = xprof_core_lib:get_mode_cb(),
     FormattedMFA = ModeCb:fmt_mfa(Mod, Fun, Arity),
     gen_server:call(?MODULE, {monitor, MFASpec, FormattedMFA}).
 
@@ -83,24 +83,24 @@ init([]) ->
     {ok, #state{max_queue_len = MaxQueueLen}}.
 
 handle_call({monitor, MFASpec, Query}, _From, State) ->
-    MFAId = xprof_lib:mfaspec2id(MFASpec),
+    MFAId = xprof_core_lib:mfaspec2id(MFASpec),
     case get_pid(MFAId) of
         Pid when is_pid(Pid) ->
             {reply, {error, already_traced}, State};
         undefined ->
-            {ok, Pid} = supervisor:start_child(xprof_tracer_handler_sup, [MFASpec]),
+            {ok, Pid} = supervisor:start_child(xprof_core_trace_handler_sup, [MFASpec]),
             put_pid(MFAId, Pid),
             %% funs stored in reversed order of start monitoring
             NState = setup_trace_all_if_initialized(State),
             {reply, ok, NState#state{funs = [{MFAId, Query}|State#state.funs]}}
     end;
 handle_call({demonitor, MFA}, _From, State) ->
-    xprof_tracer_handler:trace_mfa_off(MFA),
+    xprof_core_trace_handler:trace_mfa_off(MFA),
 
     Pid = erase_pid(MFA),
     NewFuns = lists:filter(fun({E, _}) -> E =/= MFA end, State#state.funs),
 
-    supervisor:terminate_child(xprof_tracer_handler_sup, Pid),
+    supervisor:terminate_child(xprof_core_trace_handler_sup, Pid),
     {reply, ok, State#state{funs=NewFuns}};
 handle_call(all_monitored, _From, State = #state{funs=MFAs}) ->
     {reply, MFAs, State};

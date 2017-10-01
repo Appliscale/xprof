@@ -1,4 +1,4 @@
--module(xprof_lib).
+-module(xprof_core_lib).
 
 -export([mfaspec2atom/1,
          mfa2atom/1,
@@ -48,8 +48,8 @@ get_mode() ->
 -spec get_mode_cb() -> module().
 get_mode_cb() ->
     case get_mode() of
-        erlang -> xprof_erlang_syntax;
-        elixir -> xprof_elixir_syntax
+        erlang -> xprof_core_erlang_syntax;
+        elixir -> xprof_core_elixir_syntax
     end.
 
 -spec detect_mode() -> xprof:mode().

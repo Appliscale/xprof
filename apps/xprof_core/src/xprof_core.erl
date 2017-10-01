@@ -31,7 +31,7 @@
 %% Used for autocomplete suggestions on the GUI.
 -spec get_matching_mfas_pp(binary()) -> [MFA :: binary()].
 get_matching_mfas_pp(Query) ->
-    xprof_vm_info:get_available_funs(Query).
+    xprof_core_vm_info:get_available_funs(Query).
 
 %%
 %% Monitoring functions
@@ -40,23 +40,23 @@ get_matching_mfas_pp(Query) ->
 %% @doc Start monitoring based on the specified query string.
 -spec monitor_pp(binary()) -> ok | {error, Reason :: term()}.
 monitor_pp(Query) ->
-    xprof_tracer:monitor(binary_to_list(Query)).
+    xprof_core_tracer:monitor(binary_to_list(Query)).
 
 %% @doc Start monitoring the specified function (MFA).
 -spec monitor(mfa()) -> ok | {error, Reason :: already_traced}.
 monitor(MFA) ->
-    xprof_tracer:monitor(MFA).
+    xprof_core_tracer:monitor(MFA).
 
 %% @doc Stop monitoring the specified function (MFA).
 -spec demonitor(xprof:mfa_id()) -> ok.
 demonitor(MFA) ->
-    xprof_tracer:demonitor(MFA).
+    xprof_core_tracer:demonitor(MFA).
 
 %% @doc Return list of monitored functions
 %% (both as MFA and the original query string).
 -spec get_all_monitored() -> [{xprof:mfa_id(), Query :: binary()}].
 get_all_monitored() ->
-    xprof_tracer:all_monitored().
+    xprof_core_tracer:all_monitored().
 
 %% @doc Return metrics gathered for the given function since the given
 %% timestamp. Each item contains a timestamp and the corresponding histogram
@@ -67,7 +67,7 @@ get_all_monitored() ->
                 | p25 | p50 | p75 | p90 | p99 | p9999999
                 | memsize | count.
 get_data(MFA, TimeStamp) ->
-    xprof_tracer_handler:data(MFA, TimeStamp).
+    xprof_core_trace_handler:data(MFA, TimeStamp).
 
 %%
 %% Global trace status
@@ -78,14 +78,14 @@ get_data(MFA, TimeStamp) ->
 %% given earlier.
 -spec trace(pid() | all | pause | resume) -> ok.
 trace(PidOrSpec) ->
-    xprof_tracer:trace(PidOrSpec).
+    xprof_core_tracer:trace(PidOrSpec).
 
 %% @doc Return current tracing state.
 %% (The `initialized' status is basically the same as `paused', additionally
 %%  meaning that no tracing was started yet since xprof was started)
 -spec get_trace_status() -> {pid() | all, Status :: initialized | running | paused | overflow}.
 get_trace_status() ->
-    xprof_tracer:trace_status().
+    xprof_core_tracer:trace_status().
 
 %%
 %% Long call capturing
@@ -96,12 +96,12 @@ get_trace_status() ->
 -spec capture(xprof:mfa_id(), non_neg_integer(), non_neg_integer()) ->
                      {ok, CaptureId :: non_neg_integer()}.
 capture(MFA, Threshold, Limit) ->
-    xprof_tracer_handler:capture(MFA, Threshold, Limit).
+    xprof_core_trace_handler:capture(MFA, Threshold, Limit).
 
 %% @doc Stop capturing long calls of the given function.
 -spec capture_stop(xprof:mfa_id()) -> ok | {error, not_found}.
 capture_stop(MFA) ->
-    xprof_tracer_handler:capture_stop(MFA).
+    xprof_core_trace_handler:capture_stop(MFA).
 
 %% @doc Return captured arguments and return values formatted according to the
 %% active syntax mode.
@@ -117,7 +117,7 @@ capture_stop(MFA) ->
 get_captured_data_pp(MFA, Offset) ->
     case xprof_core:get_captured_data(MFA, Offset) of
         {ok, CaptureSpec, Items} ->
-            ModeCb = xprof_lib:get_mode_cb(),
+            ModeCb = xprof_core_lib:get_mode_cb(),
             ItemsJson = [{args_res2proplist(Item, ModeCb)} || Item <- Items],
             {ok, CaptureSpec, ItemsJson};
         Error ->
@@ -156,7 +156,7 @@ format_result({exception_from, {Class, Reason}}, ModeCb) ->
                 Args :: list(),
                 Result :: term()}.
 get_captured_data(MFA, Offset) ->
-    xprof_tracer_handler:get_captured_data(MFA, Offset).
+    xprof_core_trace_handler:get_captured_data(MFA, Offset).
 
 %%
 %% Syntax mode
@@ -165,9 +165,9 @@ get_captured_data(MFA, Offset) ->
 %% @doc Set syntax mode explicitely.
 -spec set_mode(xprof:mode()) -> ok.
 set_mode(Mode) ->
-    xprof_lib:set_mode(Mode).
+    xprof_core_lib:set_mode(Mode).
 
 %% @doc Get syntax mode, if not set explicitely it will be autodetected.
 -spec get_mode() -> xprof:mode().
 get_mode() ->
-    xprof_lib:get_mode().
+    xprof_core_lib:get_mode().

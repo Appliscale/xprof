@@ -1,4 +1,4 @@
--module(xprof_ms).
+-module(xprof_core_ms).
 
 -export([fun2ms/1,
          default_ms/0,
@@ -8,7 +8,7 @@
 -spec fun2ms(string()) -> {ok, xprof:mfa_spec()}
                         | {error, string()}.
 fun2ms(Str) ->
-    ModeCb = xprof_lib:get_mode_cb(),
+    ModeCb = xprof_core_lib:get_mode_cb(),
     try
         case ModeCb:parse_query(Str) of
             {mfa, MFA} ->
@@ -62,8 +62,8 @@ workaround_empty_args_ms(Ms) ->
     [{[], G, B} || {['_'], G, B} <- Ms].
 
 %% @doc Ensure that the match-spec does not create traces that have different
-%% format than what xprof_trace_handler anticipates (ie. {message, _} directives
-%% might have to be modified)
+%% format than what xprof_core_trace_handler anticipates (ie. {message, _}
+%% directives might have to be modified)
 
 %% - The special case {message, false} is allowed (disables sending of trace
 %% messages ('call' and 'return_to') for this function call, just like if the

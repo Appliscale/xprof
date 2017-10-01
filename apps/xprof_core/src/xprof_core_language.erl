@@ -2,7 +2,7 @@
 %%% @doc Callback functions that need to be implemented
 %%% for a language-specific behvaiour
 %%%
--module(xprof_language).
+-module(xprof_core_language).
 
 %% Function for start monitoring
 

@@ -165,7 +165,7 @@ monitor_many_funs(_Config) ->
     ct:log("Start monitoring 5 funs"),
     [xprof_core:monitor(MFA) || MFA <- MFAs],
 
-    Kids = supervisor:which_children(xprof_tracer_handler_sup),
+    Kids = supervisor:which_children(xprof_core_trace_handler_sup),
     ?assertEqual(5, length(Kids)),
 
     %% strip formatted queries

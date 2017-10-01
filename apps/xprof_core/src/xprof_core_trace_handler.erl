@@ -2,10 +2,10 @@
 %% ex: ts=4 sw=4 et
 
 %% @doc Gen server that tracks all calls to a particular function. It
-%% registers itself localy under a atom that consists of MFA and xprof_monitor
+%% registers itself localy under a atom that consists of MFA and xprof_
 %% prefix. The same name is used to create public ETS table that holds entries
 %% with call time stats for every second.
--module(xprof_tracer_handler).
+-module(xprof_core_trace_handler).
 
 -behaviour(gen_server).
 
@@ -33,14 +33,14 @@
 %% @doc Starts new process registered localy.
 -spec start_link(xprof:mfa_spec()) -> {ok, pid()}.
 start_link(MFASpec) ->
-    Name = xprof_lib:mfaspec2atom(MFASpec),
+    Name = xprof_core_lib:mfaspec2atom(MFASpec),
     gen_server:start_link({local, Name}, ?MODULE, [MFASpec, Name], []).
 
 %% @doc Returns histogram data for seconds that occured after FromEpoch.
 -spec data(xprof:mfa_id(), non_neg_integer()) -> [proplists:proplist()] |
                                                  {error, not_found}.
 data(MFA, FromEpoch) ->
-    Name = xprof_lib:mfa2atom(MFA),
+    Name = xprof_core_lib:mfa2atom(MFA),
     try
         ets:select(Name, [{
                             {{sec, '$1'},'$2'},
@@ -60,12 +60,12 @@ capture(MFA = {M,F,A}, Threshold, Limit) ->
     lager:info("Capturing ~p calls to ~w:~w/~w that exceed ~p ms:",
                [Limit, M, F, A, Threshold]),
 
-    Name = xprof_lib:mfa2atom(MFA),
+    Name = xprof_core_lib:mfa2atom(MFA),
     gen_server:call(Name, {capture, Threshold, Limit}).
 
 -spec capture_stop(xprof:mfa_id()) -> ok | {error, not_found}.
 capture_stop(MFA) ->
-    Name = xprof_lib:mfa2atom(MFA),
+    Name = xprof_core_lib:mfa2atom(MFA),
     try
         gen_server:call(Name, capture_stop)
     catch
@@ -82,7 +82,7 @@ capture_stop(MFA) ->
                                          HasMore :: boolean()
                                         }, [tuple()]}.
 get_captured_data(MFA, Offset) when Offset >= 0 ->
-    Name = xprof_lib:mfa2atom(MFA),
+    Name = xprof_core_lib:mfa2atom(MFA),
     try
         Items = lists:sort(ets:select(Name,
                                       [{
@@ -188,7 +188,7 @@ maybe_make_snapshot(State = #state{name=Name, last_ts=LastTS,
     case timer:now_diff(NowTS, LastTS) of
         DiffMicro when DiffMicro >= ?ONE_SEC ->
             save_snapshot(NowTS, State),
-            remove_outdated_snapshots(Name, xprof_lib:now2epoch(NowTS)-WindSize),
+            remove_outdated_snapshots(Name, xprof_core_lib:now2epoch(NowTS)-WindSize),
             {calc_next_timeout(DiffMicro), State#state{last_ts=NowTS}};
         DiffMicro ->
             {calc_next_timeout(DiffMicro), State}
@@ -199,7 +199,7 @@ calc_next_timeout(DiffMicro) ->
     1000 - DiffMilli rem 1000.
 
 save_snapshot(NowTS, #state{name=Name, hdr_ref=Ref}) ->
-    Epoch = xprof_lib:now2epoch(NowTS),
+    Epoch = xprof_core_lib:now2epoch(NowTS),
     ets:insert(Name, [{{sec, Epoch}, get_current_hist_stats(Ref, Epoch)}]),
     hdr_histogram:reset(Ref).
 

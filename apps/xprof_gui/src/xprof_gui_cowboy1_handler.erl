@@ -1,4 +1,4 @@
--module(xprof_web_handler).
+-module(xprof_gui_cowboy1_handler).
 
 -export([init/3,handle/2,terminate/3]).
 
