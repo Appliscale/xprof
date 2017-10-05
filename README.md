@@ -33,7 +33,7 @@ you would guess from the name, it takes a bit of sleep). In the video we:
 2. Build your project.
 3. Start `xprof` by executing `xprof:start().` in Erlang shell,
    or `:xprof.start` in Elixir shell.
-4. Go to http://SERVER:7890.
+4. Go to http://localhost:7890 (replace localhost with your server’s hostname if you connect to a remote host).
 5. Type in function that you would like to start tracing.
 6. Start tracing clicking green button.
 
