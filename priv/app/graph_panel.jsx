@@ -62,16 +62,13 @@ export default class GraphPanel extends React.Component {
   render() {
     var funs = this.state.funs;
 
-    var graphsPanels = [];
-    for (var i = 0; i < funs.length; i++) {
-      graphsPanels.push(
-        <div key={funs[i]} className="row">
-          <div className="col-md-12">
-            <Graph removeGraph={this.removeGraph.bind(this)} mfa={funs[i]}/>
-          </div>
+    var graphsPanels = funs.reverse().map(fun =>
+      <div key={fun} className="row">
+        <div className="col-md-12">
+          <Graph removeGraph={this.removeGraph.bind(this)} mfa={fun}/>
         </div>
-      );
-    }
+      </div>
+    );
 
     return (<div className="container-fluid">{graphsPanels}</div>);
   }
