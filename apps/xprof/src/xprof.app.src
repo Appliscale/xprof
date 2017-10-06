@@ -1,0 +1,14 @@
+{application, xprof,
+ [{description, "Visual profiler for BEAM languages"}
+ ,{vsn, "2.0.0-snapshot"}
+ ,{registered, []}
+ ,{applications,
+   [xprof_core,
+    xprof_gui
+   ]}
+ ,{env,[]}
+ ,{modules, []}
+ ,{licenses, ["BSD-3-Clause"]}
+ ,{maintainers, ["Michal Niec", "Pawel Pikula", "Peter Gomori", "Wojciech Gawronski"]}
+ ,{links, [{"Github", "https://github.com/appliscale/xprof"}]}
+ ]}.
