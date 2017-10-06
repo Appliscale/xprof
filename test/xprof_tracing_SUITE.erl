@@ -146,7 +146,8 @@ monitor_many_funs(_Config) ->
 
     %% strip formatted queries
     AllMonitored = [MFA || {MFA, _Query} <- xprof_tracer:all_monitored()],
-    ?assertEqual(MFAs, AllMonitored),
+    %% MFAs should be listed in reversed insertion order (last first)
+    ?assertEqual(lists:reverse(MFAs), AllMonitored),
 
     ct:log("Stop monitoring all 5 funs"),
     [xprof_tracer:demonitor(MFA) || MFA <- MFAs],
