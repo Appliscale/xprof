@@ -184,7 +184,7 @@ handle_req(<<"mode">>, Req, State) ->
 
 %% Helpers
 
--spec get_mfa(cowboy:req()) -> xprof:mfa_id().
+-spec get_mfa(cowboy:req()) -> xprof_core:mfa_id().
 get_mfa(Req) ->
     {Params, _} = cowboy_req:qs_vals(Req),
     {list_to_atom(binary_to_list(proplists:get_value(<<"mod">>, Params))),

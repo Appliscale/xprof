@@ -51,13 +51,13 @@ monitor({Mod, Fun, Arity} = MFA) ->
     gen_server:call(?MODULE, {monitor, MFASpec, FormattedMFA}).
 
 %% @doc Stops monitoring specified function calls.
--spec demonitor(xprof:mfa_id()) -> ok.
+-spec demonitor(xprof_core:mfa_id()) -> ok.
 demonitor({Mod, Fun, Arity} = MFA) ->
     lager:info("Stopping monitoring ~w:~w/~w",[Mod,Fun,Arity]),
     gen_server:call(?MODULE, {demonitor, MFA}).
 
 %% @doc Returns list of monitored functions
--spec all_monitored() -> list({xprof:mfa_id(), binary()}).
+-spec all_monitored() -> list({xprof_core:mfa_id(), binary()}).
 all_monitored() ->
     gen_server:call(?MODULE, all_monitored).
 
@@ -214,22 +214,22 @@ send2pids({M, F, _} = MFA, Msg) ->
     send2pid({M, F, '_'}, Msg),
     ok.
 
--spec send2pid(xprof:mfa_id(), term()) -> any().
+-spec send2pid(xprof_core:mfa_id(), term()) -> any().
 send2pid(MFA, Msg) ->
     case get_pid(MFA) of
         undefined -> ok;
         Pid -> erlang:send(Pid, Msg)
     end.
 
--spec get_pid(xprof:mfa_id()) -> pid() | undefined.
+-spec get_pid(xprof_core:mfa_id()) -> pid() | undefined.
 get_pid(MFA) ->
     get({handler, MFA}).
 
--spec put_pid(xprof:mfa_id(), pid()) -> any().
+-spec put_pid(xprof_core:mfa_id(), pid()) -> any().
 put_pid(MFA, Pid) ->
     put({handler, MFA}, Pid).
 
--spec erase_pid(xprof:mfa_id()) -> pid() | undefined.
+-spec erase_pid(xprof_core:mfa_id()) -> pid() | undefined.
 erase_pid(MFA) ->
     erase({handler, MFA}).
 

@@ -31,13 +31,13 @@
 -define(MAX_DURATION, 30*1000).
 
 %% @doc Starts new process registered localy.
--spec start_link(xprof:mfa_spec()) -> {ok, pid()}.
+-spec start_link(xprof_core:mfa_spec()) -> {ok, pid()}.
 start_link(MFASpec) ->
     Name = xprof_core_lib:mfaspec2atom(MFASpec),
     gen_server:start_link({local, Name}, ?MODULE, [MFASpec, Name], []).
 
 %% @doc Returns histogram data for seconds that occured after FromEpoch.
--spec data(xprof:mfa_id(), non_neg_integer()) -> [proplists:proplist()] |
+-spec data(xprof_core:mfa_id(), non_neg_integer()) -> [proplists:proplist()] |
                                                  {error, not_found}.
 data(MFA, FromEpoch) ->
     Name = xprof_core_lib:mfa2atom(MFA),
@@ -54,7 +54,7 @@ data(MFA, FromEpoch) ->
 
 %% @doc Starts capturing args and results from function calls that lasted longer
 %% than specified time threshold.
--spec capture(xprof:mfa_id(), non_neg_integer(), non_neg_integer()) ->
+-spec capture(xprof_core:mfa_id(), non_neg_integer(), non_neg_integer()) ->
                      {ok, non_neg_integer()}.
 capture(MFA = {M,F,A}, Threshold, Limit) ->
     lager:info("Capturing ~p calls to ~w:~w/~w that exceed ~p ms:",
@@ -63,7 +63,7 @@ capture(MFA = {M,F,A}, Threshold, Limit) ->
     Name = xprof_core_lib:mfa2atom(MFA),
     gen_server:call(Name, {capture, Threshold, Limit}).
 
--spec capture_stop(xprof:mfa_id()) -> ok | {error, not_found}.
+-spec capture_stop(xprof_core:mfa_id()) -> ok | {error, not_found}.
 capture_stop(MFA) ->
     Name = xprof_core_lib:mfa2atom(MFA),
     try
@@ -74,7 +74,7 @@ capture_stop(MFA) ->
     end.
 
 %% @doc
--spec get_captured_data(xprof:mfa_id(), non_neg_integer()) ->
+-spec get_captured_data(xprof_core:mfa_id(), non_neg_integer()) ->
                                empty | {ok,
                                         {Index :: non_neg_integer(),
                                          Threshold :: non_neg_integer(),
@@ -305,15 +305,15 @@ record_results(Pid, CallTime, Args, Res,
             State
     end.
 
--spec capture_args_trace_on(xprof:mfa_spec()) -> any().
+-spec capture_args_trace_on(xprof_core:mfa_spec()) -> any().
 capture_args_trace_on({MFAId, {_MSOff, MSOn}}) ->
     erlang:trace_pattern(MFAId, MSOn, [local]).
 
--spec capture_args_trace_off(xprof:mfa_spec()) -> any().
+-spec capture_args_trace_off(xprof_core:mfa_spec()) -> any().
 capture_args_trace_off({MFAId, {MSOff, _MSOn}}) ->
     erlang:trace_pattern(MFAId, MSOff, [local]).
 
--spec trace_mfa_off(xprof:mfa_id()) -> any().
+-spec trace_mfa_off(xprof_core:mfa_id()) -> any().
 trace_mfa_off({M, F, '_'}) ->
     %% FIXME: this will turn off tracing also
     %% for the same function with a given arity

@@ -7,7 +7,7 @@
 %% Function for start monitoring
 
 -callback parse_query(Query :: string()) ->
-    Result :: {mfa, xprof:mfa_id()}
+    Result :: {mfa, xprof_core:mfa_id()}
             | {clauses, module(), atom(), [erl_parse:abstract_clause()]}.
 
 %% Functions for autocomplete

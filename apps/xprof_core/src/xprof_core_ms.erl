@@ -5,7 +5,7 @@
          err/1, err/2, err/3
         ]).
 
--spec fun2ms(string()) -> {ok, xprof:mfa_spec()}
+-spec fun2ms(string()) -> {ok, xprof_core:mfa_spec()}
                         | {error, string()}.
 fun2ms(Str) ->
     ModeCb = xprof_core_lib:get_mode_cb(),

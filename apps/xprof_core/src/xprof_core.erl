@@ -1,24 +1,51 @@
 -module(xprof_core).
 
--export([get_matching_mfas_pp/1,
+-export([%% Autocomplete
+         get_matching_mfas_pp/1,
 
+         %% Monitoring functions
          monitor_pp/1,
          monitor/1,
          demonitor/1,
          get_all_monitored/0,
          get_data/2,
 
+         %% Global trace status
          trace/1,
          get_trace_status/0,
 
+         %% Long call capturing
          capture/3,
          capture_stop/1,
          get_captured_data_pp/2,
          get_captured_data/2,
 
+         %% Syntax mode
          set_mode/1,
          get_mode/0
         ]).
+
+-export_type([mfa_spec/0, mfa_id/0, mfa_name/0, mode/0]).
+
+-type ms() :: [tuple()].
+%% Match-specification.
+
+-type mfa_spec() :: {mfa_id(), {ms(), ms()}}.
+%% Traced function with optional match-spec.
+%% Used to initiate tracing (both by `xprof_core_tracer' and
+%% `xprof_core_trace_handler').
+
+-type mfa_id() :: {module(), atom(), arity() | '_'}.
+%% Used by the GUI and `xprof_core_tracer' to identify mfas.
+%% Arity of `` '_' '' means all arities.
+%% Similar to type `erlang:trace_pattern_mfa()'.
+
+-type mfa_name() :: atom().
+%% Derived from `mfa_id'.
+%% Used to register ets tables and `xprof_core_trace_handler' gen_servers.
+
+-type mode() :: erlang | elixir.
+%% Accepted syntax mode.
 
 -type timestamp() :: non_neg_integer().
 %% Unix timestamp.
@@ -48,20 +75,20 @@ monitor(MFA) ->
     xprof_core_tracer:monitor(MFA).
 
 %% @doc Stop monitoring the specified function (MFA).
--spec demonitor(xprof:mfa_id()) -> ok.
+-spec demonitor(xprof_core:mfa_id()) -> ok.
 demonitor(MFA) ->
     xprof_core_tracer:demonitor(MFA).
 
 %% @doc Return list of monitored functions
 %% (both as MFA and the original query string).
--spec get_all_monitored() -> [{xprof:mfa_id(), Query :: binary()}].
+-spec get_all_monitored() -> [{xprof_core:mfa_id(), Query :: binary()}].
 get_all_monitored() ->
     xprof_core_tracer:all_monitored().
 
 %% @doc Return metrics gathered for the given function since the given
 %% timestamp. Each item contains a timestamp and the corresponding histogram
 %% metrics values.
--spec get_data(xprof:mfa_id(), timestamp()) -> [Item] | {error, not_found}
+-spec get_data(xprof_core:mfa_id(), timestamp()) -> [Item] | {error, not_found}
   when Item :: [{time, timestamp()} | {HistKey, number()}],
        HistKey :: min | mean | median | max | stddev
                 | p25 | p50 | p75 | p90 | p99 | p9999999
@@ -93,20 +120,20 @@ get_trace_status() ->
 
 %% @doc Start capturing arguments and return values of function calls that
 %% lasted longer than the specified time threshold in ms.
--spec capture(xprof:mfa_id(), non_neg_integer(), non_neg_integer()) ->
+-spec capture(xprof_core:mfa_id(), non_neg_integer(), non_neg_integer()) ->
                      {ok, CaptureId :: non_neg_integer()}.
 capture(MFA, Threshold, Limit) ->
     xprof_core_trace_handler:capture(MFA, Threshold, Limit).
 
 %% @doc Stop capturing long calls of the given function.
--spec capture_stop(xprof:mfa_id()) -> ok | {error, not_found}.
+-spec capture_stop(xprof_core:mfa_id()) -> ok | {error, not_found}.
 capture_stop(MFA) ->
     xprof_core_trace_handler:capture_stop(MFA).
 
 %% @doc Return captured arguments and return values formatted according to the
 %% active syntax mode.
 %% @see get_captured_data/2
--spec get_captured_data_pp(xprof:mfa_id(), Offset :: non_neg_integer()) ->
+-spec get_captured_data_pp(xprof_core:mfa_id(), Offset :: non_neg_integer()) ->
                                {ok, CaptureSpec, Items} | {error, not_found}
   when CaptureSpec :: {CaptureId :: non_neg_integer(),
                        Threshold :: non_neg_integer(),
@@ -143,7 +170,7 @@ format_result({exception_from, {Class, Reason}}, ModeCb) ->
 %%
 %% The returned `HasMore' indicates whether capturing is still ongoing or it has
 %% been stopped either manually or by reaching the limit.
--spec get_captured_data(xprof:mfa_id(), Offset :: non_neg_integer()) ->
+-spec get_captured_data(xprof_core:mfa_id(), Offset :: non_neg_integer()) ->
                                {ok, CaptureSpec, [Item]} | {error, not_found}
   when CaptureSpec :: {CaptureId :: non_neg_integer(),
                        Threshold :: non_neg_integer(),
@@ -163,11 +190,11 @@ get_captured_data(MFA, Offset) ->
 %%
 
 %% @doc Set syntax mode explicitely.
--spec set_mode(xprof:mode()) -> ok.
+-spec set_mode(xprof_core:mode()) -> ok.
 set_mode(Mode) ->
     xprof_core_lib:set_mode(Mode).
 
 %% @doc Get syntax mode, if not set explicitely it will be autodetected.
--spec get_mode() -> xprof:mode().
+-spec get_mode() -> xprof_core:mode().
 get_mode() ->
     xprof_core_lib:get_mode().
