@@ -74,11 +74,11 @@ init_per_testcase(TestCase, Config) ->
         _ ->
             given_overload_queue_limit(1000)
     end,
-    {ok, _} = xprof_gui_app:start_all(),
-    Config.
+    {ok, StartedApps} = xprof:start(),
+    [{started_apps, StartedApps}|Config].
 
-end_per_testcase(_TestCase, _Config) ->
-    xprof_gui_app:stop_all(),
+end_per_testcase(_TestCase, Config) ->
+    [application:stop(App) || App <- ?config(started_apps, Config)],
     ok.
 
 get_initialized_trace_status_on_start(_Config) ->

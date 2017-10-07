@@ -49,11 +49,11 @@ groups() ->
       [spawner_tracing, all_tracing, pid_tracing, dead_proc_tracing]}].
 
 init_per_suite(Config) ->
-    {ok, _} = application:ensure_all_started(xprof_core),
-    Config.
+    {ok, StartedApps} = application:ensure_all_started(xprof_core),
+    [{started_apps, StartedApps}|Config].
 
-end_per_suite(_Config) ->
-    application:stop(xprof_core),
+end_per_suite(Config) ->
+    [application:stop(App) || App <- ?config(started_apps,Config)],
     ok.
 
 init_per_group( simulate_tracing, Config) ->

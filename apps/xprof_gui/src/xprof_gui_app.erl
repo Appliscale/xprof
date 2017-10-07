@@ -4,36 +4,12 @@
 
 -behaviour(application).
 
-%% Convenience API
--export([start_all/0,
-         stop_all/0]).
-
 %% Application callbacks
 -export([start/2,
          stop/1]).
 
 -define(APP, xprof_gui).
 -define(DEF_WEB_IF_PORT, 7890).
-
-%% Convenience API
-
-start_all() ->
-    case application:ensure_all_started(xprof_core) of
-        {ok, StartedCore} ->
-            case application:ensure_all_started(xprof_gui) of
-                {ok, StartedGUI} ->
-                    {ok, StartedCore ++ StartedGUI};
-                {error, _} = Error ->
-                    [application:stop(App) || App <- StartedCore],
-                    Error
-            end;
-        {error, _} = Error ->
-            Error
-    end.
-
-stop_all() ->
-    ok = application:stop(xprof_gui),
-    ok = application:stop(xprof_core).
 
 %% Application callbacks
 
