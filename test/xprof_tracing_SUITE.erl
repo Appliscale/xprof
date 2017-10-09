@@ -3,7 +3,31 @@
 -include_lib("common_test/include/ct.hrl").
 -include_lib("eunit/include/eunit.hrl").
 
--compile(export_all).
+%% CT callbacks
+-export([all/0,
+         groups/0,
+         init_per_suite/1,
+         end_per_suite/1,
+         init_per_group/2,
+         end_per_group/2
+        ]).
+
+%% Test cases
+-export([monitor_many_funs/1,
+         monitor_recursive_fun/1,
+         monitor_keep_recursive_fun/1,
+         monitor_crashing_fun/1,
+         monitor_ms/1,
+         capture_args_res/1,
+         capture_args_ms/1,
+         capture_exception/1,
+         capture_stop/1,
+         long_call/1,
+         spawner_tracing/1,
+         all_tracing/1,
+         pid_tracing/1,
+         dead_proc_tracing/1
+        ]).
 
 %% CT funs
 
