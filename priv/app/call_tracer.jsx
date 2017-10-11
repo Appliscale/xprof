@@ -45,20 +45,58 @@ export class CallsTableRow extends React.Component {
 }
 
 class CallsTable extends React.Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      sortby: "id",
+      order: "desc"
+    };
+  }
+
+  onClick(id, event) {
+    event.preventDefault();
+
+    const newOrder = (this.state.order === "desc") ? "asc" : "desc";
+
+    this.setState({
+      sortby: id,
+      order: newOrder
+    });
+
+    console.log(this.state);
+  }
+
+  sortIcon(id) {
+    if (this.state.sortby === id) {
+      const dir = (this.state.order === "asc") ? "top" : "bottom";
+
+      return (
+        <span className={`glyphicon glyphicon-triangle-${dir}`}></span>
+      );
+    }
+  }
+
   render() {
+    let items = _.sortBy(this.props.items, this.state.sortby);
+
+    if (this.state.order === "desc") {
+      items.reverse();
+    }
+
     return (
       <table className="table table-hover table-striped">
         <thead>
           <tr>
             <th></th>
-            <th>Call time</th>
-            <th>Pid</th>
-            <th>Function arguments</th>
-            <th>Return value</th>
+            <th onClick={this.onClick.bind(this, "call_time")}>Call time{this.sortIcon("call_time")}</th>
+            <th onClick={this.onClick.bind(this, "pid")}>Pid{this.sortIcon("pid")}</th>
+            <th onClick={this.onClick.bind(this, "args")}>Function arguments{this.sortIcon("args")}</th>
+            <th onClick={this.onClick.bind(this, "res")}>Return value{this.sortIcon("res")}</th>
           </tr>
         </thead>
         <tbody>
-          {this.props.items.map((item) =>
+          {items.map((item) =>
             <CallsTableRow key={item.id} item={item}/>
           )}
         </tbody>
@@ -274,7 +312,7 @@ export default class CallsTracer extends React.Component {
             </span>
           </form>
         </div>
-        <CallsTable items={this.state.items}/>
+        <CallsTable items={this.state.items} orderby={this.state.orderby}/>
       </div>
     );
   }
