@@ -138,16 +138,18 @@ export default class Graph extends React.Component {
     var mfa = this.props.mfa;
     var lastTs = this.state.lastTs;
 
-    $.ajax({
-      url: "/api/data",
-      data: {
-        mod: mfa[0],
-        fun: mfa[1],
-        arity: mfa[2],
-        last_ts: lastTs }
-    })
-      .done(this.handleData.bind(this))
-      .fail(this.handleDataError.bind(this));
+    if (!this.props.paused) {
+      $.ajax({
+        url: "/api/data",
+        data: {
+          mod: mfa[0],
+          fun: mfa[1],
+          arity: mfa[2],
+          last_ts: lastTs }
+      })
+        .done(this.handleData.bind(this))
+        .fail(this.handleDataError.bind(this));
+    }
   }
 
   handleData(data) {

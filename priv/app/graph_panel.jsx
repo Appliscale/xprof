@@ -5,7 +5,10 @@ import Graph from "./graph.jsx";
 export default class GraphPanel extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { funs: [] };
+    this.state = {
+      funs: [],
+      paused: false
+    };
   }
 
   componentDidMount() {
@@ -59,15 +62,22 @@ export default class GraphPanel extends React.Component {
     window.setTimeout(this.getFunsList.bind(this), 1000);
   }
 
+  pauseTime() {
+    this.state.paused = !this.state.paused;
+    this.setState(this.state);
+  }
+
   render() {
     var funs = this.state.funs;
+    var paused = this.state.paused;
 
     var graphsPanels = [];
     for (var i = 0; i < funs.length; i++) {
       graphsPanels.push(
         <div key={funs[i]} className="row">
           <div className="col-md-12">
-            <Graph removeGraph={this.removeGraph.bind(this)} mfa={funs[i]}/>
+            <Graph removeGraph={this.removeGraph.bind(this)} mfa={funs[i]}
+            paused={paused}/>
           </div>
         </div>
       );

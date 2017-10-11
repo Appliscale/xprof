@@ -28,6 +28,7 @@ doc
 
 cover/
 .idea/
+.vscode/
 
 _build/
 
