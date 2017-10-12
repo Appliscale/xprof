@@ -27,6 +27,7 @@ export class CallsTableRow extends React.Component {
             </span>
           </button>
         </td>
+        <td>{item.id}</td>
         <td>{item.call_time} &micro;s</td>
         <td>{item.pid}</td>
         <td style={{ maxWidth: "500px" }}>
@@ -50,7 +51,7 @@ class CallsTable extends React.Component {
 
     this.state = {
       sortby: "id",
-      order: "desc"
+      order: "asc"
     };
   }
 
@@ -67,14 +68,26 @@ class CallsTable extends React.Component {
     console.log(this.state);
   }
 
-  sortIcon(id) {
-    if (this.state.sortby === id) {
-      const dir = (this.state.order === "asc") ? "top" : "bottom";
+  renderColumn(id, header) {
+    return (
+      <th onClick={this.onClick.bind(this, id)}>{header} {this.sortIcon(id)}</th>
+    );
+  }
 
-      return (
-        <span className={`glyphicon glyphicon-triangle-${dir}`}></span>
-      );
+  sortIcon(id) {
+    const dir = (this.state.order === "asc") ? "top" : "bottom";
+    var style = "glyphicon glyphicon-triangle-";
+
+    if (this.state.sortby === id) {
+      style += dir + " sort-active";
     }
+    else {
+      style += "bottom";
+    }
+
+    return (
+      <span className={style}></span>
+    );
   }
 
   render() {
@@ -89,10 +102,11 @@ class CallsTable extends React.Component {
         <thead>
           <tr>
             <th></th>
-            <th onClick={this.onClick.bind(this, "call_time")}>Call time{this.sortIcon("call_time")}</th>
-            <th onClick={this.onClick.bind(this, "pid")}>Pid{this.sortIcon("pid")}</th>
-            <th onClick={this.onClick.bind(this, "args")}>Function arguments{this.sortIcon("args")}</th>
-            <th onClick={this.onClick.bind(this, "res")}>Return value{this.sortIcon("res")}</th>
+            {this.renderColumn("id", "No.")}
+            {this.renderColumn("call_time", "Call time")}
+            {this.renderColumn("pid", "Pid")}
+            {this.renderColumn("args", "Function arguments")}
+            {this.renderColumn("res", "Return value")}
           </tr>
         </thead>
         <tbody>
