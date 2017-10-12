@@ -58,7 +58,8 @@ class CallsTable extends React.Component {
   onClick(id, event) {
     event.preventDefault();
 
-    const newOrder = (this.state.order === "desc") ? "asc" : "desc";
+    const changeColumn = (this.state.sortby === id);
+    const newOrder = (this.state.order === "desc" && changeColumn) ? "asc" : "desc";
 
     this.setState({
       sortby: id,
@@ -75,15 +76,12 @@ class CallsTable extends React.Component {
   }
 
   sortIcon(id) {
-    const dir = (this.state.order === "asc") ? "top" : "bottom";
-    var style = "glyphicon glyphicon-triangle-";
+    const isActive = (this.state.sortby === id);
+    const dir = (isActive && this.state.order === "asc") ? "top" : "bottom";
 
-    if (this.state.sortby === id) {
-      style += dir + " sort-active";
-    }
-    else {
-      style += "bottom";
-    }
+    const glyphiconStyle = "glyphicon glyphicon-triangle-" + dir;
+    const callTracerStyle = " call-tracer-sort-" + (isActive ? "active" : "inactive");
+    const style = glyphiconStyle + callTracerStyle;
 
     return (
       <span className={style}></span>

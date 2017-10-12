@@ -81,11 +81,12 @@ input#searchBox {
 
 /* Sort icons */
 
-.glyphicon {
+.call-tracer-sort-inactive {
   color: #c9d5d6;
   font-size: 10px;
 }
 
-.glyphicon.sort-active {
+.call-tracer-sort-active {
   color: #95a5a6;
+  font-size: 10px;
 }
