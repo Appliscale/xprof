@@ -6,7 +6,6 @@ import "bootswatch/flatly/bootstrap.css";
 
 import Graph from "./graph.jsx";
 import TracingSwitch from "./tracing_switch.jsx";
-import PauseTime from "./pause_time.jsx";
 import GraphPanel from "./graph_panel.jsx";
 import FunctionBrowser from "./function_browser.jsx";
 import Utils from "./utils.js";
@@ -54,8 +53,7 @@ class App extends React.Component {
           </div>
 
           <div className="navbar-collapse collapse" id="navbar-collapsible">
-            <PauseTime pauseTime={this.pauseTime.bind(this)}/>
-            <TracingSwitch/>
+            <TracingSwitch pauseTime={this.pauseTime.bind(this)}/>
             <FunctionBrowser ref="functionBrowser" addGraph={this.addGraph.bind(this)} language={guides.language} type={guides.type} example={guides.example} />
           </div>
         </nav>

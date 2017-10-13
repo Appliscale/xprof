@@ -4,7 +4,10 @@ import React from "react";
 export default class TracingSwitch extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { status: "paused" };
+    this.state = {
+      status: "paused",
+      pausedGraph: false
+    };
   }
 
   componentDidMount() {
@@ -16,24 +19,18 @@ export default class TracingSwitch extends React.Component {
   }
 
   handleClick(event) {
-    var spec = this.state.status === "running" ? "pause" : "all";
-
-    $.ajax({
-      url: "/api/trace_set",
-      data: { spec: spec }
-    })
-    .fail((jqXHR, textStatus, errorThrown) => console.error("Cant set tracing", errorThrown))
-    .always(() => {
-      clearTimeout(this.state.timeout);
-      this.getTracingStatus();
-    });
+    if (this.state.status === "running") {
+      this.props.pauseTime();
+      this.setState(prevState => ({ pausedGraph: !prevState.pausedGraph }));
+    }
   }
 
   getTracingStatus() {
     $.ajax({ url: "/api/trace_status" })
       .done((data) => {
-        this.state.status = data.status;
-        this.setState(this.state);
+        if (this.state.status !== data.status) {
+          this.setState(prevState => ({ status: data.status }));
+        }
       })
       .always(() =>
         this.state.timeout = window.setTimeout(this.getTracingStatus.bind(this), 1000)
@@ -45,15 +42,16 @@ export default class TracingSwitch extends React.Component {
     var btnColor = "btn btn-";
     var text = "";
     let status = this.state.status;
+    const pausedGraph = this.state.pausedGraph;
 
-    if (status === "running") {
-      text = "Pause Tracing";
-      symbol += "pause";
-      btnColor += "danger";
-    } else if (status === "paused" || status === "initialized") {
+    if (status === "paused" || status === "initialized" || pausedGraph) {
       text = "Trace All";
       symbol += "record";
       btnColor += "success";
+    } else if (status === "running") {
+      text = "Pause Time";
+      symbol += "pause";
+      btnColor += "danger";
     } else if (status === "overflow") {
       text = "Overflow! - resume trace all";
       symbol += "record";
