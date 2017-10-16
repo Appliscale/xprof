@@ -21,6 +21,9 @@
          terminate/2,
          code_change/3]).
 
+%% only for testing
+-export([trace_delivered/0]).
+
 -record(state, {trace_spec  = all,         %% trace specification
                 status      = initialized, %% tracing status
                 funs        = [],          %% functions monitored by xprof
@@ -81,6 +84,16 @@ trace(PidOrSpec) ->
 trace_status() ->
     gen_server:call(?MODULE, trace_status).
 
+%% @private
+%% @doc Only for testing - this function only returns when all trace messages
+%% have ben processed by all trace handlers
+-spec trace_delivered() -> ok.
+trace_delivered() ->
+    Ref = erlang:trace_delivered(all),
+    receive
+        {trace_delivered, all, Ref} ->
+            gen_server:call(?MODULE, sync_handlers)
+    end.
 
 %% gen_server callbacks
 
@@ -117,6 +130,11 @@ handle_call({trace, PidSpec}, _From, State) ->
 handle_call(trace_status, _From, State = #state{trace_spec=TraceSpec,
                                                 status=Status}) ->
     {reply, {TraceSpec, Status}, State};
+handle_call(sync_handlers, _From, State) ->
+    %% make a syncronous call to all handlers, this way make sure that when they
+    %% reply, they already processed all previously delivered trace messages
+    [catch sys:get_state(get_pid(MFAId)) || {MFAId, _} <- State#state.funs],
+    {reply, ok, State};
 handle_call(_Request, _From, State) ->
     {reply, ignored, State}.
 

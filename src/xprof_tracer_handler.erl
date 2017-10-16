@@ -13,6 +13,9 @@
 
 -export([trace_mfa_off/1]).
 
+%% only for testing
+-export([take_snapshot/1]).
+
 %% gen_server callbacks
 -export([init/1,
          handle_call/3,
@@ -99,6 +102,10 @@ get_captured_data(MFA, Offset) ->
             {error, not_found}
     end.
 
+-spec take_snapshot(xprof:mfa_id()) -> non_neg_integer().
+take_snapshot(MFA) ->
+    Name = xprof_lib:mfa2atom(MFA),
+    gen_server:call(Name, take_snapshot).
 
 %% gen_server callbacks
 
@@ -136,6 +143,11 @@ handle_call(capture_stop, _From, State = #state{mfa = MFA}) ->
     ets:insert(Name, {capture_spec, Id, Threshold, Count, Limit}),
     {Timeout, NewState2} = maybe_make_snapshot(NewState),
     {reply, ok, NewState2, Timeout};
+handle_call(take_snapshot, _From, State) ->
+    %% make sure a snapshot will be taken by pretending that previous one was
+    %% taken at the begining of time
+    {Timeout, NewState} = maybe_make_snapshot(State#state{last_ts = {0,0,0}}),
+    {reply, xprof_lib:now2epoch(NewState#state.last_ts), NewState, Timeout};
 handle_call(Request, _From, State) ->
     lager:warning("Received unknown message: ~p", [Request]),
     {reply, ignored, State}.

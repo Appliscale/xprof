@@ -9,7 +9,8 @@
          init_per_suite/1,
          end_per_suite/1,
          init_per_group/2,
-         end_per_group/2
+         end_per_group/2,
+         end_per_testcase/2
         ]).
 
 %% Test cases
@@ -32,6 +33,10 @@
 %% CT funs
 
 all() ->
+    [{group, all_group}].
+
+groups() ->
+    [{all_group, [{repeat_until_any_fail, 100}],
     [monitor_many_funs,
      monitor_recursive_fun,
      monitor_keep_recursive_fun,
@@ -42,10 +47,8 @@ all() ->
      capture_exception,
      capture_stop,
      long_call,
-     {group, simulate_tracing}].
-
-groups() ->
-    [{simulate_tracing, [shuffle, {repeat, 2}],
+     {group, simulate_tracing}]},
+     {simulate_tracing, [shuffle, {repeat, 2}],
       [spawner_tracing, all_tracing, pid_tracing, dead_proc_tracing]}].
 
 init_per_suite(Config) ->
@@ -56,12 +59,27 @@ end_per_suite(_Config) ->
     xprof:stop(),
     ok.
 
-init_per_group( simulate_tracing, Config) ->
+init_per_group(simulate_tracing, Config) ->
     xprof_tracer:monitor(MFA = {?MODULE, test_fun, 0}),
-    [{mfa, MFA} | Config].
+    [{mfa, MFA}, {demonitor, false} | Config];
+init_per_group(_, Config) ->
+    Config.
 
 end_per_group( simulate_tracing, Config) ->
-    xprof_tracer:demonitor(?config(mfa, Config)).
+    xprof_tracer:demonitor(?config(mfa, Config));
+end_per_group(_, Config) ->
+    Config.
+
+end_per_testcase(_, Config) ->
+    case ?config(demonitor, Config, true) of
+        true ->
+            %% ensure the test case left no function monitored
+            [xprof_tracer:demonitor(MFAId)
+             || {MFAId, _} <- xprof_tracer:all_monitored()],
+            Config;
+        _ ->
+            Config
+    end.
 
 %% test cases
 
@@ -75,16 +93,18 @@ basic_tracing(PidSpec, Config) ->
     ok = xprof_tracer:trace(PidSpec),
     ?assertMatch({PidSpec, running}, xprof_tracer:trace_status()),
 
-    Last = get_print_current_time(),
+    MFA = ?config(mfa, Config),
 
     test_fun(),
     test_fun(),
+    SnapshotTS = ensure_data(MFA),
+    test_fun(),
+    test_fun(),
+    %% have to wait 1 second as the key of data is epoch in seconds
+    %% so there can only be one data entry per second :(
     ct:sleep(1000),
-    test_fun(),
-    test_fun(),
-    ct:sleep(2000),
 
-    Values = xprof_tracer:data(?config(mfa, Config), Last),
+    Values = xprof_tracer:data(MFA, SnapshotTS - 1),
 
     [Items1,Items2|_] = Values,
     ?assert(0 =< proplists:get_value(count, Items1)),
@@ -100,16 +120,18 @@ spawner_tracing(Config) ->
     ?assertMatch({{spawner, _Pid, 1.0}, running},
                  xprof_tracer:trace_status()),
 
-    Last = get_print_current_time(),
+    MFA = ?config(mfa, Config),
 
     spawn_test_fun(),
     spawn_test_fun(),
+    SnapshotTS = ensure_data(MFA),
+    spawn_test_fun(),
+    spawn_test_fun(),
+    %% have to wait 1 second as the key of data is epoch in seconds
+    %% so there can only be one data entry per second :(
     ct:sleep(1000),
-    spawn_test_fun(),
-    spawn_test_fun(),
-    ct:sleep(2000),
 
-    Values = xprof_tracer:data(?config(mfa, Config), Last),
+    Values = xprof_tracer:data(?config(mfa, Config), SnapshotTS - 1),
 
     [Items1, Items2|_] = Values,
     ?assert(0 =< proplists:get_value(count, Items1)),
@@ -137,14 +159,12 @@ monitor_crashing_fun(_Config) ->
     xprof_tracer:monitor(MFA = {?MODULE, maybe_crash_test_fun, 1}),
     ok = xprof_tracer:trace(self()),
 
-    Last = get_print_current_time(),
-
     maybe_crash_test_fun(false),
     catch maybe_crash_test_fun(true),
     maybe_crash_test_fun(false),
-    ct:sleep(2000),
+    SnapshotTS = ensure_data(MFA),
 
-    Items = xprof_tracer:data(MFA, Last - 1),
+    Items = xprof_tracer:data(MFA, SnapshotTS - 1),
     %% it is possible that the 3 function calls are spread
     %% across multiple snapshots
     ?assertEqual(3, lists:sum([proplists:get_value(count, Item)
@@ -183,14 +203,12 @@ monitor_recursive_fun(_Config) ->
     xprof_tracer:monitor(MFA = {?MODULE, recursive_test_fun, 1}),
     ok = xprof_tracer:trace(self()),
 
-    Last = get_print_current_time(),
-
     recursive_test_fun(10),
-    ct:sleep(1000),
+    SnapshotTS = ensure_data(MFA),
 
     %% although the function was called 10 times recursively
     %% only 1 sample is recorded
-    [Items1|_] = xprof_tracer:data(MFA, Last),
+    [Items1|_] = xprof_tracer:data(MFA, SnapshotTS - 1),
     ?assertEqual(1, proplists:get_value(count, Items1)),
 
     %% the duration of the outermost call is at least 100 ms
@@ -205,13 +223,11 @@ monitor_keep_recursive_fun(_Config) ->
     xprof_tracer:monitor(MFA = {?MODULE, recursive_test_fun, 1}),
     ok = xprof_tracer:trace(self()),
 
-    Last = get_print_current_time(),
-
     recursive_test_fun(10),
-    ct:sleep(1000),
+    SnapshotTS = ensure_data(MFA),
 
     %% all 10 samples are recorded
-    [Items1|_] = xprof_tracer:data(MFA, Last),
+    [Items1|_] = xprof_tracer:data(MFA, SnapshotTS - 1),
     ?assertEqual(10, proplists:get_value(count, Items1)),
 
     %% the duration of the innermost call is around 10 ms
@@ -230,15 +246,13 @@ monitor_ms(_Config) ->
 
     ok = xprof_tracer:trace(self()),
 
-    Last = get_print_current_time(),
-
     test_fun(10),
     test_fun(2),
-    ct:sleep(1000),
+    SnapshotTS = ensure_data(MFA),
 
     %% although the function was called 2 times
     %% only the second call matched the match-spec
-    [Items1|_] = xprof_tracer:data(MFA, Last),
+    [Items1|_] = xprof_tracer:data(MFA, SnapshotTS - 1),
     ?assertEqual(1, proplists:get_value(count, Items1)),
 
     %% only one instance of MF (of any arity) can be monitored at once
@@ -262,7 +276,7 @@ capture_args_res(_Config) ->
     test_fun(10),
     test_fun(33),
 
-    ct:sleep(10), %% Let trace messages reach the process
+    ensure_data(MFA), %% Let trace messages reach the process
 
     {ok, {Id, 20, 3, 3}, [Item1, Item2]} =
         xprof_tracer_handler:get_captured_data(MFA,0),
@@ -274,7 +288,7 @@ capture_args_res(_Config) ->
     test_fun(7),
     test_fun(40),
 
-    ct:sleep(10), %% Let trace messages reach the process
+    ensure_data(MFA), %% Let trace messages reach the process
 
     {ok, {Id, 20, 3, 3}, [Item3]} = xprof_tracer_handler:get_captured_data(MFA, 2),
     ?assertMatch([_Num, _Pid, _Time, [40], {return_from, {res, 40}}], Item3),
@@ -307,7 +321,7 @@ capture_args_ms(_Config) ->
     test_fun(33),
     test_fun(40),
 
-    ct:sleep(10), %% Let trace messages reach the process
+    ensure_data(MFA), %% Let trace messages reach the process
 
     {ok, {Id, 20, 2, 2}, [Item1, Item2]} =
         xprof_tracer_handler:get_captured_data(MFA,0),
@@ -329,7 +343,7 @@ capture_exception(_Config) ->
 
     catch maybe_crash_test_fun(true),
 
-    ct:sleep(10), %% Let trace messages reach the process
+    ensure_data(MFA), %% Let trace messages reach the process
 
     {ok, {Id, 1, 3, 3}, [Item1]} =
         xprof_tracer_handler:get_captured_data(MFA,0),
@@ -352,7 +366,7 @@ capture_stop(_Config) ->
     test_fun(10),
     test_fun(33),
 
-    ct:sleep(10), %% Let trace messages reach the process
+    ensure_data(MFA), %% Let trace messages reach the process
 
     {ok, {Id, 20, 5, 5}, [Item1, Item2]} =
         xprof_tracer_handler:get_captured_data(MFA, 0),
@@ -377,17 +391,15 @@ capture_stop(_Config) ->
 long_call(_Config) ->
     application:set_env(xprof, max_duration, 100),
 
-    xprof_tracer:monitor(MFA = {?MODULE, test_fun, 1}),
+    ok = xprof_tracer:monitor(MFA = {?MODULE, test_fun, 1}),
     ok = xprof_tracer:trace(self()),
     {ok, Id} = xprof_tracer_handler:capture(MFA, 50, 1),
 
-    Last = get_print_current_time(),
-
     test_fun(20),
     test_fun(200),
-    ct:sleep(1000),
+    SnapshotTS = ensure_data(MFA),
 
-    [StatsItems|_] = xprof_tracer:data(MFA, Last),
+    [StatsItems|_] = xprof_tracer:data(MFA, SnapshotTS - 1),
     %% both calls should be recorded
     ?assertEqual(2, proplists:get_value(count, StatsItems)),
 
@@ -422,7 +434,10 @@ test_fun(Time) ->
     {res, Time}.
 
 spawn_test_fun() ->
-    spawn(fun() -> test_fun() end).
+    {Pid, Ref} = spawn_monitor(fun() -> test_fun() end),
+    receive
+        {'DOWN', Ref, _, Pid, _} -> ok
+    end.
 
 recursive_test_fun(1) ->
     timer:sleep(10),
@@ -437,8 +452,7 @@ maybe_crash_test_fun(true) ->
     timer:sleep(10),
     throw(test_crash).
 
-get_print_current_time() ->
-    {MS,S,_} = os:timestamp(),
-    Last = MS * 1000000 + S,
-    ct:pal("Time before test: ~p", [Last]),
-    Last.
+ensure_data(MFA) ->
+    %% make sure all events are processed and then take a snapshot
+    xprof_tracer:trace_delivered(),
+    _SnapshotTS = xprof_tracer_handler:take_snapshot(MFA).
