@@ -1,4 +1,4 @@
-import "underscore";
+import _ from "underscore";
 import React from "react";
 
 export class CallsTableRow extends React.Component {
@@ -45,7 +45,7 @@ export class CallsTableRow extends React.Component {
   }
 }
 
-class CallsTable extends React.Component {
+export class CallsTable extends React.Component {
   constructor(props) {
     super(props);
 
@@ -65,8 +65,6 @@ class CallsTable extends React.Component {
       sortby: id,
       order: newOrder
     });
-
-    console.log(this.state);
   }
 
   renderColumn(id, header) {
@@ -324,7 +322,7 @@ export default class CallsTracer extends React.Component {
             </span>
           </form>
         </div>
-        <CallsTable items={this.state.items} orderby={this.state.orderby}/>
+        <CallsTable items={this.state.items} />
       </div>
     );
   }
