@@ -58,8 +58,8 @@ export class CallsTable extends React.Component {
   onClick(id, event) {
     event.preventDefault();
 
-    const changeColumn = (this.state.sortby === id);
-    const newOrder = (this.state.order === "desc" && changeColumn) ? "asc" : "desc";
+    const isColumnActive = (this.state.sortby === id);
+    const newOrder = (this.state.order === "desc" && isColumnActive) ? "asc" : "desc";
 
     this.setState({
       sortby: id,
