@@ -118,12 +118,8 @@ export default class CallsTracer extends React.Component {
     };
   }
 
-  componentDidMount() {
-    this.getCaptureData();
-  }
-
   componentWillUnmount() {
-    clearTimeout(this.state.timeoutRef);
+    this.handleCaptureStop();
   }
 
   handleCaptureStart() {
@@ -157,42 +153,44 @@ export default class CallsTracer extends React.Component {
   }
 
   getCaptureData() {
-    var mfa = this.props.mfa;
+    if (this.Status.RUNNING) {
+      var mfa = this.props.mfa;
 
-    $.ajax({
-      url: "/api/capture_data",
-      data: {
-        mod: mfa[0], fun: mfa[1], arity: mfa[2],
-        offset: this.state.offset
-      }
-    }).done(function(data, textStatus, jqXHR) {
-      if (jqXHR.status === 200) {
-        if (this.state.capture_id !== data.capture_id) {
-          this.state.items = [];
-          this.state.offset = 0;
+      $.ajax({
+        url: "/api/capture_data",
+        data: {
+          mod: mfa[0], fun: mfa[1], arity: mfa[2],
+          offset: this.state.offset
+        }
+      }).done(function(data, textStatus, jqXHR) {
+        if (jqXHR.status === 200) {
+          if (this.state.capture_id !== data.capture_id) {
+            this.state.items = [];
+            this.state.offset = 0;
 
-          if (data.threshold > 0) {
-            this.state.threshold_value = data.threshold;
+            if (data.threshold > 0) {
+              this.state.threshold_value = data.threshold;
+            }
+
+            if (data.limit > 0) {
+              this.state.limit_value = data.limit;
+            }
+          } else {
+            const sortedItems = data.items.sort();
+            const lastId = sortedItems.length === 0 ? this.state.offset : _.last(sortedItems).id;
+            this.state.offset = lastId;
+            this.state.items = this.state.items.concat(sortedItems);
           }
 
-          if (data.limit > 0) {
-            this.state.limit_value = data.limit;
-          }
-        } else {
-          const sortedItems = data.items.sort();
-          const lastId = sortedItems.length === 0 ? this.state.offset : _.last(sortedItems).id;
-          this.state.offset = lastId;
-          this.state.items = this.state.items.concat(sortedItems);
+          this.state.capture_id = data.capture_id;
+          this.state.status = data.has_more ? this.Status.RUNNING : this.Status.STOPPED;
+
         }
 
-        this.state.capture_id = data.capture_id;
-        this.state.status = data.has_more ? this.Status.RUNNING : this.Status.STOPPED;
-
-      }
-
-      this.state.timeoutRef = setTimeout(this.getCaptureData.bind(this), 750);
-      this.setState(this.state);
-    }.bind(this));
+        setTimeout(this.getCaptureData.bind(this), 750);
+        this.setState(this.state);
+      }.bind(this));
+    }
   }
 
   handleChange(id, event) {

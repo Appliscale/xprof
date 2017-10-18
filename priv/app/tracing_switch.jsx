@@ -6,7 +6,6 @@ export default class TracingSwitch extends React.Component {
     super(props);
     this.state = {
       status: "paused",
-      pausedGraph: false
     };
   }
 
@@ -19,17 +18,24 @@ export default class TracingSwitch extends React.Component {
   }
 
   handleClick(event) {
-    if (this.state.status === "running") {
-      this.props.pauseTime();
-      this.setState(prevState => ({ pausedGraph: !prevState.pausedGraph }));
-    }
+    var spec = this.state.status === "running" ? "pause" : "all";
+    $.ajax({
+      url: "/api/trace_set",
+      data: { spec: spec }
+    })
+      .fail((jqXHR, textStatus, errorThrown) => console.error("Cant set tracing", errorThrown))
+      .always(() => {
+        clearTimeout(this.state.timeout);
+        this.props.pauseTime();
+        this.getTracingStatus();
+      });
   }
 
   getTracingStatus() {
     $.ajax({ url: "/api/trace_status" })
       .done((data) => {
         if (this.state.status !== data.status) {
-          this.setState(prevState => ({ status: data.status }));
+          this.setState(({ status: data.status }));
         }
       })
       .always(() =>
@@ -42,9 +48,8 @@ export default class TracingSwitch extends React.Component {
     var btnColor = "btn btn-";
     var text = "";
     let status = this.state.status;
-    const pausedGraph = this.state.pausedGraph;
 
-    if (status === "paused" || status === "initialized" || pausedGraph) {
+    if (status === "paused" || status === "initialized") {
       text = "Trace All";
       symbol += "record";
       btnColor += "success";

@@ -20,7 +20,6 @@ export default class GraphPanel extends React.Component {
   }
 
   // Getting data
-
   startMonitoring(query) {
     $.ajax({
       url: "/api/mon_start",
@@ -53,8 +52,9 @@ export default class GraphPanel extends React.Component {
   }
 
   handleFuns(data) {
-    this.state.funs = data;
-    this.setState(this.state);
+    if (this.state.funs.length !== data.length) {
+      this.setState({ funs: data });
+    }
     window.setTimeout(this.getFunsList.bind(this), 500);
   }
 
@@ -63,8 +63,7 @@ export default class GraphPanel extends React.Component {
   }
 
   pauseTime() {
-    this.state.paused = !this.state.paused;
-    this.setState(this.state);
+    this.setState({ paused: !this.state.paused });
   }
 
   render() {
