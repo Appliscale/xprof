@@ -140,10 +140,6 @@ export default class CallsTracer extends React.Component {
     this.handleCaptureCall = this.handleCaptureCall.bind(this);
   }
 
-  componentWillUnmount() {
-    this.handleCaptureStop();
-  }
-
   handleCaptureStart() {
     let mfa = this.props.mfa;
     let threshold = this.state.threshold_value;
@@ -175,7 +171,7 @@ export default class CallsTracer extends React.Component {
   }
 
   getCaptureData() {
-    if (this.Status.RUNNING) {
+    if (this.state.status === this.Status.RUNNING) {
       var mfa = this.props.mfa;
 
       $.ajax({
@@ -288,9 +284,12 @@ export default class CallsTracer extends React.Component {
               </div>
             </div>
             <span>
-              <StartStopButton disabled={buttonDisabled} started={started}
+              <StartStopButton
+                disabled={buttonDisabled}
+                started={started}
                 onStart={this.handleCaptureStart}
-                onStop={this.handleCaptureStop}/>
+                onStop={this.handleCaptureStop}
+              />
             </span>
           </form>
         </div>

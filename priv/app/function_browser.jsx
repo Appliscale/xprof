@@ -12,6 +12,7 @@ class ACModal extends React.Component {
       position: -1
     };
     this.cleared = false;
+    this.handleFunClick = this.handleFunClick.bind(this);
   }
 
   componentDidUpdate() {
@@ -40,7 +41,7 @@ class ACModal extends React.Component {
     this.setState(this.state);
   }
 
-  handleFunClick(query, e) {
+  handleFunClick(query) {
     this.props.addGraph(query);
   }
 
@@ -79,8 +80,11 @@ class ACModal extends React.Component {
       }
 
       rows.push(
-        <tr className={highlightClass} key={mfas[i]}
-            onClick={this.handleFunClick.bind(this, mfas[i])}>
+        <tr
+          className={highlightClass}
+          key={mfas[i]}
+          onClick={this.handleFunClick}
+        >
           <td>{mfas[i]}</td>
         </tr>);
     }
