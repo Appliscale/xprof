@@ -9,14 +9,14 @@ export default class GraphPanel extends React.Component {
       funs: [],
       paused: false
     };
+    this.removeGraph = this.removeGraph.bind(this);
+    this.getFunsList = this.getFunsList.bind(this);
+    this.handleFuns = this.handleFuns.bind(this);
+    this.handleFunsError = this.handleFunsError.bind(this);
   }
 
   componentDidMount() {
-    this.funsInterval = window.setTimeout(this.getFunsList.bind(this), 500);
-  }
-
-  componentWillUnmount() {
-    window.clearTimeout(this.interval);
+    window.setTimeout(this.getFunsList, 500);
   }
 
   // Getting data
@@ -47,19 +47,19 @@ export default class GraphPanel extends React.Component {
     $.ajax({
       url: "/api/mon_get_all" }
     )
-      .done(this.handleFuns.bind(this))
-      .fail(this.handleFunsError.bind(this));
+      .done(this.handleFuns)
+      .fail(this.handleFunsError);
   }
 
   handleFuns(data) {
     if (this.state.funs.length !== data.length) {
       this.setState({ funs: data });
     }
-    window.setTimeout(this.getFunsList.bind(this), 500);
+    window.setTimeout(this.getFunsList, 500);
   }
 
   handleFunsError(jqXHR, error) {
-    window.setTimeout(this.getFunsList.bind(this), 1000);
+    window.setTimeout(this.getFunsList, 1000);
   }
 
   pauseTime() {
@@ -75,8 +75,11 @@ export default class GraphPanel extends React.Component {
       graphsPanels.push(
         <div key={funs[i]} className="row">
           <div className="col-md-12">
-            <Graph removeGraph={this.removeGraph.bind(this)} mfa={funs[i]}
-            paused={paused}/>
+            <Graph
+              removeGraph={this.removeGraph}
+              mfa={funs[i]}
+              paused={paused}
+            />
           </div>
         </div>
       );

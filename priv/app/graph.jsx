@@ -15,10 +15,14 @@ export default class Graph extends React.Component {
   constructor(props) {
     super(props);
     this.state = { dps: [], error: false, lastTs: 0, unomunted: true, columns: [] };
+    this.handleClose = this.handleClose.bind(this);
+    this.getData = this.getData.bind(this);
+    this.handleData = this.handleData.bind(this);
+    this.handleDataError = this.handleDataError.bind(this);
   }
 
   componentDidMount() {
-    var ref = setInterval(this.getData.bind(this), UPDATE_INTERVAL);
+    var ref = setInterval(this.getData, UPDATE_INTERVAL);
     var newState = this.state;
 
     this.state.interval = ref;
@@ -105,7 +109,7 @@ export default class Graph extends React.Component {
     return (
       <div className={panelType}>
         <div className="panel-heading">
-          <button onClick={this.handleClose.bind(this)} type="button"
+          <button onClick={this.handleClose} type="button"
                   className="close" data-dismiss="modal"
                   aria-label="Close"><span aria-hidden="true">&times;</span>
           </button>
@@ -147,8 +151,8 @@ export default class Graph extends React.Component {
           arity: mfa[2],
           last_ts: lastTs }
       })
-        .done(this.handleData.bind(this))
-        .fail(this.handleDataError.bind(this));
+        .done(this.handleData)
+        .fail(this.handleDataError);
     }
   }
 

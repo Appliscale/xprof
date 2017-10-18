@@ -110,6 +110,9 @@ export default class FunctionBrowser extends React.Component {
   constructor(props) {
     super(props);
     this.state = { value: "" };
+    this.funsSuccess = this.funsSuccess.bind(this);
+    this.handleKeyDown = this.handleKeyDown.bind(this);
+    this.handleChange = this.handleChange.bind(this);
   }
 
   checkInput(input) {
@@ -167,7 +170,7 @@ export default class FunctionBrowser extends React.Component {
     this.setState({ value: event.target.value });
 
     if (event.target.value !== "") {
-      $.getJSON("/api/funs", { query: event.target.value }, this.funsSuccess.bind(this));
+      $.getJSON("/api/funs", { query: event.target.value }, this.funsSuccess);
     } else {
       this.refs.acm.displayFuns([]);
     }
@@ -239,8 +242,8 @@ export default class FunctionBrowser extends React.Component {
               <input id="searchBox" ref="searchBox" type="text" className="form-control"
                      placeholder={prompt}
                      aria-describedby="sizing-addon3"
-                     autoComplete="off" value={value} onKeyDown={this.handleKeyDown.bind(this)}
-                     onChange={this.handleChange.bind(this)} autoFocus="autofocus"/>
+                     autoComplete="off" value={value} onKeyDown={this.handleKeyDown}
+                     onChange={this.handleChange} autoFocus="autofocus"/>
               <ACModal ref="acm" addGraph={this.props.addGraph}></ACModal>
           </div>
         </div>

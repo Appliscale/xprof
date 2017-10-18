@@ -5,6 +5,7 @@ export class CallsTableRow extends React.Component {
   constructor(props) {
     super(props);
     this.state = { expanded: false };
+    this.handleClick = this.handleClick.bind(this);
   }
 
   handleClick(e) {
@@ -20,7 +21,7 @@ export class CallsTableRow extends React.Component {
     return (
       <tr data-expanded={this.state.expanded} className={`row-${rowType}`}>
         <td>
-          <button onClick={this.handleClick.bind(this)} type="button"
+          <button onClick={this.handleClick} type="button"
             className="btn btn-default">
             <span className={`expand-chevron glyphicon glyphicon-chevron-${dir}`}
               aria-hidden="true">
@@ -45,6 +46,10 @@ export class CallsTableRow extends React.Component {
 }
 
 class CallsTable extends React.Component {
+  shouldComponentUpdate(nextProps, nextState) {
+    return this.props.items.length !== nextProps.items.length;
+  }
+
   render() {
     return (
       <table className="table table-hover table-striped">
@@ -68,6 +73,16 @@ class CallsTable extends React.Component {
 }
 
 class StartStopButton extends React.Component {
+  constructor(props) {
+    super(props);
+    this.onClick = this.onClick.bind(this);
+  }
+
+  shouldComponentUpdate(nextProps, nextState) {
+    return this.props.disabled !== nextProps.disabled ||
+      this.props.started !== nextProps.started;
+  }
+
   onClick(e) {
     e.preventDefault();
 
@@ -86,14 +101,14 @@ class StartStopButton extends React.Component {
 
     if (started) {
       return (
-        <button type="submit" onClick={this.onClick.bind(this)}
+        <button type="submit" onClick={this.onClick}
           className="btn btn-danger" disabled={disabled}>
           Stop
         </button>
       );
     } else {
       return (
-        <button type="submit" onClick={this.onClick.bind(this)}
+        <button type="submit" onClick={this.onClick}
           className="btn btn-success" disabled={disabled}>
           Start
         </button>
@@ -116,6 +131,13 @@ export default class CallsTracer extends React.Component {
       limit_value: null,
       status: this.Status.STOPPED
     };
+
+    this.handleCaptureStart = this.handleCaptureStart.bind(this);
+    this.handleCaptureStop = this.handleCaptureStop.bind(this);
+    this.handleChangeTreshold = this.handleChange.bind(this, "threshold");
+    this.handleChangeLimit = this.handleChange.bind(this, "limit");
+    this.getCaptureData = this.getCaptureData.bind(this);
+    this.handleCaptureCall = this.handleCaptureCall.bind(this);
   }
 
   componentWillUnmount() {
@@ -162,35 +184,35 @@ export default class CallsTracer extends React.Component {
           mod: mfa[0], fun: mfa[1], arity: mfa[2],
           offset: this.state.offset
         }
-      }).done(function(data, textStatus, jqXHR) {
-        if (jqXHR.status === 200) {
-          if (this.state.capture_id !== data.capture_id) {
-            this.state.items = [];
-            this.state.offset = 0;
+      }).done(this.handleCaptureCall);
+    }
+  }
 
-            if (data.threshold > 0) {
-              this.state.threshold_value = data.threshold;
-            }
+  handleCaptureCall(data, textStatus, jqXHR) {
+    if (jqXHR.status === 200) {
+      if (this.state.capture_id !== data.capture_id) {
+        this.state.items = [];
+        this.state.offset = 0;
 
-            if (data.limit > 0) {
-              this.state.limit_value = data.limit;
-            }
-          } else {
-            const sortedItems = data.items.sort();
-            const lastId = sortedItems.length === 0 ? this.state.offset : _.last(sortedItems).id;
-            this.state.offset = lastId;
-            this.state.items = this.state.items.concat(sortedItems);
-          }
-
-          this.state.capture_id = data.capture_id;
-          this.state.status = data.has_more ? this.Status.RUNNING : this.Status.STOPPED;
-
+        if (data.threshold > 0) {
+          this.state.threshold_value = data.threshold;
         }
 
-        setTimeout(this.getCaptureData.bind(this), 750);
-        this.setState(this.state);
-      }.bind(this));
+        if (data.limit > 0) {
+          this.state.limit_value = data.limit;
+        }
+      } else {
+        const sortedItems = data.items.sort();
+        const lastId = sortedItems.length === 0 ? this.state.offset : _.last(sortedItems).id;
+        this.state.offset = lastId;
+        this.state.items = this.state.items.concat(sortedItems);
+      }
+
+      this.state.capture_id = data.capture_id;
+      this.state.status = data.has_more ? this.Status.RUNNING : this.Status.STOPPED;
     }
+    setTimeout(this.getCaptureData, 750);
+    this.setState(this.state);
   }
 
   handleChange(id, event) {
@@ -245,7 +267,7 @@ export default class CallsTracer extends React.Component {
                 <input ref="thresholdInput" type="text" className="form-control"
                   id="tresholdInput" placeholder={"0 - 1000000"}
                   value={this.state.threshold_value || ""}
-                  onChange={this.handleChange.bind(this, "threshold")}
+                  onChange={this.handleChangeTreshold}
                   disabled={started}/>
                 </span>
                 <div className="input-group-addon">ms</div>
@@ -259,7 +281,7 @@ export default class CallsTracer extends React.Component {
                 <input ref="limitInput" type="text" className="form-control"
                   id="limitInput" placeholder={"1 - 100"}
                   value={this.state.limit_value || ""}
-                  onChange={this.handleChange.bind(this, "limit")}
+                  onChange={this.handleChangeLimit}
                   disabled={started}/>
                 </span>
                 <div className="input-group-addon">calls</div>
@@ -267,8 +289,8 @@ export default class CallsTracer extends React.Component {
             </div>
             <span>
               <StartStopButton disabled={buttonDisabled} started={started}
-                onStart={this.handleCaptureStart.bind(this)}
-                onStop={this.handleCaptureStop.bind(this)}/>
+                onStart={this.handleCaptureStart}
+                onStop={this.handleCaptureStop}/>
             </span>
           </form>
         </div>

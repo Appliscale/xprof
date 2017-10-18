@@ -18,7 +18,12 @@ class App extends React.Component {
       mode: null
     };
 
-    $.getJSON("/api/mode", {}, this.modeSuccess.bind(this));
+    this.modeSuccess = this.modeSuccess.bind(this);
+    this.addGraph = this.addGraph.bind(this);
+    this.clearFunctionBrowser = this.clearFunctionBrowser.bind(this);
+    this.pauseTime = this.pauseTime.bind(this);
+
+    $.getJSON("/api/mode", {}, this.modeSuccess);
   }
 
   modeSuccess(data) {
@@ -53,11 +58,17 @@ class App extends React.Component {
           </div>
 
           <div className="navbar-collapse collapse" id="navbar-collapsible">
-            <TracingSwitch pauseTime={this.pauseTime.bind(this)}/>
-            <FunctionBrowser ref="functionBrowser" addGraph={this.addGraph.bind(this)} language={guides.language} type={guides.type} example={guides.example} />
+            <TracingSwitch pauseTime={this.pauseTime}/>
+            <FunctionBrowser
+              ref="functionBrowser"
+              addGraph={this.addGraph}
+              language={guides.language}
+              type={guides.type}
+              example={guides.example}
+            />
           </div>
         </nav>
-        <GraphPanel ref="graphPanel" clearFunctionBrowser={this.clearFunctionBrowser.bind(this)}/>
+        <GraphPanel ref="graphPanel" clearFunctionBrowser={this.clearFunctionBrowser}/>
       </div>
     );
   }
