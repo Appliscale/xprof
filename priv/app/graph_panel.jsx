@@ -62,7 +62,7 @@ export default class GraphPanel extends React.Component {
     window.setTimeout(this.getFunsList, 1000);
   }
 
-  pauseTime() {
+  toggleTimeOnGraph() {
     this.setState({ paused: !this.state.paused });
   }
 

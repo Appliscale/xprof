@@ -21,7 +21,7 @@ class App extends React.Component {
     this.modeSuccess = this.modeSuccess.bind(this);
     this.addGraph = this.addGraph.bind(this);
     this.clearFunctionBrowser = this.clearFunctionBrowser.bind(this);
-    this.pauseTime = this.pauseTime.bind(this);
+    this.toggleTimeOnGraph = this.toggleTimeOnGraph.bind(this);
 
     $.getJSON("/api/mode", {}, this.modeSuccess);
   }
@@ -41,8 +41,8 @@ class App extends React.Component {
     this.refs.functionBrowser.clear();
   }
 
-  pauseTime() {
-    this.refs.graphPanel.pauseTime();
+  toggleTimeOnGraph() {
+    this.refs.graphPanel.toggleTimeOnGraph();
   }
 
   render() {
@@ -58,7 +58,7 @@ class App extends React.Component {
           </div>
 
           <div className="navbar-collapse collapse" id="navbar-collapsible">
-            <TracingSwitch pauseTime={this.pauseTime}/>
+            <TracingSwitch toggleTimeOnGraph={this.toggleTimeOnGraph}/>
             <FunctionBrowser
               ref="functionBrowser"
               addGraph={this.addGraph}
