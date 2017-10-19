@@ -6,6 +6,7 @@ export default class TracingSwitch extends React.Component {
     super(props);
     this.state = {
       status: "paused",
+      paused: false,
     };
   }
 
@@ -26,16 +27,30 @@ export default class TracingSwitch extends React.Component {
       .fail((jqXHR, textStatus, errorThrown) => console.error("Cant set tracing", errorThrown))
       .always(() => {
         clearTimeout(this.state.timeout);
-        this.props.pauseTime();
         this.getTracingStatus();
       });
   }
 
   getTracingStatus() {
-    $.ajax({ url: "/api/trace_status" })
+    $.ajax({
+      url: "/api/trace_status"
+    })
       .done((data) => {
         if (this.state.status !== data.status) {
-          this.setState(({ status: data.status }));
+          const shouldPause = data.status !== "running";
+          this.setState((prevState, props) => {
+            let newState = {};
+            if (prevState.paused !== shouldPause) {
+              props.toggleTimeOnGraph();
+              newState = {
+                status: data.status,
+                paused: shouldPause,
+              };
+            } else {
+              newState = { status: data.status };
+            }
+            return newState;
+          });
         }
       })
       .always(() =>
@@ -49,14 +64,14 @@ export default class TracingSwitch extends React.Component {
     var text = "";
     let status = this.state.status;
 
-    if (status === "paused" || status === "initialized") {
-      text = "Trace All";
-      symbol += "record";
-      btnColor += "success";
-    } else if (status === "running") {
+    if (status === "running") {
       text = "Pause Time";
       symbol += "pause";
       btnColor += "danger";
+    } else if (status === "paused" || status === "initialized") {
+      text = "Trace All";
+      symbol += "record";
+      btnColor += "success";
     } else if (status === "overflow") {
       text = "Overflow! - resume trace all";
       symbol += "record";

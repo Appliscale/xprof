@@ -36,8 +36,8 @@ class App extends React.Component {
     this.refs.functionBrowser.clear();
   }
 
-  pauseTime() {
-    this.refs.graphPanel.pauseTime();
+  toggleTimeOnGraph() {
+    this.refs.graphPanel.toggleTimeOnGraph();
   }
 
   render() {
@@ -53,7 +53,7 @@ class App extends React.Component {
           </div>
 
           <div className="navbar-collapse collapse" id="navbar-collapsible">
-            <TracingSwitch pauseTime={this.pauseTime.bind(this)}/>
+            <TracingSwitch toggleTimeOnGraph={this.toggleTimeOnGraph.bind(this)}/>
             <FunctionBrowser ref="functionBrowser" addGraph={this.addGraph.bind(this)} language={guides.language} type={guides.type} example={guides.example} />
           </div>
         </nav>
