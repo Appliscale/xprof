@@ -1,7 +1,7 @@
-Project has been bootstraped with package Create React App (create-react-app@1.4.1).
+Project has been bootstraped using Create React App npm package (create-react-app@1.4.1).
 Following changes has been made comparing to the generated app:
 - `npm run eject`
-- [airbnb](https://github.com/airbnb/javascript/tree/master/packages/eslint-config-airbnb) eslint configuration,
+- [airbnb](https://github.com/airbnb/javascript/tree/master/packages/eslint-config-airbnb) eslint configuration instead of [react-app](https://github.com/facebookincubator/create-react-app/tree/master/packages/eslint-config-react-app)
 ```
 "eslintConfig": {
   "extends": "airbnb",
@@ -20,7 +20,7 @@ Following changes has been made comparing to the generated app:
   }
 }
 ```
-- prettier style formater with Facebook style,
+- [prettier](https://github.com/prettier/prettier) style formater configured on Facebook style,
 ```
 "prettier/prettier": ["warn", {
   "singleQuote": true,
