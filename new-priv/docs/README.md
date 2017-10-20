@@ -1,8 +1,8 @@
 Project has been bootstraped using Create React App npm package (create-react-app@1.4.1).
 Following changes has been made comparing to the generated app:
 - `npm run eject`
-- [airbnb](https://github.com/airbnb/javascript/tree/master/packages/eslint-config-airbnb) eslint configuration instead of [react-app](https://github.com/facebookincubator/create-react-app/tree/master/packages/eslint-config-react-app)
-```
+- [airbnb](https://github.com/airbnb/javascript/tree/master/packages/eslint-config-airbnb) eslint configuration instead of [react-app](https://github.com/facebookincubator/create-react-app/tree/master/packages/eslint-config-react-app). Airbnb rules are much stricter than rules provided by eslint-config-react-app.
+```js
 "eslintConfig": {
   "extends": "airbnb",
   "plugins": [
@@ -21,7 +21,7 @@ Following changes has been made comparing to the generated app:
 }
 ```
 - [prettier](https://github.com/prettier/prettier) style formater configured on Facebook style,
-```
+```js
 "prettier/prettier": ["warn", {
   "singleQuote": true,
   "trailingComma": "all",
@@ -31,7 +31,7 @@ Following changes has been made comparing to the generated app:
 }]
 ```
 - pre-commit script which performs formatting of the code to match style set by prettier config, next run eslint and try to fix problems which can be auto-fixed. If error happens developer needs to fix all problems manually before he will be able to commit.
-```
+```js
 "scripts": {
   "precommit": "lint-staged"
 },
