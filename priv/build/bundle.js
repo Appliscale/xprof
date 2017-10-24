@@ -245,14 +245,16 @@ webpackJsonp([0],[
 	        var mfa = this.props.mfa;
 	        var lastTs = this.state.lastTs;
 	
-	        $.ajax({
-	          url: "/api/data",
-	          data: {
-	            mod: mfa[0],
-	            fun: mfa[1],
-	            arity: mfa[2],
-	            last_ts: lastTs }
-	        }).done(this.handleData.bind(this)).fail(this.handleDataError.bind(this));
+	        if (!this.props.paused) {
+	          $.ajax({
+	            url: "/api/data",
+	            data: {
+	              mod: mfa[0],
+	              fun: mfa[1],
+	              arity: mfa[2],
+	              last_ts: lastTs }
+	          }).done(this.handleData.bind(this)).fail(this.handleDataError.bind(this));
+	        }
 	      }
 	
 	      return getData;
@@ -36162,16 +36164,18 @@ webpackJsonp([0],[
   \*****************************/
 /***/ function(module, exports, __webpack_require__) {
 
-	/* WEBPACK VAR INJECTION */(function($, _) {"use strict";
+	/* WEBPACK VAR INJECTION */(function($) {"use strict";
 	
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
-	exports.CallsTableRow = undefined;
+	exports.CallsTable = exports.CallsTableRow = undefined;
 	
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 	
-	__webpack_require__(/*! underscore */ 3);
+	var _underscore = __webpack_require__(/*! underscore */ 3);
+	
+	var _underscore2 = _interopRequireDefault(_underscore);
 	
 	var _react = __webpack_require__(/*! react */ 4);
 	
@@ -36232,6 +36236,11 @@ webpackJsonp([0],[
 	          _react2["default"].createElement(
 	            "td",
 	            null,
+	            item.id
+	          ),
+	          _react2["default"].createElement(
+	            "td",
+	            null,
 	            item.call_time,
 	            " \xB5s"
 	          ),
@@ -36268,19 +36277,79 @@ webpackJsonp([0],[
 	  return CallsTableRow;
 	}(_react2["default"].Component);
 	
-	var CallsTable = function (_React$Component2) {
+	var CallsTable = exports.CallsTable = function (_React$Component2) {
 	  _inherits(CallsTable, _React$Component2);
 	
-	  function CallsTable() {
+	  function CallsTable(props) {
 	    _classCallCheck(this, CallsTable);
 	
-	    return _possibleConstructorReturn(this, (CallsTable.__proto__ || Object.getPrototypeOf(CallsTable)).apply(this, arguments));
+	    var _this2 = _possibleConstructorReturn(this, (CallsTable.__proto__ || Object.getPrototypeOf(CallsTable)).call(this, props));
+	
+	    _this2.state = {
+	      sortby: "id",
+	      order: "asc"
+	    };
+	    return _this2;
 	  }
 	
 	  _createClass(CallsTable, [{
+	    key: "onClick",
+	    value: function () {
+	      function onClick(id, event) {
+	        event.preventDefault();
+	
+	        var isColumnActive = this.state.sortby === id;
+	        var newOrder = this.state.order === "desc" && isColumnActive ? "asc" : "desc";
+	
+	        this.setState({
+	          sortby: id,
+	          order: newOrder
+	        });
+	      }
+	
+	      return onClick;
+	    }()
+	  }, {
+	    key: "renderColumn",
+	    value: function () {
+	      function renderColumn(id, header) {
+	        return _react2["default"].createElement(
+	          "th",
+	          { onClick: this.onClick.bind(this, id) },
+	          header,
+	          " ",
+	          this.sortIcon(id)
+	        );
+	      }
+	
+	      return renderColumn;
+	    }()
+	  }, {
+	    key: "sortIcon",
+	    value: function () {
+	      function sortIcon(id) {
+	        var isActive = this.state.sortby === id;
+	        var dir = isActive && this.state.order === "asc" ? "top" : "bottom";
+	
+	        var glyphiconStyle = "glyphicon glyphicon-triangle-" + dir;
+	        var callTracerStyle = " call-tracer-sort-" + (isActive ? "active" : "inactive");
+	        var style = glyphiconStyle + callTracerStyle;
+	
+	        return _react2["default"].createElement("span", { className: style });
+	      }
+	
+	      return sortIcon;
+	    }()
+	  }, {
 	    key: "render",
 	    value: function () {
 	      function render() {
+	        var items = _underscore2["default"].sortBy(this.props.items, this.state.sortby);
+	
+	        if (this.state.order === "desc") {
+	          items.reverse();
+	        }
+	
 	        return _react2["default"].createElement(
 	          "table",
 	          { className: "table table-hover table-striped" },
@@ -36291,32 +36360,17 @@ webpackJsonp([0],[
 	              "tr",
 	              null,
 	              _react2["default"].createElement("th", null),
-	              _react2["default"].createElement(
-	                "th",
-	                null,
-	                "Call time"
-	              ),
-	              _react2["default"].createElement(
-	                "th",
-	                null,
-	                "Pid"
-	              ),
-	              _react2["default"].createElement(
-	                "th",
-	                null,
-	                "Args"
-	              ),
-	              _react2["default"].createElement(
-	                "th",
-	                null,
-	                "Response"
-	              )
+	              this.renderColumn("id", "No."),
+	              this.renderColumn("call_time", "Call time"),
+	              this.renderColumn("pid", "Pid"),
+	              this.renderColumn("args", "Function arguments"),
+	              this.renderColumn("res", "Return value")
 	            )
 	          ),
 	          _react2["default"].createElement(
 	            "tbody",
 	            null,
-	            this.props.items.map(function (item) {
+	            items.map(function (item) {
 	              return _react2["default"].createElement(CallsTableRow, { key: item.id, item: item });
 	            })
 	          )
@@ -36405,6 +36459,8 @@ webpackJsonp([0],[
 	      limit_value: null,
 	      status: _this4.Status.STOPPED
 	    };
+	
+	    _this4.timeout = null;
 	    return _this4;
 	  }
 	
@@ -36421,7 +36477,7 @@ webpackJsonp([0],[
 	    key: "componentWillUnmount",
 	    value: function () {
 	      function componentWillUnmount() {
-	        clearTimeout(this.state.timeoutRef);
+	        clearTimeout(this.timeout);
 	      }
 	
 	      return componentWillUnmount;
@@ -36499,7 +36555,7 @@ webpackJsonp([0],[
 	              }
 	            } else {
 	              var sortedItems = data.items.sort();
-	              var lastId = sortedItems.length === 0 ? this.state.offset : _.last(sortedItems).id;
+	              var lastId = sortedItems.length === 0 ? this.state.offset : _underscore2["default"].last(sortedItems).id;
 	              this.state.offset = lastId;
 	              this.state.items = this.state.items.concat(sortedItems);
 	            }
@@ -36508,7 +36564,7 @@ webpackJsonp([0],[
 	            this.state.status = data.has_more ? this.Status.RUNNING : this.Status.STOPPED;
 	          }
 	
-	          this.state.timeoutRef = setTimeout(this.getCaptureData.bind(this), 750);
+	          this.timeout = setTimeout(this.getCaptureData.bind(this), 750);
 	          this.setState(this.state);
 	        }.bind(this));
 	      }
@@ -36656,7 +36712,7 @@ webpackJsonp([0],[
 	}(_react2["default"].Component);
 	
 	exports["default"] = CallsTracer;
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(/*! jquery */ 2), __webpack_require__(/*! underscore */ 3)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(/*! jquery */ 2)))
 
 /***/ },
 /* 185 */
@@ -37214,6 +37270,15 @@ webpackJsonp([0],[
 	      return clearFunctionBrowser;
 	    }()
 	  }, {
+	    key: "toggleTimeOnGraph",
+	    value: function () {
+	      function toggleTimeOnGraph() {
+	        this.refs.graphPanel.toggleTimeOnGraph();
+	      }
+	
+	      return toggleTimeOnGraph;
+	    }()
+	  }, {
 	    key: "render",
 	    value: function () {
 	      function render() {
@@ -37237,7 +37302,7 @@ webpackJsonp([0],[
 	            _react2["default"].createElement(
 	              "div",
 	              { className: "navbar-collapse collapse", id: "navbar-collapsible" },
-	              _react2["default"].createElement(_tracing_switch2["default"], null),
+	              _react2["default"].createElement(_tracing_switch2["default"], { toggleTimeOnGraph: this.toggleTimeOnGraph.bind(this) }),
 	              _react2["default"].createElement(_function_browser2["default"], { ref: "functionBrowser", addGraph: this.addGraph.bind(this), language: guides.language, type: guides.type, example: guides.example })
 	            )
 	          ),
@@ -37383,7 +37448,10 @@ webpackJsonp([0],[
 	
 	    var _this = _possibleConstructorReturn(this, (TracingSwitch.__proto__ || Object.getPrototypeOf(TracingSwitch)).call(this, props));
 	
-	    _this.state = { status: "paused" };
+	    _this.state = {
+	      status: "paused",
+	      paused: false
+	    };
 	    return _this;
 	  }
 	
@@ -37412,7 +37480,6 @@ webpackJsonp([0],[
 	        var _this2 = this;
 	
 	        var spec = this.state.status === "running" ? "pause" : "all";
-	
 	        $.ajax({
 	          url: "/api/trace_set",
 	          data: { spec: spec }
@@ -37432,9 +37499,27 @@ webpackJsonp([0],[
 	      function getTracingStatus() {
 	        var _this3 = this;
 	
-	        $.ajax({ url: "/api/trace_status" }).done(function (data) {
-	          _this3.state.status = data.status;
-	          _this3.setState(_this3.state);
+	        $.ajax({
+	          url: "/api/trace_status"
+	        }).done(function (data) {
+	          if (_this3.state.status !== data.status) {
+	            (function () {
+	              var shouldPause = data.status !== "running";
+	              _this3.setState(function (prevState, props) {
+	                var newState = {};
+	                if (prevState.paused !== shouldPause) {
+	                  props.toggleTimeOnGraph();
+	                  newState = {
+	                    status: data.status,
+	                    paused: shouldPause
+	                  };
+	                } else {
+	                  newState = { status: data.status };
+	                }
+	                return newState;
+	              });
+	            })();
+	          }
 	        }).always(function () {
 	          return _this3.state.timeout = window.setTimeout(_this3.getTracingStatus.bind(_this3), 1000);
 	        });
@@ -37511,6 +37596,10 @@ webpackJsonp([0],[
 	
 	var _graph2 = _interopRequireDefault(_graph);
 	
+	var _underscore = __webpack_require__(/*! underscore */ 3);
+	
+	var _underscore2 = _interopRequireDefault(_underscore);
+	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -37527,7 +37616,10 @@ webpackJsonp([0],[
 	
 	    var _this = _possibleConstructorReturn(this, (GraphPanel.__proto__ || Object.getPrototypeOf(GraphPanel)).call(this, props));
 	
-	    _this.state = { funs: [] };
+	    _this.state = {
+	      funs: [],
+	      paused: false
+	    };
 	    return _this;
 	  }
 	
@@ -37606,8 +37698,9 @@ webpackJsonp([0],[
 	    key: "handleFuns",
 	    value: function () {
 	      function handleFuns(data) {
-	        this.state.funs = data;
-	        this.setState(this.state);
+	        if (!_underscore2["default"].isEqual(this.state.funs, data)) {
+	          this.setState({ funs: data });
+	        }
 	        window.setTimeout(this.getFunsList.bind(this), 500);
 	      }
 	
@@ -37623,10 +37716,20 @@ webpackJsonp([0],[
 	      return handleFunsError;
 	    }()
 	  }, {
+	    key: "toggleTimeOnGraph",
+	    value: function () {
+	      function toggleTimeOnGraph() {
+	        this.setState({ paused: !this.state.paused });
+	      }
+	
+	      return toggleTimeOnGraph;
+	    }()
+	  }, {
 	    key: "render",
 	    value: function () {
 	      function render() {
 	        var funs = this.state.funs;
+	        var paused = this.state.paused;
 	
 	        var graphsPanels = [];
 	        for (var i = 0; i < funs.length; i++) {
@@ -37636,7 +37739,8 @@ webpackJsonp([0],[
 	            _react2["default"].createElement(
 	              "div",
 	              { className: "col-md-12" },
-	              _react2["default"].createElement(_graph2["default"], { removeGraph: this.removeGraph.bind(this), mfa: funs[i] })
+	              _react2["default"].createElement(_graph2["default"], { removeGraph: this.removeGraph.bind(this), mfa: funs[i],
+	                paused: paused })
 	            )
 	          ));
 	        }
