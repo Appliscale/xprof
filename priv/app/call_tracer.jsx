@@ -164,6 +164,8 @@ export default class CallsTracer extends React.Component {
       limit_value: null,
       status: this.Status.STOPPED
     };
+
+    this.timeout = null;
   }
 
   componentDidMount() {
@@ -171,7 +173,7 @@ export default class CallsTracer extends React.Component {
   }
 
   componentWillUnmount() {
-    clearTimeout(this.state.timeoutRef);
+    clearTimeout(this.timeout);
   }
 
   handleCaptureStart() {
@@ -238,7 +240,7 @@ export default class CallsTracer extends React.Component {
 
       }
 
-      this.state.timeoutRef = setTimeout(this.getCaptureData.bind(this), 750);
+      this.timeout = setTimeout(this.getCaptureData.bind(this), 750);
       this.setState(this.state);
     }.bind(this));
   }

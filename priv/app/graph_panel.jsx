@@ -1,11 +1,15 @@
 import React from "react";
 
 import Graph from "./graph.jsx";
+import _ from "underscore";
 
 export default class GraphPanel extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { funs: [] };
+    this.state = {
+      funs: [],
+      paused: false
+    };
   }
 
   componentDidMount() {
@@ -17,7 +21,6 @@ export default class GraphPanel extends React.Component {
   }
 
   // Getting data
-
   startMonitoring(query) {
     $.ajax({
       url: "/api/mon_start",
@@ -50,8 +53,9 @@ export default class GraphPanel extends React.Component {
   }
 
   handleFuns(data) {
-    this.state.funs = data;
-    this.setState(this.state);
+    if (!_.isEqual(this.state.funs, data)) {
+      this.setState({ funs: data });
+    }
     window.setTimeout(this.getFunsList.bind(this), 500);
   }
 
@@ -59,15 +63,21 @@ export default class GraphPanel extends React.Component {
     window.setTimeout(this.getFunsList.bind(this), 1000);
   }
 
+  toggleTimeOnGraph() {
+    this.setState({ paused: !this.state.paused });
+  }
+
   render() {
     var funs = this.state.funs;
+    var paused = this.state.paused;
 
     var graphsPanels = [];
     for (var i = 0; i < funs.length; i++) {
       graphsPanels.push(
         <div key={funs[i]} className="row">
           <div className="col-md-12">
-            <Graph removeGraph={this.removeGraph.bind(this)} mfa={funs[i]}/>
+            <Graph removeGraph={this.removeGraph.bind(this)} mfa={funs[i]}
+            paused={paused}/>
           </div>
         </div>
       );
