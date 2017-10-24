@@ -116,10 +116,16 @@ export default class CallsTracer extends React.Component {
       limit_value: null,
       status: this.Status.STOPPED
     };
+
+    this.timeout = null;
+  }
+
+  componentDidMount() {
+    this.getCaptureData();
   }
 
   componentWillUnmount() {
-    this.handleCaptureStop();
+    clearTimeout(this.timeout);
   }
 
   handleCaptureStart() {
@@ -153,44 +159,42 @@ export default class CallsTracer extends React.Component {
   }
 
   getCaptureData() {
-    if (this.Status.RUNNING) {
-      var mfa = this.props.mfa;
+    var mfa = this.props.mfa;
 
-      $.ajax({
-        url: "/api/capture_data",
-        data: {
-          mod: mfa[0], fun: mfa[1], arity: mfa[2],
-          offset: this.state.offset
-        }
-      }).done(function(data, textStatus, jqXHR) {
-        if (jqXHR.status === 200) {
-          if (this.state.capture_id !== data.capture_id) {
-            this.state.items = [];
-            this.state.offset = 0;
+    $.ajax({
+      url: "/api/capture_data",
+      data: {
+        mod: mfa[0], fun: mfa[1], arity: mfa[2],
+        offset: this.state.offset
+      }
+    }).done(function(data, textStatus, jqXHR) {
+      if (jqXHR.status === 200) {
+        if (this.state.capture_id !== data.capture_id) {
+          this.state.items = [];
+          this.state.offset = 0;
 
-            if (data.threshold > 0) {
-              this.state.threshold_value = data.threshold;
-            }
-
-            if (data.limit > 0) {
-              this.state.limit_value = data.limit;
-            }
-          } else {
-            const sortedItems = data.items.sort();
-            const lastId = sortedItems.length === 0 ? this.state.offset : _.last(sortedItems).id;
-            this.state.offset = lastId;
-            this.state.items = this.state.items.concat(sortedItems);
+          if (data.threshold > 0) {
+            this.state.threshold_value = data.threshold;
           }
 
-          this.state.capture_id = data.capture_id;
-          this.state.status = data.has_more ? this.Status.RUNNING : this.Status.STOPPED;
-
+          if (data.limit > 0) {
+            this.state.limit_value = data.limit;
+          }
+        } else {
+          const sortedItems = data.items.sort();
+          const lastId = sortedItems.length === 0 ? this.state.offset : _.last(sortedItems).id;
+          this.state.offset = lastId;
+          this.state.items = this.state.items.concat(sortedItems);
         }
 
-        setTimeout(this.getCaptureData.bind(this), 750);
-        this.setState(this.state);
-      }.bind(this));
-    }
+        this.state.capture_id = data.capture_id;
+        this.state.status = data.has_more ? this.Status.RUNNING : this.Status.STOPPED;
+
+      }
+
+      this.timeout = setTimeout(this.getCaptureData.bind(this), 750);
+      this.setState(this.state);
+    }.bind(this));
   }
 
   handleChange(id, event) {
