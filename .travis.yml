@@ -4,7 +4,7 @@ branches:
         - cowboy_2.0
 otp_release:
     - 20.0
-    - 19.2
+    - 19.3
 cache:
     directories:
         - $HOME/.cache/rebar3
@@ -16,6 +16,7 @@ install:
 script:
     - make test
     - make test_front_end
+    - if [ $TRAVIS_OTP_RELEASE = "20.0" ]; then make doc dialyzer; fi
 after_success:
     - ./rebar3 cover
     - if [ $TRAVIS_OTP_RELEASE = "18.3" ]; then ./rebar3 coveralls send; fi

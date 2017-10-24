@@ -26,5 +26,10 @@ webpack_autoreload: npm
 test: compile
 	./rebar3 do eunit -c, ct -c, cover
 
+doc:
+	./rebar3 edoc
 
-.PHONY=compile dev npm bootstrap_front_end check_front_end test_front_end webpack webpack_autoreload test
+dialyzer:
+	./rebar3 dialyzer
+
+.PHONY: compile dev npm bootstrap_front_end check_front_end test_front_end webpack webpack_autoreload test doc dialyzer

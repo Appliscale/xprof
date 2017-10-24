@@ -3,13 +3,38 @@
 -include_lib("common_test/include/ct.hrl").
 -include_lib("eunit/include/eunit.hrl").
 
--compile(export_all).
+%% CT callbacks
+-export([all/0,
+         groups/0,
+         init_per_suite/1,
+         end_per_suite/1,
+         init_per_group/2,
+         end_per_group/2
+        ]).
+
+%% Test cases
+-export([monitor_many_funs/1,
+         monitor_recursive_fun/1,
+         monitor_keep_recursive_fun/1,
+         monitor_crashing_fun/1,
+         monitor_ms/1,
+         capture_args_res/1,
+         capture_args_ms/1,
+         capture_exception/1,
+         capture_stop/1,
+         long_call/1,
+         spawner_tracing/1,
+         all_tracing/1,
+         pid_tracing/1,
+         dead_proc_tracing/1
+        ]).
 
 %% CT funs
 
 all() ->
     [monitor_many_funs,
      monitor_recursive_fun,
+     monitor_keep_recursive_fun,
      monitor_crashing_fun,
      monitor_ms,
      capture_args_res,
@@ -145,7 +170,8 @@ monitor_many_funs(_Config) ->
 
     %% strip formatted queries
     AllMonitored = [MFA || {MFA, _Query} <- xprof_tracer:all_monitored()],
-    ?assertEqual(MFAs, AllMonitored),
+    %% MFAs should be listed in reversed insertion order (last first)
+    ?assertEqual(lists:reverse(MFAs), AllMonitored),
 
     ct:log("Stop monitoring all 5 funs"),
     [xprof_tracer:demonitor(MFA) || MFA <- MFAs],
@@ -172,6 +198,28 @@ monitor_recursive_fun(_Config) ->
 
     xprof_tracer:trace(pause),
     xprof_tracer:demonitor(MFA),
+    ok.
+
+monitor_keep_recursive_fun(_Config) ->
+    application:set_env(xprof, ignore_recursion, false),
+    xprof_tracer:monitor(MFA = {?MODULE, recursive_test_fun, 1}),
+    ok = xprof_tracer:trace(self()),
+
+    Last = get_print_current_time(),
+
+    recursive_test_fun(10),
+    ct:sleep(1000),
+
+    %% all 10 samples are recorded
+    [Items1|_] = xprof_tracer:data(MFA, Last),
+    ?assertEqual(10, proplists:get_value(count, Items1)),
+
+    %% the duration of the innermost call is around 10 ms
+    ?assert(20 > (proplists:get_value(min, Items1) div 1000)),
+
+    xprof_tracer:trace(pause),
+    xprof_tracer:demonitor(MFA),
+    application:unset_env(xprof, ignore_recursion),
     ok.
 
 monitor_ms(_Config) ->
@@ -376,7 +424,8 @@ test_fun(Time) ->
 spawn_test_fun() ->
     spawn(fun() -> test_fun() end).
 
-recursive_test_fun(0) ->
+recursive_test_fun(1) ->
+    timer:sleep(10),
     ok;
 recursive_test_fun(N) ->
     timer:sleep(10),

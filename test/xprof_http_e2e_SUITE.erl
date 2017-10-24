@@ -3,7 +3,36 @@
 -include_lib("common_test/include/ct.hrl").
 -include_lib("eunit/include/eunit.hrl").
 
--compile(export_all).
+%% CT callbacks
+-export([all/0,
+         init_per_suite/1,
+         end_per_suite/1,
+         init_per_testcase/2,
+         end_per_testcase/2
+        ]).
+
+%% Test cases
+-export([get_initialized_trace_status_on_start/1,
+         get_running_status_after_setting_tracing/1,
+         trace_set_only_accepts_all_and_pause/1,
+         try_to_start_monitoring_invalid_query/1,
+         monitor_valid_query/1,
+         monitor_valid_query_twice/1,
+         monitor_query_with_matchspec/1,
+         get_overflow_status_after_hitting_overload/1,
+         get_function_proposals_for_known_module/1,
+         no_function_proposals_for_invalid_module/1,
+         stop_monitoring/1,
+         get_data_for_not_traced_fun/1,
+         get_data_for_traced_fun/1,
+         no_capture_data_when_not_traced/1,
+         capture_data_when_traced_test/1,
+         capture_data_with_formatted_exception_test/1,
+         error_when_stopping_not_started_capture/1,
+         dont_receive_new_capture_data_after_stop/1,
+         in_this_project_we_should_detect_erlang/1,
+         but_it_should_return_elixir_if_it_is_forced_as_setting/1
+        ]).
 
 %% CT funs
 
@@ -38,13 +67,18 @@ init_per_suite(Config) ->
 end_per_suite(_Config) ->
     ok.
 
-init_per_testcase(_TestCase, Config) ->
+init_per_testcase(TestCase, Config) ->
+    case TestCase of
+        get_overflow_status_after_hitting_overload ->
+            given_overload_queue_limit(1);
+        _ ->
+            given_overload_queue_limit(1000)
+    end,
     {ok, _} = xprof:start(),
     Config.
 
 end_per_testcase(_TestCase, _Config) ->
     xprof:stop(),
-    given_overload_queue_limit(1000),
     ok.
 
 get_initialized_trace_status_on_start(_Config) ->
@@ -71,7 +105,6 @@ trace_set_only_accepts_all_and_pause(_Config) ->
 get_overflow_status_after_hitting_overload(_Config) ->
     %% given
     given_tracing_all(),
-    given_overload_queue_limit(1),
     given_traced("dict:new/0"),
 
     %% when

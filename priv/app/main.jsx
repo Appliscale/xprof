@@ -36,6 +36,10 @@ class App extends React.Component {
     this.refs.functionBrowser.clear();
   }
 
+  toggleTimeOnGraph() {
+    this.refs.graphPanel.toggleTimeOnGraph();
+  }
+
   render() {
     let guides = Utils.getLanguageGuides(this.state.mode);
 
@@ -49,7 +53,7 @@ class App extends React.Component {
           </div>
 
           <div className="navbar-collapse collapse" id="navbar-collapsible">
-            <TracingSwitch/>
+            <TracingSwitch toggleTimeOnGraph={this.toggleTimeOnGraph.bind(this)}/>
             <FunctionBrowser ref="functionBrowser" addGraph={this.addGraph.bind(this)} language={guides.language} type={guides.type} example={guides.example} />
           </div>
         </nav>

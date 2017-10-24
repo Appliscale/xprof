@@ -4,7 +4,10 @@ import React from "react";
 export default class TracingSwitch extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { status: "paused" };
+    this.state = {
+      status: "paused",
+      paused: false,
+    };
   }
 
   componentDidMount() {
@@ -17,23 +20,38 @@ export default class TracingSwitch extends React.Component {
 
   handleClick(event) {
     var spec = this.state.status === "running" ? "pause" : "all";
-
     $.ajax({
       url: "/api/trace_set",
       data: { spec: spec }
     })
-    .fail((jqXHR, textStatus, errorThrown) => console.error("Cant set tracing", errorThrown))
-    .always(() => {
-      clearTimeout(this.state.timeout);
-      this.getTracingStatus();
-    });
+      .fail((jqXHR, textStatus, errorThrown) => console.error("Cant set tracing", errorThrown))
+      .always(() => {
+        clearTimeout(this.state.timeout);
+        this.getTracingStatus();
+      });
   }
 
   getTracingStatus() {
-    $.ajax({ url: "/api/trace_status" })
+    $.ajax({
+      url: "/api/trace_status"
+    })
       .done((data) => {
-        this.state.status = data.status;
-        this.setState(this.state);
+        if (this.state.status !== data.status) {
+          const shouldPause = data.status !== "running";
+          this.setState((prevState, props) => {
+            let newState = {};
+            if (prevState.paused !== shouldPause) {
+              props.toggleTimeOnGraph();
+              newState = {
+                status: data.status,
+                paused: shouldPause,
+              };
+            } else {
+              newState = { status: data.status };
+            }
+            return newState;
+          });
+        }
       })
       .always(() =>
         this.state.timeout = window.setTimeout(this.getTracingStatus.bind(this), 1000)

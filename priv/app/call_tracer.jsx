@@ -1,4 +1,4 @@
-import "underscore";
+import _ from "underscore";
 import React from "react";
 
 export class CallsTableRow extends React.Component {
@@ -27,6 +27,7 @@ export class CallsTableRow extends React.Component {
             </span>
           </button>
         </td>
+        <td>{item.id}</td>
         <td>{item.call_time} &micro;s</td>
         <td>{item.pid}</td>
         <td style={{ maxWidth: "500px" }}>
@@ -44,21 +45,68 @@ export class CallsTableRow extends React.Component {
   }
 }
 
-class CallsTable extends React.Component {
+export class CallsTable extends React.Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      sortby: "id",
+      order: "asc"
+    };
+  }
+
+  onClick(id, event) {
+    event.preventDefault();
+
+    const isColumnActive = (this.state.sortby === id);
+    const newOrder = (this.state.order === "desc" && isColumnActive) ? "asc" : "desc";
+
+    this.setState({
+      sortby: id,
+      order: newOrder
+    });
+  }
+
+  renderColumn(id, header) {
+    return (
+      <th onClick={this.onClick.bind(this, id)}>{header} {this.sortIcon(id)}</th>
+    );
+  }
+
+  sortIcon(id) {
+    const isActive = (this.state.sortby === id);
+    const dir = (isActive && this.state.order === "asc") ? "top" : "bottom";
+
+    const glyphiconStyle = "glyphicon glyphicon-triangle-" + dir;
+    const callTracerStyle = " call-tracer-sort-" + (isActive ? "active" : "inactive");
+    const style = glyphiconStyle + callTracerStyle;
+
+    return (
+      <span className={style}></span>
+    );
+  }
+
   render() {
+    let items = _.sortBy(this.props.items, this.state.sortby);
+
+    if (this.state.order === "desc") {
+      items.reverse();
+    }
+
     return (
       <table className="table table-hover table-striped">
         <thead>
           <tr>
             <th></th>
-            <th>Call time</th>
-            <th>Pid</th>
-            <th>Args</th>
-            <th>Response</th>
+            {this.renderColumn("id", "No.")}
+            {this.renderColumn("call_time", "Call time")}
+            {this.renderColumn("pid", "Pid")}
+            {this.renderColumn("args", "Function arguments")}
+            {this.renderColumn("res", "Return value")}
           </tr>
         </thead>
         <tbody>
-          {this.props.items.map((item) =>
+          {items.map((item) =>
             <CallsTableRow key={item.id} item={item}/>
           )}
         </tbody>
@@ -116,6 +164,8 @@ export default class CallsTracer extends React.Component {
       limit_value: null,
       status: this.Status.STOPPED
     };
+
+    this.timeout = null;
   }
 
   componentDidMount() {
@@ -123,7 +173,7 @@ export default class CallsTracer extends React.Component {
   }
 
   componentWillUnmount() {
-    clearTimeout(this.state.timeoutRef);
+    clearTimeout(this.timeout);
   }
 
   handleCaptureStart() {
@@ -190,7 +240,7 @@ export default class CallsTracer extends React.Component {
 
       }
 
-      this.state.timeoutRef = setTimeout(this.getCaptureData.bind(this), 750);
+      this.timeout = setTimeout(this.getCaptureData.bind(this), 750);
       this.setState(this.state);
     }.bind(this));
   }
@@ -274,7 +324,7 @@ export default class CallsTracer extends React.Component {
             </span>
           </form>
         </div>
-        <CallsTable items={this.state.items}/>
+        <CallsTable items={this.state.items} />
       </div>
     );
   }

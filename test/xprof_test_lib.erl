@@ -1,9 +1,19 @@
 -module(xprof_test_lib).
 
--export([run_elixir_unit_tests/1]).
+-export([is_elixir_version/1,
+         run_elixir_unit_tests/1]).
 
 -define(EUNIT_NOAUTO, true).
 -include_lib("eunit/include/eunit.hrl").
+
+-spec is_elixir_version(string()) -> boolean().
+is_elixir_version(Requirement) ->
+    try
+        ElixirVsn = 'Elixir.System':version(),
+        'Elixir.Version':'match?'(ElixirVsn, list_to_binary(Requirement))
+    catch _:_ ->
+            false
+    end.
 
 run_elixir_unit_tests(Tests) ->
     case os:find_executable("elixir") of
