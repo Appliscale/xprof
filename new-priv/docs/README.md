@@ -5,6 +5,12 @@ Following changes has been made comparing to the generated app:
 ```js
 "eslintConfig": {
   "extends": "airbnb",
+  ...
+```
+- [prettier](https://github.com/prettier/prettier) with [eslint plugin](https://github.com/prettier/eslint-plugin-prettier). Style formater configured on Facebook style ("fb"),
+```js
+  // continuation of eslintConfig
+  ...
   "plugins": [
     "prettier"
   ],
@@ -19,16 +25,14 @@ Following changes has been made comparing to the generated app:
     "jest": true
   }
 }
-```
-- [prettier](https://github.com/prettier/prettier) style formater configured on Facebook style,
-```js
-"prettier/prettier": ["warn", {
-  "singleQuote": true,
-  "trailingComma": "all",
-  "bracketSpacing": false,
-  "jsxBracketSameLine": true,
-  "parser": "flow"
-}]
+// Facebook style is equivalent to:
+// "prettier/prettier": ["warn", {
+//   "singleQuote": true,
+//   "trailingComma": "all",
+//   "bracketSpacing": false,
+//   "jsxBracketSameLine": true,
+//   "parser": "flow"
+// }]
 ```
 - pre-commit script which performs formatting of the code to match style set by prettier config, next run eslint and try to fix problems which can be auto-fixed. If error happens developer needs to fix all problems manually before he will be able to commit.
 ```js
@@ -49,3 +53,5 @@ Following changes has been made comparing to the generated app:
   "gitDir": "../"
 }
 ```
+- added [.editorconfig](http://editorconfig.org) file to define and maintain consistent coding styles between different editors and IDEs.
+- hot reload
