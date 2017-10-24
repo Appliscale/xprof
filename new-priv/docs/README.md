@@ -1,5 +1,4 @@
-Project has been bootstraped using Create React App npm package (create-react-app@1.4.1).
-Following changes has been made comparing to the generated app:
+Project has been bootstraped using Create React App npm package (create-react-app@1.4.1). Please read [CREATE_REACT_APP.md](CREATE_REACT_APP.md) to get aquinted with development setup (I know it's long!). Slight modification comparing to the generated setup has been made, all are bulleted below:
 - `npm run eject`
 - [airbnb](https://github.com/airbnb/javascript/tree/master/packages/eslint-config-airbnb) eslint configuration instead of [react-app](https://github.com/facebookincubator/create-react-app/tree/master/packages/eslint-config-react-app). Airbnb rules are much stricter than rules provided by eslint-config-react-app.
 ```js
@@ -54,4 +53,4 @@ Following changes has been made comparing to the generated app:
 }
 ```
 - added [.editorconfig](http://editorconfig.org) file to define and maintain consistent coding styles between different editors and IDEs.
-- hot reload
+- hot reload TBD
