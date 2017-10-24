@@ -1,7 +1,7 @@
 import React from "react";
 
 import Graph from "./graph.jsx";
-import _ from "lodash";
+import _ from "underscode";
 
 export default class GraphPanel extends React.Component {
   constructor(props) {
@@ -53,7 +53,7 @@ export default class GraphPanel extends React.Component {
   }
 
   handleFuns(data) {
-    if (!_.isEqual(this.state.funs, data.length)) {
+    if (!_.isEqual(this.state.funs, data)) {
       this.setState({ funs: data });
     }
     window.setTimeout(this.getFunsList.bind(this), 500);
