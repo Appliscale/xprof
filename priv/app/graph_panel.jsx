@@ -1,7 +1,7 @@
 import React from "react";
 
 import Graph from "./graph.jsx";
-import _ from "underscode";
+import _ from "underscore";
 
 export default class GraphPanel extends React.Component {
   constructor(props) {
