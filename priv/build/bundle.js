@@ -245,14 +245,16 @@ webpackJsonp([0],[
 	        var mfa = this.props.mfa;
 	        var lastTs = this.state.lastTs;
 	
-	        $.ajax({
-	          url: "/api/data",
-	          data: {
-	            mod: mfa[0],
-	            fun: mfa[1],
-	            arity: mfa[2],
-	            last_ts: lastTs }
-	        }).done(this.handleData.bind(this)).fail(this.handleDataError.bind(this));
+	        if (!this.props.paused) {
+	          $.ajax({
+	            url: "/api/data",
+	            data: {
+	              mod: mfa[0],
+	              fun: mfa[1],
+	              arity: mfa[2],
+	              last_ts: lastTs }
+	          }).done(this.handleData.bind(this)).fail(this.handleDataError.bind(this));
+	        }
 	      }
 	
 	      return getData;
@@ -2888,11 +2890,9 @@ webpackJsonp([0],[
 
 	/**
 	 * Copyright (c) 2013-present, Facebook, Inc.
-	 * All rights reserved.
 	 *
-	 * This source code is licensed under the BSD-style license found in the
-	 * LICENSE file in the root directory of this source tree. An additional grant
-	 * of patent rights can be found in the PATENTS file in the same directory.
+	 * This source code is licensed under the MIT license found in the
+	 * LICENSE file in the root directory of this source tree.
 	 *
 	 */
 	
@@ -5174,11 +5174,9 @@ webpackJsonp([0],[
 	
 	/**
 	 * Copyright (c) 2013-present, Facebook, Inc.
-	 * All rights reserved.
 	 *
-	 * This source code is licensed under the BSD-style license found in the
-	 * LICENSE file in the root directory of this source tree. An additional grant
-	 * of patent rights can be found in the PATENTS file in the same directory.
+	 * This source code is licensed under the MIT license found in the
+	 * LICENSE file in the root directory of this source tree.
 	 *
 	 * @typechecks
 	 */
@@ -5213,11 +5211,9 @@ webpackJsonp([0],[
 
 	/**
 	 * Copyright (c) 2013-present, Facebook, Inc.
-	 * All rights reserved.
 	 *
-	 * This source code is licensed under the BSD-style license found in the
-	 * LICENSE file in the root directory of this source tree. An additional grant
-	 * of patent rights can be found in the PATENTS file in the same directory.
+	 * This source code is licensed under the MIT license found in the
+	 * LICENSE file in the root directory of this source tree.
 	 *
 	 * @typechecks
 	 */
@@ -7044,11 +7040,9 @@ webpackJsonp([0],[
 	
 	/**
 	 * Copyright (c) 2013-present, Facebook, Inc.
-	 * All rights reserved.
 	 *
-	 * This source code is licensed under the BSD-style license found in the
-	 * LICENSE file in the root directory of this source tree. An additional grant
-	 * of patent rights can be found in the PATENTS file in the same directory.
+	 * This source code is licensed under the MIT license found in the
+	 * LICENSE file in the root directory of this source tree.
 	 *
 	 * @typechecks
 	 */
@@ -7136,11 +7130,9 @@ webpackJsonp([0],[
 	
 	/**
 	 * Copyright (c) 2013-present, Facebook, Inc.
-	 * All rights reserved.
 	 *
-	 * This source code is licensed under the BSD-style license found in the
-	 * LICENSE file in the root directory of this source tree. An additional grant
-	 * of patent rights can be found in the PATENTS file in the same directory.
+	 * This source code is licensed under the MIT license found in the
+	 * LICENSE file in the root directory of this source tree.
 	 *
 	 * @typechecks
 	 */
@@ -7271,11 +7263,9 @@ webpackJsonp([0],[
 	
 	/**
 	 * Copyright (c) 2013-present, Facebook, Inc.
-	 * All rights reserved.
 	 *
-	 * This source code is licensed under the BSD-style license found in the
-	 * LICENSE file in the root directory of this source tree. An additional grant
-	 * of patent rights can be found in the PATENTS file in the same directory.
+	 * This source code is licensed under the MIT license found in the
+	 * LICENSE file in the root directory of this source tree.
 	 *
 	 */
 	
@@ -8447,11 +8437,9 @@ webpackJsonp([0],[
 
 	/**
 	 * Copyright (c) 2013-present, Facebook, Inc.
-	 * All rights reserved.
 	 *
-	 * This source code is licensed under the BSD-style license found in the
-	 * LICENSE file in the root directory of this source tree. An additional grant
-	 * of patent rights can be found in the PATENTS file in the same directory.
+	 * This source code is licensed under the MIT license found in the
+	 * LICENSE file in the root directory of this source tree.
 	 *
 	 */
 	
@@ -8853,11 +8841,9 @@ webpackJsonp([0],[
 
 	/**
 	 * Copyright (c) 2013-present, Facebook, Inc.
-	 * All rights reserved.
 	 *
-	 * This source code is licensed under the BSD-style license found in the
-	 * LICENSE file in the root directory of this source tree. An additional grant
-	 * of patent rights can be found in the PATENTS file in the same directory.
+	 * This source code is licensed under the MIT license found in the
+	 * LICENSE file in the root directory of this source tree.
 	 *
 	 * @typechecks
 	 */
@@ -8902,11 +8888,9 @@ webpackJsonp([0],[
 	
 	/**
 	 * Copyright (c) 2013-present, Facebook, Inc.
-	 * All rights reserved.
 	 *
-	 * This source code is licensed under the BSD-style license found in the
-	 * LICENSE file in the root directory of this source tree. An additional grant
-	 * of patent rights can be found in the PATENTS file in the same directory.
+	 * This source code is licensed under the MIT license found in the
+	 * LICENSE file in the root directory of this source tree.
 	 *
 	 * @typechecks
 	 */
@@ -9026,11 +9010,9 @@ webpackJsonp([0],[
 
 	/**
 	 * Copyright (c) 2013-present, Facebook, Inc.
-	 * All rights reserved.
 	 *
-	 * This source code is licensed under the BSD-style license found in the
-	 * LICENSE file in the root directory of this source tree. An additional grant
-	 * of patent rights can be found in the PATENTS file in the same directory.
+	 * This source code is licensed under the MIT license found in the
+	 * LICENSE file in the root directory of this source tree.
 	 *
 	 * @typechecks
 	 */
@@ -9074,11 +9056,9 @@ webpackJsonp([0],[
 	
 	/**
 	 * Copyright (c) 2013-present, Facebook, Inc.
-	 * All rights reserved.
 	 *
-	 * This source code is licensed under the BSD-style license found in the
-	 * LICENSE file in the root directory of this source tree. An additional grant
-	 * of patent rights can be found in the PATENTS file in the same directory.
+	 * This source code is licensed under the MIT license found in the
+	 * LICENSE file in the root directory of this source tree.
 	 *
 	 * @typechecks
 	 */
@@ -9112,11 +9092,9 @@ webpackJsonp([0],[
 
 	/**
 	 * Copyright (c) 2013-present, Facebook, Inc.
-	 * All rights reserved.
 	 *
-	 * This source code is licensed under the BSD-style license found in the
-	 * LICENSE file in the root directory of this source tree. An additional grant
-	 * of patent rights can be found in the PATENTS file in the same directory.
+	 * This source code is licensed under the MIT license found in the
+	 * LICENSE file in the root directory of this source tree.
 	 *
 	 * 
 	 * @typechecks static-only
@@ -12795,11 +12773,9 @@ webpackJsonp([0],[
 
 	/**
 	 * Copyright (c) 2013-present, Facebook, Inc.
-	 * All rights reserved.
 	 *
-	 * This source code is licensed under the BSD-style license found in the
-	 * LICENSE file in the root directory of this source tree. An additional grant
-	 * of patent rights can be found in the PATENTS file in the same directory.
+	 * This source code is licensed under the MIT license found in the
+	 * LICENSE file in the root directory of this source tree.
 	 *
 	 * @typechecks
 	 * 
@@ -14969,17 +14945,8 @@ webpackJsonp([0],[
 	/**
 	 * Copyright (c) 2013-present, Facebook, Inc.
 	 *
-	 * Licensed under the Apache License, Version 2.0 (the "License");
-	 * you may not use this file except in compliance with the License.
-	 * You may obtain a copy of the License at
-	 *
-	 * http://www.apache.org/licenses/LICENSE-2.0
-	 *
-	 * Unless required by applicable law or agreed to in writing, software
-	 * distributed under the License is distributed on an "AS IS" BASIS,
-	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-	 * See the License for the specific language governing permissions and
-	 * limitations under the License.
+	 * This source code is licensed under the MIT license found in the
+	 * LICENSE file in the root directory of this source tree.
 	 *
 	 * @typechecks
 	 */
@@ -15058,11 +15025,9 @@ webpackJsonp([0],[
 
 	/**
 	 * Copyright (c) 2013-present, Facebook, Inc.
-	 * All rights reserved.
 	 *
-	 * This source code is licensed under the BSD-style license found in the
-	 * LICENSE file in the root directory of this source tree. An additional grant
-	 * of patent rights can be found in the PATENTS file in the same directory.
+	 * This source code is licensed under the MIT license found in the
+	 * LICENSE file in the root directory of this source tree.
 	 *
 	 * @typechecks
 	 */
@@ -15081,10 +15046,10 @@ webpackJsonp([0],[
 	 */
 	
 	function getUnboundedScrollPosition(scrollable) {
-	  if (scrollable === window) {
+	  if (scrollable.Window && scrollable instanceof scrollable.Window) {
 	    return {
-	      x: window.pageXOffset || document.documentElement.scrollLeft,
-	      y: window.pageYOffset || document.documentElement.scrollTop
+	      x: scrollable.pageXOffset || scrollable.document.documentElement.scrollLeft,
+	      y: scrollable.pageYOffset || scrollable.document.documentElement.scrollTop
 	    };
 	  }
 	  return {
@@ -15764,11 +15729,9 @@ webpackJsonp([0],[
 	
 	/**
 	 * Copyright (c) 2013-present, Facebook, Inc.
-	 * All rights reserved.
 	 *
-	 * This source code is licensed under the BSD-style license found in the
-	 * LICENSE file in the root directory of this source tree. An additional grant
-	 * of patent rights can be found in the PATENTS file in the same directory.
+	 * This source code is licensed under the MIT license found in the
+	 * LICENSE file in the root directory of this source tree.
 	 *
 	 * 
 	 */
@@ -15811,11 +15774,9 @@ webpackJsonp([0],[
 	
 	/**
 	 * Copyright (c) 2013-present, Facebook, Inc.
-	 * All rights reserved.
 	 *
-	 * This source code is licensed under the BSD-style license found in the
-	 * LICENSE file in the root directory of this source tree. An additional grant
-	 * of patent rights can be found in the PATENTS file in the same directory.
+	 * This source code is licensed under the MIT license found in the
+	 * LICENSE file in the root directory of this source tree.
 	 *
 	 * @typechecks
 	 */
@@ -15843,11 +15804,9 @@ webpackJsonp([0],[
 	
 	/**
 	 * Copyright (c) 2013-present, Facebook, Inc.
-	 * All rights reserved.
 	 *
-	 * This source code is licensed under the BSD-style license found in the
-	 * LICENSE file in the root directory of this source tree. An additional grant
-	 * of patent rights can be found in the PATENTS file in the same directory.
+	 * This source code is licensed under the MIT license found in the
+	 * LICENSE file in the root directory of this source tree.
 	 *
 	 * @typechecks
 	 */
@@ -15857,7 +15816,9 @@ webpackJsonp([0],[
 	 * @return {boolean} Whether or not the object is a DOM node.
 	 */
 	function isNode(object) {
-	  return !!(object && (typeof Node === 'function' ? object instanceof Node : typeof object === 'object' && typeof object.nodeType === 'number' && typeof object.nodeName === 'string'));
+	  var doc = object ? object.ownerDocument || object : document;
+	  var defaultView = doc.defaultView || window;
+	  return !!(object && (typeof defaultView.Node === 'function' ? object instanceof defaultView.Node : typeof object === 'object' && typeof object.nodeType === 'number' && typeof object.nodeName === 'string'));
 	}
 	
 	module.exports = isNode;
@@ -15873,11 +15834,9 @@ webpackJsonp([0],[
 	
 	/**
 	 * Copyright (c) 2013-present, Facebook, Inc.
-	 * All rights reserved.
 	 *
-	 * This source code is licensed under the BSD-style license found in the
-	 * LICENSE file in the root directory of this source tree. An additional grant
-	 * of patent rights can be found in the PATENTS file in the same directory.
+	 * This source code is licensed under the MIT license found in the
+	 * LICENSE file in the root directory of this source tree.
 	 *
 	 * @typechecks
 	 */
@@ -15890,15 +15849,19 @@ webpackJsonp([0],[
 	 *
 	 * The activeElement will be null only if the document or document body is not
 	 * yet defined.
+	 *
+	 * @param {?DOMDocument} doc Defaults to current document.
+	 * @return {?DOMElement}
 	 */
-	function getActiveElement() /*?DOMElement*/{
-	  if (typeof document === 'undefined') {
+	function getActiveElement(doc) /*?DOMElement*/{
+	  doc = doc || (typeof document !== 'undefined' ? document : undefined);
+	  if (typeof doc === 'undefined') {
 	    return null;
 	  }
 	  try {
-	    return document.activeElement || document.body;
+	    return doc.activeElement || doc.body;
 	  } catch (e) {
-	    return document.body;
+	    return doc.body;
 	  }
 	}
 	
@@ -36304,12 +36267,12 @@ webpackJsonp([0],[
 	              _react2["default"].createElement(
 	                "th",
 	                null,
-	                "Args"
+	                "Function arguments"
 	              ),
 	              _react2["default"].createElement(
 	                "th",
 	                null,
-	                "Response"
+	                "Return value"
 	              )
 	            )
 	          ),
@@ -36405,6 +36368,8 @@ webpackJsonp([0],[
 	      limit_value: null,
 	      status: _this4.Status.STOPPED
 	    };
+	
+	    _this4.timeout = null;
 	    return _this4;
 	  }
 	
@@ -36421,7 +36386,7 @@ webpackJsonp([0],[
 	    key: "componentWillUnmount",
 	    value: function () {
 	      function componentWillUnmount() {
-	        clearTimeout(this.state.timeoutRef);
+	        clearTimeout(this.timeout);
 	      }
 	
 	      return componentWillUnmount;
@@ -36508,7 +36473,7 @@ webpackJsonp([0],[
 	            this.state.status = data.has_more ? this.Status.RUNNING : this.Status.STOPPED;
 	          }
 	
-	          this.state.timeoutRef = setTimeout(this.getCaptureData.bind(this), 750);
+	          this.timeout = setTimeout(this.getCaptureData.bind(this), 750);
 	          this.setState(this.state);
 	        }.bind(this));
 	      }
@@ -36764,17 +36729,17 @@ webpackJsonp([0],[
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 	
 	// load the styles
-	var content = __webpack_require__(/*! !./../css-loader!./c3.css */ 187);
+	var content = __webpack_require__(/*! !../css-loader!./c3.css */ 187);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
-	var update = __webpack_require__(/*! ./../style-loader/addStyles.js */ 189)(content, {});
+	var update = __webpack_require__(/*! ../style-loader/addStyles.js */ 189)(content, {});
 	if(content.locals) module.exports = content.locals;
 	// Hot Module Replacement
 	if(false) {
 		// When the styles change, update the <style> tags
 		if(!content.locals) {
-			module.hot.accept("!!./../css-loader/index.js!./c3.css", function() {
-				var newContent = require("!!./../css-loader/index.js!./c3.css");
+			module.hot.accept("!!../css-loader/index.js!./c3.css", function() {
+				var newContent = require("!!../css-loader/index.js!./c3.css");
 				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
 				update(newContent);
 			});
@@ -36790,7 +36755,7 @@ webpackJsonp([0],[
   \************************************/
 /***/ function(module, exports, __webpack_require__) {
 
-	exports = module.exports = __webpack_require__(/*! ./../css-loader/lib/css-base.js */ 188)();
+	exports = module.exports = __webpack_require__(/*! ../css-loader/lib/css-base.js */ 188)();
 	// imports
 	
 	
@@ -37214,6 +37179,15 @@ webpackJsonp([0],[
 	      return clearFunctionBrowser;
 	    }()
 	  }, {
+	    key: "toggleTimeOnGraph",
+	    value: function () {
+	      function toggleTimeOnGraph() {
+	        this.refs.graphPanel.toggleTimeOnGraph();
+	      }
+	
+	      return toggleTimeOnGraph;
+	    }()
+	  }, {
 	    key: "render",
 	    value: function () {
 	      function render() {
@@ -37237,7 +37211,7 @@ webpackJsonp([0],[
 	            _react2["default"].createElement(
 	              "div",
 	              { className: "navbar-collapse collapse", id: "navbar-collapsible" },
-	              _react2["default"].createElement(_tracing_switch2["default"], null),
+	              _react2["default"].createElement(_tracing_switch2["default"], { toggleTimeOnGraph: this.toggleTimeOnGraph.bind(this) }),
 	              _react2["default"].createElement(_function_browser2["default"], { ref: "functionBrowser", addGraph: this.addGraph.bind(this), language: guides.language, type: guides.type, example: guides.example })
 	            )
 	          ),
@@ -37265,17 +37239,17 @@ webpackJsonp([0],[
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 	
 	// load the styles
-	var content = __webpack_require__(/*! !./../../css-loader!./bootstrap.css */ 192);
+	var content = __webpack_require__(/*! !../../css-loader!./bootstrap.css */ 192);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
-	var update = __webpack_require__(/*! ./../../style-loader/addStyles.js */ 189)(content, {});
+	var update = __webpack_require__(/*! ../../style-loader/addStyles.js */ 189)(content, {});
 	if(content.locals) module.exports = content.locals;
 	// Hot Module Replacement
 	if(false) {
 		// When the styles change, update the <style> tags
 		if(!content.locals) {
-			module.hot.accept("!!./../../css-loader/index.js!./bootstrap.css", function() {
-				var newContent = require("!!./../../css-loader/index.js!./bootstrap.css");
+			module.hot.accept("!!../../css-loader/index.js!./bootstrap.css", function() {
+				var newContent = require("!!../../css-loader/index.js!./bootstrap.css");
 				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
 				update(newContent);
 			});
@@ -37291,7 +37265,7 @@ webpackJsonp([0],[
   \**********************************************************/
 /***/ function(module, exports, __webpack_require__) {
 
-	exports = module.exports = __webpack_require__(/*! ./../../css-loader/lib/css-base.js */ 188)();
+	exports = module.exports = __webpack_require__(/*! ../../css-loader/lib/css-base.js */ 188)();
 	// imports
 	exports.push([module.id, "@import url(https://fonts.googleapis.com/css?family=Lato:400,700,400italic);", ""]);
 	
@@ -37383,7 +37357,10 @@ webpackJsonp([0],[
 	
 	    var _this = _possibleConstructorReturn(this, (TracingSwitch.__proto__ || Object.getPrototypeOf(TracingSwitch)).call(this, props));
 	
-	    _this.state = { status: "paused" };
+	    _this.state = {
+	      status: "paused",
+	      paused: false
+	    };
 	    return _this;
 	  }
 	
@@ -37412,7 +37389,6 @@ webpackJsonp([0],[
 	        var _this2 = this;
 	
 	        var spec = this.state.status === "running" ? "pause" : "all";
-	
 	        $.ajax({
 	          url: "/api/trace_set",
 	          data: { spec: spec }
@@ -37432,9 +37408,25 @@ webpackJsonp([0],[
 	      function getTracingStatus() {
 	        var _this3 = this;
 	
-	        $.ajax({ url: "/api/trace_status" }).done(function (data) {
-	          _this3.state.status = data.status;
-	          _this3.setState(_this3.state);
+	        $.ajax({
+	          url: "/api/trace_status"
+	        }).done(function (data) {
+	          if (_this3.state.status !== data.status) {
+	            var shouldPause = data.status !== "running";
+	            _this3.setState(function (prevState, props) {
+	              var newState = {};
+	              if (prevState.paused !== shouldPause) {
+	                props.toggleTimeOnGraph();
+	                newState = {
+	                  status: data.status,
+	                  paused: shouldPause
+	                };
+	              } else {
+	                newState = { status: data.status };
+	              }
+	              return newState;
+	            });
+	          }
 	        }).always(function () {
 	          return _this3.state.timeout = window.setTimeout(_this3.getTracingStatus.bind(_this3), 1000);
 	        });
@@ -37511,6 +37503,10 @@ webpackJsonp([0],[
 	
 	var _graph2 = _interopRequireDefault(_graph);
 	
+	var _underscore = __webpack_require__(/*! underscore */ 3);
+	
+	var _underscore2 = _interopRequireDefault(_underscore);
+	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -37527,7 +37523,10 @@ webpackJsonp([0],[
 	
 	    var _this = _possibleConstructorReturn(this, (GraphPanel.__proto__ || Object.getPrototypeOf(GraphPanel)).call(this, props));
 	
-	    _this.state = { funs: [] };
+	    _this.state = {
+	      funs: [],
+	      paused: false
+	    };
 	    return _this;
 	  }
 	
@@ -37606,8 +37605,9 @@ webpackJsonp([0],[
 	    key: "handleFuns",
 	    value: function () {
 	      function handleFuns(data) {
-	        this.state.funs = data;
-	        this.setState(this.state);
+	        if (!_underscore2["default"].isEqual(this.state.funs, data)) {
+	          this.setState({ funs: data });
+	        }
 	        window.setTimeout(this.getFunsList.bind(this), 500);
 	      }
 	
@@ -37623,10 +37623,20 @@ webpackJsonp([0],[
 	      return handleFunsError;
 	    }()
 	  }, {
+	    key: "toggleTimeOnGraph",
+	    value: function () {
+	      function toggleTimeOnGraph() {
+	        this.setState({ paused: !this.state.paused });
+	      }
+	
+	      return toggleTimeOnGraph;
+	    }()
+	  }, {
 	    key: "render",
 	    value: function () {
 	      function render() {
 	        var funs = this.state.funs;
+	        var paused = this.state.paused;
 	
 	        var graphsPanels = [];
 	        for (var i = 0; i < funs.length; i++) {
@@ -37636,7 +37646,8 @@ webpackJsonp([0],[
 	            _react2["default"].createElement(
 	              "div",
 	              { className: "col-md-12" },
-	              _react2["default"].createElement(_graph2["default"], { removeGraph: this.removeGraph.bind(this), mfa: funs[i] })
+	              _react2["default"].createElement(_graph2["default"], { removeGraph: this.removeGraph.bind(this), mfa: funs[i],
+	                paused: paused })
 	            )
 	          ));
 	        }
