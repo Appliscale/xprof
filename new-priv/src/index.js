@@ -6,8 +6,7 @@ import App from './App';
 import registerServiceWorker from './registerServiceWorker';
 
 const render = () => {
-  const element = React.createElement(AppContainer, null, App());
-  ReactDOM.render(element, document.getElementById('root'));
+  ReactDOM.render(React.createElement(AppContainer, null, App()), document.getElementById('root'));
 };
 
 render();
