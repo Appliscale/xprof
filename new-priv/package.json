@@ -24,15 +24,23 @@
     "file-loader": "0.11.2",
     "fs-extra": "3.0.1",
     "html-webpack-plugin": "2.29.0",
+    "husky": "^0.14.3",
+    "jest": "^21.2.1",
+    "lint-staged": "^4.3.0",
+    "lodash": "^4.17.4",
     "object-assign": "4.1.1",
     "postcss-flexbugs-fixes": "3.2.0",
     "postcss-loader": "2.0.6",
+    "prettier": "^1.7.4",
     "prettier-eslint": "^8.2.1",
     "promise": "8.0.1",
     "react": "^16.0.0",
     "react-dev-utils": "^4.1.0",
     "react-dom": "^16.0.0",
     "react-hot-loader": "^3.1.1",
+    "react-redux": "^5.0.6",
+    "redux": "^3.7.2",
+    "rxjs": "^5.5.0",
     "style-loader": "0.19.0",
     "sw-precache-webpack-plugin": "0.11.4",
     "url-loader": "0.6.2",
@@ -42,12 +50,7 @@
     "whatwg-fetch": "2.0.3"
   },
   "devDependencies": {
-    "husky": "^0.14.3",
-    "jest": "^20.0.4",
-    "lint-staged": "^4.3.0",
-    "lodash": "^4.17.4",
-    "prettier": "^1.7.4",
-    "rxjs": "^5.5.0"
+    "redux-immutable-state-invariant": "^2.1.0"
   },
   "scripts": {
     "precommit": "lint-staged",
@@ -86,7 +89,6 @@
   },
   "eslintConfig": {
     "extends": ["airbnb"],
-    "plugins": ["react", "jsx-a11y", "import"],
     "env": {
       "browser": true,
       "jest": true

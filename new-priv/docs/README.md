@@ -1,10 +1,11 @@
+## Development workflow
+
 The project has been bootstrapped using Create React App npm package (create-react-app@1.4.1). Please read [CREATE_REACT_APP.md](CREATE_REACT_APP.md) to get acquainted with development setup (I know it's long!). Slight modification compared to the generated setup has been made, all are bulleted below:
 - `npm run eject`
 - [airbnb](https://github.com/airbnb/javascript/tree/master/packages/eslint-config-airbnb) eslint configuration instead of [react-app](https://github.com/facebookincubator/create-react-app/tree/master/packages/eslint-config-react-app). Airbnb rules are much stricter than rules provided by eslint-config-react-app.
 ```js
 "eslintConfig": {
   "extends": ["airbnb"],
-  "plugins": ["react", "jsx-a11y", "import"],
   "env": {
     "browser": true,
     "jest": true
@@ -40,3 +41,19 @@ The project has been bootstrapped using Create React App npm package (create-rea
 - Added [.editorconfig](http://editorconfig.org) file to define and maintain consistent coding styles between different editors and IDEs.
 - Added Hot loading functionality ([React Hot Loader](https://github.com/gaearon/react-hot-loader)) which allow tweak React components in real time. Just save file in the editor and component will update without refresh in the browser.
 
+## State management with Redux
+
+### Actions
+
+### How to handle immutability
+
+- OBJECT: Object.assign({}, object, { value: "new"})
+- ARRAYS: Spread operator for arrays [...arr]
+
+### How to enforce immutability?
+
+- redux-immutable-state-invariant
+
+### READ
+
+- http://redux.js.org/docs/basics/UsageWithReact.html
