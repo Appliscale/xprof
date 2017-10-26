@@ -97,9 +97,9 @@ handle_call({monitor, MFASpec, Query}, _From, State) ->
         undefined ->
             {ok, Pid} = supervisor:start_child(xprof_tracer_handler_sup, [MFASpec]),
             put_pid(MFAId, Pid),
-            %% funs stored in the order of start monitoring
+            %% funs stored in reversed order of start monitoring
             NState = setup_trace_all_if_initialized(State),
-            {reply, ok, NState#state{funs = State#state.funs ++ [{MFAId, Query}]}}
+            {reply, ok, NState#state{funs = [{MFAId, Query}|State#state.funs]}}
     end;
 handle_call({demonitor, MFA}, _From, State) ->
     xprof_tracer_handler:trace_mfa_off(MFA),
