@@ -8,14 +8,19 @@ export default class TracingSwitch extends React.Component {
       status: "paused",
       paused: false,
     };
+
+    this.timeout = null;
+
+    this.getTracingStatus = this.getTracingStatus.bind(this);
+    this.handleClick = this.handleClick.bind(this);
   }
 
   componentDidMount() {
-    this.state.timeout = window.setTimeout(this.getTracingStatus.bind(this), 1000);
+    this.timeout = window.setTimeout(this.getTracingStatus, 1000);
   }
 
   componentWillUnmount() {
-    window.clearTimeout(this.state.timeout);
+    window.clearTimeout(this.timeout);
   }
 
   handleClick(event) {
@@ -26,7 +31,7 @@ export default class TracingSwitch extends React.Component {
     })
       .fail((jqXHR, textStatus, errorThrown) => console.error("Cant set tracing", errorThrown))
       .always(() => {
-        clearTimeout(this.state.timeout);
+        clearTimeout(this.timeout);
         this.getTracingStatus();
       });
   }
@@ -54,7 +59,7 @@ export default class TracingSwitch extends React.Component {
         }
       })
       .always(() =>
-        this.state.timeout = window.setTimeout(this.getTracingStatus.bind(this), 1000)
+        this.timeout = window.setTimeout(this.getTracingStatus, 1000)
       );
   }
 
@@ -80,7 +85,7 @@ export default class TracingSwitch extends React.Component {
 
     return (
       <form className="navbar-form navbar-left" role="search">
-        <button type="button" onClick={this.handleClick.bind(this)} className={btnColor}>
+        <button type="button" onClick={this.handleClick} className={btnColor}>
           <span className={symbol} aria-hidden="true"></span> {text}
         </button>
       </form>);

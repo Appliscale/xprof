@@ -10,14 +10,14 @@ export default class GraphPanel extends React.Component {
       funs: [],
       paused: false
     };
+    this.removeGraph = this.removeGraph.bind(this);
+    this.getFunsList = this.getFunsList.bind(this);
+    this.handleFuns = this.handleFuns.bind(this);
+    this.handleFunsError = this.handleFunsError.bind(this);
   }
 
   componentDidMount() {
-    this.funsInterval = window.setTimeout(this.getFunsList.bind(this), 500);
-  }
-
-  componentWillUnmount() {
-    window.clearTimeout(this.interval);
+    window.setTimeout(this.getFunsList, 500);
   }
 
   // Getting data
@@ -36,31 +36,29 @@ export default class GraphPanel extends React.Component {
   }
 
   removeGraph(mfa) {
-    var newState = this.state;
-    var index = this.state.funs.indexOf(mfa);
+    const index = this.state.funs.indexOf(mfa);
     if (index > -1) {
-      newState.funs.splice(index, 1);
+      this.setState({ funs: this.state.funs.splice(index, 1) });
     }
-    this.setState(newState);
   }
 
   getFunsList() {
     $.ajax({
       url: "/api/mon_get_all" }
     )
-      .done(this.handleFuns.bind(this))
-      .fail(this.handleFunsError.bind(this));
+      .done(this.handleFuns)
+      .fail(this.handleFunsError);
   }
 
   handleFuns(data) {
     if (!_.isEqual(this.state.funs, data)) {
       this.setState({ funs: data });
     }
-    window.setTimeout(this.getFunsList.bind(this), 500);
+    window.setTimeout(this.getFunsList, 500);
   }
 
   handleFunsError(jqXHR, error) {
-    window.setTimeout(this.getFunsList.bind(this), 1000);
+    window.setTimeout(this.getFunsList, 1000);
   }
 
   toggleTimeOnGraph() {
@@ -76,8 +74,11 @@ export default class GraphPanel extends React.Component {
       graphsPanels.push(
         <div key={funs[i]} className="row">
           <div className="col-md-12">
-            <Graph removeGraph={this.removeGraph.bind(this)} mfa={funs[i]}
-            paused={paused}/>
+            <Graph
+              removeGraph={this.removeGraph}
+              mfa={funs[i]}
+              paused={paused}
+            />
           </div>
         </div>
       );

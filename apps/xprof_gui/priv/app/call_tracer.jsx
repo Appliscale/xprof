@@ -5,6 +5,7 @@ export class CallsTableRow extends React.Component {
   constructor(props) {
     super(props);
     this.state = { expanded: false };
+    this.handleClick = this.handleClick.bind(this);
   }
 
   handleClick(e) {
@@ -20,7 +21,7 @@ export class CallsTableRow extends React.Component {
     return (
       <tr data-expanded={this.state.expanded} className={`row-${rowType}`}>
         <td>
-          <button onClick={this.handleClick.bind(this)} type="button"
+          <button onClick={this.handleClick} type="button"
             className="btn btn-default">
             <span className={`expand-chevron glyphicon glyphicon-chevron-${dir}`}
               aria-hidden="true">
@@ -68,6 +69,8 @@ export class CallsTable extends React.Component {
   }
 
   renderColumn(id, header) {
+    // To fix problem with bidn we
+    // Need another layer of abstraction IE a new react component
     return (
       <th onClick={this.onClick.bind(this, id)}>{header} {this.sortIcon(id)}</th>
     );
@@ -116,6 +119,16 @@ export class CallsTable extends React.Component {
 }
 
 class StartStopButton extends React.Component {
+  constructor(props) {
+    super(props);
+    this.onClick = this.onClick.bind(this);
+  }
+
+  shouldComponentUpdate(nextProps, nextState) {
+    return this.props.disabled !== nextProps.disabled ||
+      this.props.started !== nextProps.started;
+  }
+
   onClick(e) {
     e.preventDefault();
 
@@ -134,14 +147,14 @@ class StartStopButton extends React.Component {
 
     if (started) {
       return (
-        <button type="submit" onClick={this.onClick.bind(this)}
+        <button type="submit" onClick={this.onClick}
           className="btn btn-danger" disabled={disabled}>
           Stop
         </button>
       );
     } else {
       return (
-        <button type="submit" onClick={this.onClick.bind(this)}
+        <button type="submit" onClick={this.onClick}
           className="btn btn-success" disabled={disabled}>
           Start
         </button>
@@ -166,6 +179,13 @@ export default class CallsTracer extends React.Component {
     };
 
     this.timeout = null;
+
+    this.handleCaptureStart = this.handleCaptureStart.bind(this);
+    this.handleCaptureStop = this.handleCaptureStop.bind(this);
+    this.handleChangeTreshold = this.handleChange.bind(this, "threshold");
+    this.handleChangeLimit = this.handleChange.bind(this, "limit");
+    this.getCaptureData = this.getCaptureData.bind(this);
+    this.handleCaptureCall = this.handleCaptureCall.bind(this);
   }
 
   componentDidMount() {
@@ -190,10 +210,11 @@ export default class CallsTracer extends React.Component {
         threshold: threshold,
         limit: limit }
     }).done((response) => {
-      this.state.capture_id = response.capture_id;
-      this.state.offset = 0;
-      this.state.items = [];
-      this.setState(this.state);
+      this.setState({
+        capture_id: response.capture_id,
+        offset: 0,
+        items: [],
+      });
       this.getCaptureData();
     });
   }
@@ -215,34 +236,34 @@ export default class CallsTracer extends React.Component {
         mod: mfa[0], fun: mfa[1], arity: mfa[2],
         offset: this.state.offset
       }
-    }).done(function(data, textStatus, jqXHR) {
-      if (jqXHR.status === 200) {
-        if (this.state.capture_id !== data.capture_id) {
-          this.state.items = [];
-          this.state.offset = 0;
+    }).done(this.handleCaptureCall);
+  }
 
-          if (data.threshold > 0) {
-            this.state.threshold_value = data.threshold;
-          }
+  handleCaptureCall(data, textStatus, jqXHR) {
+    const nextState = {};
+    if (jqXHR.status === 200) {
+      if (this.state.capture_id !== data.capture_id) {
+        nextState.items = [];
+        nextState.offset = 0;
 
-          if (data.limit > 0) {
-            this.state.limit_value = data.limit;
-          }
-        } else {
-          const sortedItems = data.items.sort();
-          const lastId = sortedItems.length === 0 ? this.state.offset : _.last(sortedItems).id;
-          this.state.offset = lastId;
-          this.state.items = this.state.items.concat(sortedItems);
+        if (data.threshold >= 0) {
+          nextState.threshold_value = data.threshold;
         }
-
-        this.state.capture_id = data.capture_id;
-        this.state.status = data.has_more ? this.Status.RUNNING : this.Status.STOPPED;
-
+        if (data.limit >= 0) {
+          nextState.limit_value = data.limit;
+        }
+      } else {
+        const sortedItems = data.items.sort();
+        const lastId = sortedItems.length === 0 ? this.state.offset : _.last(sortedItems).id;
+        nextState.offset = lastId;
+        nextState.items = this.state.items.concat(sortedItems);
       }
 
-      this.timeout = setTimeout(this.getCaptureData.bind(this), 750);
-      this.setState(this.state);
-    }.bind(this));
+      nextState.capture_id = data.capture_id;
+      nextState.status = data.has_more ? this.Status.RUNNING : this.Status.STOPPED;
+    }
+    this.timeout = setTimeout(this.getCaptureData, 750);
+    this.setState(nextState);
   }
 
   handleChange(id, event) {
@@ -297,7 +318,7 @@ export default class CallsTracer extends React.Component {
                 <input ref="thresholdInput" type="text" className="form-control"
                   id="tresholdInput" placeholder={"0 - 1000000"}
                   value={this.state.threshold_value || ""}
-                  onChange={this.handleChange.bind(this, "threshold")}
+                  onChange={this.handleChangeTreshold}
                   disabled={started}/>
                 </span>
                 <div className="input-group-addon">ms</div>
@@ -311,16 +332,19 @@ export default class CallsTracer extends React.Component {
                 <input ref="limitInput" type="text" className="form-control"
                   id="limitInput" placeholder={"1 - 100"}
                   value={this.state.limit_value || ""}
-                  onChange={this.handleChange.bind(this, "limit")}
+                  onChange={this.handleChangeLimit}
                   disabled={started}/>
                 </span>
                 <div className="input-group-addon">calls</div>
               </div>
             </div>
             <span>
-              <StartStopButton disabled={buttonDisabled} started={started}
-                onStart={this.handleCaptureStart.bind(this)}
-                onStop={this.handleCaptureStop.bind(this)}/>
+              <StartStopButton
+                disabled={buttonDisabled}
+                started={started}
+                onStart={this.handleCaptureStart}
+                onStop={this.handleCaptureStop}
+              />
             </span>
           </form>
         </div>

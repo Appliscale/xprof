@@ -12,6 +12,7 @@ class ACModal extends React.Component {
       position: -1
     };
     this.cleared = false;
+    this.handleFunClick = this.handleFunClick.bind(this);
   }
 
   componentDidUpdate() {
@@ -34,13 +35,13 @@ class ACModal extends React.Component {
     if (data.length === 0) {
       this.cleared = true;
     }
-
-    this.state.funs = data;
-    this.state.position = data.length === 1 ? 0 : -1;
-    this.setState(this.state);
+    this.setState({
+      funs: data,
+      position: data.length === 1 ? 0 : -1,
+    });
   }
 
-  handleFunClick(query, e) {
+  handleFunClick(query) {
     this.props.addGraph(query);
   }
 
@@ -48,8 +49,9 @@ class ACModal extends React.Component {
     var targetPosition = this.state.position + delta;
 
     if (targetPosition > 0 || targetPosition < this.state.funs.length) {
-      this.state.position = targetPosition;
-      this.setState(this.state);
+      this.setState({
+        position: targetPosition,
+      });
     }
   }
 
@@ -79,8 +81,11 @@ class ACModal extends React.Component {
       }
 
       rows.push(
-        <tr className={highlightClass} key={mfas[i]}
-            onClick={this.handleFunClick.bind(this, mfas[i])}>
+        <tr
+          className={highlightClass}
+          key={mfas[i]}
+          onClick={this.handleFunClick}
+        >
           <td>{mfas[i]}</td>
         </tr>);
     }
@@ -110,6 +115,9 @@ export default class FunctionBrowser extends React.Component {
   constructor(props) {
     super(props);
     this.state = { value: "" };
+    this.funsSuccess = this.funsSuccess.bind(this);
+    this.handleKeyDown = this.handleKeyDown.bind(this);
+    this.handleChange = this.handleChange.bind(this);
   }
 
   checkInput(input) {
@@ -167,7 +175,7 @@ export default class FunctionBrowser extends React.Component {
     this.setState({ value: event.target.value });
 
     if (event.target.value !== "") {
-      $.getJSON("/api/funs", { query: event.target.value }, this.funsSuccess.bind(this));
+      $.getJSON("/api/funs", { query: event.target.value }, this.funsSuccess);
     } else {
       this.refs.acm.displayFuns([]);
     }
@@ -239,8 +247,8 @@ export default class FunctionBrowser extends React.Component {
               <input id="searchBox" ref="searchBox" type="text" className="form-control"
                      placeholder={prompt}
                      aria-describedby="sizing-addon3"
-                     autoComplete="off" value={value} onKeyDown={this.handleKeyDown.bind(this)}
-                     onChange={this.handleChange.bind(this)} autoFocus="autofocus"/>
+                     autoComplete="off" value={value} onKeyDown={this.handleKeyDown}
+                     onChange={this.handleChange} autoFocus="autofocus"/>
               <ACModal ref="acm" addGraph={this.props.addGraph}></ACModal>
           </div>
         </div>

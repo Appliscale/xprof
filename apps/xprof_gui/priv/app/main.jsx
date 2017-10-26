@@ -18,14 +18,17 @@ class App extends React.Component {
       mode: null
     };
 
-    $.getJSON("/api/mode", {}, this.modeSuccess.bind(this));
+    this.modeSuccess = this.modeSuccess.bind(this);
+    this.addGraph = this.addGraph.bind(this);
+    this.clearFunctionBrowser = this.clearFunctionBrowser.bind(this);
+    this.toggleTimeOnGraph = this.toggleTimeOnGraph.bind(this);
+
+    $.getJSON("/api/mode", {}, this.modeSuccess);
   }
 
   modeSuccess(data) {
-    this.state.mode = data.mode;
-    this.setState(this.state);
-
-    $("#favicon").attr("href", `img/xprof_icon_${this.state.mode}.png`);
+    this.setState({ mode: data.mode });
+    $("#favicon").attr("href", `img/xprof_icon_${data.mode}.png`);
   }
 
   addGraph(query) {
@@ -53,11 +56,17 @@ class App extends React.Component {
           </div>
 
           <div className="navbar-collapse collapse" id="navbar-collapsible">
-            <TracingSwitch toggleTimeOnGraph={this.toggleTimeOnGraph.bind(this)}/>
-            <FunctionBrowser ref="functionBrowser" addGraph={this.addGraph.bind(this)} language={guides.language} type={guides.type} example={guides.example} />
+            <TracingSwitch toggleTimeOnGraph={this.toggleTimeOnGraph}/>
+            <FunctionBrowser
+              ref="functionBrowser"
+              addGraph={this.addGraph}
+              language={guides.language}
+              type={guides.type}
+              example={guides.example}
+            />
           </div>
         </nav>
-        <GraphPanel ref="graphPanel" clearFunctionBrowser={this.clearFunctionBrowser.bind(this)}/>
+        <GraphPanel ref="graphPanel" clearFunctionBrowser={this.clearFunctionBrowser}/>
       </div>
     );
   }
