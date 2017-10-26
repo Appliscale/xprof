@@ -91,7 +91,6 @@ export class CallsTable extends React.Component {
 
   render() {
     let items = _.sortBy(this.props.items, this.state.sortby);
-
     if (this.state.order === "desc") {
       items.reverse();
     }
@@ -256,7 +255,12 @@ export default class CallsTracer extends React.Component {
         const sortedItems = data.items.sort();
         const lastId = sortedItems.length === 0 ? this.state.offset : _.last(sortedItems).id;
         nextState.offset = lastId;
-        nextState.items = this.state.items.concat(sortedItems);
+        let itemsToAdd = sortedItems.filter(item => {
+          let shouldAdd = true;
+          this.state.items.forEach(i => { if (item.id === i.id) { shouldAdd = false; } });
+          return shouldAdd;
+        });
+        nextState.items = this.state.items.concat(itemsToAdd);
       }
 
       nextState.capture_id = data.capture_id;
