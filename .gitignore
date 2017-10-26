@@ -16,6 +16,7 @@ deps
 
 Mnesia.*
 erl_crash.dump
+rebar3.crashdump
 log/
 
 *.coverdata
@@ -24,6 +25,7 @@ dialyzer.actual
 dialyzer.expected.filtered
 
 doc
+apps/*/doc
 .edts
 
 cover/
@@ -32,8 +34,8 @@ cover/
 
 _build/
 
-priv/build/*.js.map
-priv/bower_components/
-priv/node_modules/
+apps/xprof_gui/priv/build/*.js.map
+apps/xprof_gui/priv/bower_components/
+apps/xprof_gui/priv/node_modules/
 
 compile_commands.json

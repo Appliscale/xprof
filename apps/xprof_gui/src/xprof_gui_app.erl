@@ -1,20 +1,22 @@
-%% @doc xprof public API
+%% @doc XProf GUI application callback
 %% @end
--module(xprof_app).
+-module(xprof_gui_app).
 
 -behaviour(application).
 
--include("xprof.hrl").
+%% Application callbacks
+-export([start/2,
+         stop/1]).
+
+-define(APP, xprof_gui).
+-define(DEF_WEB_IF_PORT, 7890).
 
 %% Application callbacks
--export([start/2,stop/1]).
-
-%% API
 
 start(_StartType, _StartArgs) ->
     case start_cowboy() of
         {ok, _} ->
-            xprof_sup:start_link();
+            {ok, self()};
         {error, _} = Error ->
             Error
     end.
@@ -32,7 +34,7 @@ start_cowboy() ->
                       [{env, [{dispatch, Dispatch}]}]).
 
 cowboy_routes() ->
-    [{'_', [{"/api/:what", xprof_web_handler, []},
+    [{'_', [{"/api/:what", xprof_gui_cowboy1_handler, []},
             {"/build/[...]", cowboy_static, {priv_dir, ?APP, "build"}},
             {"/styles/[...]", cowboy_static, {priv_dir, ?APP, "styles"}},
             {"/img/[...]", cowboy_static, {priv_dir, ?APP, "img"}},

@@ -1,9 +1,9 @@
 %%%
 %%% @doc Module to parse and format expressions in Erlang syntax
 %%%
--module(xprof_erlang_syntax).
+-module(xprof_core_erlang_syntax).
 
--behaviour(xprof_language).
+-behaviour(xprof_core_language).
 
 -export([parse_query/1,
          hidden_function/1,
@@ -31,7 +31,7 @@ parse_query(Str) ->
 tokens(Str) ->
     case erl_scan:string(Str, {1,1}) of
         {error, {_Loc, Mod, Err}, Loc} ->
-            xprof_ms:err(Loc, Mod, Err);
+            xprof_core_ms:err(Loc, Mod, Err);
         {ok, [{atom, _, M}, {':', _},
               {atom, _, F}, {'/', _},
               {integer, _, A}], _EndLoc} ->
@@ -40,7 +40,7 @@ tokens(Str) ->
               {atom, _, F}|Tokens], _EndLoc} when Tokens =/= [] ->
             {clauses, M, F, [{'fun', 0}|ensure_end(ensure_body(Tokens))]};
         {ok, Tokens, _EndLoc} ->
-            xprof_ms:err("expression is not an xprof match-spec fun ~w", [Tokens])
+            xprof_core_ms:err("expression is not an xprof match-spec fun ~w", [Tokens])
     end.
 
 %% @doc Ensure the fun has at least a trivial function body "-> true".
@@ -70,11 +70,11 @@ ensure_end(Tokens) ->
 parse(Tokens) ->
     case erl_parse:parse_exprs(Tokens) of
         {error, {Loc, Mod, Err}} ->
-            xprof_ms:err(Loc, Mod, Err);
+            xprof_core_ms:err(Loc, Mod, Err);
         {ok, [{'fun', _Loc, {clauses, Clauses}}]} ->
             Clauses;
         {ok, _} ->
-            xprof_ms:err("expression is not an xprof match-spec fun")
+            xprof_core_ms:err("expression is not an xprof match-spec fun")
     end.
 
 %%

@@ -2,6 +2,7 @@ language: erlang
 branches:
     only:
         - master
+        - release_2.0
 otp_release:
     - 20.0
     - 19.3

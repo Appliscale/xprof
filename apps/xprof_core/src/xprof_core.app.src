@@ -1,0 +1,19 @@
+{application, xprof_core,
+ [{description, "Visual BEAM profiler tracer core"}
+ ,{vsn, "2.0.0-snapshot"}
+ ,{registered, []}
+ ,{mod, {'xprof_core_app', []}}
+ ,{applications,
+   [kernel
+   ,stdlib
+   ,lager
+   ,customized_hdr_histogram
+   ]}
+ ,{env,[]}
+ ,{modules, []}
+ ,{licenses, ["BSD-3-Clause"]}
+ ,{maintainers, ["Marcin Kasprowicz", "Marcin Kolodziej",
+                 "Michal Niec", "Pawel Pikula",
+                 "Peter Gomori", "Wojciech Gawronski"]}
+ ,{links, [{"Github", "https://github.com/appliscale/xprof"}]}
+ ]}.

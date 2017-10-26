@@ -1,7 +1,7 @@
 %% -*- erlang-indent-level: 4;indent-tabs-mode: nil -*-
 %% ex: ts=4 sw=4 et
 
--module(xprof_tracer).
+-module(xprof_core_tracer).
 
 -behaviour(gen_server).
 
@@ -9,8 +9,7 @@
          trace/1,
          monitor/1, demonitor/1,
          all_monitored/0,
-         trace_status/0,
-         data/2]).
+         trace_status/0]).
 
 %% gen_server callbacks
 
@@ -35,7 +34,7 @@ start_link() ->
 %% @doc Starts monitoring specified function calls.
 -spec monitor(mfa() | string()) -> ok | {error, term()}.
 monitor(Query) when is_list(Query) ->
-    case xprof_ms:fun2ms(Query) of
+    case xprof_core_ms:fun2ms(Query) of
         {ok, MFASpec} ->
             lager:info("Starting monitoring ~s",[Query]),
             gen_server:call(
@@ -46,27 +45,21 @@ monitor(Query) when is_list(Query) ->
     end;
 monitor({Mod, Fun, Arity} = MFA) ->
     lager:info("Starting monitoring ~w:~w/~b",[Mod,Fun,Arity]),
-    MFASpec = {MFA, xprof_ms:default_ms()},
-    ModeCb = xprof_lib:get_mode_cb(),
+    MFASpec = {MFA, xprof_core_ms:default_ms()},
+    ModeCb = xprof_core_lib:get_mode_cb(),
     FormattedMFA = ModeCb:fmt_mfa(Mod, Fun, Arity),
     gen_server:call(?MODULE, {monitor, MFASpec, FormattedMFA}).
 
 %% @doc Stops monitoring specified function calls.
--spec demonitor(xprof:mfa_id()) -> ok.
+-spec demonitor(xprof_core:mfa_id()) -> ok.
 demonitor({Mod, Fun, Arity} = MFA) ->
     lager:info("Stopping monitoring ~w:~w/~w",[Mod,Fun,Arity]),
     gen_server:call(?MODULE, {demonitor, MFA}).
 
 %% @doc Returns list of monitored functions
--spec all_monitored() -> list({xprof:mfa_id(), binary()}).
+-spec all_monitored() -> list({xprof_core:mfa_id(), binary()}).
 all_monitored() ->
     gen_server:call(?MODULE, all_monitored).
-
-%% @doc Returns metrics gathered for particular function.
--spec data(xprof:mfa_id(), non_neg_integer()) -> list(proplists:proplist()) |
-                                                 {error, not_found}.
-data(MFA, TS) ->
-    xprof_tracer_handler:data(MFA, TS).
 
 %% @doc Turns on or resumes tracing for a process specified by pid, all
 %% processes or processes that are spawned by specified spawner pid.
@@ -90,24 +83,24 @@ init([]) ->
     {ok, #state{max_queue_len = MaxQueueLen}}.
 
 handle_call({monitor, MFASpec, Query}, _From, State) ->
-    MFAId = xprof_lib:mfaspec2id(MFASpec),
+    MFAId = xprof_core_lib:mfaspec2id(MFASpec),
     case get_pid(MFAId) of
         Pid when is_pid(Pid) ->
             {reply, {error, already_traced}, State};
         undefined ->
-            {ok, Pid} = supervisor:start_child(xprof_tracer_handler_sup, [MFASpec]),
+            {ok, Pid} = supervisor:start_child(xprof_core_trace_handler_sup, [MFASpec]),
             put_pid(MFAId, Pid),
             %% funs stored in reversed order of start monitoring
             NState = setup_trace_all_if_initialized(State),
             {reply, ok, NState#state{funs = [{MFAId, Query}|State#state.funs]}}
     end;
 handle_call({demonitor, MFA}, _From, State) ->
-    xprof_tracer_handler:trace_mfa_off(MFA),
+    xprof_core_trace_handler:trace_mfa_off(MFA),
 
     Pid = erase_pid(MFA),
     NewFuns = lists:filter(fun({E, _}) -> E =/= MFA end, State#state.funs),
 
-    supervisor:terminate_child(xprof_tracer_handler_sup, Pid),
+    supervisor:terminate_child(xprof_core_trace_handler_sup, Pid),
     {reply, ok, State#state{funs=NewFuns}};
 handle_call(all_monitored, _From, State = #state{funs=MFAs}) ->
     {reply, MFAs, State};
@@ -221,22 +214,22 @@ send2pids({M, F, _} = MFA, Msg) ->
     send2pid({M, F, '_'}, Msg),
     ok.
 
--spec send2pid(xprof:mfa_id(), term()) -> any().
+-spec send2pid(xprof_core:mfa_id(), term()) -> any().
 send2pid(MFA, Msg) ->
     case get_pid(MFA) of
         undefined -> ok;
         Pid -> erlang:send(Pid, Msg)
     end.
 
--spec get_pid(xprof:mfa_id()) -> pid() | undefined.
+-spec get_pid(xprof_core:mfa_id()) -> pid() | undefined.
 get_pid(MFA) ->
     get({handler, MFA}).
 
--spec put_pid(xprof:mfa_id(), pid()) -> any().
+-spec put_pid(xprof_core:mfa_id(), pid()) -> any().
 put_pid(MFA, Pid) ->
     put({handler, MFA}, Pid).
 
--spec erase_pid(xprof:mfa_id()) -> pid() | undefined.
+-spec erase_pid(xprof_core:mfa_id()) -> pid() | undefined.
 erase_pid(MFA) ->
     erase({handler, MFA}).
 
