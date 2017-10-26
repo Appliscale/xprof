@@ -2,10 +2,10 @@
 %% ex: ts=4 sw=4 et
 
 %% @doc Gen server that tracks all calls to a particular function. It
-%% registers itself localy under a atom that consists of MFA and xprof_monitor
+%% registers itself localy under a atom that consists of MFA and xprof_
 %% prefix. The same name is used to create public ETS table that holds entries
 %% with call time stats for every second.
--module(xprof_tracer_handler).
+-module(xprof_core_trace_handler).
 
 -behaviour(gen_server).
 
@@ -31,16 +31,16 @@
 -define(MAX_DURATION, 30*1000).
 
 %% @doc Starts new process registered localy.
--spec start_link(xprof:mfa_spec()) -> {ok, pid()}.
+-spec start_link(xprof_core:mfa_spec()) -> {ok, pid()}.
 start_link(MFASpec) ->
-    Name = xprof_lib:mfaspec2atom(MFASpec),
+    Name = xprof_core_lib:mfaspec2atom(MFASpec),
     gen_server:start_link({local, Name}, ?MODULE, [MFASpec, Name], []).
 
 %% @doc Returns histogram data for seconds that occured after FromEpoch.
--spec data(xprof:mfa_id(), non_neg_integer()) -> [proplists:proplist()] |
+-spec data(xprof_core:mfa_id(), non_neg_integer()) -> [proplists:proplist()] |
                                                  {error, not_found}.
 data(MFA, FromEpoch) ->
-    Name = xprof_lib:mfa2atom(MFA),
+    Name = xprof_core_lib:mfa2atom(MFA),
     try
         ets:select(Name, [{
                             {{sec, '$1'},'$2'},
@@ -54,18 +54,18 @@ data(MFA, FromEpoch) ->
 
 %% @doc Starts capturing args and results from function calls that lasted longer
 %% than specified time threshold.
--spec capture(xprof:mfa_id(), non_neg_integer(), non_neg_integer()) ->
+-spec capture(xprof_core:mfa_id(), non_neg_integer(), non_neg_integer()) ->
                      {ok, non_neg_integer()}.
 capture(MFA = {M,F,A}, Threshold, Limit) ->
     lager:info("Capturing ~p calls to ~w:~w/~w that exceed ~p ms:",
                [Limit, M, F, A, Threshold]),
 
-    Name = xprof_lib:mfa2atom(MFA),
+    Name = xprof_core_lib:mfa2atom(MFA),
     gen_server:call(Name, {capture, Threshold, Limit}).
 
--spec capture_stop(xprof:mfa_id()) -> ok | {error, not_found}.
+-spec capture_stop(xprof_core:mfa_id()) -> ok | {error, not_found}.
 capture_stop(MFA) ->
-    Name = xprof_lib:mfa2atom(MFA),
+    Name = xprof_core_lib:mfa2atom(MFA),
     try
         gen_server:call(Name, capture_stop)
     catch
@@ -74,27 +74,28 @@ capture_stop(MFA) ->
     end.
 
 %% @doc
--spec get_captured_data(xprof:mfa_id(), non_neg_integer()) ->
+-spec get_captured_data(xprof_core:mfa_id(), non_neg_integer()) ->
                                empty | {ok,
-                                        {Id :: non_neg_integer(),
+                                        {Index :: non_neg_integer(),
                                          Threshold :: non_neg_integer(),
-                                         Limit :: non_neg_integer(),
-                                         OrigLimit :: non_neg_integer()
-                                        },list(any())}.
-get_captured_data(MFA, Offset) ->
-    Name = xprof_lib:mfa2atom(MFA),
+                                         OrigLimit :: non_neg_integer(),
+                                         HasMore :: boolean()
+                                        }, [tuple()]}.
+get_captured_data(MFA, Offset) when Offset >= 0 ->
+    Name = xprof_core_lib:mfa2atom(MFA),
     try
         Items = lists:sort(ets:select(Name,
                                       [{
                                          {{args_res, '$1'},
                                           {'$2', '$3','$4','$5'}},
                                          [{'>','$1',Offset}],
-                                         [['$1', '$2', '$3', '$4', '$5']]
+                                         [{{'$1', '$2', '$3', '$4', '$5'}}]
                                        }])),
 
         Res = ets:lookup(Name, capture_spec),
-        [{capture_spec, Id, Threshold, Limit, OrigLimit}] = Res,
-        {ok, {Id, Threshold, Limit, OrigLimit}, Items}
+        [{capture_spec, Index, Threshold, Limit, OrigLimit}] = Res,
+        HasMore = Offset + length(Items) < Limit,
+        {ok, {Index, Threshold, OrigLimit, HasMore}, Items}
     catch error:badarg ->
             {error, not_found}
     end.
@@ -187,7 +188,7 @@ maybe_make_snapshot(State = #state{name=Name, last_ts=LastTS,
     case timer:now_diff(NowTS, LastTS) of
         DiffMicro when DiffMicro >= ?ONE_SEC ->
             save_snapshot(NowTS, State),
-            remove_outdated_snapshots(Name, xprof_lib:now2epoch(NowTS)-WindSize),
+            remove_outdated_snapshots(Name, xprof_core_lib:now2epoch(NowTS)-WindSize),
             {calc_next_timeout(DiffMicro), State#state{last_ts=NowTS}};
         DiffMicro ->
             {calc_next_timeout(DiffMicro), State}
@@ -198,7 +199,7 @@ calc_next_timeout(DiffMicro) ->
     1000 - DiffMilli rem 1000.
 
 save_snapshot(NowTS, #state{name=Name, hdr_ref=Ref}) ->
-    Epoch = xprof_lib:now2epoch(NowTS),
+    Epoch = xprof_core_lib:now2epoch(NowTS),
     ets:insert(Name, [{{sec, Epoch}, get_current_hist_stats(Ref, Epoch)}]),
     hdr_histogram:reset(Ref).
 
@@ -304,15 +305,15 @@ record_results(Pid, CallTime, Args, Res,
             State
     end.
 
--spec capture_args_trace_on(xprof:mfa_spec()) -> any().
+-spec capture_args_trace_on(xprof_core:mfa_spec()) -> any().
 capture_args_trace_on({MFAId, {_MSOff, MSOn}}) ->
     erlang:trace_pattern(MFAId, MSOn, [local]).
 
--spec capture_args_trace_off(xprof:mfa_spec()) -> any().
+-spec capture_args_trace_off(xprof_core:mfa_spec()) -> any().
 capture_args_trace_off({MFAId, {MSOff, _MSOn}}) ->
     erlang:trace_pattern(MFAId, MSOff, [local]).
 
--spec trace_mfa_off(xprof:mfa_id()) -> any().
+-spec trace_mfa_off(xprof_core:mfa_id()) -> any().
 trace_mfa_off({M, F, '_'}) ->
     %% FIXME: this will turn off tracing also
     %% for the same function with a given arity

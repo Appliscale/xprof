@@ -1,4 +1,4 @@
--module(xprof_vm_info).
+-module(xprof_core_vm_info).
 
 -export([get_available_funs/1]).
 
@@ -12,7 +12,7 @@
 
 -spec get_available_funs(binary()) -> [MFA :: binary()].
 get_available_funs(Query) ->
-    ModeCB = xprof_lib:get_mode_cb(),
+    ModeCB = xprof_core_lib:get_mode_cb(),
 
     AllMods = get_modules(),
 
@@ -41,7 +41,7 @@ find_mods(Query, AllMods, ModeCB) ->
     lists:filtermap(
       fun(Mod) ->
               ModBin = ModeCB:fmt_mod_and_delim(Mod),
-              case xprof_lib:prefix_rest(ModBin, Query) of
+              case xprof_core_lib:prefix_rest(ModBin, Query) of
                   false -> false;
                   Rest -> {true, {Mod, Rest}}
               end
@@ -49,7 +49,7 @@ find_mods(Query, AllMods, ModeCB) ->
 
 filter_mods(Prefix, Mods, ModeCB) ->
     lists:filter(fun(Mod) ->
-                         xprof_lib:prefix(Prefix, ModeCB:fmt_mod(Mod))
+                         xprof_core_lib:prefix(Prefix, ModeCB:fmt_mod(Mod))
                  end, Mods).
 
 filter_funs(Prefix, Funs, ModeCB) ->
@@ -60,7 +60,7 @@ filter_funs(Prefix, Funs, ModeCB) ->
 
 is_fun_arity(Prefix, Fun, Arity, ModeCB) ->
     FunArityBin = ModeCB:fmt_fun_and_arity(Fun, Arity),
-    xprof_lib:prefix(Prefix, FunArityBin).
+    xprof_core_lib:prefix(Prefix, FunArityBin).
 
 %% @doc Check if Prefix string can be a match-spec fun declaration.
 %% The heuristic is that the function name must be followed by an open
@@ -69,7 +69,7 @@ is_fun_arity(Prefix, Fun, Arity, ModeCB) ->
 %%  prefix of FunArityBin already)
 is_ms_fun(Prefix, Fun, ModeCB) ->
     FunBin = ModeCB:fmt_fun(Fun),
-    case xprof_lib:prefix_rest(FunBin, Prefix) of
+    case xprof_core_lib:prefix_rest(FunBin, Prefix) of
         <<"(", _/binary>> -> true;
         <<" ", _/binary>> -> true;
         _ -> false

@@ -1,8 +1,8 @@
--module(xprof_vm_info_tests).
+-module(xprof_core_vm_info_tests).
 
 -include_lib("eunit/include/eunit.hrl").
 
--define(M, xprof_vm_info).
+-define(M, xprof_core_vm_info).
 
 get_available_funs_test_() ->
     [fun() ->
@@ -14,31 +14,31 @@ get_available_funs_test_() ->
      end,
      {"Only module names are listed",
       fun() ->
-              L1 = ?M:get_available_funs(<<"xprof_vm_info">>),
-              ?assert(lists:member(<<"xprof_vm_info:">>, L1)),
-              ?assertNot(lists:member(<<"xprof_vm_info:get_available_funs/1">>, L1))
+              L1 = ?M:get_available_funs(<<"xprof_core_vm_info">>),
+              ?assert(lists:member(<<"xprof_core_vm_info:">>, L1)),
+              ?assertNot(lists:member(<<"xprof_core_vm_info:get_available_funs/1">>, L1))
       end},
      {"Module info is filtered out",
       fun() ->
-              L1 = ?M:get_available_funs(<<"xprof_vm_info:">>),
-              ?assertNot(lists:member(<<"xprof_vm_info:module_info/0">>, L1)),
-              ?assertNot(lists:member(<<"xprof_vm_info:module_info/1">>, L1))
+              L1 = ?M:get_available_funs(<<"xprof_core_vm_info:">>),
+              ?assertNot(lists:member(<<"xprof_core_vm_info:module_info/0">>, L1)),
+              ?assertNot(lists:member(<<"xprof_core_vm_info:module_info/1">>, L1))
       end},
      {"Local functions are also listed if query contains colon",
       fun() ->
-              L1 = ?M:get_available_funs(<<"xprof_vm_info:">>),
-              ?assert(lists:member(<<"xprof_vm_info:get_available_funs/1">>, L1)),
-              ?assert(lists:member(<<"xprof_vm_info:filter_funs/3">>, L1))
+              L1 = ?M:get_available_funs(<<"xprof_core_vm_info:">>),
+              ?assert(lists:member(<<"xprof_core_vm_info:get_available_funs/1">>, L1)),
+              ?assert(lists:member(<<"xprof_core_vm_info:filter_funs/3">>, L1))
       end},
      {"Local functions are listed after exported ones",
       fun() ->
-              L1 = ?M:get_available_funs(<<"xprof_vm_info:">>),
-              ?assertMatch([<<"xprof_vm_info:get_available_funs/1">>|_], L1),
-              ?assert(lists:member(<<"xprof_vm_info:filter_funs/3">>, L1))
+              L1 = ?M:get_available_funs(<<"xprof_core_vm_info:">>),
+              ?assertMatch([<<"xprof_core_vm_info:get_available_funs/1">>|_], L1),
+              ?assert(lists:member(<<"xprof_core_vm_info:filter_funs/3">>, L1))
       end},
      {"Generated functions are filtered out",
       fun() ->
-              ?assertEqual([], ?M:get_available_funs(<<"xprof_vm_info:'-">>)),
+              ?assertEqual([], ?M:get_available_funs(<<"xprof_core_vm_info:'-">>)),
               ?assertEqual([], ?M:get_available_funs(<<"gen_server:behaviour_info">>))
       end},
      {"No module matches query",
@@ -49,23 +49,23 @@ get_available_funs_test_() ->
       end},
      {"No function matches query",
       fun() ->
-              ?assertEqual([], ?M:get_available_funs(<<"xprof_vm_info:zzz">>))
+              ?assertEqual([], ?M:get_available_funs(<<"xprof_core_vm_info:zzz">>))
       end},
      {"Arity matching",
       fun() ->
-              L1 = ?M:get_available_funs(<<"xprof_vm_info:get_available_funs/">>),
-              ?assertEqual([<<"xprof_vm_info:get_available_funs/1">>], L1),
-              L2 = ?M:get_available_funs(<<"xprof_vm_info:get_available_funs/1">>),
-              ?assertEqual([<<"xprof_vm_info:get_available_funs/1">>], L2),
-              L3 = ?M:get_available_funs(<<"xprof_vm_info:get_available_funs/99">>),
+              L1 = ?M:get_available_funs(<<"xprof_core_vm_info:get_available_funs/">>),
+              ?assertEqual([<<"xprof_core_vm_info:get_available_funs/1">>], L1),
+              L2 = ?M:get_available_funs(<<"xprof_core_vm_info:get_available_funs/1">>),
+              ?assertEqual([<<"xprof_core_vm_info:get_available_funs/1">>], L2),
+              L3 = ?M:get_available_funs(<<"xprof_core_vm_info:get_available_funs/99">>),
               ?assertEqual([], L3)
       end},
      {"Match-spec fun matching",
       fun() ->
-              L1 = ?M:get_available_funs(<<"xprof_vm_info:get_available_funs(_) ->">>),
-              ?assertEqual([<<"xprof_vm_info:get_available_funs/1">>], L1),
-              L2 = ?M:get_available_funs(<<"xprof_vm_info:get_available_funs message(get_tcw())">>),
-              ?assertEqual([<<"xprof_vm_info:get_available_funs/1">>], L2)
+              L1 = ?M:get_available_funs(<<"xprof_core_vm_info:get_available_funs(_) ->">>),
+              ?assertEqual([<<"xprof_core_vm_info:get_available_funs/1">>], L1),
+              L2 = ?M:get_available_funs(<<"xprof_core_vm_info:get_available_funs message(get_tcw())">>),
+              ?assertEqual([<<"xprof_core_vm_info:get_available_funs/1">>], L2)
       end}
     ].
 
@@ -73,7 +73,7 @@ get_available_funs_elixir_test_() ->
     Tests =
         [{"Only module names are listed",
           fun() ->
-                  ?assertEqual(elixir, xprof_lib:get_mode()),
+                  ?assertEqual(elixir, xprof_core_lib:get_mode()),
                   L1 = ?M:get_available_funs(<<"System">>),
                   ?assert(lists:member(<<"System.">>, L1)),
                   ?assertNot(lists:member(<<"System.cmd/3">>, L1))
@@ -114,10 +114,10 @@ get_available_funs_elixir_test_() ->
           end},
          {"Erlang module",
           fun() ->
-                  L1 = ?M:get_available_funs(<<":xprof_vm_info">>),
-                  ?assert(lists:member(<<":xprof_vm_info.">>, L1)),
-                  L2 = ?M:get_available_funs(<<":xprof_vm_info.get_available_funs">>),
-                  ?assertEqual([<<":xprof_vm_info.get_available_funs/1">>], L2)
+                  L1 = ?M:get_available_funs(<<":xprof_core_vm_info">>),
+                  ?assert(lists:member(<<":xprof_core_vm_info.">>, L1)),
+                  L2 = ?M:get_available_funs(<<":xprof_core_vm_info.get_available_funs">>),
+                  ?assertEqual([<<":xprof_core_vm_info.get_available_funs/1">>], L2)
           end},
          {"Invalid module alias",
           fun() ->
@@ -139,7 +139,7 @@ get_available_funs_elixir_test_() ->
                   L2 = ?M:get_available_funs(<<"System.delete_env _ -> message(get_tcw())">>),
                   ?assertEqual([<<"System.delete_env/1">>], L2)
           end}],
-    xprof_test_lib:run_elixir_unit_tests(Tests).
+    xprof_core_test_lib:run_elixir_unit_tests(Tests).
 
 weird_atoms_test_() ->
     {setup,

@@ -74,11 +74,11 @@ init_per_testcase(TestCase, Config) ->
         _ ->
             given_overload_queue_limit(1000)
     end,
-    {ok, _} = xprof:start(),
-    Config.
+    {ok, StartedApps} = xprof:start(),
+    [{started_apps, StartedApps}|Config].
 
-end_per_testcase(_TestCase, _Config) ->
-    xprof:stop(),
+end_per_testcase(_TestCase, Config) ->
+    [application:stop(App) || App <- ?config(started_apps, Config)],
     ok.
 
 get_initialized_trace_status_on_start(_Config) ->
@@ -109,9 +109,9 @@ get_overflow_status_after_hitting_overload(_Config) ->
 
     %% when
     %% freeze the tracer process while it receives many trace messages
-    sys:suspend(xprof_tracer),
+    sys:suspend(xprof_core_tracer),
     dict:new(), dict:new(), dict:new(),
-    sys:resume(xprof_tracer),
+    sys:resume(xprof_core_tracer),
     {HTTPCode, JSON} = make_get_request("api/trace_status"),
 
     %% then

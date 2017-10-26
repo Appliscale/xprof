@@ -1,9 +1,9 @@
 %%%
 %%% @doc Module to parse and format expressions in Elixir syntax
 %%%
--module(xprof_elixir_syntax).
+-module(xprof_core_elixir_syntax).
 
--behaviour(xprof_language).
+-behaviour(xprof_core_language).
 
 -export([parse_query/1,
          hidden_function/1,
@@ -95,7 +95,7 @@ parse_quoted([?clause([?guard([?mfargs(ModQ, Fun, Args), Guards])], Body)|Clause
     ClausesAST = fn_to_clauses(build_fn([build_clause(Args, Guards, Body)|ClausesQ])),
     {clauses, Mod, Fun, ClausesAST};
 parse_quoted(_) ->
-    xprof_ms:err("expression is not an xprof match-spec fun").
+    xprof_core_ms:err("expression is not an xprof match-spec fun").
 
 %% @doc Convert a quoted anonymous function to the Erlang AST representation
 %% and return the list of clauses of the later
@@ -104,15 +104,15 @@ fn_to_clauses(QuotedFn) ->
         {'fun', _Loc, {clauses, ClausesAST}} ->
             ClausesAST;
         _ ->
-            xprof_ms:err("expression is not an xprof match-spec fun "
+            xprof_core_ms:err("expression is not an xprof match-spec fun "
                          "(Erlang AST does not represent an anonymous function)")
     catch C:Exception ->
             case 'Elixir.Exception':'exception?'(Exception) of
                 true ->
-                    xprof_ms:err('Elixir.Exception':message(Exception));
+                    xprof_core_ms:err('Elixir.Exception':message(Exception));
                 false ->
                     erlang:raise(C, Exception, erlang:get_stacktrace())
-                    %%xprof_ms:err("cannot convert quoted expression to Erlang AST")
+                    %%xprof_core_ms:err("cannot convert quoted expression to Erlang AST")
             end
     end.
 
@@ -127,7 +127,7 @@ tokenizer_err(Str) ->
         {ok, _, _, Tokens} ->
             Tokens;
         {error, {_Line, Error, Token}, _Rest, SoFar} ->
-            xprof_ms:err(err_str(Error), [Token, get_next_col(SoFar)])
+            xprof_core_ms:err(err_str(Error), [Token, get_next_col(SoFar)])
     end.
 
 %% @doc 
@@ -135,14 +135,14 @@ parser_err(Tokens) ->
     put(elixir_parser_file, <<"nofile">>),
     try elixir_parser:parse(Tokens) of
         {error, {Loc, Mod, Err}} ->
-            xprof_ms:err(Loc, Mod, Err);
+            xprof_core_ms:err(Loc, Mod, Err);
         {ok, Quoted} ->
             quoted_to_ast(Quoted)
     catch
         %% I couldn't find a case where an error is thrown instead of returned
         %% but elixir:string_to_string does catch too
         {error, {Loc, Mod, Err}} ->
-            xprof_ms:err(Loc, Mod, Err)
+            xprof_core_ms:err(Loc, Mod, Err)
     after
         erase(elixir_parser_file)
     end.
@@ -168,7 +168,7 @@ mod_to_atom(Quoted) when is_atom(Quoted) ->
 mod_to_atom({__aliasis, _, _} = Quoted) ->
     'Elixir.Macro':expand(Quoted, elixir:env_for_eval([])).
 
-%%%% @doc Convert an Elixir quoted expression to an Erlang abstract syntax tree
+%% @doc Convert an Elixir quoted expression to an Erlang abstract syntax tree
 -spec quoted_to_ast(ex_quoted()) -> erl_ast().
 quoted_to_ast(Quoted) ->
     %% pretend that the quoted expression is within a function,

@@ -1,5 +1,5 @@
 %% @doc xprof top level supervisor.
--module(xprof_sup).
+-module(xprof_core_sup).
 
 -behaviour(supervisor).
 
@@ -20,19 +20,19 @@ start_link() ->
 
 init([]) ->
     TraceHandlerSup =
-        {xprof_tracer_handler_sup,
-            {xprof_tracer_handler_sup, start_link, []},
+        {xprof_core_trace_handler_sup,
+            {xprof_core_trace_handler_sup, start_link, []},
             permanent,
             5000,
             supervisor,
-            [xprof_tracer_handler_sup]
+            [xprof_core_trace_handler_sup]
         },
     Tracer =
-        {xprof_tracer,
-            {xprof_tracer, start_link, []},
+        {xprof_core_tracer,
+            {xprof_core_tracer, start_link, []},
             permanent,
             5000,
             worker,
-            [xprof_tracer]
+            [xprof_core_tracer]
         },
     {ok, { {rest_for_one, 0, 1}, [TraceHandlerSup, Tracer]} }.

@@ -1,4 +1,4 @@
--module(xprof_lib).
+-module(xprof_core_lib).
 
 -export([mfaspec2atom/1,
          mfa2atom/1,
@@ -11,11 +11,11 @@
          prefix_rest/2
         ]).
 
--spec mfaspec2atom(xprof:mfa_spec()) -> xprof:mfa_name().
+-spec mfaspec2atom(xprof_core:mfa_spec()) -> xprof_core:mfa_name().
 mfaspec2atom({MFAId, {_MSOff, _MSOn}}) ->
     mfa2atom(MFAId).
 
--spec mfa2atom(xprof:mfa_id()) -> xprof:mfa_name().
+-spec mfa2atom(xprof_core:mfa_id()) -> xprof_core:mfa_name().
 mfa2atom({M, F, '_'}) ->
     list_to_atom(string:join(["xprof_", atom_to_list(M),
                               atom_to_list(F), "_"], "_"));
@@ -23,18 +23,18 @@ mfa2atom({M,F,A}) ->
     list_to_atom(string:join(["xprof_", atom_to_list(M),
                               atom_to_list(F), integer_to_list(A)], "_")).
 
--spec mfaspec2id(xprof:mfa_spec()) -> xprof:mfa_id().
+-spec mfaspec2id(xprof_core:mfa_spec()) -> xprof_core:mfa_id().
 mfaspec2id({MFAId, {_, _}}) ->
     MFAId.
 
 now2epoch({MS, S, _US}) ->
     MS * 1000000 + S.
 
--spec set_mode(xprof:mode()) -> ok.
+-spec set_mode(xprof_core:mode()) -> ok.
 set_mode(Mode) when Mode =:= elixir; Mode =:= erlang ->
     application:set_env(xprof, mode, Mode).
 
--spec get_mode() -> xprof:mode().
+-spec get_mode() -> xprof_core:mode().
 get_mode() ->
     case application:get_env(xprof, mode) of
         undefined ->
@@ -48,11 +48,11 @@ get_mode() ->
 -spec get_mode_cb() -> module().
 get_mode_cb() ->
     case get_mode() of
-        erlang -> xprof_erlang_syntax;
-        elixir -> xprof_elixir_syntax
+        erlang -> xprof_core_erlang_syntax;
+        elixir -> xprof_core_elixir_syntax
     end.
 
--spec detect_mode() -> xprof:mode().
+-spec detect_mode() -> xprof_core:mode().
 detect_mode() ->
     case lists:keymember(elixir, 1, application:which_applications()) of
         true -> elixir;

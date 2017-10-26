@@ -1,5 +1,5 @@
 %%% @doc Supervisor
--module(xprof_tracer_handler_sup).
+-module(xprof_core_trace_handler_sup).
 
 -behaviour(supervisor).
 
@@ -24,12 +24,12 @@ init([]) ->
     SupFlags = {RestartStrategy, MaxRestarts, MaxSecondsBetweenRestarts},
 
     Child = {
-        xprof_tracer_handler,
-            {xprof_tracer_handler, start_link, []},
+        xprof_core_trace_handler,
+            {xprof_core_trace_handler, start_link, []},
             permanent,
             5000,
             worker,
-            [xprof_tracer_handler]
+            [xprof_core_trace_handler]
         },
 
     {ok, {SupFlags, [Child]}}.

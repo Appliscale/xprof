@@ -1,4 +1,4 @@
--module(xprof_test_lib).
+-module(xprof_core_test_lib).
 
 -export([is_elixir_version/1,
          run_elixir_unit_tests/1]).

@@ -1,8 +1,8 @@
--module(xprof_elixir_syntax_tests).
+-module(xprof_core_elixir_syntax_tests).
 
 -include_lib("eunit/include/eunit.hrl").
 
--define(M, xprof_elixir_syntax).
+-define(M, xprof_core_elixir_syntax).
 
 parse_query_test_() ->
     Tests =
@@ -113,7 +113,7 @@ parse_query_test_() ->
                           [{atom,0,true}]}]},
                        ?M:parse_query("App.Mod.fun(a) when a < 1 when a > 10"))
         ],
-    xprof_test_lib:run_elixir_unit_tests(Tests).
+    xprof_core_test_lib:run_elixir_unit_tests(Tests).
 
 fmt_test_() ->
     Tests =
@@ -121,7 +121,7 @@ fmt_test_() ->
                        ?M:fmt_exception(error, {badmatch, dummy})),
          ?_assertEqual(<<"** (throw) :dummy">>,
                        ?M:fmt_exception(throw, dummy)),
-         ?_assertEqual(case xprof_test_lib:is_elixir_version(">= 1.4.0")  of
+         ?_assertEqual(case xprof_core_test_lib:is_elixir_version(">= 1.4.0")  of
                            true ->
                                %% in version 1.4.0 the exception description was improved
                                <<"** (exit) exited in: :gen_server.call(:server, :msg)\n    "
@@ -134,4 +134,4 @@ fmt_test_() ->
                        end,
                        ?M:fmt_exception(exit, {noproc, {gen_server, call, [server, msg]}}))
         ],
-    xprof_test_lib:run_elixir_unit_tests(Tests).
+    xprof_core_test_lib:run_elixir_unit_tests(Tests).
