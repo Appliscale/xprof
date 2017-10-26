@@ -56,10 +56,6 @@ export class CallsTable extends React.Component {
     };
   }
 
-  shouldComponentUpdate(nextProps, nextState) {
-    return this.props.items.length !== nextProps.items.length;
-  }
-  
   onClick(id, event) {
     event.preventDefault();
 
@@ -73,6 +69,8 @@ export class CallsTable extends React.Component {
   }
 
   renderColumn(id, header) {
+    // To fix problem with bidn we
+    // Need another layer of abstraction IE a new react component
     return (
       <th onClick={this.onClick.bind(this, id)}>{header} {this.sortIcon(id)}</th>
     );
@@ -89,7 +87,6 @@ export class CallsTable extends React.Component {
     return (
       <span className={style}></span>
     );
->>>>>>> b1191082775c7a4eb47011235c06e19375908cf4
   }
 
   render() {
