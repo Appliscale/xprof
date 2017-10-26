@@ -8,16 +8,19 @@ export default class TracingSwitch extends React.Component {
       status: "paused",
       paused: false,
     };
+
+    this.timeout = null;
+
     this.getTracingStatus = this.getTracingStatus.bind(this);
     this.handleClick = this.handleClick.bind(this);
   }
 
   componentDidMount() {
-    this.state.timeout = window.setTimeout(this.getTracingStatus, 1000);
+    this.timeout = window.setTimeout(this.getTracingStatus, 1000);
   }
 
   componentWillUnmount() {
-    window.clearTimeout(this.state.timeout);
+    window.clearTimeout(this.timeout);
   }
 
   handleClick(event) {
@@ -28,7 +31,7 @@ export default class TracingSwitch extends React.Component {
     })
       .fail((jqXHR, textStatus, errorThrown) => console.error("Cant set tracing", errorThrown))
       .always(() => {
-        clearTimeout(this.state.timeout);
+        clearTimeout(this.timeout);
         this.getTracingStatus();
       });
   }
@@ -56,7 +59,7 @@ export default class TracingSwitch extends React.Component {
         }
       })
       .always(() =>
-        this.state.timeout = window.setTimeout(this.getTracingStatus, 1000)
+        this.timeout = window.setTimeout(this.getTracingStatus, 1000)
       );
   }
 
@@ -67,7 +70,7 @@ export default class TracingSwitch extends React.Component {
     let status = this.state.status;
 
     if (status === "running") {
-      text = "Pause Time";
+      text = "Pause Tracing";
       symbol += "pause";
       btnColor += "danger";
     } else if (status === "paused" || status === "initialized") {

@@ -27,10 +27,8 @@ class App extends React.Component {
   }
 
   modeSuccess(data) {
-    this.state.mode = data.mode;
-    this.setState(this.state);
-
-    $("#favicon").attr("href", `img/xprof_icon_${this.state.mode}.png`);
+    this.setState({ mode: data.mode });
+    $("#favicon").attr("href", `img/xprof_icon_${data.mode}.png`);
   }
 
   addGraph(query) {

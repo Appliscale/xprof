@@ -132,12 +132,22 @@ export default class CallsTracer extends React.Component {
       status: this.Status.STOPPED
     };
 
+    this.timeout = null;
+
     this.handleCaptureStart = this.handleCaptureStart.bind(this);
     this.handleCaptureStop = this.handleCaptureStop.bind(this);
     this.handleChangeTreshold = this.handleChange.bind(this, "threshold");
     this.handleChangeLimit = this.handleChange.bind(this, "limit");
     this.getCaptureData = this.getCaptureData.bind(this);
     this.handleCaptureCall = this.handleCaptureCall.bind(this);
+  }
+
+  componentDidMount() {
+    this.getCaptureData();
+  }
+
+  componentWillUnmount() {
+    clearTimeout(this.timeout);
   }
 
   handleCaptureStart() {
@@ -154,10 +164,11 @@ export default class CallsTracer extends React.Component {
         threshold: threshold,
         limit: limit }
     }).done((response) => {
-      this.state.capture_id = response.capture_id;
-      this.state.offset = 0;
-      this.state.items = [];
-      this.setState(this.state);
+      this.setState({
+        capture_id: response.capture_id,
+        offset: 0,
+        items: [],
+      });
       this.getCaptureData();
     });
   }
@@ -171,44 +182,42 @@ export default class CallsTracer extends React.Component {
   }
 
   getCaptureData() {
-    if (this.state.status === this.Status.RUNNING) {
-      var mfa = this.props.mfa;
+    var mfa = this.props.mfa;
 
-      $.ajax({
-        url: "/api/capture_data",
-        data: {
-          mod: mfa[0], fun: mfa[1], arity: mfa[2],
-          offset: this.state.offset
-        }
-      }).done(this.handleCaptureCall);
-    }
+    $.ajax({
+      url: "/api/capture_data",
+      data: {
+        mod: mfa[0], fun: mfa[1], arity: mfa[2],
+        offset: this.state.offset
+      }
+    }).done(this.handleCaptureCall);
   }
 
   handleCaptureCall(data, textStatus, jqXHR) {
+    const nextState = {};
     if (jqXHR.status === 200) {
       if (this.state.capture_id !== data.capture_id) {
-        this.state.items = [];
-        this.state.offset = 0;
+        nextState.items = [];
+        nextState.offset = 0;
 
-        if (data.threshold > 0) {
-          this.state.threshold_value = data.threshold;
+        if (data.threshold >= 0) {
+          nextState.threshold_value = data.threshold;
         }
-
-        if (data.limit > 0) {
-          this.state.limit_value = data.limit;
+        if (data.limit >= 0) {
+          nextState.limit_value = data.limit;
         }
       } else {
         const sortedItems = data.items.sort();
         const lastId = sortedItems.length === 0 ? this.state.offset : _.last(sortedItems).id;
-        this.state.offset = lastId;
-        this.state.items = this.state.items.concat(sortedItems);
+        nextState.offset = lastId;
+        nextState.items = this.state.items.concat(sortedItems);
       }
 
-      this.state.capture_id = data.capture_id;
-      this.state.status = data.has_more ? this.Status.RUNNING : this.Status.STOPPED;
+      nextState.capture_id = data.capture_id;
+      nextState.status = data.has_more ? this.Status.RUNNING : this.Status.STOPPED;
     }
-    setTimeout(this.getCaptureData, 750);
-    this.setState(this.state);
+    this.timeout = setTimeout(this.getCaptureData, 750);
+    this.setState(nextState);
   }
 
   handleChange(id, event) {

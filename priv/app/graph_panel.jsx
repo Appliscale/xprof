@@ -1,6 +1,7 @@
 import React from "react";
 
 import Graph from "./graph.jsx";
+import _ from "underscore";
 
 export default class GraphPanel extends React.Component {
   constructor(props) {
@@ -35,12 +36,10 @@ export default class GraphPanel extends React.Component {
   }
 
   removeGraph(mfa) {
-    var newState = this.state;
-    var index = this.state.funs.indexOf(mfa);
+    const index = this.state.funs.indexOf(mfa);
     if (index > -1) {
-      newState.funs.splice(index, 1);
+      this.setState({ funs: this.state.splice(index, 1) });
     }
-    this.setState(newState);
   }
 
   getFunsList() {
@@ -52,7 +51,7 @@ export default class GraphPanel extends React.Component {
   }
 
   handleFuns(data) {
-    if (this.state.funs.length !== data.length) {
+    if (!_.isEqual(this.state.funs, data)) {
       this.setState({ funs: data });
     }
     window.setTimeout(this.getFunsList, 500);

@@ -35,10 +35,10 @@ class ACModal extends React.Component {
     if (data.length === 0) {
       this.cleared = true;
     }
-
-    this.state.funs = data;
-    this.state.position = data.length === 1 ? 0 : -1;
-    this.setState(this.state);
+    this.setState({
+      funs: data,
+      position: data.length === 1 ? 0 : -1,
+    });
   }
 
   handleFunClick(query) {
@@ -49,8 +49,9 @@ class ACModal extends React.Component {
     var targetPosition = this.state.position + delta;
 
     if (targetPosition > 0 || targetPosition < this.state.funs.length) {
-      this.state.position = targetPosition;
-      this.setState(this.state);
+      this.setState({
+        position: targetPosition,
+      });
     }
   }
 

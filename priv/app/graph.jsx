@@ -14,7 +14,11 @@ const MAX_DPS = 5 * 60;
 export default class Graph extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { dps: [], error: false, lastTs: 0, unomunted: true, columns: [] };
+    this.state = { dps: [], error: false, lastTs: 0, columns: [] };
+
+    this.interval = null;
+    this.unmounted = true;
+
     this.handleClose = this.handleClose.bind(this);
     this.getData = this.getData.bind(this);
     this.handleData = this.handleData.bind(this);
@@ -22,17 +26,13 @@ export default class Graph extends React.Component {
   }
 
   componentDidMount() {
-    var ref = setInterval(this.getData, UPDATE_INTERVAL);
-    var newState = this.state;
-
-    this.state.interval = ref;
-    this.state.unmounted = false;
-    this.setState(this.state);
+    this.interval = setInterval(this.getData, UPDATE_INTERVAL);
+    this.unmounted = false;
   }
 
   componentWillUnmount() {
-    window.clearInterval(this.state.interval);
-    this.state.unmounted = true;
+    window.clearInterval(this.interval);
+    this.unmounted = true;
   }
 
   render() {
@@ -130,7 +130,7 @@ export default class Graph extends React.Component {
 
   handleClose() {
     var mfa = this.props.mfa;
-    clearInterval(this.state.interval);
+    clearInterval(this.interval);
 
     $.ajax({
       url: "/api/mon_stop",
@@ -167,22 +167,21 @@ export default class Graph extends React.Component {
     padding = this.padData(maxAge, _.first(truncData).time);
     finalData = padding.concat(truncData);
 
-    this.state.columns = this.createColumns(finalData);
-
-    this.state.dps = truncData;
-    this.state.lastTs = _.last(sortedData).time;
-    this.state.error = false;
-
     if (!this.unmounted) {
-      this.setState(this.state);
+      this.setState({
+        columns: this.createColumns(finalData),
+        dps: truncData,
+        lastTs: _.last(sortedData).time,
+        error: false,
+      });
     }
   }
 
   handleDataError(jqXHR, error) {
-    this.state.error = true;
-
     if (!this.unmounted) {
-      this.setState(this.state);
+      this.setState({
+        error: true,
+      });
     }
   }
 
