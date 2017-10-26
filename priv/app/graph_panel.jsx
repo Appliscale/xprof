@@ -38,7 +38,7 @@ export default class GraphPanel extends React.Component {
   removeGraph(mfa) {
     const index = this.state.funs.indexOf(mfa);
     if (index > -1) {
-      this.setState({ funs: this.state.splice(index, 1) });
+      this.setState({ funs: this.state.funs.splice(index, 1) });
     }
   }
 
