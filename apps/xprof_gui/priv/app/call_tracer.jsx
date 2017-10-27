@@ -244,7 +244,7 @@ export default class CallsTracer extends React.Component {
     if (jqXHR.status === 200) {
       // Capturing / not-capturing
       const nextStatus = data.has_more ? this.Status.RUNNING : this.Status.STOPPED;
-      // New capture has beegin
+      // Capturing has begun
       if (this.state.capture_id !== data.capture_id) {
         this.setState({
           capture_id: data.capture_id,
@@ -257,14 +257,15 @@ export default class CallsTracer extends React.Component {
       // Backend returned some slow calls
       } else if (data.items.length) {
         const offset = _.last(data.items).id;
-        // Find interesction to exclude duplicated slow calls
+        // Find intersection to exclude duplicates slow calls
         const setItems = _.uniqBy(this.state.items.concat(data.items), "id");
         this.setState({
           capture_id: data.capture_id,
           items: setItems,
           offset: offset,
         });
-      // Capture has been stopped
+      // Capturing has been stopped
+      // (when started capture_id receives new value which is checked as first)
       } else if (this.state.status !== nextStatus) {
         this.setState({
           status: nextStatus
