@@ -13,6 +13,11 @@ export class CallsTableRow extends React.Component {
     this.setState({ expanded: !this.state.expanded });
   }
 
+  shouldComponentUpdate(nextProps, nextState) {
+    return this.props.item !== nextProps.item ||
+      this.state.expanded !== nextState.expanded;
+  }
+
   render() {
     let item = this.props.item;
     let dir = this.state.expanded ? "down" : "right";
@@ -167,8 +172,6 @@ export default class CallsTracer extends React.Component {
     this.Status = { STOPPED: 0, RUNNING: 1 };
 
     this.state = {
-      capture_id: null,
-      offset: 0,
       items: [],
       threshold_value: null,
       limit_value: null,
@@ -176,6 +179,8 @@ export default class CallsTracer extends React.Component {
     };
 
     this.timeout = null;
+    this.offset = 0;
+    this.capture_id = null;
 
     this.handleCaptureStart = this.handleCaptureStart.bind(this);
     this.handleCaptureStop = this.handleCaptureStop.bind(this);
@@ -202,6 +207,7 @@ export default class CallsTracer extends React.Component {
     let mfa = this.props.mfa;
     let threshold = this.state.threshold_value;
     let limit = this.state.limit_value;
+    clearTimeout(this.timeout);
 
     $.ajax({
       url: "/api/capture",
@@ -210,10 +216,10 @@ export default class CallsTracer extends React.Component {
         threshold: threshold,
         limit: limit }
     }).done((response) => {
+      this.offset = 0;
+      this.capture_id = response.capture_id;
       this.setState({
         status: this.Status.RUNNING,
-        capture_id: response.capture_id,
-        offset: 0,
         items: [],
       });
       this.getCaptureData();
@@ -230,12 +236,11 @@ export default class CallsTracer extends React.Component {
 
   getCaptureData() {
     var mfa = this.props.mfa;
-
     $.ajax({
       url: "/api/capture_data",
       data: {
         mod: mfa[0], fun: mfa[1], arity: mfa[2],
-        offset: this.state.offset
+        offset: this.offset
       }
     }).done(this.handleCaptureCall);
   }
@@ -245,31 +250,22 @@ export default class CallsTracer extends React.Component {
       // Capturing / not-capturing
       const nextStatus = data.has_more ? this.Status.RUNNING : this.Status.STOPPED;
       // Capturing has begun
-      if (this.state.capture_id !== data.capture_id) {
+      if (this.capture_id !== data.capture_id) {
+        this.offset = 0;
+        this.capture_id = data.capture_id;
         this.setState({
-          capture_id: data.capture_id,
           status: nextStatus,
           items: [],
-          offset: 0,
           threshold_value: (data.threshold >= 0) ? data.threshold : null,
           limit_value: (data.limit > 1) ? data.limit : null,
         });
       // Backend returned some slow calls
       } else if (data.items.length) {
-        const offset = _.last(data.items).id;
-        // Find intersection to exclude duplicates slow calls
-        const setItems = _.uniqBy(this.state.items.concat(data.items), "id");
-        this.setState({
-          capture_id: data.capture_id,
-          items: setItems,
-          offset: offset,
-        });
+        this.offset = _.last(data.items).id;
+        this.setState({ items: this.state.items.concat(data.items) });
       // Capturing has been stopped
-      // (when started capture_id receives new value which is checked as first)
       } else if (this.state.status !== nextStatus) {
-        this.setState({
-          status: nextStatus
-        });
+        this.setState({ status: nextStatus });
       }
     }
     this.timeout = setTimeout(this.getCaptureData, 750);
