@@ -1,4 +1,4 @@
-import _ from "underscore";
+import _ from "lodash";
 import React from "react";
 
 export class CallsTableRow extends React.Component {
@@ -54,6 +54,12 @@ export class CallsTable extends React.Component {
       sortby: "id",
       order: "asc"
     };
+
+    this.onClickId = this.onClick.bind(this, "id");
+    this.onClickTime = this.onClick.bind(this, "call_time");
+    this.onClickPid = this.onClick.bind(this, "pid");
+    this.onClickArgs = this.onClick.bind(this, "args");
+    this.onClickRes = this.onClick.bind(this, "res");
   }
 
   onClick(id, event) {
@@ -66,14 +72,6 @@ export class CallsTable extends React.Component {
       sortby: id,
       order: newOrder
     });
-  }
-
-  renderColumn(id, header) {
-    // To fix problem with bidn we
-    // Need another layer of abstraction IE a new react component
-    return (
-      <th onClick={this.onClick.bind(this, id)}>{header} {this.sortIcon(id)}</th>
-    );
   }
 
   sortIcon(id) {
@@ -100,11 +98,11 @@ export class CallsTable extends React.Component {
         <thead>
           <tr>
             <th></th>
-            {this.renderColumn("id", "No.")}
-            {this.renderColumn("call_time", "Call time")}
-            {this.renderColumn("pid", "Pid")}
-            {this.renderColumn("args", "Function arguments")}
-            {this.renderColumn("res", "Return value")}
+            <th onClick={this.onClickId}>No. {this.sortIcon("id")}</th>
+            <th onClick={this.onClickTime}>Call time {this.sortIcon("call_time")}</th>
+            <th onClick={this.onClickPid}>Pid {this.sortIcon("pid")}</th>
+            <th onClick={this.onClickArgs}>Function arguments {this.sortIcon("args")}</th>
+            <th onClick={this.onClickRes}>Return value {this.sortIcon("res")}</th>
           </tr>
         </thead>
         <tbody>
@@ -187,6 +185,11 @@ export default class CallsTracer extends React.Component {
     this.handleCaptureCall = this.handleCaptureCall.bind(this);
   }
 
+  shouldComponentUpdate(nextProps, nextState) {
+    return this.props.mfa[3] !== nextProps.mfa[3] ||
+      this.state !== nextState;
+  }
+
   componentDidMount() {
     this.getCaptureData();
   }
@@ -200,8 +203,6 @@ export default class CallsTracer extends React.Component {
     let threshold = this.state.threshold_value;
     let limit = this.state.limit_value;
 
-    this.setState({ status: this.Status.RUNNING });
-
     $.ajax({
       url: "/api/capture",
       data: {
@@ -210,6 +211,7 @@ export default class CallsTracer extends React.Component {
         limit: limit }
     }).done((response) => {
       this.setState({
+        status: this.Status.RUNNING,
         capture_id: response.capture_id,
         offset: 0,
         items: [],
@@ -239,35 +241,37 @@ export default class CallsTracer extends React.Component {
   }
 
   handleCaptureCall(data, textStatus, jqXHR) {
-    const nextState = {};
     if (jqXHR.status === 200) {
+      // Capturing / not-capturing
+      const nextStatus = data.has_more ? this.Status.RUNNING : this.Status.STOPPED;
+      // New capture has beegin
       if (this.state.capture_id !== data.capture_id) {
-        nextState.items = [];
-        nextState.offset = 0;
-
-        if (data.threshold >= 0) {
-          nextState.threshold_value = data.threshold;
-        }
-        if (data.limit >= 0) {
-          nextState.limit_value = data.limit;
-        }
-      } else {
-        const sortedItems = data.items.sort();
-        const lastId = sortedItems.length === 0 ? this.state.offset : _.last(sortedItems).id;
-        nextState.offset = lastId;
-        let itemsToAdd = sortedItems.filter(item => {
-          let shouldAdd = true;
-          this.state.items.forEach(i => { if (item.id === i.id) { shouldAdd = false; } });
-          return shouldAdd;
+        this.setState({
+          capture_id: data.capture_id,
+          status: nextStatus,
+          items: [],
+          offset: 0,
+          threshold_value: (data.threshold >= 0) ? data.threshold : null,
+          limit_value: (data.limit > 1) ? data.limit : null,
         });
-        nextState.items = this.state.items.concat(itemsToAdd);
+      // Backend returned some slow calls
+      } else if (data.items.length) {
+        const offset = _.last(data.items).id;
+        // Find interesction to exclude duplicated slow calls
+        const setItems = _.uniqBy(this.state.items.concat(data.items), "id");
+        this.setState({
+          capture_id: data.capture_id,
+          items: setItems,
+          offset: offset,
+        });
+      // Capture has been stopped
+      } else if (this.state.status !== nextStatus) {
+        this.setState({
+          status: nextStatus
+        });
       }
-
-      nextState.capture_id = data.capture_id;
-      nextState.status = data.has_more ? this.Status.RUNNING : this.Status.STOPPED;
     }
     this.timeout = setTimeout(this.getCaptureData, 750);
-    this.setState(nextState);
   }
 
   handleChange(id, event) {

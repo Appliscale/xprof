@@ -35,11 +35,11 @@ describe("<CallsTable />", () => {
   });
 
   it("has id/call_time/pid/args/res columns", () => {
-    expect(callsTable.contains("No.")).to.equal(true);
-    expect(callsTable.contains("Call time")).to.equal(true);
-    expect(callsTable.contains("Pid")).to.equal(true);
-    expect(callsTable.contains("Function arguments")).to.equal(true);
-    expect(callsTable.contains("Return value")).to.equal(true);
+    expect(callsTable.contains("No. ")).to.equal(true);
+    expect(callsTable.contains("Call time ")).to.equal(true);
+    expect(callsTable.contains("Pid ")).to.equal(true);
+    expect(callsTable.contains("Function arguments ")).to.equal(true);
+    expect(callsTable.contains("Return value ")).to.equal(true);
   });
 
   it("contains exactly 3 rows", () => {
