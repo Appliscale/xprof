@@ -207,7 +207,6 @@ export default class CallsTracer extends React.Component {
     let mfa = this.props.mfa;
     let threshold = this.state.threshold_value;
     let limit = this.state.limit_value;
-    clearTimeout(this.timeout);
 
     $.ajax({
       url: "/api/capture",
@@ -222,7 +221,6 @@ export default class CallsTracer extends React.Component {
         status: this.Status.RUNNING,
         items: [],
       });
-      this.getCaptureData();
     });
   }
 
@@ -268,7 +266,7 @@ export default class CallsTracer extends React.Component {
         this.setState({ status: nextStatus });
       }
     }
-    this.timeout = setTimeout(this.getCaptureData, 750);
+    this.timeout = setTimeout(this.getCaptureData, 500);
   }
 
   handleChange(id, event) {
