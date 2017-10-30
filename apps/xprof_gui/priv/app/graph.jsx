@@ -1,4 +1,3 @@
-import "underscore";
 import React from "react";
 import C3Chart from "react-c3js";
 import CallsTracer from "./call_tracer.jsx";

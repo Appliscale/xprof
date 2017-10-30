@@ -1,4 +1,3 @@
-import "underscore";
 import React from "react";
 
 export default class TracingSwitch extends React.Component {

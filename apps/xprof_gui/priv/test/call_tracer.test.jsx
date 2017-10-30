@@ -1,6 +1,5 @@
 // eslint-env: mocha
 
-import _ from "underscore";
 import React from "react";
 import ReactTestUtils from "react-addons-test-utils";
 import { mount, shallow } from "enzyme";
