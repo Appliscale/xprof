@@ -1,6 +1,9 @@
 -module(xprof_core_vm_info).
 
--export([get_available_funs/1]).
+-export([
+    get_available_funs/1,
+    get_called_funs/1
+]).
 
 %% @doc Return list of existing module/funcion/arity that match query.
 %%
@@ -86,3 +89,50 @@ get_all_functions(Mod, ModeCB) ->
 get_modules() ->
     ModsFiles = lists:sort(code:all_loaded()),
     [ Mod || {Mod, _File} <- ModsFiles].
+
+%% @doc Return list of called functions for given mfa tuple.
+-spec get_called_funs(mfa()) -> [mfa()].
+get_called_funs({Mod, Fun, Arity}) ->
+    File = code:which(Mod),
+    {beam_file, Mod, _, _, _, Disasm} = beam_disasm:file(File),
+    
+    %% extract beamasm operations for given function
+    Operations = lists:flatten(
+        lists:filtermap(
+            fun(Entry) ->
+                case Entry of
+                    {function, Fun, Arity, _, Opcodes} ->
+                        {true, Opcodes};
+                    _ ->
+                        false
+                end
+            end,
+            Disasm
+        )
+    ),
+
+    %% extract function calls from beamasm
+    Calls = lists:filtermap(
+        fun(Opcode) ->
+            case Opcode of
+                {call, F, A} ->
+                    {true, {Mod, F, A}};
+                {call_only, _, {M, F, A}} ->
+                    {true, {M, F, A}};
+                {call_last, _, {M, F, A}, _} ->
+                    {true, {M, F, A}};
+                {call_ext, _, {extfunc, M, F, A}} ->
+                    {true, {M, F, A}};
+                {call_ext_only, _, {extfunc, M, F, A}} ->
+                        {true, {M, F, A}};
+                {call_ext_last, _, {extfunc, M, F, A}, _} ->
+                    {true, {M, F, A}};
+                _ ->
+                    false
+            end
+        end,
+        Operations
+    ),
+
+    %% return list of calls
+    Calls.
