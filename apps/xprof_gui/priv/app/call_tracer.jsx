@@ -1,4 +1,4 @@
-import _ from "underscore";
+import _ from "lodash";
 import React from "react";
 
 export class CallsTableRow extends React.Component {
@@ -11,6 +11,11 @@ export class CallsTableRow extends React.Component {
   handleClick(e) {
     e.preventDefault();
     this.setState({ expanded: !this.state.expanded });
+  }
+
+  shouldComponentUpdate(nextProps, nextState) {
+    return this.props.item !== nextProps.item ||
+      this.state.expanded !== nextState.expanded;
   }
 
   render() {
@@ -54,6 +59,12 @@ export class CallsTable extends React.Component {
       sortby: "id",
       order: "asc"
     };
+
+    this.onClickId = this.onClick.bind(this, "id");
+    this.onClickTime = this.onClick.bind(this, "call_time");
+    this.onClickPid = this.onClick.bind(this, "pid");
+    this.onClickArgs = this.onClick.bind(this, "args");
+    this.onClickRes = this.onClick.bind(this, "res");
   }
 
   onClick(id, event) {
@@ -66,14 +77,6 @@ export class CallsTable extends React.Component {
       sortby: id,
       order: newOrder
     });
-  }
-
-  renderColumn(id, header) {
-    // To fix problem with bidn we
-    // Need another layer of abstraction IE a new react component
-    return (
-      <th onClick={this.onClick.bind(this, id)}>{header} {this.sortIcon(id)}</th>
-    );
   }
 
   sortIcon(id) {
@@ -91,7 +94,6 @@ export class CallsTable extends React.Component {
 
   render() {
     let items = _.sortBy(this.props.items, this.state.sortby);
-
     if (this.state.order === "desc") {
       items.reverse();
     }
@@ -101,11 +103,11 @@ export class CallsTable extends React.Component {
         <thead>
           <tr>
             <th></th>
-            {this.renderColumn("id", "No.")}
-            {this.renderColumn("call_time", "Call time")}
-            {this.renderColumn("pid", "Pid")}
-            {this.renderColumn("args", "Function arguments")}
-            {this.renderColumn("res", "Return value")}
+            <th onClick={this.onClickId}>No. {this.sortIcon("id")}</th>
+            <th onClick={this.onClickTime}>Call time {this.sortIcon("call_time")}</th>
+            <th onClick={this.onClickPid}>Pid {this.sortIcon("pid")}</th>
+            <th onClick={this.onClickArgs}>Function arguments {this.sortIcon("args")}</th>
+            <th onClick={this.onClickRes}>Return value {this.sortIcon("res")}</th>
           </tr>
         </thead>
         <tbody>
@@ -170,8 +172,6 @@ export default class CallsTracer extends React.Component {
     this.Status = { STOPPED: 0, RUNNING: 1 };
 
     this.state = {
-      capture_id: null,
-      offset: 0,
       items: [],
       threshold_value: null,
       limit_value: null,
@@ -179,6 +179,8 @@ export default class CallsTracer extends React.Component {
     };
 
     this.timeout = null;
+    this.offset = 0;
+    this.capture_id = null;
 
     this.handleCaptureStart = this.handleCaptureStart.bind(this);
     this.handleCaptureStop = this.handleCaptureStop.bind(this);
@@ -186,6 +188,11 @@ export default class CallsTracer extends React.Component {
     this.handleChangeLimit = this.handleChange.bind(this, "limit");
     this.getCaptureData = this.getCaptureData.bind(this);
     this.handleCaptureCall = this.handleCaptureCall.bind(this);
+  }
+
+  shouldComponentUpdate(nextProps, nextState) {
+    return this.props.mfa[3] !== nextProps.mfa[3] ||
+      this.state !== nextState;
   }
 
   componentDidMount() {
@@ -201,8 +208,6 @@ export default class CallsTracer extends React.Component {
     let threshold = this.state.threshold_value;
     let limit = this.state.limit_value;
 
-    this.setState({ status: this.Status.RUNNING });
-
     $.ajax({
       url: "/api/capture",
       data: {
@@ -210,12 +215,12 @@ export default class CallsTracer extends React.Component {
         threshold: threshold,
         limit: limit }
     }).done((response) => {
+      this.offset = 0;
+      this.capture_id = response.capture_id;
       this.setState({
-        capture_id: response.capture_id,
-        offset: 0,
+        status: this.Status.RUNNING,
         items: [],
       });
-      this.getCaptureData();
     });
   }
 
@@ -229,41 +234,39 @@ export default class CallsTracer extends React.Component {
 
   getCaptureData() {
     var mfa = this.props.mfa;
-
     $.ajax({
       url: "/api/capture_data",
       data: {
         mod: mfa[0], fun: mfa[1], arity: mfa[2],
-        offset: this.state.offset
+        offset: this.offset
       }
     }).done(this.handleCaptureCall);
   }
 
   handleCaptureCall(data, textStatus, jqXHR) {
-    const nextState = {};
     if (jqXHR.status === 200) {
-      if (this.state.capture_id !== data.capture_id) {
-        nextState.items = [];
-        nextState.offset = 0;
-
-        if (data.threshold >= 0) {
-          nextState.threshold_value = data.threshold;
-        }
-        if (data.limit >= 0) {
-          nextState.limit_value = data.limit;
-        }
-      } else {
-        const sortedItems = data.items.sort();
-        const lastId = sortedItems.length === 0 ? this.state.offset : _.last(sortedItems).id;
-        nextState.offset = lastId;
-        nextState.items = this.state.items.concat(sortedItems);
+      // Capturing / not-capturing
+      const nextStatus = data.has_more ? this.Status.RUNNING : this.Status.STOPPED;
+      // Capturing has begun
+      if (this.capture_id !== data.capture_id) {
+        this.offset = 0;
+        this.capture_id = data.capture_id;
+        this.setState({
+          status: nextStatus,
+          items: [],
+          threshold_value: (data.threshold >= 0) ? data.threshold : null,
+          limit_value: (data.limit > 1) ? data.limit : null,
+        });
+      // Backend returned some slow calls
+      } else if (data.items.length) {
+        this.offset = _.last(data.items).id;
+        this.setState({ items: this.state.items.concat(data.items) });
+      // Capturing has been stopped
+      } else if (this.state.status !== nextStatus) {
+        this.setState({ status: nextStatus });
       }
-
-      nextState.capture_id = data.capture_id;
-      nextState.status = data.has_more ? this.Status.RUNNING : this.Status.STOPPED;
     }
-    this.timeout = setTimeout(this.getCaptureData, 750);
-    this.setState(nextState);
+    this.timeout = setTimeout(this.getCaptureData, 500);
   }
 
   handleChange(id, event) {

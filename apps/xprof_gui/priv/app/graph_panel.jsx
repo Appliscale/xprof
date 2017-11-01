@@ -1,7 +1,5 @@
 import React from "react";
-
 import Graph from "./graph.jsx";
-import _ from "underscore";
 
 export default class GraphPanel extends React.Component {
   constructor(props) {
@@ -72,7 +70,7 @@ export default class GraphPanel extends React.Component {
     var graphsPanels = [];
     for (var i = 0; i < funs.length; i++) {
       graphsPanels.push(
-        <div key={funs[i]} className="row">
+        <div key={funs[i][3]} className="row">
           <div className="col-md-12">
             <Graph
               removeGraph={this.removeGraph}
