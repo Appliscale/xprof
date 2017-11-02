@@ -1,5 +1,6 @@
 import _ from "lodash";
 import React from "react";
+import { CAPTURE_CALLS_INTERVAL } from "./graph_constants";
 
 export class CallsTableRow extends React.Component {
   constructor(props) {
@@ -266,7 +267,7 @@ export default class CallsTracer extends React.Component {
         this.setState({ status: nextStatus });
       }
     }
-    this.timeout = setTimeout(this.getCaptureData, 500);
+    this.timeout = setTimeout(this.getCaptureData, CAPTURE_CALLS_INTERVAL);
   }
 
   handleChange(id, event) {
@@ -306,6 +307,7 @@ export default class CallsTracer extends React.Component {
     const atLeastOneEmptyInput = !threshold || !limit;
     const started = this.state.status === this.Status.RUNNING;
     const buttonDisabled = error || atLeastOneEmptyInput;
+    const table = (this.state.items.length) ? <CallsTable items={this.state.items} /> : null;
 
     return (
       <div className="panel panel-default">
@@ -351,7 +353,7 @@ export default class CallsTracer extends React.Component {
             </span>
           </form>
         </div>
-        <CallsTable items={this.state.items} />
+        {table}
       </div>
     );
   }

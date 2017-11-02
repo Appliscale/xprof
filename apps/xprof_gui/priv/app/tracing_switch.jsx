@@ -1,4 +1,5 @@
 import React from "react";
+import { GET_STATUS_INTERVAL } from "./graph_constants";
 
 export default class TracingSwitch extends React.Component {
   constructor(props) {
@@ -15,7 +16,7 @@ export default class TracingSwitch extends React.Component {
   }
 
   componentDidMount() {
-    this.timeout = window.setTimeout(this.getTracingStatus, 1000);
+    this.timeout = window.setTimeout(this.getTracingStatus, GET_STATUS_INTERVAL);
   }
 
   componentWillUnmount() {
@@ -58,7 +59,7 @@ export default class TracingSwitch extends React.Component {
         }
       })
       .always(() =>
-        this.timeout = window.setTimeout(this.getTracingStatus, 1000)
+        this.timeout = window.setTimeout(this.getTracingStatus, GET_STATUS_INTERVAL)
       );
   }
 
