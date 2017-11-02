@@ -43,6 +43,45 @@ export const NAMES_TO_COLUMNS = {
   memsize: "memsize",
   stddev: "stddev",
 };
+export const DATA = {
+  json: [],
+  keys: {
+    x: COLUMNS.time,
+    value: [
+      COLUMNS.min,
+      COLUMNS.mean,
+      COLUMNS.median,
+      COLUMNS.max,
+      // COLUMNS.stddev,
+      COLUMNS.p25,
+      COLUMNS.p50,
+      COLUMNS.p75,
+      COLUMNS.p90,
+      COLUMNS.p99,
+      // COLUMNS.memsize,
+      COLUMNS.count,
+    ]
+  },
+  hide: [
+    COLUMNS.max,
+    COLUMNS.p90,
+    COLUMNS.p75,
+    COLUMNS.p50,
+  ],
+  axes: {
+    count: "y2"
+  },
+  colors: {
+    // "count": "#98FB98",
+    // "max": "#8C2A04",
+    // "99th perc": "#E24806",
+    // "90th perc": "#E24806",
+    // "75th perc": "#E26606",
+    // "50th perc": "#E26606",
+    // "mean": "#FFAA00",
+    // "min": "#D3D004",
+  }
+};
 export const POINT = { show: false };
 export const GRID = {
   x: { show: true },
@@ -86,29 +125,7 @@ export const AXIS = {
   }
 };
 export const TRANSITION = { duration: 0 };
-export const DATA = {
-  x: COLUMNS.time,
-  hide: [
-    COLUMNS_TO_NAMES.max,
-    COLUMNS_TO_NAMES.p90,
-    COLUMNS_TO_NAMES.p75,
-    COLUMNS_TO_NAMES.p50,
-  ],
-  axes: {
-    count: "y2"
-  },
-  colors: {
-    "count": "#98FB98",
-    "max": "#8C2A04",
-    "99th perc": "#E24806",
-    "90th perc": "#E24806",
-    "75th perc": "#E26606",
-    "50th perc": "#E26606",
-    "mean": "#FFAA00",
-    "min": "#D3D004",
-  }
-};
-export const MAX_DPS = 300;
+export const MAX_DPS = 120;
 export const GET_SAMPLES_INTERVAL = 1000;
 export const GET_FUNS_INTERVAL = 500;
 export const CAPTURE_CALLS_INTERVAL = 500;
