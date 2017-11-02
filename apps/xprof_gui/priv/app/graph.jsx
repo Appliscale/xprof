@@ -6,29 +6,31 @@ import Utils from "./utils.js";
 import "c3/c3.css";
 
 import {
-  COLUMNS,
-  POINT,
-  GRID,
-  AXIS,
-  TRANSITION,
-  DATA,
-  MAX_DPS,
-  GET_SAMPLES_INTERVAL
+    AXIS,
+    COLUMNS,
+    COLUMNS_TO_NAMES,
+    NAMES_TO_COLUMNS,
+    DATA,
+    GET_SAMPLES_INTERVAL,
+    GRID,
+    MAX_DPS,
+    POINT,
+    TRANSITION,
 } from "./graph_constants";
 
 export default class Graph extends React.Component {
   constructor(props) {
     super(props);
     this.state = { error: false, columns: [
-      [ COLUMNS.time ],
-      [ COLUMNS.count ],
-      [ COLUMNS.max ],
-      [ COLUMNS.p99 ],
-      [ COLUMNS.p90 ],
-      [ COLUMNS.p75 ],
-      [ COLUMNS.p50 ],
-      [ COLUMNS.mean ],
-      [ COLUMNS.min ] ]
+      [ COLUMNS_TO_NAMES.time ],
+      [ COLUMNS_TO_NAMES.count ],
+      [ COLUMNS_TO_NAMES.max ],
+      [ COLUMNS_TO_NAMES.p99 ],
+      [ COLUMNS_TO_NAMES.p90 ],
+      [ COLUMNS_TO_NAMES.p75 ],
+      [ COLUMNS_TO_NAMES.p50 ],
+      [ COLUMNS_TO_NAMES.mean ],
+      [ COLUMNS_TO_NAMES.min ] ]
     };
 
     this.interval = null;
@@ -80,6 +82,7 @@ export default class Graph extends React.Component {
     const sortedIncomingData = _.sortBy(data, "time");
     const concatenatedData = this.dps.concat(sortedIncomingData);
     const nextDps = _.takeRight(concatenatedData, MAX_DPS);
+    const isFull = nextDps.length === MAX_DPS;
 
     if (nextDps.length < MAX_DPS) {
       // Fill begining of the graph wit zeros
@@ -105,8 +108,7 @@ export default class Graph extends React.Component {
       nextDps.unshift(...toadd);
     }
 
-    const onlyOneSample = sortedIncomingData.length === 1 && nextDps.length === MAX_DPS;
-    const nextColumns = this.updateColumns(nextDps, onlyOneSample);
+    const nextColumns = this.updateColumns(nextDps, sortedIncomingData.length === 1 && isFull);
 
     this.lastTs = _.last(nextDps).time;
     this.dps = nextDps;
@@ -121,11 +123,11 @@ export default class Graph extends React.Component {
   updateColumns(data, onlyOneSample) {
     const columns = [];
     _.forEach(this.state.columns, column => {
-      const columnKey = column.shift();
+      const columnKey = NAMES_TO_COLUMNS[column.shift()];
       const updatedColumn = (onlyOneSample)
         ? this.updateWithOneSample(data, column, columnKey)
         : data.map(sample => (columnKey === "time") ? sample[columnKey] * 1000 : sample[columnKey]);
-      columns.push([ columnKey, ...updatedColumn ]);
+      columns.push([ COLUMNS_TO_NAMES[columnKey], ...updatedColumn ]);
     });
     return columns;
   }
@@ -160,7 +162,13 @@ export default class Graph extends React.Component {
           <h3 className="panel-title">{MFA[3]}{errorMsg}</h3>
         </div>
         <div className="panel-body">
-          <C3Chart data={data} point={POINT} grid={GRID} axis={AXIS} transition={TRANSITION}/>
+          <C3Chart
+            data={data}
+            point={POINT}
+            grid={GRID}
+            axis={AXIS}
+            transition={TRANSITION}
+          />
           <div className="container-fluid">
             <br/>
             <CallsTracer mfa={MFA}/>

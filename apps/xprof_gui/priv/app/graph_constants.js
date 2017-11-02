@@ -6,12 +6,42 @@ export const COLUMNS = {
   p90: "p90",
   p75: "p75",
   p50: "p50",
-  // /p25: "p25",
+  p25: "p25",
   mean: "mean",
   min: "min",
-  // /median: "median",
-  // /memsize: "memsize",
-  // /stddev: "stddev",
+  median: "median",
+  memsize: "memsize",
+  stddev: "stddev",
+};
+export const COLUMNS_TO_NAMES = {
+  time: "time",
+  count: "count",
+  max: "max",
+  p99: "99th perc",
+  p90: "90th perc",
+  p75: "75th perc",
+  p50: "50th perc",
+  p25: "25th perc",
+  mean: "mean",
+  min: "min",
+  median: "median",
+  memsize: "memsize",
+  stddev: "stddev",
+};
+export const NAMES_TO_COLUMNS = {
+  time: "time",
+  count: "count",
+  max: "max",
+  "99th perc": "p99",
+  "90th perc": "p90",
+  "75th perc": "p75",
+  "50th perc": "p50",
+  "25th perc": "p25",
+  mean: "mean",
+  min: "min",
+  median: "median",
+  memsize: "memsize",
+  stddev: "stddev",
 };
 export const POINT = { show: false };
 export const GRID = {
@@ -57,18 +87,23 @@ export const AXIS = {
 };
 export const TRANSITION = { duration: 0 };
 export const DATA = {
-  x: "time",
-  hide: [ "max", "p90", "p75", "p50" ],
+  x: COLUMNS.time,
+  hide: [
+    COLUMNS_TO_NAMES.max,
+    COLUMNS_TO_NAMES.p90,
+    COLUMNS_TO_NAMES.p75,
+    COLUMNS_TO_NAMES.p50,
+  ],
   axes: {
     count: "y2"
   },
   colors: {
     "count": "#98FB98",
     "max": "#8C2A04",
-    "p99": "#E24806",
-    "p90": "#E24806",
-    "p75": "#E26606",
-    "p50": "#E26606",
+    "99th perc": "#E24806",
+    "90th perc": "#E24806",
+    "75th perc": "#E26606",
+    "50th perc": "#E26606",
     "mean": "#FFAA00",
     "min": "#D3D004",
   }
