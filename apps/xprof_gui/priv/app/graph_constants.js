@@ -109,7 +109,7 @@ export const AXIS = {
   }
 };
 export const TRANSITION = { duration: 0 };
-export const MAX_DPS = 180;
+export const MAX_DPS = 300;
 export const GET_SAMPLES_INTERVAL = 1000;
 export const GET_FUNS_INTERVAL = 500;
 export const CAPTURE_CALLS_INTERVAL = 500;

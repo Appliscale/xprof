@@ -19,13 +19,11 @@ import {
 export default class Graph extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {
-      data: DATA,
-      error: false,
-    };
+    this.state = { error: false };
 
     this.interval = null;
     this.lastTs = 0;
+    this.data = Object.assign({}, DATA);
 
     this.handleClose = this.handleClose.bind(this);
     this.handleIncomingData = this.handleIncomingData.bind(this);
@@ -100,8 +98,8 @@ export default class Graph extends React.Component {
 
   updateChart(dps) {
     const datajson = _.takeRight(dps, MAX_DPS);
-    const data = Object.assign({}, DATA, { json: datajson });
-    this.setState({ data: data });
+    this.data.json = datajson;
+    this.refs.c3.chart.load(this.data);
   }
 
   handleClose() {
@@ -118,7 +116,7 @@ export default class Graph extends React.Component {
     }
     if (data.length) {
       const incomingdps = this.transformIncomingData(data);
-      const dps = this.state.data.json.concat(incomingdps);
+      const dps = this.data.json.concat(incomingdps);
       this.updateChart(dps);
     }
   }
@@ -143,7 +141,8 @@ export default class Graph extends React.Component {
         </div>
         <div className="panel-body">
           <C3Chart
-            data={this.state.data}
+            ref="c3"
+            data={this.data}
             point={POINT}
             grid={GRID}
             axis={AXIS}
