@@ -8,8 +8,6 @@ import "c3/c3.css";
 import {
     AXIS,
     COLUMNS,
-    COLUMNS_TO_NAMES,
-    NAMES_TO_COLUMNS,
     DATA,
     GET_SAMPLES_INTERVAL,
     GRID,
@@ -21,12 +19,13 @@ import {
 export default class Graph extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { error: false };
+    this.state = {
+      data: DATA,
+      error: false,
+    };
 
     this.interval = null;
     this.lastTs = 0;
-    this.mounted = false;
-    this.dps = [];
 
     this.handleClose = this.handleClose.bind(this);
     this.handleIncomingData = this.handleIncomingData.bind(this);
@@ -58,28 +57,27 @@ export default class Graph extends React.Component {
           mean: 0,
           median: 0,
           max: 0,
-          // stddev: 0,
+          stddev: 0,
           p25: 0,
           p50: 0,
           p75: 0,
           p90: 0,
           p99: 0,
           p9999999: 0,
-          // memsize: 0,
+          memsize: 0,
           count: 0,
         }));
         dps.unshift(...fill);
       }
 
-      this.dps = dps;
-      this.updateChart();
+      this.updateChart(dps);
       this.interval = setInterval(this.getDataInInterval, GET_SAMPLES_INTERVAL);
     });
   }
 
   getData(callback) {
-    var mfa = this.props.mfa;
     if (!this.props.paused) {
+      const mfa = this.props.mfa;
       $.ajax({
         url: "/api/data",
         data: {
@@ -100,10 +98,10 @@ export default class Graph extends React.Component {
     return dps;
   }
 
-  updateChart() {
-    const fill = _.takeRight(this.dps, MAX_DPS);
-    const data = Object.assign(DATA, { json: fill });
-    this.refs.c3.chart.load(data);
+  updateChart(dps) {
+    const datajson = _.takeRight(dps, MAX_DPS);
+    const data = Object.assign({}, DATA, { json: datajson });
+    this.setState({ data: data });
   }
 
   handleClose() {
@@ -115,11 +113,13 @@ export default class Graph extends React.Component {
   }
 
   handleIncomingData(data) {
-    if (this.state.error) { this.setState({ error: false }); }
+    if (this.state.error) {
+      this.setState({ error: false });
+    }
     if (data.length) {
-      const dps = this.transformIncomingData(data);
-      this.dps = this.dps.concat(dps);
-      this.updateChart();
+      const incomingdps = this.transformIncomingData(data);
+      const dps = this.state.data.json.concat(incomingdps);
+      this.updateChart(dps);
     }
   }
 
@@ -132,7 +132,6 @@ export default class Graph extends React.Component {
       panelType += "panel-danger";
       errorMsg = <strong>  -  communication error</strong>;
     }
-
     return (
       <div className={panelType}>
         <div className="panel-heading">
@@ -144,8 +143,7 @@ export default class Graph extends React.Component {
         </div>
         <div className="panel-body">
           <C3Chart
-            ref="c3"
-            data={DATA}
+            data={this.state.data}
             point={POINT}
             grid={GRID}
             axis={AXIS}

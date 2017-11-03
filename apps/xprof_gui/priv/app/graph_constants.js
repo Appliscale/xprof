@@ -13,36 +13,6 @@ export const COLUMNS = {
   memsize: "memsize",
   stddev: "stddev",
 };
-export const COLUMNS_TO_NAMES = {
-  time: "time",
-  count: "count",
-  max: "max",
-  p99: "99th perc",
-  p90: "90th perc",
-  p75: "75th perc",
-  p50: "50th perc",
-  p25: "25th perc",
-  mean: "mean",
-  min: "min",
-  median: "median",
-  memsize: "memsize",
-  stddev: "stddev",
-};
-export const NAMES_TO_COLUMNS = {
-  time: "time",
-  count: "count",
-  max: "max",
-  "99th perc": "p99",
-  "90th perc": "p90",
-  "75th perc": "p75",
-  "50th perc": "p50",
-  "25th perc": "p25",
-  mean: "mean",
-  min: "min",
-  median: "median",
-  memsize: "memsize",
-  stddev: "stddev",
-};
 export const DATA = {
   json: [],
   keys: {
@@ -50,10 +20,10 @@ export const DATA = {
     value: [
       COLUMNS.min,
       COLUMNS.mean,
-      COLUMNS.median,
+      // COLUMNS.median,
       COLUMNS.max,
       // COLUMNS.stddev,
-      COLUMNS.p25,
+      // COLUMNS.p25,
       COLUMNS.p50,
       COLUMNS.p75,
       COLUMNS.p90,
@@ -69,17 +39,31 @@ export const DATA = {
     COLUMNS.p50,
   ],
   axes: {
-    count: "y2"
+    count: "y2",
+  },
+  names: {
+    count: "count",
+    max: "max",
+    p99: "99th perc",
+    p90: "90th perc",
+    p75: "75th perc",
+    p50: "50th perc",
+    p25: "25th perc",
+    mean: "mean",
+    min: "min",
+    median: "median",
+    memsize: "memsize",
+    stddev: "stddev",
   },
   colors: {
-    // "count": "#98FB98",
-    // "max": "#8C2A04",
-    // "99th perc": "#E24806",
-    // "90th perc": "#E24806",
-    // "75th perc": "#E26606",
-    // "50th perc": "#E26606",
-    // "mean": "#FFAA00",
-    // "min": "#D3D004",
+    count: "#98FB98",
+    max: "#8C2A04",
+    p99: "#E24806",
+    p90: "#E24806",
+    p75: "#E26606",
+    p50: "#E26606",
+    mean: "#FFAA00",
+    min: "#D3D004",
   }
 };
 export const POINT = { show: false };
@@ -125,7 +109,7 @@ export const AXIS = {
   }
 };
 export const TRANSITION = { duration: 0 };
-export const MAX_DPS = 120;
+export const MAX_DPS = 180;
 export const GET_SAMPLES_INTERVAL = 1000;
 export const GET_FUNS_INTERVAL = 500;
 export const CAPTURE_CALLS_INTERVAL = 500;
