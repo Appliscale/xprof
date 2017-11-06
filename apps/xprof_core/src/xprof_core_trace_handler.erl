@@ -109,9 +109,11 @@ init([MFASpec, Name]) ->
     {ok, HDR} = init_storage(Name, MaxDuration),
     %% add trace pattern with args capturing turned off
     capture_args_trace_off(MFASpec),
-    {ok, #state{mfa=MFASpec, hdr_ref=HDR, name=Name,
-                last_ts=os:timestamp(),
-                window_size=?WINDOW_SIZE,
+    {ok, #state{mfa = MFASpec,
+                hdr_ref = HDR,
+                name = Name,
+                last_ts = os:timestamp(),
+                window_size = ?WINDOW_SIZE,
                 max_duration = MaxDuration,
                 ignore_recursion = IgnoreRecursion}, 1000}.
 
