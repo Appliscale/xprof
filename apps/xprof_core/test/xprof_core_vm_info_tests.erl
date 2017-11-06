@@ -69,6 +69,41 @@ get_available_funs_test_() ->
       end}
     ].
 
+get_called_funs_test_() ->
+    Tests = 
+        [
+        {"Functions without calls return empty list",
+        fun() ->
+            ?assertEqual([], ?M:get_called_funs({?MODULE, get_called_funs_test_, 0}))
+        end},
+        {"Lists calls from simple functions in standard library",
+        fun() ->
+            ?assertEqual([{lists, reverse, 2}], ?M:get_called_funs({lists, reverse, 1})),
+            ?assertEqual([{erlang, nif_error, 1}], ?M:get_called_funs({lists, reverse, 2}))
+        end},
+        {"Extract calls from loaded xprof modules",
+        fun() ->
+            code:load_file(xprof_core_lib),
+            Calls = ?M:get_called_funs({xprof_core_lib, detect_mode, 0}),
+            ?assertEqual(2, length(Calls)),
+            ?assertEqual([{application, which_applications, 0}, {lists, keymember, 3}], Calls)
+        end},
+        {"Extract calls from xprof_core_vm_info:get_called_funs/1",
+        fun() ->
+            code:load_file(?M),
+            Calls = ?M:get_called_funs({?M, get_called_funs, 1}),
+            ?assertEqual(5, length(Calls)),
+            ?assertEqual(
+                [{code, which, 1},
+                 {beam_disasm, file, 1},
+                 {lists, filtermap, 2},
+                 {lists, flatten, 1},
+                 {lists, filtermap, 2}
+                ],
+                Calls)
+        end}
+        ].
+
 get_available_funs_elixir_test_() ->
     Tests =
         [{"Only module names are listed",
