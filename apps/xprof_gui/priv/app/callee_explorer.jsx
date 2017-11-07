@@ -63,13 +63,13 @@ export default class CalleeExplorer extends React.Component {
 
     return (
       <div className="panel panel-default">
-      <div className="panel-heading">
-        Explore callees
+        <div className="panel-heading">
+          Explore callees
+        </div>
+        <div className="panel-body">
+          {output}
+        </div>
       </div>
-      <div className="panel-body">
-        {output}
-      </div>
-    </div>
     );
   }
 }
