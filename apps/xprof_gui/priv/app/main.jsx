@@ -4,7 +4,6 @@ import React from "react";
 
 import "bootswatch/flatly/bootstrap.css";
 
-import Graph from "./graph.jsx";
 import TracingSwitch from "./tracing_switch.jsx";
 import GraphPanel from "./graph_panel.jsx";
 import FunctionBrowser from "./function_browser.jsx";

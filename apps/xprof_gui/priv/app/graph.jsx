@@ -2,6 +2,7 @@ import "underscore";
 import React from "react";
 import C3Chart from "react-c3js";
 import CallsTracer from "./call_tracer.jsx";
+import CalleeExplorer from "./callee_explorer.jsx";
 import Utils from "./utils.js";
 
 import "c3/c3.css";
@@ -120,6 +121,7 @@ export default class Graph extends React.Component {
           <div className="container-fluid">
             <br/>
             <CallsTracer mfa={MFA}/>
+            <CalleeExplorer mfa={MFA}/>
           </div>
         </div>
       </div>
