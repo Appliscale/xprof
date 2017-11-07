@@ -44,10 +44,15 @@ export default class CalleeExplorer extends React.Component {
 
     if (callees.length !== 0) {
       var calleeList = [];
-      for (let callee of callees) {
-        calleeList.push(callee[0] + ":" + callee[1] + "/" + callee[2]);
+      for (var i = 0; i < callees.length; ++i) {
+        const callee = callees[i];
+        calleeList.push(
+          <button key={i} type="button" className="btn btn-default btn-sm">
+            {callee[0]}:{callee[1]}/{callee[2]}
+          </button>
+        );
       }
-      output = calleeList.join(", ");
+      output = calleeList;
     }
     else {
       output = "This function has no callees to explore.";
