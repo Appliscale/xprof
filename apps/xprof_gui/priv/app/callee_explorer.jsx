@@ -31,11 +31,11 @@ export default class CalleeExplorer extends React.Component {
   }
 
   handleCalleeClick(e) {
-    const fun = e.target.value;
+    const calleeQuery = e.target.value;
 
     $.ajax({
       url: "/api/mon_start",
-      data: { query: fun }
+      data: { query: calleeQuery }
     });
   }
 
@@ -44,17 +44,15 @@ export default class CalleeExplorer extends React.Component {
     var output;
 
     if (callees.length !== 0) {
-      var calleeList = [];
-      for (var i = 0; i < callees.length; ++i) {
-        const callee = callees[i];
-        const fun = callee[0] + ":" + callee[1] + "/" + callee[2];
-        calleeList.push(
-          <button key={i} type="button" className="btn btn-default btn-sm" onClick={this.handleCalleeClick} value={fun}>
-            {fun}
+      output = callees.map((callee) => {
+        const mfa = `${callee[0]}:${callee[1]}/${callee[2]}`;
+
+        return (
+          <button key={mfa} type="button" className="btn btn-default btn-sm" onClick={this.handleCalleeClick} value={mfa}>
+            {mfa}
           </button>
         );
-      }
-      output = calleeList;
+      });
     }
     else {
       output = "This function has no callees to explore.";
