@@ -1,4 +1,3 @@
-import _ from "underscore";
 import React from "react";
 
 export default class CalleeExplorer extends React.Component {
