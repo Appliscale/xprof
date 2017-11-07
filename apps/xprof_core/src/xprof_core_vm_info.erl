@@ -93,8 +93,7 @@ get_modules() ->
 %% @doc Return list of called functions for given mfa tuple.
 -spec get_called_funs(mfa()) -> [mfa()].
 get_called_funs({Mod, Fun, Arity}) ->
-    %% Make sure that beam file is loaded and then disassemble
-    code:load_file(Mod),
+    %% Get file for given module and disassemble it
     File = code:which(Mod),
     {beam_file, Mod, _, _, _, Disasm} = beam_disasm:file(File),
     
@@ -136,5 +135,5 @@ get_called_funs({Mod, Fun, Arity}) ->
         Operations
     ),
 
-    %% return list of calls
-    Calls.
+    %% return sorted list of calls
+    lists:usort(Calls).
