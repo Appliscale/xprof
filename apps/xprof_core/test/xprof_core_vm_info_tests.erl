@@ -93,10 +93,10 @@ get_called_funs_test_() ->
              ?assertEqual(5, length(Calls)),
              ?assertEqual(
              [{beam_disasm,file,1},
-                     {code,which,1},
-                     {lists,filtermap,2},
-                     {lists,flatten,1},
-                     {lists,usort,1}
+              {code,which,1},
+              {lists,filtermap,2},
+              {lists,flatten,1},
+              {lists,usort,1}
              ],
              Calls)
      end}

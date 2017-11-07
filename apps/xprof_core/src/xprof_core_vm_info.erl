@@ -116,8 +116,8 @@ get_called_funs({Mod, Fun, Arity}) ->
     Calls = lists:filtermap(
         fun(Opcode) ->
             case Opcode of
-                {call, F, A} ->
-                    {true, {Mod, F, A}};
+                {call, _, {M, F, A}} ->
+                    {true, {M, F, A}};
                 {call_only, _, {M, F, A}} ->
                     {true, {M, F, A}};
                 {call_last, _, {M, F, A}, _} ->
