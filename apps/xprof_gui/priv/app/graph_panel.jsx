@@ -1,5 +1,6 @@
 import React from "react";
 import Graph from "./graph.jsx";
+import { GET_FUNS_INTERVAL } from "./graph_constants";
 
 export default class GraphPanel extends React.Component {
   constructor(props) {
@@ -15,7 +16,7 @@ export default class GraphPanel extends React.Component {
   }
 
   componentDidMount() {
-    window.setTimeout(this.getFunsList, 500);
+    window.setTimeout(this.getFunsList, GET_FUNS_INTERVAL);
   }
 
   // Getting data
@@ -52,7 +53,7 @@ export default class GraphPanel extends React.Component {
     if (!_.isEqual(this.state.funs, data)) {
       this.setState({ funs: data });
     }
-    window.setTimeout(this.getFunsList, 500);
+    window.setTimeout(this.getFunsList, GET_FUNS_INTERVAL);
   }
 
   handleFunsError(jqXHR, error) {

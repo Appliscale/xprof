@@ -8,14 +8,15 @@ var config = {
     // specify that react should be part of that chunk.
     entry: {
       app: [ "./app/graph.jsx", "./app/main.jsx" ],
-      vendors: [ "jquery", "lodash", "react" ]
+      vendors: [ "jquery", "lodash", "react", "moment" ]
     },
     plugins: [
       new webpack.optimize.CommonsChunkPlugin("vendors", "vendors.js"),
       new webpack.ProvidePlugin({
         $: "jquery",
         jQuery: "jquery",
-        _: "lodash"
+        _: "lodash",
+        moment: "moment"
       })
     ],
     output: {
@@ -26,7 +27,7 @@ var config = {
     module: {
       noParse: [],
       loaders: [
-        { test: path.join(__dirname, "app"),  loader: "babel", query: { presets: [ "react", "es2015" ] } },
+        { test: path.join(__dirname, "app"), loader: "babel", query: { presets: [ "react", "es2015" ] } },
         { test: /\.less$/, loader: "style!css!less" },
         { test: /\.css$/, loaders: [ "style", "css" ] },
         { test: /\.woff2?(\?v=\d+\.\d+\.\d+)?$/, loader: "url?limit=10000&minetype=application/font-woff" },
