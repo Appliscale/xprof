@@ -5,7 +5,13 @@ import rootReducer from '../reducers';
 
 export default function configureStore(initialState) {
   // return createStore(rootReducer, initialState, applyMiddleware(reduxImmutableStateInvariant()));
+  const store = createStore(rootReducer, initialState);
 
-  return createStore(rootReducer, initialState);
-  // more middleware can be adder, hot reload, chrome dev ec
+  if (module.hot) {
+    module.hot.accept('../reducers', () => {
+      store.replaceReducer(rootReducer);
+    });
+  }
+
+  return store;
 }

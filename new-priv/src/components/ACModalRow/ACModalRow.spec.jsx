@@ -3,9 +3,9 @@ import { shallow } from 'enzyme';
 import ACModalRow from './ACModalRow';
 
 describe('ACModalRow component', () => {
-  const onFunctionSelected = jest.fn();
+  const onFunctionClickedModal = jest.fn();
   const props = {
-    onFunctionSelected,
+    onFunctionClickedModal,
     functionName: 'fun-fun-function',
     isHighlighted: true,
   };
@@ -19,6 +19,6 @@ describe('ACModalRow component', () => {
   });
   it('calls onFunctionSelected with functionName on click', () => {
     wrapper.find('tr').simulate('click');
-    expect(onFunctionSelected).toBeCalledWith(props.functionName);
+    expect(onFunctionClickedModal).toBeCalledWith(props.functionName);
   });
 });

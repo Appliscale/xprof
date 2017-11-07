@@ -1,15 +1,14 @@
 import React from 'react';
 import _ from 'lodash';
 import { shallow } from 'enzyme';
-import ACModal from './ACModal';
-import ACModalRow from '../ACModalRow/ACModalRow';
+import { ACModal, ACModalRow } from '../';
 import { MAX_FUNCTIONS_AUTOCOMPLETER } from '../../constants';
 
 describe('ACModal component', () => {
-  const onFunctionSelected = jest.fn();
+  const onFunctionClickedModal = jest.fn();
   const props = {
     functions: ['fun1', 'fun2', 'fun3'],
-    onFunctionSelected,
+    onFunctionClickedModal,
     position: 1,
   };
   const wrapper = shallow(<ACModal {...props} />);

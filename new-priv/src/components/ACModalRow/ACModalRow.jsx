@@ -6,7 +6,7 @@ const defaultProps = {
 };
 
 const propTypes = {
-  onFunctionSelected: PropTypes.func.isRequired,
+  onFunctionClickedModal: PropTypes.func.isRequired,
   functionName: PropTypes.string.isRequired,
   isHighlighted: PropTypes.bool,
 };
@@ -18,8 +18,8 @@ class ACModalRow extends React.Component {
   }
 
   onClick() {
-    const { functionName, onFunctionSelected } = this.props;
-    onFunctionSelected(functionName);
+    const { functionName, onFunctionClickedModal } = this.props;
+    onFunctionClickedModal(functionName);
   }
 
   render() {

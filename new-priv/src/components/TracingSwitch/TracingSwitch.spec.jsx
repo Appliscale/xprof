@@ -1,6 +1,6 @@
 import React from 'react';
 import { shallow } from 'enzyme';
-import SwitchTrace from './SwitchTrace';
+import TracingSwitch from './TracingSwitch';
 
 describe('SwitchTrace component', () => {
   const toggleTraceStatus = jest.fn();
@@ -10,7 +10,7 @@ describe('SwitchTrace component', () => {
       toggleTraceStatus,
       status: 'running',
     };
-    const wrapper = shallow(<SwitchTrace {...props} />);
+    const wrapper = shallow(<TracingSwitch {...props} />);
 
     it('renders form', () => {
       expect(wrapper.find('form').length).toBe(1);
@@ -35,7 +35,7 @@ describe('SwitchTrace component', () => {
       toggleTraceStatus,
       status: 'paused',
     };
-    const wrapper = shallow(<SwitchTrace {...props} />);
+    const wrapper = shallow(<TracingSwitch {...props} />);
 
     it('outputs pause text', () => {
       expect(wrapper.find('button').text()).toEqual(' Trace All');
@@ -53,7 +53,7 @@ describe('SwitchTrace component', () => {
       toggleTraceStatus,
       status: 'overflow',
     };
-    const wrapper = shallow(<SwitchTrace {...props} />);
+    const wrapper = shallow(<TracingSwitch {...props} />);
 
     it('outputs pause text', () => {
       expect(wrapper.find('button').text()).toEqual(' Overflow! - resume trace all');

@@ -10,6 +10,7 @@
     "babel-loader": "7.1.1",
     "babel-preset-react-app": "^3.0.3",
     "babel-runtime": "6.26.0",
+    "bootswatch": "3.3.7",
     "case-sensitive-paths-webpack-plugin": "2.1.1",
     "chalk": "1.1.3",
     "css-loader": "0.28.4",
@@ -29,6 +30,7 @@
     "husky": "^0.14.3",
     "jest": "^21.2.1",
     "jest-enzyme": "^4.0.1",
+    "jquery": "^3.2.1",
     "lint-staged": "^4.3.0",
     "lodash": "^4.17.4",
     "object-assign": "4.1.1",
@@ -66,12 +68,17 @@
   },
   "lint-staged": {
     "linters": {
-      "new-priv/src/**/*.{js,jsx,json}": ["eslint --fix", "git add"]
+      "new-priv/src/**/*.{js,jsx,json}": [
+        "eslint --fix",
+        "git add"
+      ]
     },
     "gitDir": "../"
   },
   "jest": {
-    "collectCoverageFrom": ["src/**/*.{js,jsx}"],
+    "collectCoverageFrom": [
+      "src/**/*.{js,jsx}"
+    ],
     "setupFiles": [
       "<rootDir>/config/polyfills.js",
       "<rootDir>/config/jest/setupTests.js"
@@ -88,18 +95,35 @@
       "^.+\\.css$": "<rootDir>/config/jest/cssTransform.js",
       "^(?!.*\\.(js|jsx|css|json)$)": "<rootDir>/config/jest/fileTransform.js"
     },
-    "transformIgnorePatterns": ["[/\\\\]node_modules[/\\\\].+\\.(js|jsx)$"],
+    "transformIgnorePatterns": [
+      "[/\\\\]node_modules[/\\\\].+\\.(js|jsx)$"
+    ],
     "moduleNameMapper": {
       "^react-native$": "react-native-web"
     },
-    "moduleFileExtensions": ["web.js", "js", "json", "web.jsx", "jsx", "node"],
-    "unmockedModulePathPatterns": ["react", "enzyme", "jest-enzyme"]
+    "moduleFileExtensions": [
+      "web.js",
+      "js",
+      "json",
+      "web.jsx",
+      "jsx",
+      "node"
+    ],
+    "unmockedModulePathPatterns": [
+      "react",
+      "enzyme",
+      "jest-enzyme"
+    ]
   },
   "babel": {
-    "presets": ["react-app"]
+    "presets": [
+      "react-app"
+    ]
   },
   "eslintConfig": {
-    "extends": ["airbnb"],
+    "extends": [
+      "airbnb"
+    ],
     "env": {
       "browser": true,
       "jest": true

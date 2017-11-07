@@ -1,23 +1,32 @@
-import { AppContainer } from 'react-hot-loader';
+/* eslint-disable */
+/* global document */
 import React from 'react';
 import ReactDOM from 'react-dom';
+import { AppContainer } from 'react-hot-loader';
 import { Provider } from 'react-redux';
-import configureStore from './store/configureStore';
-import './index.css';
-import App from './containers/App';
-import registerServiceWorker from './utils';
 
-const render = (component) => {
-  const providerContainer = React.createElement(Provider, { store: configureStore() }, component());
-  const hotContainer = React.createElement(AppContainer, null, providerContainer);
-  ReactDOM.render(hotContainer, document.getElementById('root'));
+import RootContainer from './containers/RootContainer/RootContainer';
+import configureStore from './store/configureStore';
+
+import 'bootswatch/flatly/bootstrap.css';
+import './main.css';
+// import 'bootswatch/flatly/bootstrap.css';
+
+const render = Component => {
+  ReactDOM.render(
+    <AppContainer>
+      <Provider store={configureStore()}>
+        <Component />
+      </Provider>
+    </AppContainer>,
+    document.getElementById('root'),
+  );
 };
 
-render(App);
-registerServiceWorker();
+render(RootContainer);
 
 if (module.hot) {
-  module.hot.accept('./containers/App', () => {
-    render(App);
+  module.hot.accept('./containers/RootContainer/RootContainer', () => {
+    render(RootContainer);
   });
 }

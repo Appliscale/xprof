@@ -6,7 +6,7 @@ const propTypes = {
   toggleTraceStatus: PropTypes.func.isRequired,
 };
 
-const SwitchTrace = ({ status, toggleTraceStatus }) => {
+const TracingSwitch = ({ status, toggleTraceStatus }) => {
   let text = '';
   let symbol = 'glyphicon glyphicon-';
   let btnclass = 'btn btn-';
@@ -34,6 +34,6 @@ const SwitchTrace = ({ status, toggleTraceStatus }) => {
   );
 };
 
-SwitchTrace.propTypes = propTypes;
+TracingSwitch.propTypes = propTypes;
 
-export default SwitchTrace;
+export default TracingSwitch;
