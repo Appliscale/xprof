@@ -4,21 +4,14 @@ import React from "react";
 export default class CalleeExplorer extends React.Component {
   constructor(props) {
     super(props);
+
     this.state = {
-      expanded: false,
       callees: []
     };
-
-    this.handleClick = this.handleClick.bind(this);
   }
 
   componentDidMount() {
     this.getCallees();
-  }
-
-  handleClick(e) {
-    e.preventDefault();
-    this.setState({ expanded: !this.state.expanded });
   }
 
   getCallees() {
@@ -38,6 +31,15 @@ export default class CalleeExplorer extends React.Component {
     });
   }
 
+  handleCalleeClick(e) {
+    const fun = e.target.value;
+
+    $.ajax({
+      url: "/api/mon_start",
+      data: { query: fun }
+    });
+  }
+
   render() {
     const callees = this.state.callees;
     var output;
@@ -46,9 +48,10 @@ export default class CalleeExplorer extends React.Component {
       var calleeList = [];
       for (var i = 0; i < callees.length; ++i) {
         const callee = callees[i];
+        const fun = callee[0] + ":" + callee[1] + "/" + callee[2];
         calleeList.push(
-          <button key={i} type="button" className="btn btn-default btn-sm">
-            {callee[0]}:{callee[1]}/{callee[2]}
+          <button key={i} type="button" className="btn btn-default btn-sm" onClick={this.handleCalleeClick} value={fun}>
+            {fun}
           </button>
         );
       }
