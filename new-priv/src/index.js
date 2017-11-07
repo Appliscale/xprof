@@ -4,22 +4,20 @@ import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
 import configureStore from './store/configureStore';
 import './index.css';
-import App from './app';
+import App from './containers/App';
 import registerServiceWorker from './utils';
 
-const store = configureStore();
-
-const render = () => {
-  const providerContainer = React.createElement(Provider, { store }, App());
+const render = (component) => {
+  const providerContainer = React.createElement(Provider, { store: configureStore() }, component());
   const hotContainer = React.createElement(AppContainer, null, providerContainer);
   ReactDOM.render(hotContainer, document.getElementById('root'));
 };
 
-render();
+render(App);
 registerServiceWorker();
 
 if (module.hot) {
-  module.hot.accept('./app', () => {
-    render();
+  module.hot.accept('./containers/App', () => {
+    render(App);
   });
 }

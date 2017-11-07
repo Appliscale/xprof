@@ -40,6 +40,7 @@ The project has been bootstrapped using Create React App npm package (create-rea
 ```
 - Added [.editorconfig](http://editorconfig.org) file to define and maintain consistent coding styles between different editors and IDEs.
 - Added Hot loading functionality ([React Hot Loader](https://github.com/gaearon/react-hot-loader)) which allow tweak React components in real time. Just save file in the editor and component will update without refresh in the browser.
+- Added [enzyme](https://github.com/airbnb/enzyme) (JavaScript Testing utility for React) with additional matchers from [jest-enzyme](https://github.com/blainekasten/enzyme-matchers)
 
 ## State management with Redux
 
