@@ -55,6 +55,13 @@ The project has been bootstrapped using Create React App npm package (create-rea
 
 - redux-immutable-state-invariant
 
-### READ
+### TO READ
 
 - http://redux.js.org/docs/basics/UsageWithReact.html
+- https://medium.com/@dan_abramov/smart-and-dumb-components-7ca2f9a7c7d0
+- https://daveceddia.com/react-project-structure/
+
+### Examples of good projects in react&redux
+
+- https://github.com/rwieruch/favesound-redux
+- https://github.com/andrewngu/sound-redux
