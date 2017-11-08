@@ -9,6 +9,7 @@
          demonitor/1,
          get_all_monitored/0,
          get_data/2,
+         get_called_funs/1,
 
          %% Global trace status
          trace/1,
@@ -95,6 +96,11 @@ get_all_monitored() ->
                 | memsize | count.
 get_data(MFA, TimeStamp) ->
     xprof_core_trace_handler:data(MFA, TimeStamp).
+
+%% @doc Return list of called functions for given mfa tuple.
+-spec get_called_funs(xprof_core:mfa_id()) -> [xprof_core:mfa_id()].
+get_called_funs(MFA) ->
+    xprof_core_vm_info:get_called_funs(MFA).
 
 %%
 %% Global trace status

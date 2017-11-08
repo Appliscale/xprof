@@ -32,7 +32,8 @@
          dont_receive_new_capture_data_after_stop/1,
          in_this_project_we_should_detect_erlang/1,
          but_it_should_return_elixir_if_it_is_forced_as_setting/1,
-         explore_callees_of_standard_function/1
+         explore_callees_of_standard_function/1,
+         explore_callees_on_not_existing_function/1
         ]).
 
 %% CT funs
@@ -59,7 +60,8 @@ all() ->
      dont_receive_new_capture_data_after_stop,
      in_this_project_we_should_detect_erlang,
      but_it_should_return_elixir_if_it_is_forced_as_setting,
-     explore_callees_of_standard_function
+     explore_callees_of_standard_function,
+     explore_callees_on_not_existing_function
     ].
 
 init_per_suite(Config) ->
@@ -263,6 +265,12 @@ but_it_should_return_elixir_if_it_is_forced_as_setting(_Config) ->
 explore_callees_of_standard_function(_Config) ->
     MFA = [{"mod", "lists"}, {"fun", "reverse"}, {"arity", "1"}],
     Expected = [[<<"lists">>, <<"reverse">>, 2]],
+    {200, Calls} = make_get_request("api/get_callees", MFA),
+    ?assertMatch(Expected, Calls).
+
+explore_callees_on_not_existing_function(_Config) ->
+    MFA = [{"mod", "not_existing"}, {"fun", "function"}, {"arity", "42"}],
+    Expected = [],
     {200, Calls} = make_get_request("api/get_callees", MFA),
     ?assertMatch(Expected, Calls).
 

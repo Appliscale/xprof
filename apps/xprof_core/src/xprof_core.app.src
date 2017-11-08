@@ -6,6 +6,7 @@
  ,{applications,
    [kernel
    ,stdlib
+   ,compiler
    ,lager
    ,customized_hdr_histogram
    ]}
