@@ -33,7 +33,8 @@
          in_this_project_we_should_detect_erlang/1,
          but_it_should_return_elixir_if_it_is_forced_as_setting/1,
          explore_callees_of_standard_function/1,
-         explore_callees_on_not_existing_function/1
+         explore_callees_on_not_existing_function/1,
+         explore_callees_in_elixir_mode/1
         ]).
 
 %% CT funs
@@ -61,7 +62,8 @@ all() ->
      in_this_project_we_should_detect_erlang,
      but_it_should_return_elixir_if_it_is_forced_as_setting,
      explore_callees_of_standard_function,
-     explore_callees_on_not_existing_function
+     explore_callees_on_not_existing_function,
+     explore_callees_in_elixir_mode
     ].
 
 init_per_suite(Config) ->
@@ -264,7 +266,7 @@ but_it_should_return_elixir_if_it_is_forced_as_setting(_Config) ->
 
 explore_callees_of_standard_function(_Config) ->
     MFA = [{"mod", "lists"}, {"fun", "reverse"}, {"arity", "1"}],
-    Expected = [[<<"lists">>, <<"reverse">>, 2]],
+    Expected = [<<"lists:reverse/2">>],
     {200, Calls} = make_get_request("api/get_callees", MFA),
     ?assertMatch(Expected, Calls).
 
@@ -273,6 +275,15 @@ explore_callees_on_not_existing_function(_Config) ->
     Expected = [],
     {200, Calls} = make_get_request("api/get_callees", MFA),
     ?assertMatch(Expected, Calls).
+
+explore_callees_in_elixir_mode(_Config) ->
+    given_elixir_mode_is_set(),
+    MFA = [{"mod", "Elixir.List"}, {"fun", "flatten"}, {"arity", "1"}],
+    Expected = [<<":lists.flatten/1">>],
+    {200, Calls} = make_get_request("api/get_callees", MFA),
+    ?assertMatch(Expected, Calls),
+    restore_default_mode(),
+    ok.
 
 %%
 %% Givens

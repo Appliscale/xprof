@@ -10,6 +10,7 @@
          get_all_monitored/0,
          get_data/2,
          get_called_funs/1,
+         get_called_funs_pp/1,
 
          %% Global trace status
          trace/1,
@@ -101,6 +102,14 @@ get_data(MFA, TimeStamp) ->
 -spec get_called_funs(xprof_core:mfa_id()) -> [xprof_core:mfa_id()].
 get_called_funs(MFA) ->
     xprof_core_vm_info:get_called_funs(MFA).
+
+%% @doc Return list of called functions formatted according to the
+%% active syntax mode
+-spec get_called_funs_pp(xprof_core:mfa_id()) -> [MFA :: binary()].
+get_called_funs_pp(MFA) ->
+    ModeCb = xprof_core_lib:get_mode_cb(),
+    Calls = xprof_core:get_called_funs(MFA),
+    [ModeCb:fmt_mfa(M, F, A) || {M, F, A} <- Calls].
 
 %%
 %% Global trace status

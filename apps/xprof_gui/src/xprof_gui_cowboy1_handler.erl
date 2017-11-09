@@ -98,8 +98,8 @@ handle_req(<<"data">>, Req, State) ->
 
 handle_req(<<"get_callees">>, Req, State) ->
     MFA = get_mfa(Req),
-    Callees = xprof_core:get_called_funs(MFA),
-    Json = jsone:encode([[M, F, A] || {M, F, A} <- Callees]),
+    Callees = xprof_core:get_called_funs_pp(MFA),
+    Json = jsone:encode(Callees),
     {ok, ResReq} = cowboy_req:reply(200,
                                     [{<<"content-type">>,
                                       <<"application/json">>}],
