@@ -44,9 +44,7 @@ export default class CalleeExplorer extends React.Component {
     var output;
 
     if (callees.length !== 0) {
-      output = callees.map((callee) => {
-        const mfa = `${callee[0]}:${callee[1]}/${callee[2]}`;
-
+      output = callees.map((mfa) => {
         return (
           <button key={mfa} type="button" className="btn btn-default btn-sm" onClick={this.handleCalleeClick} value={mfa}>
             {mfa}
