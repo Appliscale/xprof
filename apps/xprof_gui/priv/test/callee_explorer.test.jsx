@@ -10,15 +10,10 @@ describe("<CalleeExplorer />", () => {
   let calleeExplorer = null;
 
   const MFAs = [
-    [ "lists", "reverse", 1 ],
-    [ "lists", "reverse", 2 ],
-    [ "mock", "function", 3 ]
+    "lists:reverse/1",
+    "lists:reverse/2",
+    "mock:function/3"
   ];
-
-  let functions = [];
-  for (var MFA of MFAs) {
-    functions.push(MFA[0] + ":" + MFA[1] + "/" + MFA[2]);
-  }
 
   beforeEach(() => {
     calleeExplorer = shallow(<CalleeExplorer />);
@@ -42,8 +37,8 @@ describe("<CalleeExplorer />", () => {
     calleeExplorer.setState({ callees: MFAs });
     const buttons = calleeExplorer.find("button");
 
-    for (var i = 0; i < functions.length; ++i) {
-      expect(buttons.at(i).prop("value")).to.equal(functions[i]);
+    for (var i = 0; i < MFAs.length; ++i) {
+      expect(buttons.at(i).prop("value")).to.equal(MFAs[i]);
     }
   });
 });
