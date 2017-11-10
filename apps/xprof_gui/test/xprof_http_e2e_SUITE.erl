@@ -277,13 +277,19 @@ explore_callees_on_not_existing_function(_Config) ->
     ?assertMatch(Expected, Calls).
 
 explore_callees_in_elixir_mode(_Config) ->
-    given_elixir_mode_is_set(),
-    MFA = [{"mod", "Elixir.List"}, {"fun", "flatten"}, {"arity", "1"}],
-    Expected = [<<":lists.flatten/1">>],
-    {200, Calls} = make_get_request("api/get_callees", MFA),
-    ?assertMatch(Expected, Calls),
-    restore_default_mode(),
-    ok.
+    case xprof_core_test_lib:is_elixir_available() of
+        true ->
+            given_elixir_mode_is_set(),
+            MFA = [{"mod", "Elixir.List"}, {"fun", "flatten"}, {"arity", "1"}],
+            Expected = [<<":lists.flatten/1">>],
+            {200, Calls} = make_get_request("api/get_callees", MFA),
+            ?assertMatch(Expected, Calls),
+            restore_default_mode(),
+            ok;
+        false ->
+            io:format("Elixir not found, skipping test."),
+            ok
+    end.
 
 %%
 %% Givens

@@ -1,6 +1,7 @@
 -module(xprof_core_test_lib).
 
 -export([is_elixir_version/1,
+         is_elixir_available/0,
          run_elixir_unit_tests/1]).
 
 -define(EUNIT_NOAUTO, true).
@@ -13,6 +14,13 @@ is_elixir_version(Requirement) ->
         'Elixir.Version':'match?'(ElixirVsn, list_to_binary(Requirement))
     catch _:_ ->
             false
+    end.
+
+-spec is_elixir_available() -> boolean().
+is_elixir_available() ->
+    case os:find_executable("elixir") of
+        false -> false;
+        _     -> true
     end.
 
 run_elixir_unit_tests(Tests) ->
