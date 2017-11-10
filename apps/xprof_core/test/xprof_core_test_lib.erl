@@ -18,9 +18,11 @@ is_elixir_version(Requirement) ->
 
 -spec is_elixir_available() -> boolean().
 is_elixir_available() ->
-    case os:find_executable("elixir") of
-        false -> false;
-        _     -> true
+    try
+        'Elixir.System':version(),
+        true
+    catch _:_ ->
+        false
     end.
 
 run_elixir_unit_tests(Tests) ->
