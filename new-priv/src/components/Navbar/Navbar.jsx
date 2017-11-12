@@ -1,6 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { FunctionBrowser, TracingSwitch } from '../';
+import logo from './logo.png';
 
 const defaultProps = {
   position: -1,
@@ -10,41 +11,41 @@ const defaultProps = {
 const propTypes = {
   status: PropTypes.string.isRequired,
   toggleTraceStatus: PropTypes.func.isRequired,
-  handleKeyDown: PropTypes.func.isRequired,
-  handleInputChange: PropTypes.func.isRequired,
-  value: PropTypes.string.isRequired,
+  queryKeyDown: PropTypes.func.isRequired,
+  queryInputChange: PropTypes.func.isRequired,
+  query: PropTypes.string.isRequired,
   placeholder: PropTypes.string,
   functions: PropTypes.arrayOf(PropTypes.string).isRequired,
-  onFunctionClickedModal: PropTypes.func.isRequired,
+  functionClick: PropTypes.func.isRequired,
   position: PropTypes.number,
 };
 
 const Navbar = ({
   status,
   toggleTraceStatus,
-  handleKeyDown,
-  handleInputChange,
-  value,
+  queryKeyDown,
+  queryInputChange,
+  query,
   placeholder,
   functions,
-  onFunctionClickedModal,
+  functionClick,
   position,
 }) => (
   <nav className="navbar navbar-default navbar-fixed-top">
     <div className="navbar-header">
       <a className="navbar-brand" href="#top">
-        <img src="img/xprof_logo.png" alt="XProf logo" height="45px" />
+        <img src={logo} alt="XProf logo" height="45px" />
       </a>
     </div>
     <div className="navbar-collapse collapse" id="navbar-collapsible">
       <TracingSwitch status={status} toggleTraceStatus={toggleTraceStatus} />
       <FunctionBrowser
-        handleKeyDown={handleKeyDown}
-        handleInputChange={handleInputChange}
-        value={value}
+        queryKeyDown={queryKeyDown}
+        queryInputChange={queryInputChange}
+        query={query}
         placeholder={placeholder}
         functions={functions}
-        onFunctionClickedModal={onFunctionClickedModal}
+        functionClick={functionClick}
         position={position}
       />
     </div>

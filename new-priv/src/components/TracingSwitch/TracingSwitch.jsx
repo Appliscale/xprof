@@ -1,5 +1,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
+import { STATUS } from '../../constants';
 
 const propTypes = {
   status: PropTypes.string.isRequired,
@@ -11,15 +12,15 @@ const TracingSwitch = ({ status, toggleTraceStatus }) => {
   let symbol = 'glyphicon glyphicon-';
   let btnclass = 'btn btn-';
 
-  if (status === 'running') {
+  if (status === STATUS.RUNNING) {
     text = 'Pause Tracing';
     symbol += 'pause';
     btnclass += 'danger';
-  } else if (status === 'paused' || status === 'initialized') {
+  } else if (status === STATUS.PAUSED || status === STATUS.INIT) {
     text = 'Trace All';
     symbol += 'record';
     btnclass += 'success';
-  } else if (status === 'overflow') {
+  } else if (status === STATUS.OVERFLOW) {
     text = 'Overflow! - resume trace all';
     symbol += 'record';
     btnclass += 'warning';

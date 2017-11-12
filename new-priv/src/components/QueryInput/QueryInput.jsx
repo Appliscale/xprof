@@ -7,9 +7,9 @@ const defaultProps = {
 };
 
 const propTypes = {
-  handleKeyDown: PropTypes.func.isRequired,
-  handleInputChange: PropTypes.func.isRequired,
-  value: PropTypes.string.isRequired,
+  queryKeyDown: PropTypes.func.isRequired,
+  queryInputChange: PropTypes.func.isRequired,
+  query: PropTypes.string.isRequired,
   placeholder: PropTypes.string,
 };
 
@@ -21,20 +21,20 @@ class QueryInput extends React.Component {
   }
 
   onKeyDown(e) {
-    const { handleKeyDown } = this.props;
+    const { queryKeyDown } = this.props;
     if (HANDLED_KEY_CODES.includes(e.keyCode)) {
       e.preventDefault();
-      handleKeyDown(e.keyCode);
+      queryKeyDown(e.keyCode);
     }
   }
 
   onChange(e) {
-    const { handleInputChange } = this.props;
-    handleInputChange(e.target.value);
+    const { queryInputChange } = this.props;
+    queryInputChange(e.target.value);
   }
 
   render() {
-    const { value, placeholder } = this.props;
+    const { query, placeholder } = this.props;
     return (
       <div>
         <input
@@ -44,7 +44,7 @@ class QueryInput extends React.Component {
           placeholder={placeholder}
           aria-describedby="sizing-addon3"
           autoComplete="off"
-          value={value}
+          value={query}
           onKeyDown={this.onKeyDown}
           onChange={this.onChange}
         />

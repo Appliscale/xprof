@@ -2,13 +2,12 @@ import React from 'react';
 import _ from 'lodash';
 import { shallow } from 'enzyme';
 import { ACModal, ACModalRow } from '../';
-import { MAX_FUNCTIONS_AUTOCOMPLETER } from '../../constants';
+import * as constants from '../../constants';
 
 describe('ACModal component', () => {
-  const onFunctionClickedModal = jest.fn();
   const props = {
     functions: ['fun1', 'fun2', 'fun3'],
-    onFunctionClickedModal,
+    onFunctionClickedModal: jest.fn(),
     position: 1,
   };
   const wrapper = shallow(<ACModal {...props} />);
@@ -23,10 +22,13 @@ describe('ACModal component', () => {
     const functions = _.range(0, 150).map(i => `foo${i}`);
     const props2 = Object.assign(props, { functions });
     const wrapper2 = shallow(<ACModal {...props2} />);
-    expect(wrapper2.find(ACModalRow)).toHaveLength(MAX_FUNCTIONS_AUTOCOMPLETER);
+    expect(wrapper2.find(ACModalRow)).toHaveLength(constants.MAX_FUNCTIONS_AUTOCOMPLETER);
   });
   it('highlight only one row', () => {
     const highlightedRow = wrapper.find(ACModalRow).get(props.position);
     expect(highlightedRow.props.isHighlighted).toBeTruthy();
   });
+  // it('Should now show rows if not functions', () => {
+  //   const wrapper2 = shallow(<ACModal {...props2} />);
+  // });
 });

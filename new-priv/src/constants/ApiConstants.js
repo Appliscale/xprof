@@ -1,4 +1,4 @@
-const API_HOSTNAME = '';
+const API_HOSTNAME = 'http://localhost:7890';
 
 export const FUNCTION_AUTOEXPANSION_URL = `${API_HOSTNAME}/api/funs`;
 export const START_MONITORING_FUNCTION_URL = `${API_HOSTNAME}/api/mon_start`;

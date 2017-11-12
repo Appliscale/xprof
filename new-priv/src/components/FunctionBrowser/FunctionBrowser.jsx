@@ -8,22 +8,22 @@ const defaultProps = {
 };
 
 const propTypes = {
-  handleKeyDown: PropTypes.func.isRequired,
-  handleInputChange: PropTypes.func.isRequired,
-  value: PropTypes.string.isRequired,
+  queryKeyDown: PropTypes.func.isRequired,
+  queryInputChange: PropTypes.func.isRequired,
+  query: PropTypes.string.isRequired,
   placeholder: PropTypes.string,
   functions: PropTypes.arrayOf(PropTypes.string).isRequired,
-  onFunctionClickedModal: PropTypes.func.isRequired,
+  functionClick: PropTypes.func.isRequired,
   position: PropTypes.number,
 };
 
 const FunctionBrowser = ({
-  handleKeyDown,
-  handleInputChange,
-  value,
+  queryKeyDown,
+  queryInputChange,
+  query,
   placeholder,
   functions,
-  onFunctionClickedModal,
+  functionClick,
   position,
 }) => (
   <form className="navbar-form">
@@ -33,16 +33,12 @@ const FunctionBrowser = ({
           <span className="glyphicon glyphicon-search" />
         </span>
         <QueryInput
-          handleKeyDown={handleKeyDown}
-          handleInputChange={handleInputChange}
-          value={value}
+          queryKeyDown={queryKeyDown}
+          queryInputChange={queryInputChange}
+          query={query}
           placeholder={placeholder}
         />
-        <ACModal
-          functions={functions}
-          onFunctionClickedModal={onFunctionClickedModal}
-          position={position}
-        />
+        <ACModal functions={functions} functionClick={functionClick} position={position} />
       </div>
     </div>
   </form>

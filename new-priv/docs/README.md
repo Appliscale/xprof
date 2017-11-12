@@ -48,18 +48,17 @@ The project has been bootstrapped using Create React App npm package (create-rea
 
 ### How to handle immutability
 
-- OBJECT: Object.assign({}, object, { value: "new"})
-- ARRAYS: Spread operator for arrays [...arr]
+- OBJECT: Object.assign({}, object, { value: "new"}) or spread operator { ...object, value: "new" }
+- ARRAYS: Spread operator for arrays [...arr, ...arr2, item]
 
-### How to enforce immutability?
-
-- redux-immutable-state-invariant
 
 ### TO READ
 
 - http://redux.js.org/docs/basics/UsageWithReact.html
 - https://medium.com/@dan_abramov/smart-and-dumb-components-7ca2f9a7c7d0
 - https://daveceddia.com/react-project-structure/
+- https://medium.com/javascript-scene/10-tips-for-better-redux-architecture-69250425af44
+- https://egghead.io/courses/getting-started-with-redux
 
 ### Examples of good projects in react&redux
 
