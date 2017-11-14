@@ -5,8 +5,11 @@
 
 %% CT callbacks
 -export([all/0,
+         groups/0,
          init_per_suite/1,
          end_per_suite/1,
+         init_per_group/2,
+         end_per_group/2,
          init_per_testcase/2,
          end_per_testcase/2
         ]).
@@ -31,33 +34,51 @@
          error_when_stopping_not_started_capture/1,
          dont_receive_new_capture_data_after_stop/1,
          in_this_project_we_should_detect_erlang/1,
-         but_it_should_return_elixir_if_it_is_forced_as_setting/1
+         but_it_should_return_elixir_if_it_is_forced_as_setting/1,
+         explore_callees_of_standard_function/1,
+         explore_callees_on_not_existing_function/1,
+         explore_callees_in_elixir_mode/1
         ]).
 
 %% CT funs
 
 all() ->
     [
-     get_initialized_trace_status_on_start,
-     get_running_status_after_setting_tracing,
-     trace_set_only_accepts_all_and_pause,
-     try_to_start_monitoring_invalid_query,
-     monitor_valid_query,
-     monitor_valid_query_twice,
-     monitor_query_with_matchspec,
-     get_overflow_status_after_hitting_overload,
-     get_function_proposals_for_known_module,
-     no_function_proposals_for_invalid_module,
-     stop_monitoring,
-     get_data_for_not_traced_fun,
-     get_data_for_traced_fun,
-     no_capture_data_when_not_traced,
-     capture_data_when_traced_test,
-     capture_data_with_formatted_exception_test,
-     error_when_stopping_not_started_capture,
-     dont_receive_new_capture_data_after_stop,
-     in_this_project_we_should_detect_erlang,
-     but_it_should_return_elixir_if_it_is_forced_as_setting
+     {group, erlang},
+     {group, elixir}
+    ].
+
+groups() ->
+    [
+     {erlang,
+      [],
+      [
+       get_initialized_trace_status_on_start,
+       get_running_status_after_setting_tracing,
+       trace_set_only_accepts_all_and_pause,
+       try_to_start_monitoring_invalid_query,
+       monitor_valid_query,
+       monitor_valid_query_twice,
+       monitor_query_with_matchspec,
+       get_overflow_status_after_hitting_overload,
+       get_function_proposals_for_known_module,
+       no_function_proposals_for_invalid_module,
+       stop_monitoring,
+       get_data_for_not_traced_fun,
+       get_data_for_traced_fun,
+       no_capture_data_when_not_traced,
+       capture_data_when_traced_test,
+       capture_data_with_formatted_exception_test,
+       error_when_stopping_not_started_capture,
+       dont_receive_new_capture_data_after_stop,
+       in_this_project_we_should_detect_erlang,
+       but_it_should_return_elixir_if_it_is_forced_as_setting,
+       explore_callees_of_standard_function,
+       explore_callees_on_not_existing_function
+      ]},
+     {elixir,
+      [],
+      [explore_callees_in_elixir_mode]}
     ].
 
 init_per_suite(Config) ->
@@ -65,6 +86,25 @@ init_per_suite(Config) ->
     Config.
 
 end_per_suite(_Config) ->
+    ok.
+
+init_per_group(elixir, Config) ->
+    case xprof_core_test_lib:ensure_elixir_setup_for_e2e_test() of
+        [] ->
+            {skip, "Elixir unsupported on this OTP release."};
+        {setup, SetupFun, CleanupFun} ->
+            SetupFun(),
+            [{cleanup, CleanupFun} | Config]
+    end;
+init_per_group(_, Config) ->
+    Config.
+
+end_per_group(elixir, Config) ->
+    case ?config(cleanup, Config) of
+        undefined  -> ok;
+        CleanupFun -> CleanupFun()
+    end;
+end_per_group(_, _) ->
     ok.
 
 init_per_testcase(TestCase, Config) ->
@@ -257,6 +297,33 @@ but_it_should_return_elixir_if_it_is_forced_as_setting(_Config) ->
     ?assertEqual([{<<"mode">>, <<"elixir">>}], Mode),
     restore_default_mode(),
     ok.
+
+explore_callees_of_standard_function(_Config) ->
+    MFA = [{"mod", "lists"}, {"fun", "reverse"}, {"arity", "1"}],
+    Expected = [<<"lists:reverse/2">>],
+    {200, Calls} = make_get_request("api/get_callees", MFA),
+    ?assertMatch(Expected, Calls).
+
+explore_callees_on_not_existing_function(_Config) ->
+    MFA = [{"mod", "not_existing"}, {"fun", "function"}, {"arity", "42"}],
+    Expected = [],
+    {200, Calls} = make_get_request("api/get_callees", MFA),
+    ?assertMatch(Expected, Calls).
+
+explore_callees_in_elixir_mode(_Config) ->
+    case xprof_core_test_lib:is_elixir_available() of
+        true ->
+            given_elixir_mode_is_set(),
+            MFA = [{"mod", "Elixir.List"}, {"fun", "flatten"}, {"arity", "1"}],
+            Expected = [<<":lists.flatten/1">>],
+            {200, Calls} = make_get_request("api/get_callees", MFA),
+            ?assertMatch(Expected, Calls),
+            restore_default_mode(),
+            ok;
+        false ->
+            io:format("Elixir not found, skipping test."),
+            ok
+    end.
 
 %%
 %% Givens

@@ -96,6 +96,16 @@ handle_req(<<"data">>, Req, State) ->
         end,
     {ok, ResReq, State};
 
+handle_req(<<"get_callees">>, Req, State) ->
+    MFA = get_mfa(Req),
+    Callees = xprof_core:get_called_funs_pp(MFA),
+    Json = jsone:encode(Callees),
+    {ok, ResReq} = cowboy_req:reply(200,
+                                    [{<<"content-type">>,
+                                      <<"application/json">>}],
+                                    Json, Req),
+    {ok, ResReq, State};
+
 handle_req(<<"trace_set">>, Req, State) ->
     {Spec, _} = cowboy_req:qs_val(<<"spec">>, Req),
 

@@ -1,6 +1,11 @@
 -module(xprof_core_vm_info).
 
--export([get_available_funs/1]).
+-include_lib("compiler/src/beam_disasm.hrl").
+
+-export([
+    get_available_funs/1,
+    get_called_funs/1
+]).
 
 %% @doc Return list of existing module/funcion/arity that match query.
 %%
@@ -86,3 +91,63 @@ get_all_functions(Mod, ModeCB) ->
 get_modules() ->
     ModsFiles = lists:sort(code:all_loaded()),
     [ Mod || {Mod, _File} <- ModsFiles].
+
+%% @doc Return list of called functions for given mfa tuple.
+-spec get_called_funs(mfa()) -> [mfa()].
+get_called_funs({Mod, Fun, Arity}) ->
+    try
+        %% Get file for given module and disassemble it
+        File = code:which(Mod),
+        #beam_file{module = Mod, code = Disasm} = beam_disasm:file(File),
+
+        %% extract beamasm operations for given function
+        Operations = lists:flatten(
+            lists:filtermap(
+                fun(Entry) ->
+                    case Entry of
+                        #function{name = Fun, arity = Arity, code = Opcodes} ->
+                            {true, Opcodes};
+                        _ ->
+                            false
+                    end
+                end,
+                Disasm
+            )
+        ),
+
+        %% extract function calls from beamasm
+        Calls = lists:filtermap(
+            fun(Opcode) ->
+                case Opcode of
+                    {call, _, {M, F, A}} ->
+                        {true, {M, F, A}};
+                    {call_only, _, {M, F, A}} ->
+                        {true, {M, F, A}};
+                    {call_last, _, {M, F, A}, _} ->
+                        {true, {M, F, A}};
+                    {call_ext, _, {extfunc, M, F, A}} ->
+                        {true, {M, F, A}};
+                    {call_ext_only, _, {extfunc, M, F, A}} ->
+                            {true, {M, F, A}};
+                    {call_ext_last, _, {extfunc, M, F, A}, _} ->
+                        {true, {M, F, A}};
+                    _ ->
+                        false
+                end
+            end,
+            Operations
+        ),
+
+        %% return filtered and sorted list of calls
+        ModeCB = xprof_core_lib:get_mode_cb(),
+        FilterList = [{erlang, nif_error, 1}],
+
+        lists:usort([Call || Call = {_, F, _} <- Calls,
+                     not ModeCB:hidden_function(F),
+                     not lists:member(Call, FilterList)
+                    ])
+    catch
+        _:_ ->
+            %% TODO: proper error handling
+            []
+    end.

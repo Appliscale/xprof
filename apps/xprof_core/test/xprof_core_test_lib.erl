@@ -1,7 +1,9 @@
 -module(xprof_core_test_lib).
 
 -export([is_elixir_version/1,
-         run_elixir_unit_tests/1]).
+         is_elixir_available/0,
+         run_elixir_unit_tests/1,
+         ensure_elixir_setup_for_e2e_test/0]).
 
 -define(EUNIT_NOAUTO, true).
 -include_lib("eunit/include/eunit.hrl").
@@ -13,6 +15,15 @@ is_elixir_version(Requirement) ->
         'Elixir.Version':'match?'(ElixirVsn, list_to_binary(Requirement))
     catch _:_ ->
             false
+    end.
+
+-spec is_elixir_available() -> boolean().
+is_elixir_available() ->
+    try
+        'Elixir.System':version(),
+        true
+    catch _:_ ->
+        false
     end.
 
 run_elixir_unit_tests(Tests) ->
@@ -29,6 +40,22 @@ run_elixir_unit_tests(Tests) ->
                      fun() -> setup_elixir(ElixirEbin) end,
                      fun cleanup_elixir/1,
                      Tests}
+            end
+    end.
+
+ensure_elixir_setup_for_e2e_test() ->
+    case os:find_executable("elixir") of
+        false ->
+            %% no Elixir in path - skip elixir tests
+            [];
+        Elixir ->
+            case get_elixir_ebin(Elixir) of
+                error ->
+                    [];
+                ElixirEbin ->
+                    {setup,
+                     fun() -> setup_elixir(ElixirEbin) end,
+                     fun() -> del_elixir_from_path(ElixirEbin) end}
             end
     end.
 

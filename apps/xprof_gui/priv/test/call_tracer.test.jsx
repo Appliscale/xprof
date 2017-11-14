@@ -2,7 +2,7 @@
 
 import React from "react";
 import ReactTestUtils from "react-addons-test-utils";
-import { mount, shallow } from "enzyme";
+import { shallow } from "enzyme";
 import { expect } from "chai";
 import { CallsTracer, CallsTable, CallsTableRow } from "../app/call_tracer.jsx";
 
