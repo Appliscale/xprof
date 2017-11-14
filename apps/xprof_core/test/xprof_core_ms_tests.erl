@@ -84,27 +84,41 @@ ms_test_() ->
     ].
 
 traverse_ms_test_() ->
-    MSs =
-    {%% capture args off
-      [%% false -> false: no trace
-       {[a,'_'], [], [{exception_trace},{message,arity},{message,false}]},
-       %% true -> arity: trace without args
-       {[b,'_'], [], [{exception_trace},{message,arity},{message,arity}]},
-       %% custom msg -> arity: trace without args
-       {['_','$1'], [], [{exception_trace},{message,arity},{message,arity}]}],
-      %% capture args on
-      [%% false -> false: no trace
-       {[a,'_'], [], [{exception_trace},{message,'$_'},{message,false}]},
-       %% true -> '$_' aka object(): trace with all args
-       {[b,'_'], [], [{exception_trace},{message,'$_'},{message,'$_'}]},
-       %% custom msg -> custom msg: trace with one arg only
-       {['_','$1'], [], [{exception_trace},{message,'$_'},{message,'$1'}]}]},
-
-    [?_assertEqual(
-        {ok, {{m, f, 2}, MSs}},
-        ?M:fun2ms("m:f(a, _) -> message(false);"
-                  "   (b, _) -> message(true);"
-                  "   (_, C) -> message(C) end."))
+    [fun() ->
+             {ok, {MFA, {MSOff, MSOn}}} =
+                 ?M:fun2ms("m:f(a, _) -> message(false);"
+                           "   (b, _) -> message(true);"
+                           "   (_, C) -> message(C) end."),
+             ?assertEqual({m, f, 2}, MFA),
+             %% capture args off
+             ?assertEqual(
+                [%% false -> false: no trace
+                 {[a,'_'], [], [{exception_trace},{message,arity},{message,false}]},
+                 %% true -> arity: trace without args
+                 {[b,'_'], [], [{exception_trace},{message,arity},{message,arity}]},
+                 %% custom msg -> arity: trace without args
+                 {['_','$1'], [], [{exception_trace},{message,arity},
+                                   {message,{'andalso',{'=/=','$1',false},arity}}]}],
+                MSOff),
+             %% capture args on
+             ?assertEqual(
+                [%% false -> false: no trace
+                 {[a,'_'], [], [{exception_trace},{message,'$_'},{message,false}]},
+                 %% true -> '$_' aka object(): trace with all args
+                 {[b,'_'], [], [{exception_trace},{message,'$_'},{message,'$_'}]},
+                 %% custom msg -> custom msg: trace with one arg only
+                 {['_','$1'], [], [{exception_trace},{message,'$_'},{message,'$1'}]}],
+                MSOn)
+     end,
+     fun() ->
+             %% complicated condition within `message' action-function
+             {ok, {MFA, {MSOff, MSOn}}} = ?M:fun2ms("m:f(A) -> message(A > 1 andalso A + 1)"),
+             ?assertEqual({m, f, 1}, MFA),
+             ?assertMatch({ok, false, _, _}, erlang:match_spec_test([1], MSOff, trace)),
+             ?assertMatch({ok, arity, _, _}, erlang:match_spec_test([2], MSOff, trace)),
+             ?assertMatch({ok, false, _, _}, erlang:match_spec_test([1], MSOn, trace)),
+             ?assertMatch({ok, 3, _, _}, erlang:match_spec_test([2], MSOn, trace))
+     end
     ].
 
 fun2ms_elixir_test_() ->

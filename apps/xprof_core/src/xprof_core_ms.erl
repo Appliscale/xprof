@@ -101,7 +101,10 @@ traverse_ms_c([{message, true}|T], false) ->
 traverse_ms_c([{message, true}|T], true) ->
     [{message, '$_'}|traverse_ms_c(T, true)];
 traverse_ms_c([{message, Other}|T], false) when Other =/= false ->
-    [{message, arity}|traverse_ms_c(T, false)];
+    %% In case `Other' evaluates to `false', return `false' (disable sending a
+    %% trace message). Otherwise return `arity'.
+    %% message( (Other =/= false ) andalso 'arity' )
+    [{message, {'andalso', {'=/=', Other, false}, arity}}|traverse_ms_c(T, false)];
 traverse_ms_c([H|T], C) ->
     [traverse_ms_c(H, C)|traverse_ms_c(T, C)];
 traverse_ms_c(Tuple, C) when is_tuple(Tuple) ->
