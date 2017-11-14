@@ -1,7 +1,15 @@
 export const callApi = (url, options) =>
   fetch(url, options)
     .then(
-      response => (response.ok ? response.json() : Promise.reject(response.text())),
+      (response) => {
+        if (response.status === 204) {
+          return '';
+        } else if (response.ok) {
+          return response.json();
+        }
+        return Promise.reject(response.text());
+        // return response.ok ? response.json() : Promise.reject(response.text());
+      },
       error => Promise.reject(error),
     )
     .then(json => ({ json }), error => ({ error }))

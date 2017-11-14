@@ -4,4 +4,7 @@ export const STATUS = {
   INIT: 'initialized',
   OVERFLOW: 'overflow',
 };
-export const a = 1;
+export const SPEC = {
+  running: 'all',
+  paused: 'pause',
+};

@@ -1,16 +1,13 @@
 import * as types from '../constants/ActionTypes';
 import {
-  getStatus,
   getACfunctions,
   getACposition,
   getQuery,
   getHighlightedFunction,
 } from '../selectors/CommonSelectors';
 import {
-  STATUS,
   HANDLED_KEYS,
   FUNCTION_AUTOEXPANSION_URL,
-  SET_TRACING_STATUS_URL,
   START_MONITORING_FUNCTION_URL,
 } from '../constants';
 // import { STATUS, HANDLED_KEYS } from '../constants';
@@ -20,21 +17,6 @@ import { callApi } from '../utils/ApiUtils';
 export const setACfunctions = functions => ({
   type: types.FILL_AUTOCOMPLETER_FUNCTIONS,
   functions,
-});
-
-export const setTraceStatusRequest = status => ({
-  type: types.TOGGLE_TRACE_STATUS,
-  status,
-});
-
-export const setTraceStatusError = status => ({
-  type: types.TOGGLE_TRACE_STATUS_ERROR,
-  status,
-});
-
-export const setTraceStatusSuccess = status => ({
-  type: types.TOGGLE_TRACE_STATUS_SUCCESS,
-  status,
 });
 
 export const setPosition = position => ({
@@ -76,33 +58,12 @@ export const functionClick = selected => async (dispatch, getState) => {
   }
 };
 
-export const toggleTraceStatus = () => async (dispatch, getState) => {
-  const state = getState();
-  const status = getStatus(state);
-
-  if (status === STATUS.RUNNING || status === STATUS.PAUSED) {
-    const spec = status === STATUS.RUNNING ? STATUS.PAUSED : STATUS.RUNNING;
-    dispatch(setTraceStatusRequest(spec));
-    const { error } = await callApi(`${SET_TRACING_STATUS_URL}?spec=${spec}`);
-    if (error) dispatch(setTraceStatusError(status));
-    else dispatch(setTraceStatusSuccess(spec));
-  }
-};
-
 export const queryKeyDown = key => async (dispatch, getState) => {
   const state = getState();
   const position = getACposition(state);
   const functions = getACfunctions(state);
   const query = getQuery(state);
   const highlightedFunction = getHighlightedFunction(state);
-
-  // Don't modify search box content if it is not a prefix of the
-  // new value, don't want to overwrite a match-spec fun
-  // (for which there are still suggestions) that is being edited
-  // with some arity.
-  const checkMatchSpec = (next, current) =>
-    (next.startsWith(current) ? dispatch(queryInputChange(next)) : null);
-
   let chosenQuery;
 
   switch (key) {
@@ -113,8 +74,15 @@ export const queryKeyDown = key => async (dispatch, getState) => {
       if (position > 0) dispatch(setPosition(position - 1));
       break;
     case HANDLED_KEYS.TAB:
-      if (highlightedFunction) checkMatchSpec(highlightedFunction, query);
-      else if (functions.length) checkMatchSpec(commonArrayPrefix(functions), query);
+      // Don't modify search box content if it is not a prefix of the
+      // new value, don't want to overwrite a match-spec fun
+      // (for which there are still suggestions) that is being edited
+      // with some arity.
+      if (highlightedFunction && highlightedFunction.startsWith(query)) {
+        dispatch(queryInputChange(highlightedFunction));
+      } else if (functions.length && commonArrayPrefix(functions).startsWith(query)) {
+        dispatch(queryInputChange(commonArrayPrefix(functions)));
+      }
       break;
     case HANDLED_KEYS.ESC:
       dispatch(clearFunctionBrowser());
