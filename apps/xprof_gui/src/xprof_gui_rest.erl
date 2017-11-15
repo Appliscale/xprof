@@ -1,16 +1,229 @@
 %%% @doc HTTP server independent part of the REST API implementation
+%%%
+%%% == Autocomplete ==
+%%%
+%%% === /api/funs ===
+%%%
+%%% Returns:
+%%% <ul>
+%%%   <li> 200: ["MFA"] </li>
+%%% </ul>
+%%%
+%%% Get loaded modules and functions (MFAs) that match the query string.
+%%% Used for autocomplete suggestions on the GUI.
+%%%
+%%% === /api/get_callees ===
+%%%
+%%% Params:
+%%% <ul>
+%%%   <li> "mod" </li>
+%%%   <li> "fun" </li>
+%%%   <li> "arity" </li>
+%%% </ul>
+%%%
+%%% Returns:
+%%% <ul>
+%%%   <li> 200: ["MFA"] </li>
+%%% </ul>
+%%%
+%%% Get list of functions (MFAs) that are called by the specified function
+%%% (MFA) based on static analysis (ie. not based on runtime information).
+%%%
+%%%
+%%% == Monitoring functions ==
+%%%
+%%% === /api/mon_start ===
+%%%
+%%% Params:
+%%% <ul>
+%%%   <li> "query" (""): the query string representing a XProf-flavoured match-spec </li>
+%%% </ul>
+%%%
+%%% Returns:
+%%% <ul>
+%%%   <li> 204: "" </li>
+%%%   <li> 400: "" </li>
+%%% </ul>
+%%%
+%%% Start monitoring based on the specified query string.
+%%%
+%%% === /api/mon_stop ===
+%%%
+%%% Params:
+%%% <ul>
+%%%   <li> "mod" </li>
+%%%   <li> "fun" </li>
+%%%   <li> "arity" </li>
+%%% </ul>
+%%%
+%%% Returns:
+%%% <ul>
+%%%   <li> 204: "" </li>
+%%% </ul>
+%%%
+%%% Stop monitoring the specified function (MFA).
+%%%
+%%% === /api/mon_get_all ===
+%%%
+%%% Returns:
+%%% <ul>
+%%%   <li> 200: [["mod", "fun", "arity", "query"]] </li>
+%%% </ul>
+%%%
+%%% Return list of monitored functions.
+%%% (The values of "mod", "fun" and "arity" can be used as params to calls to eg
+%%% "/api/mon_stop" while "query" can be used to display the original query
+%%% string).
+%%%
+%%% === /api/data ===
+%%%
+%%% Params:
+%%% <ul>
+%%%   <li> "mod" </li>
+%%%   <li> "fun" </li>
+%%%   <li> "arity" </li>
+%%%   <li> "last_ts" </li>
+%%% </ul>
+%%%
+%%% Returns:
+%%% <ul>
+%%%   <li> 200: [{"time": timestamp, "hitkey": number}] (where "histkey" is one of:
+%%%        min, mean, median, max, stddev,
+%%%        p25, p50, p75, p90, p99, p9999999, memsize, count) </li>
+%%%   <li> 404: "" (the requested MFA is not monitored) </li>
+%%% </ul>
+%%%
+%%% Return metrics gathered for the given function since the given
+%%% timestamp. Each item contains a timestamp and the corresponding histogram
+%%% metrics values.
+%%%
+%%% == Global trace status ==
+%%%
+%%% === /api/trace_set ===
+%%%
+%%% Params:
+%%% <ul>
+%%%   <li> "spec" ("all"/"pause") </li>
+%%% </ul>
+%%%
+%%% Returns:
+%%% <ul>
+%%%   <li> 204: "" </li>
+%%%   <li> 400: "" (if spec has invalid value) </li>
+%%% </ul>
+%%%
+%%% Turn on or pause tracing of all processes.
+%%%
+%%% === /api/trace_status ===
+%%%
+%%% Returns:
+%%% <ul>
+%%%   <li> 200: {"status": "initialized"/"running"/"paused"/"overflow"} </li>
+%%% </ul>
+%%%
+%%% Return current tracing state.
+%%% (The `initialized' status is basically the same as `paused', additionally
+%%%  meaning that no tracing was started yet since xprof was started)
+%%%
+%%% == Long call capturing ==
+%%%
+%%% === /api/capture ===
+%%%
+%%% Params:
+%%% <ul>
+%%%   <li> "mod" </li>
+%%%   <li> "fun" </li>
+%%%   <li> "arity" </li>
+%%%   <li> "threshold" </li>
+%%%   <li> "limit" </li>
+%%% </ul>
+%%%
+%%% Returns:
+%%% <ul>
+%%%   <li> 202: {"capture_id": integer} </li>
+%%%   <li> 404: "" (the requested MFA is not monitored)</li>
+%%% </ul>
+%%%
+%%% Start capturing arguments and return values of function calls that lasted
+%%% longer than the specified time threshold in ms. Stop after `limit' number of
+%%% captured calls.
+%%%
+%%% === /api/capture_stop ===
+%%%
+%%% Params:
+%%% <ul>
+%%%   <li> "mod" </li>
+%%%   <li> "fun" </li>
+%%%   <li> "arity" </li>
+%%% </ul>
+%%%
+%%% Returns:
+%%% <ul>
+%%%   <li> 204: "" </li>
+%%%   <li> 404: "" (the requested MFA is not monitored or hasn't been captured yet) </li>
+%%% </ul>
+%%%
+%%% Stop capturing long calls of the given function (MFA).
+%%%
+%%% === /api/capture_data ===
+%%%
+%%% Params:
+%%% <ul>
+%%%   <li> "mod" </li>
+%%%   <li> "fun" </li>
+%%%   <li> "arity" </li>
+%%%   <li> "offset" </li>
+%%% </ul>
+%%%
+%%% Returns:
+%%% <ul>
+%%%   <li> 200: {"capture_id": integer,
+%%%              "threshold": integer,
+%%%              "limit": integer,
+%%%              "items": [Item],
+%%%              "has_more": boolean}
+%%%             where `Item' is
+%%%              {"id": number,
+%%%               "pid": string,
+%%%               "call_time": number,
+%%%               "args": string,
+%%%               "res": string} </li>
+%%%   <li> 404: "" (the requested MFA is not monitored) </li>
+%%% </ul>
+%%%
+%%% Return captured arguments and return values.
+%%%
+%%% The `Offset' argument is the item index last seen by the caller, only items
+%%% newer than that will be returned. An offset of 0 will return all data.
+%%%
+%%% The returned `HasMore' indicates whether capturing is still ongoing or it has
+%%% been stopped either manually or by reaching the limit.
+%%%
+%%% == Syntax mode ==
+%%%
+%%% === /api/mode ===
+%%%
+%%% Returns:
+%%% <ul>
+%%%   <li> 200: {"mode": "erlang"/"elixir"} </li>
+%%% </ul>
+%%%
+%%% Get syntax mode, if not set explicitely in the backend, it will be
+%%% autodetected.
+%%%
+%%% @end
+
 -module(xprof_gui_rest).
 
 -export([handle_req/2]).
 
 
--spec handle_req(binary(), [{binary(), binary()}]) -> integer() | {integer(), binary()}.
+-spec handle_req(Path :: binary(), Params :: [{binary(), binary()}])
+  -> StatusCode | {StatusCode, Body}
+         when StatusCode :: integer(),
+              Body :: binary().
 
-%% @doc "/api/funs"
-%% Returns:
-%% - 200: ["MFA"]
-%% Get loaded modules and functions (MFAs) that match the query string.
-%% Used for autocomplete suggestions on the GUI.
+%% @doc
 handle_req(<<"funs">>, Params) ->
     Query = get_query(Params),
 
@@ -21,28 +234,12 @@ handle_req(<<"funs">>, Params) ->
 
     {200, Json};
 
-%% @doc "/api/get_callees"
-%% Params:
-%% - "mod"
-%% - "fun"
-%% - "arity"
-%% Returns:
-%% - 200: ["MFA"]
-%% Get list of functions (MFAs) that are called by the specified function
-%% (MFA) based on static analysis (ie. not based on runtime information).
 handle_req(<<"get_callees">>, Req) ->
     MFA = get_mfa(Req),
     Callees = xprof_core:get_called_funs_pp(MFA),
     Json = jsone:encode(Callees),
     {200, Json};
 
-%% @doc "/api/mon_start"
-%% Params:
-%% - "query" (""): the query string represening a XProf-flavoured match-spec
-%% Returns:
-%% - 204: ""
-%% - 400: ""
-%% Start monitoring based on the specified query string.
 handle_req(<<"mon_start">>, Params) ->
     Query = get_query(Params),
 
@@ -57,14 +254,6 @@ handle_req(<<"mon_start">>, Params) ->
             400
     end;
 
-%% @doc "/api/mon_stop"
-%% Params:
-%% - "mod"
-%% - "fun"
-%% - "arity"
-%% Returns:
-%% - 204: ""
-%% Stop monitoring the specified function (MFA).
 handle_req(<<"mon_stop">>, Params) ->
     MFA = {M, F, A} = get_mfa(Params),
 
@@ -73,13 +262,6 @@ handle_req(<<"mon_stop">>, Params) ->
     xprof_core:demonitor(MFA),
     204;
 
-%% @doc "/api/mon_get_all"
-%% Returns:
-%% - 200: [["mod", "fun", "arity", "query"]]
-%% Return list of monitored functions.
-%% (The values of "mod", "fun" and "arity" can be used as params to calls to eg
-%% "/api/mon_stop" while "query" can be used to display the original query
-%% string).
 handle_req(<<"mon_get_all">>, _Params) ->
     Funs = xprof_core:get_all_monitored(),
     FunsArr = [[Mod, Fun, Arity, Query]
@@ -87,20 +269,6 @@ handle_req(<<"mon_get_all">>, _Params) ->
     Json = jsone:encode(FunsArr),
     {200, Json};
 
-%% @doc "/api/data"
-%% Params:
-%% - "mod"
-%% - "fun"
-%% - "arity"
-%% - "last_ts"
-%% Returns:
-%% - 200: [{"time": timestamp, "hitkey": number}] (where "histkey" is one of:
-%%        min, mean, median, max, stddev,
-%%        p25, p50, p75, p90, p99, p9999999, memsize, count)
-%% - 404: "" (the requested MFA is not monitored)
-%% Return metrics gathered for the given function since the given
-%% timestamp. Each item contains a timestamp and the corresponding histogram
-%% metrics values.
 handle_req(<<"data">>, Params) ->
     MFA = get_mfa(Params),
     LastTS = get_int(<<"last_ts">>, Params, 0),
@@ -113,13 +281,6 @@ handle_req(<<"data">>, Params) ->
             {200, Json}
     end;
 
-%% @doc "/api/trace_set"
-%% Params:
-%% - "spec" ("all"/"pause")
-%% Returns:
-%% - 204: ""
-%% - 400: "" (if spec has invalid value)
-%% Turn on or pause tracing of all processes.
 handle_req(<<"trace_set">>, Params) ->
     case proplists:get_value(<<"spec">>, Params) of
         <<"all">> ->
@@ -133,12 +294,6 @@ handle_req(<<"trace_set">>, Params) ->
             400
     end;
 
-%% @doc "/api/trace_status"
-%% Returns:
-%% - 200: {"status": "initialized"/"running"/"paused"/"overflow"
-%% Return current tracing state.
-%% (The `initialized' status is basically the same as `paused', additionally
-%%  meaning that no tracing was started yet since xprof was started)
 handle_req(<<"trace_status">>, _Params) ->
     {_, Status} = xprof_core:get_trace_status(),
     Json = jsone:encode({[{status, Status}]}),
