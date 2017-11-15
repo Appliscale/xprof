@@ -28,9 +28,11 @@
          stop_monitoring/1,
          get_data_for_not_traced_fun/1,
          get_data_for_traced_fun/1,
+         error_when_starting_not_traced_fun/1,
          no_capture_data_when_not_traced/1,
          capture_data_when_traced_test/1,
          capture_data_with_formatted_exception_test/1,
+         error_when_stopping_not_traced_fun/1,
          error_when_stopping_not_started_capture/1,
          dont_receive_new_capture_data_after_stop/1,
          in_this_project_we_should_detect_erlang/1,
@@ -66,9 +68,11 @@ groups() ->
        stop_monitoring,
        get_data_for_not_traced_fun,
        get_data_for_traced_fun,
+       error_when_starting_not_traced_fun,
        no_capture_data_when_not_traced,
        capture_data_when_traced_test,
        capture_data_with_formatted_exception_test,
+       error_when_stopping_not_traced_fun,
        error_when_stopping_not_started_capture,
        dont_receive_new_capture_data_after_stop,
        in_this_project_we_should_detect_erlang,
@@ -223,6 +227,15 @@ get_data_for_traced_fun(_Config) ->
                                                         ])),
     ok.
 
+error_when_starting_not_traced_fun(_Config) ->
+    Params = [{"mod", "xprof_http_e2e_SUITE"},
+              {"fun", "long_function"},
+              {"arity", "0"},
+              {"threshold", "1"},
+              {"limit", "1"}],
+    ?assertMatch({404, _}, make_get_request("api/capture", Params)),
+    ok.
+
 no_capture_data_when_not_traced(_Config) ->
     ?assertMatch({404, _}, make_get_request("api/capture_data", [
                                                                  {"mod", "xprof_http_e2e_SUITE"},
@@ -232,8 +245,15 @@ no_capture_data_when_not_traced(_Config) ->
                                                                 ])),
     ok.
 
+error_when_stopping_not_traced_fun(_Config) ->
+    MFA = [{"mod", "xprof_http_e2e_SUITE"}, {"fun", "long_function"}, {"arity", "0"}],
+    ?assertMatch({404, _}, make_get_request("api/capture_stop", MFA)),
+    ok.
+
 error_when_stopping_not_started_capture(_Config) ->
     MFA = [{"mod", "xprof_http_e2e_SUITE"}, {"fun", "long_function"}, {"arity", "0"}],
+    given_traced("xprof_http_e2e_SUITE:long_function/0"),
+
     ?assertMatch({404, _}, make_get_request("api/capture_stop", MFA)),
     ok.
 

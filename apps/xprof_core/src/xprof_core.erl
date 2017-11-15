@@ -136,12 +136,12 @@ get_trace_status() ->
 %% @doc Start capturing arguments and return values of function calls that
 %% lasted longer than the specified time threshold in ms.
 -spec capture(xprof_core:mfa_id(), non_neg_integer(), non_neg_integer()) ->
-                     {ok, CaptureId :: non_neg_integer()}.
+                     {ok, CaptureId :: non_neg_integer()} | {error, not_found}.
 capture(MFA, Threshold, Limit) ->
     xprof_core_trace_handler:capture(MFA, Threshold, Limit).
 
 %% @doc Stop capturing long calls of the given function.
--spec capture_stop(xprof_core:mfa_id()) -> ok | {error, not_found}.
+-spec capture_stop(xprof_core:mfa_id()) -> ok | {error, not_found | not_captured}.
 capture_stop(MFA) ->
     xprof_core_trace_handler:capture_stop(MFA).
 

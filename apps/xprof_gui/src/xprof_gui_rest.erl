@@ -152,10 +152,14 @@ handle_req(<<"capture">>, Params) ->
     lager:info("Capture ~b calls to ~w:~w/~w~n exceeding ~b ms",
                [Limit, M, F, A, Threshold]),
 
-    {ok, CaptureId} = xprof_core:capture(MFA, Threshold, Limit),
-    Json = jsone:encode({[{capture_id, CaptureId}]}),
+    case xprof_core:capture(MFA, Threshold, Limit) of
+        {ok, CaptureId} ->
+            Json = jsone:encode({[{capture_id, CaptureId}]}),
 
-    {200, Json};
+            {200, Json};
+        {error, not_found} ->
+            404
+    end;
 
 handle_req(<<"capture_stop">>, Params) ->
     MFA = get_mfa(Params),
@@ -166,6 +170,8 @@ handle_req(<<"capture_stop">>, Params) ->
         ok ->
             204;
         {error, not_found} ->
+            404;
+        {error, not_captured} ->
             404
     end;
 

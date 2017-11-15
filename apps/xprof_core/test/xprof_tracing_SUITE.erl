@@ -13,7 +13,10 @@
         ]).
 
 %% Test cases
--export([monitor_many_funs/1,
+-export([not_found_error/1,
+         already_traced_error/1,
+         not_captured_error/1,
+         monitor_many_funs/1,
          monitor_recursive_fun/1,
          monitor_keep_recursive_fun/1,
          monitor_crashing_fun/1,
@@ -32,7 +35,10 @@
 %% CT funs
 
 all() ->
-    [monitor_many_funs,
+    [not_found_error,
+     already_traced_error,
+     not_captured_error,
+     monitor_many_funs,
      monitor_recursive_fun,
      monitor_keep_recursive_fun,
      monitor_crashing_fun,
@@ -132,6 +138,35 @@ dead_proc_tracing(_Config) ->
     ?assertMatch({{spawner, Pid, 1.0}, running},
                  xprof_core:get_trace_status()),
     ok.
+
+not_found_error(_Config) ->
+    MFA = {?MODULE, no_such_fun, 1},
+    ?assertEqual(ok, xprof_core:demonitor(MFA)),
+    ?assertEqual({error, not_found}, xprof_core:get_data(MFA, 0)),
+    ?assertEqual({error, not_found}, xprof_core:capture(MFA, 1, 1)),
+    ?assertEqual({error, not_found}, xprof_core:capture_stop(MFA)),
+    ?assertEqual({error, not_found}, xprof_core:get_captured_data(MFA, 0)),
+    ok.
+
+already_traced_error(_Config) ->
+    MFA = {?MODULE, test_fun, 1},
+    ok = xprof_core:monitor(MFA),
+    try
+        ?assertEqual({error, already_traced}, xprof_core:monitor(MFA))
+    after
+        xprof_core:demonitor(MFA)
+    end.
+
+not_captured_error(_Config) ->
+    MFA = {?MODULE, test_fun, 1},
+    ok = xprof_core:monitor(MFA),
+    try
+        ?assertEqual({error, not_captured}, xprof_core:capture_stop(MFA)),
+        ?assertEqual({ok, {-1,-1,-1,false}, []},
+                     xprof_core:get_captured_data(MFA, 0))
+    after
+        xprof_core:demonitor(MFA)
+    end.
 
 monitor_crashing_fun(_Config) ->
     xprof_core:monitor(MFA = {?MODULE, maybe_crash_test_fun, 1}),
