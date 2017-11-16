@@ -4,5 +4,5 @@
   // Enable/disable default JavaScript formatter (For Prettier)
   "javascript.format.enable": false,
   // Use 'prettier-eslint' instead of 'prettier'. Other settings will only be fallbacks in case they could not be inferred from eslint rules.
-  "prettier.eslintIntegration": true
+  "prettier.eslintIntegration": true,
 }

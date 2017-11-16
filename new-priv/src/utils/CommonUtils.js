@@ -34,3 +34,10 @@ export const getLanguageGuides = (mode) => {
     example: 'ets:lookup(data, _)',
   };
 };
+export const mfaToObject = mfa => ({
+  module: mfa[0],
+  function: mfa[1],
+  arity: mfa[2],
+  complete: mfa[3],
+});
+export const mfaToArr = mfa => [mfa.module, mfa.function, mfa.arity, mfa.complete];

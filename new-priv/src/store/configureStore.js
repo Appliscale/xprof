@@ -6,11 +6,13 @@ import rootReducer from '../reducers';
 export default function configureStore(initialState) {
   // return createStore(rootReducer, initialState, applyMiddleware(reduxImmutableStateInvariant()));
   const logger = store => next => (action) => {
-    console.group(action.type);
-    console.info('dispatching', action);
+    if (action.type) {
+      console.group(action.type);
+      console.info('dispatching', action);
+      console.log('next state', store.getState());
+      console.groupEnd(action.type);
+    }
     const result = next(action);
-    console.log('next state', store.getState());
-    console.groupEnd(action.type);
     return result;
   };
 

@@ -5,6 +5,6 @@ export const STATUS = {
   OVERFLOW: 'overflow',
 };
 export const SPEC = {
-  running: 'all',
-  paused: 'pause',
+  ALL: 'all',
+  PAUSE: 'pause',
 };

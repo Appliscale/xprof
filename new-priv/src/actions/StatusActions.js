@@ -36,12 +36,11 @@ export const toggleTraceStatus = () => async (dispatch, getState) => {
   const state = getState();
   const status = getStatus(state);
 
-  if (status === STATUS.RUNNING || status === STATUS.PAUSED) {
-    const spec = status === STATUS.RUNNING ? STATUS.PAUSED : STATUS.RUNNING;
-    dispatch(setTraceStatusRequest(spec));
+  const toggledStatus = status === STATUS.RUNNING ? STATUS.PAUSED : STATUS.RUNNING;
+  const spec = status === STATUS.RUNNING ? SPEC.PAUSE : SPEC.ALL;
+  dispatch(setTraceStatusRequest(toggledStatus));
 
-    const { error } = await callApi(`${SET_TRACING_STATUS_URL}?spec=${SPEC[spec]}`);
-    if (error) dispatch(setTraceStatusError(status));
-    else dispatch(setTraceStatusSuccess(spec));
-  }
+  const { error } = await callApi(`${SET_TRACING_STATUS_URL}?spec=${spec}`);
+  if (error) dispatch(setTraceStatusError(status));
+  else dispatch(setTraceStatusSuccess(toggledStatus));
 };

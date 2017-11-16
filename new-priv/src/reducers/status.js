@@ -2,7 +2,7 @@ import * as types from '../constants/ActionTypes';
 import { STATUS } from '../constants';
 
 const initialState = {
-  status: STATUS.RUNNING,
+  status: STATUS.INIT,
 };
 
 const status = (state = initialState, action) => {

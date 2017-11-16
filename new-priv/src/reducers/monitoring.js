@@ -2,7 +2,7 @@ import * as types from '../constants/ActionTypes';
 
 const initialState = {
   mfas: [],
-  data: [],
+  data: {},
 };
 
 const monitoring = (state = initialState, action) => {

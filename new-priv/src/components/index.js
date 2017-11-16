@@ -1,3 +1,5 @@
+import Monitoring from './Monitoring/Monitoring';
+import Footer from './Footer/Footer';
 import ACModal from './ACModal/ACModal';
 import ACModalRow from './ACModalRow/ACModalRow';
 import FunctionBrowser from './FunctionBrowser/FunctionBrowser';
@@ -6,4 +8,14 @@ import TracingSwitch from './TracingSwitch/TracingSwitch';
 import Root from './Root/Root';
 import Navbar from './Navbar/Navbar';
 
-export { ACModal, ACModalRow, FunctionBrowser, QueryInput, TracingSwitch, Root, Navbar };
+export {
+  ACModal,
+  ACModalRow,
+  FunctionBrowser,
+  QueryInput,
+  TracingSwitch,
+  Root,
+  Navbar,
+  Footer,
+  Monitoring,
+};
