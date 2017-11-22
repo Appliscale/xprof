@@ -55,15 +55,20 @@ data(MFA, FromEpoch) ->
 %% @doc Starts capturing args and results from function calls that lasted longer
 %% than specified time threshold.
 -spec capture(xprof_core:mfa_id(), non_neg_integer(), non_neg_integer()) ->
-                     {ok, non_neg_integer()}.
+                     {ok, non_neg_integer()} | {error, not_found}.
 capture(MFA = {M,F,A}, Threshold, Limit) ->
     lager:info("Capturing ~p calls to ~w:~w/~w that exceed ~p ms:",
                [Limit, M, F, A, Threshold]),
 
     Name = xprof_core_lib:mfa2atom(MFA),
-    gen_server:call(Name, {capture, Threshold, Limit}).
+    try
+        gen_server:call(Name, {capture, Threshold, Limit})
+    catch
+        exit:{noproc, _} ->
+            {error, not_found}
+    end.
 
--spec capture_stop(xprof_core:mfa_id()) -> ok | {error, not_found}.
+-spec capture_stop(xprof_core:mfa_id()) -> ok | {error, not_found | not_captured}.
 capture_stop(MFA) ->
     Name = xprof_core_lib:mfa2atom(MFA),
     try
@@ -75,27 +80,34 @@ capture_stop(MFA) ->
 
 %% @doc
 -spec get_captured_data(xprof_core:mfa_id(), non_neg_integer()) ->
-                               empty | {ok,
-                                        {Index :: non_neg_integer(),
-                                         Threshold :: non_neg_integer(),
-                                         OrigLimit :: non_neg_integer(),
-                                         HasMore :: boolean()
-                                        }, [tuple()]}.
+                               {ok,
+                                {Index :: non_neg_integer(),
+                                 Threshold :: non_neg_integer(),
+                                 OrigLimit :: non_neg_integer(),
+                                 HasMore :: boolean()
+                                }, [tuple()]} |
+                               {error, not_found}.
 get_captured_data(MFA, Offset) when Offset >= 0 ->
     Name = xprof_core_lib:mfa2atom(MFA),
     try
-        Items = lists:sort(ets:select(Name,
-                                      [{
-                                         {{args_res, '$1'},
-                                          {'$2', '$3','$4','$5'}},
-                                         [{'>','$1',Offset}],
-                                         [{{'$1', '$2', '$3', '$4', '$5'}}]
-                                       }])),
-
-        Res = ets:lookup(Name, capture_spec),
-        [{capture_spec, Index, Threshold, Limit, OrigLimit}] = Res,
-        HasMore = Offset + length(Items) < Limit,
-        {ok, {Index, Threshold, OrigLimit, HasMore}, Items}
+        [{capture_spec, Index, Threshold, Limit, OrigLimit}] =
+            ets:lookup(Name, capture_spec),
+        case Index of
+            -1 ->
+                %% no capturing was done for this MFA yet,
+                %% no need to traverse the table
+                {ok, {Index, Threshold, OrigLimit, _HasMore = false}, _Items = []};
+            _ ->
+                MS = [{
+                        {{args_res, '$1'},
+                         {'$2', '$3','$4','$5'}},
+                        [{'>','$1',Offset}],
+                        [{{'$1', '$2', '$3', '$4', '$5'}}]
+                      }],
+                Items = lists:sort(ets:select(Name, MS)),
+                HasMore = Offset + length(Items) < Limit,
+                {ok, {Index, Threshold, OrigLimit, HasMore}, Items}
+        end
     catch error:badarg ->
             {error, not_found}
     end.
@@ -127,6 +139,9 @@ handle_call({capture, Threshold, Limit}, _From,
     capture_args_trace_on(MFA),
     {Timeout, NewState2} = maybe_make_snapshot(NewState),
     {reply, {ok, NewId}, NewState2, Timeout};
+handle_call(capture_stop, _From, State = #state{capture_spec = undefined}) ->
+    {Timeout, NewState} = maybe_make_snapshot(State),
+    {reply, {error, not_captured}, NewState, Timeout};
 handle_call(capture_stop, _From, State = #state{mfa = MFA}) ->
     capture_args_trace_off(MFA),
     #state{capture_spec = {Threshold, Limit},
