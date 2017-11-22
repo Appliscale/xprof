@@ -1,4 +1,4 @@
-import d3 from 'd3';
+import { format } from 'd3';
 
 export const COLUMNS = {
   time: 'time',
@@ -94,7 +94,7 @@ export const AXIS = {
       // so the values on the ticks will not be rounded nicely."
       outer: false,
       format(d) {
-        return `${d3.format('.2s')(d / 1000000)}s`;
+        return `${format('.2s')(d / 1000000)}s`;
       },
     },
   },
