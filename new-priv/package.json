@@ -11,9 +11,11 @@
     "babel-preset-react-app": "3.0.3",
     "babel-runtime": "6.26.0",
     "bootswatch": "3.3.7",
+    "c3": "^0.4.18",
     "case-sensitive-paths-webpack-plugin": "2.1.1",
     "chalk": "1.1.3",
     "css-loader": "0.28.4",
+    "d3": "^4.11.0",
     "dotenv": "4.0.0",
     "enzyme": "3.1.1",
     "enzyme-adapter-react-16": "1.0.4",
@@ -43,6 +45,7 @@
     "prop-types": "15.6.0",
     "raf": "3.4.0",
     "react": "16.0.0",
+    "react-c3js": "^0.1.20",
     "react-dev-utils": "4.1.0",
     "react-dom": "16.0.0",
     "react-hot-loader": "3.1.1",
@@ -52,7 +55,6 @@
     "redux-immutable-state-invariant": "2.1.0",
     "redux-thunk": "^2.2.0",
     "reselect": "^3.0.1",
-    "rxjs": "5.5.0",
     "style-loader": "0.19.0",
     "sw-precache-webpack-plugin": "0.11.4",
     "url-loader": "0.6.2",
@@ -128,6 +130,12 @@
     "env": {
       "browser": true,
       "jest": true
+    },
+    "rules": {
+      "max-len": [
+        2,
+        80
+      ]
     }
   }
 }

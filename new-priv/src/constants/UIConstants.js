@@ -7,3 +7,10 @@ export const HANDLED_KEYS = {
   ARROW_DOWN: 40,
 };
 export const HANDLED_KEY_CODES = Object.values(HANDLED_KEYS);
+export const CALLS_COLUMNS = {
+  ID: 'id',
+  PID: 'pid',
+  CALL_TIME: 'call_time',
+  ARGS: 'args',
+  RES: 'res',
+};

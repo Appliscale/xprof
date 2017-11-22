@@ -1,5 +1,5 @@
 import React from 'react';
-import _ from 'lodash';
+import { range } from 'lodash';
 import { shallow } from 'enzyme';
 import { ACModal, ACModalRow } from '../';
 import * as constants from '../../constants';
@@ -19,10 +19,11 @@ describe('ACModal component', () => {
     expect(wrapper.find('table')).toBePresent();
   });
   it('limit number of visible rows', () => {
-    const functions = _.range(0, 150).map(i => `foo${i}`);
+    const functions = range(0, 150).map(i => `foo${i}`);
     const props2 = Object.assign(props, { functions });
     const wrapper2 = shallow(<ACModal {...props2} />);
-    expect(wrapper2.find(ACModalRow)).toHaveLength(constants.MAX_FUNCTIONS_AUTOCOMPLETER);
+    const max = constants.MAX_FUNCTIONS_AUTOCOMPLETER;
+    expect(wrapper2.find(ACModalRow)).toHaveLength(max);
   });
   it('highlight only one row', () => {
     const highlightedRow = wrapper.find(ACModalRow).get(props.position);

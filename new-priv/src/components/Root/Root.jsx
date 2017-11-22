@@ -1,7 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import NavbarContainer from '../../containers/NavbarContainer/NavbarContainer';
-import MonitoringContainer from '../../containers/MonitoringContainer/MonitoringContainer';
+import {
+  NavbarContainer,
+  MonitoringContainer,
+  TracingContainer,
+} from '../../containers';
 import { Footer } from '../';
 import { STATUS_INTERVAL } from '../../constants';
 
@@ -20,6 +23,9 @@ class Root extends React.Component {
       <div>
         <NavbarContainer />
         <MonitoringContainer />
+        <br />
+        <br />
+        <TracingContainer />
         <Footer />
       </div>
     );

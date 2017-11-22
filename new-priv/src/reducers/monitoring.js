@@ -7,6 +7,8 @@ const initialState = {
 
 const monitoring = (state = initialState, action) => {
   switch (action.type) {
+    case types.STOP_MONITORING_FUNCTION:
+    case types.STOP_MONITORING_FUNCTION_ERROR:
     case types.UPDATE_MONITORED_FUNCTIONS:
       return {
         ...state,

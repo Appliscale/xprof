@@ -2,14 +2,20 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { Monitoring } from '../../components';
 import { poolData, poolMonitoredFunctions } from '../../actions/PoolingActions';
+import { stopMonitoringFunction } from '../../actions/MonitoringActions';
+import { getData, getMfas } from '../../selectors/CommonSelectors';
 
 const MonitoringContainer = props => <Monitoring {...props} />;
 
-const mapStateToProps = () => ({});
+const sp = state => ({
+  mfas: getMfas(state),
+  data: getData(state),
+});
 
-const mapDispatchToProps = {
+const dp = {
   poolMonitoredFunctions,
   poolData,
+  stopMonitoringFunction,
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(MonitoringContainer);
+export default connect(sp, dp)(MonitoringContainer);

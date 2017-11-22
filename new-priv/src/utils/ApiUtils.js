@@ -8,7 +8,8 @@ export const callApi = (url, options) =>
           return response.json();
         }
         return Promise.reject(response.text());
-        // return response.ok ? response.json() : Promise.reject(response.text());
+        // return response.ok ? response.json()
+        // : Promise.reject(response.text());
       },
       error => Promise.reject(error),
     )

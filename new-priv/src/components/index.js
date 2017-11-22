@@ -7,6 +7,7 @@ import QueryInput from './QueryInput/QueryInput';
 import TracingSwitch from './TracingSwitch/TracingSwitch';
 import Root from './Root/Root';
 import Navbar from './Navbar/Navbar';
+import Tracing from './Tracing/Tracing';
 
 export {
   ACModal,
@@ -18,4 +19,5 @@ export {
   Navbar,
   Footer,
   Monitoring,
+  Tracing,
 };

@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import _ from 'lodash';
+import { take } from 'lodash';
 import { ACModalRow } from '../';
 import * as contants from '../../constants';
 
@@ -15,7 +15,7 @@ const propTypes = {
 };
 
 const ACModal = ({ functions, functionClick, position }) => {
-  const funs = _.take(functions, contants.MAX_FUNCTIONS_AUTOCOMPLETER);
+  const funs = take(functions, contants.MAX_FUNCTIONS_AUTOCOMPLETER);
   return (
     <div className="suggestions-panel-parent">
       {funs.length ? (

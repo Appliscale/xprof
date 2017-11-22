@@ -2,7 +2,6 @@ import * as types from '../constants/ActionTypes';
 
 const initialState = {
   query: '',
-  key: null,
   functions: [],
   position: -1,
 };

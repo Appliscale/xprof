@@ -1,3 +1,5 @@
+import { CAPTURE_ACTION } from '../constants/index';
+
 const commonPrefix = (string1, string2) => {
   const len = string1.length;
   let i = 0;
@@ -34,10 +36,26 @@ export const getLanguageGuides = (mode) => {
     example: 'ets:lookup(data, _)',
   };
 };
-export const mfaToObject = mfa => ({
-  module: mfa[0],
-  function: mfa[1],
-  arity: mfa[2],
-  complete: mfa[3],
-});
-export const mfaToArr = mfa => [mfa.module, mfa.function, mfa.arity, mfa.complete];
+export const captureDecision = (json, lastCapture) => {
+  const lastCaptureId = lastCapture ? lastCapture.captureId : undefined;
+  let decision;
+  if (json && json.capture_id > 0) {
+    if (!lastCaptureId && !json.has_more) {
+      decision = CAPTURE_ACTION.APP_INITIALIZATION;
+    } else if (!lastCaptureId) {
+      decision = CAPTURE_ACTION.START_FIRST_CAPTURE;
+    } else if (json.capture_id !== lastCaptureId) {
+      decision = CAPTURE_ACTION.START_NEXT_CAPTURE;
+    } else if (json.items.length) {
+      decision = CAPTURE_ACTION.CAPTURING;
+    }
+  }
+  return decision;
+};
+export const isIntegerInRange = (value, lowerLimit, upperLimit) => {
+  const numVal = Number(value);
+  if (Number.isInteger(numVal)) {
+    return numVal <= upperLimit && numVal >= lowerLimit;
+  }
+  return false;
+};

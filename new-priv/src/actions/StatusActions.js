@@ -1,7 +1,12 @@
 import * as types from '../constants/ActionTypes';
 import { getStatus } from '../selectors/CommonSelectors';
 import { callApi } from '../utils/ApiUtils';
-import { STATUS, SET_TRACING_STATUS_URL, GET_TRACING_STATUS_URL, SPEC } from '../constants';
+import {
+  STATUS,
+  SET_TRACING_STATUS_URL,
+  GET_TRACING_STATUS_URL,
+  SPEC,
+} from '../constants';
 
 export const setTraceStatus = status => ({
   type: types.SET_TRACE_STATUS,
@@ -36,7 +41,8 @@ export const toggleTraceStatus = () => async (dispatch, getState) => {
   const state = getState();
   const status = getStatus(state);
 
-  const toggledStatus = status === STATUS.RUNNING ? STATUS.PAUSED : STATUS.RUNNING;
+  const toggledStatus =
+    status === STATUS.RUNNING ? STATUS.PAUSED : STATUS.RUNNING;
   const spec = status === STATUS.RUNNING ? SPEC.PAUSE : SPEC.ALL;
   dispatch(setTraceStatusRequest(toggledStatus));
 

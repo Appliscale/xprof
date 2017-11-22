@@ -38,7 +38,11 @@ const FunctionBrowser = ({
           query={query}
           placeholder={placeholder}
         />
-        <ACModal functions={functions} functionClick={functionClick} position={position} />
+        <ACModal
+          functions={functions}
+          functionClick={functionClick}
+          position={position}
+        />
       </div>
     </div>
   </form>

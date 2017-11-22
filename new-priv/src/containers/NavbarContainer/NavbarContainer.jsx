@@ -1,7 +1,11 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { Navbar } from '../../components';
-import { functionClick, queryKeyDown, queryInputChange } from '../../actions/NavigationActions';
+import {
+  functionClick,
+  queryKeyDown,
+  queryInputChange,
+} from '../../actions/NavigationActions';
 import { toggleTraceStatus } from '../../actions/StatusActions';
 // import { getValue } from '../../selectors/NavigationSelectors';
 import {

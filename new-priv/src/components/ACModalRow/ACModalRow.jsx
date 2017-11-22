@@ -11,26 +11,14 @@ const propTypes = {
   isHighlighted: PropTypes.bool,
 };
 
-class ACModalRow extends React.Component {
-  constructor(props) {
-    super(props);
-    this.onClick = this.onClick.bind(this);
-  }
-
-  onClick() {
-    const { functionName, functionClick } = this.props;
-    functionClick(functionName);
-  }
-
-  render() {
-    const { functionName, isHighlighted } = this.props;
-    return (
-      <tr className={isHighlighted ? 'row-highlight' : ''} onClick={this.onClick}>
-        <td>{functionName}</td>
-      </tr>
-    );
-  }
-}
+const ACModalRow = ({ functionClick, functionName, isHighlighted }) => (
+  <tr
+    className={isHighlighted ? 'row-highlight' : ''}
+    onClick={() => functionClick(functionName)}
+  >
+    <td>{functionName}</td>
+  </tr>
+);
 
 ACModalRow.defaultProps = defaultProps;
 ACModalRow.propTypes = propTypes;

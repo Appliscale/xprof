@@ -36,7 +36,8 @@ export const setQueryInput = query => ({
 export const queryInputChange = query => async (dispatch) => {
   dispatch(setQueryInput(query));
   if (query) {
-    const { json } = await callApi(`${FUNCTION_AUTOEXPANSION_URL}?query=${query}`);
+    const endpoint = `${FUNCTION_AUTOEXPANSION_URL}?query=${query}`;
+    const { json } = await callApi(endpoint);
     dispatch(setACfunctions(json));
     if (json.length === 1) dispatch(setPosition(0));
     else dispatch(setPosition(-1));
@@ -50,7 +51,8 @@ export const functionClick = selected => async (dispatch, getState) => {
   const query = getQuery(state);
   if (selected.startsWith(query) && isMfa(selected)) {
     dispatch(clearFunctionBrowser());
-    const { error } = await callApi(`${START_MONITORING_FUNCTION_URL}?query=${selected}`);
+    const endpoint = `${START_MONITORING_FUNCTION_URL}?query=${selected}`;
+    const { error } = await callApi(endpoint);
     if (error) console.log('ERROR_STARTED_MONITORING: ', error);
     else console.log('STARTED_MONITORING');
   } else {
@@ -80,7 +82,10 @@ export const queryKeyDown = key => async (dispatch, getState) => {
       // with some arity.
       if (highlightedFunction && highlightedFunction.startsWith(query)) {
         dispatch(queryInputChange(highlightedFunction));
-      } else if (functions.length && commonArrayPrefix(functions).startsWith(query)) {
+      } else if (
+        functions.length &&
+        commonArrayPrefix(functions).startsWith(query)
+      ) {
         dispatch(queryInputChange(commonArrayPrefix(functions)));
       }
       break;
@@ -96,9 +101,10 @@ export const queryKeyDown = key => async (dispatch, getState) => {
 
       if (chosenQuery) {
         dispatch(clearFunctionBrowser());
-        const { error } = await callApi(`${START_MONITORING_FUNCTION_URL}?query=${chosenQuery}`);
+        const params = `query=${chosenQuery}`;
+        const endpoint = `${START_MONITORING_FUNCTION_URL}?${params}`;
+        const { error } = await callApi(endpoint);
         if (error) console.log('ERROR_STARTED_MONITORING: ', error);
-        else console.log('STARTED_MONITORING');
       }
       break;
     default:
