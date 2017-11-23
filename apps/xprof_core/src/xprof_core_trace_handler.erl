@@ -9,7 +9,7 @@
 
 -behaviour(gen_server).
 
--export([start_link/1, data/2, capture/3, capture_stop/1, get_captured_data/2]).
+-export([start_link/2, data/2, capture/3, capture_stop/1, get_captured_data/2]).
 
 -export([trace_mfa_off/1]).
 
@@ -31,10 +31,10 @@
 -define(MAX_DURATION, 30*1000).
 
 %% @doc Starts new process registered localy.
--spec start_link(xprof_core:mfa_spec()) -> {ok, pid()}.
-start_link(MFASpec) ->
+-spec start_link(xprof_core:mfa_spec(), xprof_core:options()) -> {ok, pid()}.
+start_link(MFASpec, Options) ->
     Name = xprof_core_lib:mfaspec2atom(MFASpec),
-    gen_server:start_link({local, Name}, ?MODULE, [MFASpec, Name], []).
+    gen_server:start_link({local, Name}, ?MODULE, [Name, MFASpec, Options], []).
 
 %% @doc Returns histogram data for seconds that occured after FromEpoch.
 -spec data(xprof_core:mfa_id(), non_neg_integer()) -> [proplists:proplist()] |
@@ -115,7 +115,7 @@ get_captured_data(MFA, Offset) when Offset >= 0 ->
 
 %% gen_server callbacks
 
-init([MFASpec, Name]) ->
+init([Name, MFASpec, _Options]) ->
     MaxDuration = application:get_env(xprof_core, max_duration, ?MAX_DURATION) * 1000,
     IgnoreRecursion = application:get_env(xprof_core, ignore_recursion, true),
     {ok, HDR} = init_storage(Name, MaxDuration),

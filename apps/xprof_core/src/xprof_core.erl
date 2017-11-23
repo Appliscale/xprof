@@ -8,6 +8,8 @@
          monitor_pp/1,
          monitor/1,
          demonitor/1,
+         run_pp/1,
+         run/2,
          get_all_monitored/0,
          get_data/2,
          get_called_funs/1,
@@ -35,7 +37,16 @@
          get_mode/0
         ]).
 
--export_type([mfa_spec/0, mfa_id/0, mfa_name/0, mode/0]).
+-export_type([cmd/0, options/0,
+              mfa_spec/0, mfa_id/0, mfa_name/0,
+              mode/0
+             ]).
+
+-type cmd() :: atom().
+%% Command name.
+
+-type options() :: [{atom(), term()}].
+%% Options passed to commands.
 
 -type ms() :: [tuple()].
 %% Match-specification.
@@ -107,6 +118,14 @@ monitor(MFA) ->
 -spec demonitor(xprof_core:mfa_id()) -> ok.
 demonitor(MFA) ->
     xprof_core_tracer:demonitor(MFA).
+
+%% @doc Start monitoring based on the specified query string.
+run_pp(Query) ->
+    xprof_core_cmd:handle_query(Query).
+
+%% @doc Start command with the given options.
+run(Command, Options) ->
+    xprof_core_tracer:run(Command, Options).
 
 %% @doc Return list of monitored functions
 %% (both as MFA and the original query string).

@@ -8,6 +8,7 @@
 -export([start_link/0,
          trace/1,
          monitor/1, demonitor/1,
+         run/2,
          all_monitored/0,
          trace_status/0]).
 
@@ -33,22 +34,35 @@ start_link() ->
 
 %% @doc Starts monitoring specified function calls.
 -spec monitor(mfa() | string()) -> ok | {error, already_traced | string()}.
-monitor(Query) when is_list(Query) ->
-    case xprof_core_ms:fun2ms(Query) of
-        {ok, MFASpec} ->
+monitor(QueryOrMfa) ->
+    run(funlatency, [{mfa, QueryOrMfa}]).
+
+-spec run(xprof_core:cmd(), xprof_core:options()) -> ok | {error, already_traced | string()}.
+run(_Command = funlatency, Options) ->
+    QueryOrMfa = proplists:get_value(mfa, Options),
+    case parse_mfa_query(QueryOrMfa) of
+        {ok, MFASpec, Query} ->
             lager:info("Starting monitoring ~s",[Query]),
             gen_server:call(
-              ?MODULE, {monitor, MFASpec, unicode:characters_to_binary(Query)});
+              ?MODULE, {monitor, MFASpec, Options, unicode:characters_to_binary(Query)});
         {error, Reason} = Error ->
             lager:error(Reason),
             Error
+    end.
+
+parse_mfa_query(Query) when is_list(Query) ->
+    case xprof_core_ms:fun2ms(Query) of
+        {ok, MFASpec} ->
+            {ok, MFASpec, list_to_binary(Query)};
+        {error, _} = Error ->
+            Error
     end;
-monitor({Mod, Fun, Arity} = MFA) ->
+parse_mfa_query({Mod, Fun, Arity} = MFA) ->
     lager:info("Starting monitoring ~w:~w/~b",[Mod,Fun,Arity]),
     MFASpec = {MFA, xprof_core_ms:default_ms()},
     ModeCb = xprof_core_lib:get_mode_cb(),
     FormattedMFA = ModeCb:fmt_mfa(Mod, Fun, Arity),
-    gen_server:call(?MODULE, {monitor, MFASpec, FormattedMFA}).
+    {ok, MFASpec, FormattedMFA}.
 
 %% @doc Stops monitoring specified function calls.
 -spec demonitor(xprof_core:mfa_id()) -> ok.
@@ -82,13 +96,14 @@ init([]) ->
     MaxQueueLen = application:get_env(xprof_core, max_tracer_queue_len, 1000),
     {ok, #state{max_queue_len = MaxQueueLen}}.
 
-handle_call({monitor, MFASpec, Query}, _From, State) ->
+handle_call({monitor, MFASpec, Options, Query}, _From, State) ->
     MFAId = xprof_core_lib:mfaspec2id(MFASpec),
     case get_pid(MFAId) of
         Pid when is_pid(Pid) ->
             {reply, {error, already_traced}, State};
         undefined ->
-            {ok, Pid} = supervisor:start_child(xprof_core_trace_handler_sup, [MFASpec]),
+            {ok, Pid} = supervisor:start_child(xprof_core_trace_handler_sup,
+                                               [MFASpec, Options]),
             put_pid(MFAId, Pid),
             %% funs stored in reversed order of start monitoring
             NState = setup_trace_all_if_initialized(State),
