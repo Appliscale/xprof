@@ -9,7 +9,7 @@
 
 -behaviour(gen_server).
 
--export([start_link/1, data/2, capture/3, capture_stop/1, get_captured_data/2]).
+-export([start_link/2, data/2, capture/3, capture_stop/1, get_captured_data/2]).
 
 -export([trace_mfa_off/1]).
 
@@ -23,7 +23,7 @@
 
 -record(state, {mfa, name, last_ts, hdr_ref,
                 window_size, max_duration, ignore_recursion,
-                capture_spec, capture_id=0, capture_counter=0}).
+                capture_spec, capture_id=0, capture_counter=0, retmatch}).
 
 -define(ONE_SEC, 1000000). %% Second in microseconds
 -define(WINDOW_SIZE, 10*60). %% 10 min window size
@@ -31,10 +31,10 @@
 -define(MAX_DURATION, 30*1000).
 
 %% @doc Starts new process registered localy.
--spec start_link(xprof_core:mfa_spec()) -> {ok, pid()}.
-start_link(MFASpec) ->
+-spec start_link(xprof_core:mfa_spec(), any()) -> {ok, pid()}.
+start_link(MFASpec, RetMatchFun) ->
     Name = xprof_core_lib:mfaspec2atom(MFASpec),
-    gen_server:start_link({local, Name}, ?MODULE, [MFASpec, Name], []).
+    gen_server:start_link({local, Name}, ?MODULE, [MFASpec, Name, RetMatchFun], []).
 
 %% @doc Returns histogram data for seconds that occured after FromEpoch.
 -spec data(xprof_core:mfa_id(), non_neg_integer()) -> [proplists:proplist()] |
@@ -115,7 +115,7 @@ get_captured_data(MFA, Offset) when Offset >= 0 ->
 
 %% gen_server callbacks
 
-init([MFASpec, Name]) ->
+init([MFASpec, Name, RetMatchFun]) ->
     MaxDuration = application:get_env(xprof, max_duration, ?MAX_DURATION) * 1000,
     IgnoreRecursion = application:get_env(xprof, ignore_recursion, true),
     {ok, HDR} = init_storage(Name, MaxDuration),
@@ -127,7 +127,8 @@ init([MFASpec, Name]) ->
                 last_ts = os:timestamp(),
                 window_size = ?WINDOW_SIZE,
                 max_duration = MaxDuration,
-                ignore_recursion = IgnoreRecursion}, 1000}.
+                ignore_recursion = IgnoreRecursion,
+                retmatch = RetMatchFun}, 1000}.
 
 handle_call({capture, Threshold, Limit}, _From,
             State = #state{mfa = MFA}) ->
@@ -169,13 +170,18 @@ handle_info({trace_ts, Pid, call, _MFA, Args, StartTime}, State) ->
 handle_info({trace_ts, Pid, Tag, _MFA, RetOrExc, EndTime}, State)
   when Tag =:= return_from;
        Tag =:= exception_from ->
-
     NewState = case get_ts_args(Pid, State#state.ignore_recursion) of
                    undefined ->
                        State;
                    {StartTime, Args} ->
-                       CallTime = timer:now_diff(EndTime, StartTime),
-                       record_results(Pid, CallTime, Args, {Tag, RetOrExc}, State)
+                       case matching_parsing(State#state.retmatch, RetOrExc) of
+                            false ->
+                               State;
+                         {true, NewRet} ->
+                              CallTime = timer:now_diff(EndTime, StartTime),
+                              record_results(Pid, CallTime, Args, {Tag, NewRet}, State)
+                       end
+
                end,
 
     {Timeout, NewState2} = maybe_make_snapshot(NewState),
@@ -188,6 +194,18 @@ handle_info(_Info, State) ->
 
 terminate(_Reason, _State) ->
     ok.
+
+-spec matching_parsing(fun() | undefined, any()) ->
+    false | {true, NewRet :: any()}.
+matching_parsing(undefined, _) ->
+    true;
+matching_parsing(RetMatch, RetOrExc) ->
+    case RetMatch(RetOrExc) of
+        false -> false;
+        true -> {true, RetOrExc};
+        {true, NewValue} -> {true, NewValue};
+        _ -> false
+    end.
 
 code_change(_OldVsn, State, _Extra) ->
     {ok, State}.
