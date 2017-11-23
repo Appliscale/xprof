@@ -33,6 +33,10 @@ export const setQueryInput = query => ({
   query,
 });
 
+export const noSuchFunctionError = () => ({
+  type: types.NO_SUCH_FUNCTION_ERROR,
+});
+
 export const queryInputChange = query => async (dispatch) => {
   dispatch(setQueryInput(query));
   if (query) {
@@ -103,7 +107,9 @@ export const queryKeyDown = key => async (dispatch, getState) => {
         const params = `query=${chosenQuery}`;
         const endpoint = `${START_MONITORING_FUNCTION_URL}?${params}`;
         const { error } = await callApi(endpoint);
-        if (error) console.log('ERROR: ', error);
+        if (error) {
+          dispatch(noSuchFunctionError());
+        }
       }
       break;
     default:

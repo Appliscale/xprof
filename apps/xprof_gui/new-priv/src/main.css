@@ -88,3 +88,21 @@ input#searchBox {
   border-color: transparent;
   width: 100%;
 }
+
+input.is-invalid{
+  background-color: rgba(255,0,0)
+}
+
+.is-invalid::-webkit-input-placeholder { /* Chrome/Opera/Safari */
+  color: pink;
+}
+.is-invalid::-moz-placeholder { /* Firefox 19+ */
+  color: pink;
+}
+.is-invalid:-ms-input-placeholder { /* IE 10+ */
+  color: pink;
+}
+.is-invalid:-moz-placeholder { /* Firefox 18- */
+  color: pink;
+}
+

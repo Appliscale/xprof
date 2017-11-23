@@ -9,6 +9,8 @@ export const getHighlightedFunction = state =>
   (getACposition(state) !== -1
     ? state.navigation.functions[getACposition(state)]
     : undefined);
+export const getError = state => state.navigation.error;
+
 export const getMfas = state => state.monitoring.mfas;
 export const getData = state => state.monitoring.data;
 export const getCapture = state => state.tracing.capture;

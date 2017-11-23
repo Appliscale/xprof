@@ -6,6 +6,7 @@ import logo from './logo.png';
 const defaultProps = {
   position: -1,
   placeholder: 'Hello BEAMer! Please specify your trace pattern here.',
+  error: false,
 };
 
 const propTypes = {
@@ -18,6 +19,7 @@ const propTypes = {
   functions: PropTypes.arrayOf(PropTypes.string).isRequired,
   functionClick: PropTypes.func.isRequired,
   position: PropTypes.number,
+  error: PropTypes.bool,
 };
 
 const Navbar = ({
@@ -30,6 +32,7 @@ const Navbar = ({
   functions,
   functionClick,
   position,
+  error,
 }) => (
   <nav className="navbar navbar-default navbar-fixed-top">
     <div className="navbar-header">
@@ -47,6 +50,7 @@ const Navbar = ({
         functions={functions}
         functionClick={functionClick}
         position={position}
+        error={error}
       />
     </div>
   </nav>
