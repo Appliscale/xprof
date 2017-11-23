@@ -12,13 +12,15 @@
          terminate/3
         ]).
 
--define(HDR_JSON, [{<<"content-type">>, <<"application/json">>}]).
+-define(HDR_JSON, [{<<"content-type">>, <<"application/json">>},
+    {<<"access-control-allow-origin">>,<<$*>>}]).
 
 %% In case an XHR receives no content with no content-type Firefox will emit
 %% the following error: "XML Parsing Error: no root element found..."
 %% As a workaround always return a content-type of octet-stream with
 %% 204 No Content responses
--define(HDR_NO_CONTENT, [{<<"content-type">>, <<"application/octet-stream">>}]).
+-define(HDR_NO_CONTENT, [{<<"content-type">>, <<"application/octet-stream">>},
+    {<<"access-control-allow-origin">>,<<$*>>}]).
 
 %% xprof_gui_app callback
 
