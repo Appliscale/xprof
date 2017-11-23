@@ -30,6 +30,7 @@ apps/*/doc
 
 cover/
 .idea/
+*.iml
 .vscode/
 
 _build/

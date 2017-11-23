@@ -7,7 +7,7 @@
     get_called_funs/1
 ]).
 
-%% @doc Return list of existing module/funcion/arity that match query.
+%% @doc Return list of existing module/function/arity that match query.
 %%
 %% If query does not contain colon only the global functions
 %% (excluding module_info) of all the matching modules are listed.
