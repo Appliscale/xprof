@@ -5,7 +5,8 @@
 
 -behaviour(xprof_core_language).
 
--export([parse_match_spec/1,
+-export([parse_query/1,
+         parse_match_spec/1,
          hidden_function/1,
          fmt_mfa/3,
          fmt_mod_and_delim/1,
@@ -22,6 +23,13 @@
 -type ex_quoted() :: tuple().
 %% Erlang abstract syntax tree
 -type erl_ast() :: tuple().
+
+%% @doc Parse a query string that represents either an xprof-flavoured
+%% match-spec fun or an extended xprof query in Elixir syntax.
+parse_query("%" ++ _ = _Query) ->
+    {error, not_implemented};
+parse_query(Query) ->
+    {ok, funlatency, [{mfa, Query}]}.
 
 %% @doc Parse a query string that represents either a module-funtion-arity
 %% or an xprof-flavoured match-spec fun in Elixir syntax.

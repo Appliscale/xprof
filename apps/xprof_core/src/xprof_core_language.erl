@@ -6,7 +6,14 @@
 
 %% Function for start monitoring
 
-%% Parse a query string that represents an XProf-flavoured match-spec fun
+%% @doc Parse a query string that represents either an xprof-flavoured
+%% match-spec fun or an extended xprof query.
+-callback parse_query(Query :: string()) ->
+    Result :: {ok, xprof_core:cmd(), [{mfa, string()} |
+                                      {atom(), erl_parse:abstract_expr()}]}
+            | {error, Reason :: any()}.
+
+%% Parse a query string that represents an xprof-flavoured match-spec fun
 -callback parse_match_spec(Query :: string()) ->
     Result :: {mfa, xprof_core:mfa_id()}
             | {clauses, module(), atom(), [erl_parse:abstract_clause()]}.
