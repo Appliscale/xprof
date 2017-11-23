@@ -26,6 +26,7 @@
          capture_exception/1,
          capture_stop/1,
          long_call/1,
+         return_matching/1,
          spawner_tracing/1,
          all_tracing/1,
          pid_tracing/1,
@@ -48,6 +49,7 @@ all() ->
      capture_exception,
      capture_stop,
      long_call,
+     return_matching,
      {group, simulate_tracing}].
 
 groups() ->
@@ -449,6 +451,27 @@ long_call(_Config) ->
     Max = proplists:get_value(max, StatsItems),
     ?assertMatch({true, _}, {Max > 98*1000, Max}),
 
+    ok.
+
+return_matching(_Config) ->
+    xprof_core:monitor(funlatency, [{mfa, MFA = {?MODULE, test_fun, 1}},
+                                    {retmatch, fun({res, Res}) -> Res =:= 20 end}]),
+    ok = xprof_core:trace(self()),
+
+    Last = get_print_current_time(),
+
+    test_fun(10),
+    test_fun(20),
+    ct:sleep(1000),
+
+    [Items1|_] = xprof_core:get_data(MFA, Last),
+    ?assertEqual(1, proplists:get_value(count, Items1)),
+
+    %% the duration of the only captured call is at least 20 ms
+    %%?assertMatch({20 < (proplists:get_value(min, Items1) div 1000)),
+
+    xprof_core:trace(pause),
+    xprof_core:demonitor(MFA),
     ok.
 
 %% Helpers

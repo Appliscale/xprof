@@ -39,10 +39,10 @@ param_from_ast(_, _) ->
 param_to_internal(mfa, Value) ->
     xprof_core_ms:fun2ms(Value);
 param_to_internal(retmatch, Fun) ->
-    case erlang:fun_info(Fun, arity) of
-        1 -> {ok, Fun};
-        2 -> {ok, Fun};
-        _ -> {error, wrong_arity}
+    if is_function(Fun, 1) -> {ok, Fun};
+       is_function(Fun, 2) -> {ok, {exception_from, Fun}};
+       is_function(Fun) -> {error, wrong_arity};
+       true -> {error, not_fun}
     end;
 param_to_internal(_, _) ->
    {error, unknown_param}.
@@ -59,15 +59,18 @@ get_cmd_id(Params) ->
 
 -record(state, {hdr_ref,
                 max_duration,
-                ignore_recursion}).
+                ignore_recursion,
+                retmatch}).
 
-init(_Options, _MFASpec) ->
+init(Options, _MFASpec) ->
     MaxDuration = application:get_env(xprof_core, max_duration, ?MAX_DURATION) * 1000,
     IgnoreRecursion = application:get_env(xprof_core, ignore_recursion, true),
+    RetMatchFun = proplists:get_value(retmatch, Options),
     {ok, HDR} = hdr_histogram:open(MaxDuration, 3),
     {ok, #state{hdr_ref = HDR,
                 max_duration = MaxDuration,
-                ignore_recursion = IgnoreRecursion}}.
+                ignore_recursion = IgnoreRecursion,
+                retmatch = RetMatchFun}}.
 
 handle_event({trace_ts, Pid, call, _MFA, Args, StartTime}, _, State) ->
     put_ts_args(Pid, StartTime, Args, State#state.ignore_recursion),
@@ -83,18 +86,23 @@ handle_event({trace_ts, Pid, Tag, MFA, RetOrExc, EndTime},
         undefined ->
             ok;
         {StartTime, Args} ->
-            CallTime = timer:now_diff(EndTime, StartTime),
-            if CallTime > MaxDuration ->
-                    lager:error("Call ~p took ~p ms that is larger than the maximum "
-                                "that can be stored (~p ms)",
-                                [MFA, CallTime/1000, MaxDuration div 1000]),
-                    ok = hdr_histogram:record(Ref, MaxDuration);
-               true ->
-                    ok = hdr_histogram:record(Ref, CallTime)
-            end,
+            case matching_parsing(State#state.retmatch, Tag, RetOrExc) of
+                false ->
+                    ok;
+                {true, NewRet} ->
+                    CallTime = timer:now_diff(EndTime, StartTime),
+                    if CallTime > MaxDuration ->
+                            lager:error("Call ~p took ~p ms that is larger than the maximum "
+                                        "that can be stored (~p ms)",
+                                        [MFA, CallTime/1000, MaxDuration div 1000]),
+                            ok = hdr_histogram:record(Ref, MaxDuration);
+                       true ->
+                            ok = hdr_histogram:record(Ref, CallTime)
+                    end,
 
-            maybe_capture({Pid, CallTime, Args, {Tag, RetOrExc}},
-                          CaptureThreshold, State)
+                    maybe_capture({Pid, CallTime, Args, {Tag, NewRet}},
+                                  CaptureThreshold, State)
+            end
     end.
 
 take_snapshot(#state{hdr_ref = Ref}) ->
@@ -137,6 +145,32 @@ get_ts_args(Pid, IgnoreRecursion) ->
                 true ->
                     undefined
             end
+    end.
+
+-spec matching_parsing(fun() | {exception_from, fun()} | undefined,
+                       return_from | exception_from, any()) ->
+    false | {true, NewRet :: any()}.
+matching_parsing(undefined, _, RetOrExc) ->
+    {true, RetOrExc};
+matching_parsing({exception_from, RetMatch}, exception_from, {Class, Reason} = Error) ->
+    try RetMatch(Class, Reason) of
+        false -> false;
+        true -> {true, Error};
+        {true, NewValue} -> {true, NewValue};
+        _ -> false
+    catch _:_ ->
+            false
+    end;
+matching_parsing({exception_from, _}, _, _) ->
+    false;
+matching_parsing(RetMatch, _, RetOrExc) ->
+    try RetMatch(RetOrExc) of
+        false -> false;
+        true -> {true, RetOrExc};
+        {true, NewValue} -> {true, NewValue};
+        _ -> false
+    catch _:_ ->
+            false
     end.
 
 maybe_capture(_, _Threshold = undefined, _State) ->
