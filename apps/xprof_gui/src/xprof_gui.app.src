@@ -1,0 +1,20 @@
+{application, xprof_gui,
+ [{description, "Visual BEAM profiler GUI"}
+ ,{vsn, "2.0.0-snapshot"}
+ ,{registered, []}
+ ,{mod, {'xprof_gui_app', []}}
+ ,{applications,
+   [kernel
+   ,stdlib
+   ,cowboy
+   ,lager
+   ,jsone
+   ]}
+ ,{env,[]}
+ ,{modules, []}
+ ,{licenses, ["BSD-3-Clause"]}
+ ,{maintainers, ["Marcin Kasprowicz", "Marcin Kolodziej",
+                 "Michal Niec", "Pawel Pikula",
+                 "Peter Gomori", "Wojciech Gawronski"]}
+ ,{links, [{"Github", "https://github.com/appliscale/xprof"}]}
+ ]}.
