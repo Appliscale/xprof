@@ -32,7 +32,7 @@
 start_link() ->
     gen_server:start_link({local, ?MODULE}, ?MODULE, [], []).
 
-%% @doc Starts monitoring specified function calls.
+%% update doc
 -spec monitor(mfa() | string()) -> ok | {error, term()}.
 monitor(QueryOrMfa) ->
     run(funlatency, [{mfa, QueryOrMfa}]).
