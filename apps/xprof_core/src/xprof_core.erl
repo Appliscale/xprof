@@ -7,6 +7,7 @@
          monitor_pp/1,
          monitor/1,
          demonitor/1,
+         run/2,
          get_all_monitored/0,
          get_data/2,
          get_called_funs/1,
@@ -80,6 +81,9 @@ monitor(MFA) ->
 -spec demonitor(xprof_core:mfa_id()) -> ok.
 demonitor(MFA) ->
     xprof_core_tracer:demonitor(MFA).
+
+run(Command, Options) ->
+    xprof_core_tracer:run(Command, Options).
 
 %% @doc Return list of monitored functions
 %% (both as MFA and the original query string).

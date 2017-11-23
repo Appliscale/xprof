@@ -197,8 +197,8 @@ terminate(_Reason, _State) ->
 
 -spec matching_parsing(fun() | undefined, any()) ->
     false | {true, NewRet :: any()}.
-matching_parsing(undefined, _) ->
-    true;
+matching_parsing(undefined, RetOrExc) ->
+    {true, RetOrExc};
 matching_parsing(RetMatch, RetOrExc) ->
     case RetMatch(RetOrExc) of
         false -> false;

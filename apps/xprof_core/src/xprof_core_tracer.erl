@@ -8,6 +8,7 @@
 -export([start_link/0,
          trace/1,
          monitor/1, demonitor/1,
+         run/2,
          all_monitored/0,
          trace_status/0]).
 
@@ -33,35 +34,36 @@ start_link() ->
 
 %% @doc Starts monitoring specified function calls.
 -spec monitor(mfa() | string()) -> ok | {error, term()}.
-monitor(Query) when is_list(Query) ->
+monitor(QueryOrMfa) ->
+    run(funlatency, [{mfa, QueryOrMfa}]).
+
+run(_Command = funlatency, Options) ->
+    QueryOrMfa = proplists:get_value(mfa, Options),
+    RetMatchFun = proplists:get_value(retmatch, Options),
+    case parse_mfa_query(QueryOrMfa) of
+        {ok, MFASpec, Query} ->
+            lager:info("Starting monitoring ~s",[Query]),
+            gen_server:call(
+              ?MODULE, {monitor, MFASpec, Query, RetMatchFun});
+        {error, _} = Error ->
+            Error
+    end.
+
+parse_mfa_query(Query) when is_list(Query) ->
     case xprof_core_ms:fun2ms(Query) of
         {ok, MFASpec} ->
             lager:info("Starting monitoring ~s",[Query]),
-            gen_server:call(
-              ?MODULE, {monitor, MFASpec, list_to_binary(Query)});
+            {ok, MFASpec, list_to_binary(Query)};
         {error, Reason} = Error ->
             lager:error(Reason),
             Error
     end;
-monitor({Mod, Fun, Arity} = MFA) ->
+parse_mfa_query({Mod, Fun, Arity} = MFA) ->
     lager:info("Starting monitoring ~w:~w/~b",[Mod,Fun,Arity]),
     MFASpec = {MFA, xprof_core_ms:default_ms()},
     ModeCb = xprof_core_lib:get_mode_cb(),
     FormattedMFA = ModeCb:fmt_mfa(Mod, Fun, Arity),
-    gen_server:call(?MODULE, {monitor, MFASpec, FormattedMFA, undefined}).
-
-monitor(Command, Options) ->
-    Query = proplists:get_value(mfa, Options),
-    RetMatchFun = proplists:get_value(retmatch, Options),
-  case xprof_core_ms:fun2ms(Query) of
-    {ok, MFASpec} ->
-      lager:info("Starting monitoring ~s",[Query]),
-      gen_server:call(
-        ?MODULE, {monitor, MFASpec, list_to_binary(Query), RetMatchFun});
-    {error, Reason} = Error ->
-      lager:error(Reason),
-      Error
-  end.
+    {ok, MFASpec, FormattedMFA}.
 
 %% @doc Stops monitoring specified function calls.
 -spec demonitor(xprof_core:mfa_id()) -> ok.
