@@ -8,7 +8,8 @@
 %% the following error: "XML Parsing Error: no root element found..."
 %% As a workaround always return a content-type of octet-stream with
 %% 204 No Content responses
--define(HDR_NO_CONTENT, [{<<"Content-type">>, <<"application/octet-stream">>}]).
+-define(HDR_NO_CONTENT, [{<<"Content-type">>, <<"application/octet-stream">>},
+{<<"access-control-allow-origin">>,<<$*>>}]).
 
 %% Cowboy callbacks
 
@@ -37,7 +38,9 @@ handle_req(<<"funs">>, Req, State) ->
 
     {ok, Req2} = cowboy_req:reply(200,
                                   [{<<"content-type">>,
-                                    <<"application/json">>}],
+                                    <<"application/json">>},
+                                    {<<"access-control-allow-origin">>,
+                                    <<$*>>}],
                                   Json,
                                   Req),
     {ok, Req2, State};
@@ -74,7 +77,9 @@ handle_req(<<"mon_get_all">>, Req, State) ->
     Json = jsone:encode(FunsArr),
     {ok, ResReq} = cowboy_req:reply(200,
                                     [{<<"content-type">>,
-                                      <<"application/json">>}],
+                                      <<"application/json">>},
+                                      {<<"access-control-allow-origin">>,
+                                      <<$*>>}],
                                     Json, Req),
     {ok, ResReq, State};
 
@@ -91,7 +96,9 @@ handle_req(<<"data">>, Req, State) ->
 
                 cowboy_req:reply(200,
                                  [{<<"content-type">>,
-                                   <<"application/json">>}],
+                                   <<"application/json">>},
+                                   {<<"access-control-allow-origin">>,
+                                   <<$*>>}],
                                  Json, Req)
         end,
     {ok, ResReq, State};
@@ -114,7 +121,9 @@ handle_req(<<"trace_status">>, Req, State) ->
     Json = jsone:encode({[{status, Status}]}),
     {ok, ResReq} = cowboy_req:reply(200,
                                     [{<<"content-type">>,
-                                      <<"application/json">>}],
+                                      <<"application/json">>},
+                                      {<<"access-control-allow-origin">>,
+                                      <<$*>>}],
                                     Json, Req),
 
     {ok, ResReq, State};
@@ -134,7 +143,9 @@ handle_req(<<"capture">>, Req, State) ->
 
     {ok, ResReq} = cowboy_req:reply(200,
                                     [{<<"content-type">>,
-                                      <<"application/json">>}], Json, Req),
+                                      <<"application/json">>},
+                                      {<<"access-control-allow-origin">>,
+                                      <<$*>>}], Json, Req),
     {ok, ResReq, State};
 
 handle_req(<<"capture_stop">>, Req, State) ->
@@ -170,7 +181,9 @@ handle_req(<<"capture_data">>, Req, State) ->
                                       {has_more, Offset + length(Items) < Limit}]}),
                 cowboy_req:reply(200,
                                  [{<<"content-type">>,
-                                   <<"application/json">>}],
+                                   <<"application/json">>},
+                                   {<<"access-control-allow-origin">>,
+                                      <<$*>>}],
                                  Json, Req)
         end,
     {ok, ResReq, State};
@@ -180,7 +193,9 @@ handle_req(<<"mode">>, Req, State) ->
     Json = jsone:encode({[{mode, Mode}]}),
     {ok, ResReq} = cowboy_req:reply(200,
                                     [{<<"content-type">>,
-                                      <<"application/json">>}],
+                                      <<"application/json">>},
+                                      {<<"access-control-allow-origin">>,
+                                      <<$*>>}],
                                     Json, Req),
     {ok, ResReq, State}.
 
