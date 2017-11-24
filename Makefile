@@ -1,10 +1,15 @@
 JS_PRIV=apps/xprof_gui/priv
 BIN_DIR:=node_modules/.bin
+NIF_DIR:=apps/xprof_nif
 
-compile:
+ERTS_INCLUDE_DIR ?= $(shell erl -noshell -s init stop -eval "io:format(\"~s/erts-~s/include/\", [code:root_dir(), erlang:system_info(version)]).")
+ERL_INTERFACE_INCLUDE_DIR ?= $(shell erl -noshell -s init stop -eval "io:format(\"~s\", [code:lib_dir(erl_interface, include)]).")
+ERL_INTERFACE_LIB_DIR ?= $(shell erl -noshell -s init stop -eval "io:format(\"~s\", [code:lib_dir(erl_interface, lib)]).")
+
+compile: nif
 	./rebar3 compile
 
-dev: webpack
+dev: webpack nif
 	./rebar3 as dev compile, shell
 
 npm:
@@ -23,6 +28,14 @@ webpack: test_front_end
 
 webpack_autoreload: npm
 	cd $(JS_PRIV); $(BIN_DIR)/webpack -w -d
+
+nif:
+	gcc -I $(ERTS_INCLUDE_DIR) \
+	-I $(ERL_INTERFACE_INCLUDE_DIR) \
+	-L $(ERL_INTERFACE_LIB_DIR) \
+	-fPIC -shared \
+	-o $(NIF_DIR)/xprof_core_nif_tracer.so \
+	$(NIF_DIR)/xprof_core_nif_tracer.c
 
 test: compile
 	./rebar3 do eunit -c, ct -c, cover

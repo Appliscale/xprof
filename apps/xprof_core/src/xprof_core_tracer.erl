@@ -136,6 +136,7 @@ handle_info({trace_ts, _Spawner, spawn, NewProc, _MFArgs,_TimeStamp},
 
     case random_uniform() < Sample of
         true ->
+            %% to enable nif tracer add {tracer, xprof_core_nif_tracer, self()} to list
             catch erlang:trace(NewProc, true, [call, procs, timestamp]);
         false ->
             ok
@@ -197,6 +198,7 @@ set_trace_opts(_How, undefined) ->
 
 trace(PidSpec, How, Flags) ->
     try
+        %% For nif tracer add {tracer, xprof_core_nif_tracer, self()} to Flags
         erlang:trace(PidSpec, How, Flags)
     catch
         error:badarg ->
