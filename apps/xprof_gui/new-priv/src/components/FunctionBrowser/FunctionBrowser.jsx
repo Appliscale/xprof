@@ -4,6 +4,7 @@ import { QueryInput, ACModal } from '../';
 
 const defaultProps = {
   position: -1,
+  showFavourites: false,
   placeholder: 'Hello BEAMer! Please specify your trace pattern here.',
 };
 
@@ -12,6 +13,8 @@ const propTypes = {
   queryInputChange: PropTypes.func.isRequired,
   query: PropTypes.string.isRequired,
   placeholder: PropTypes.string,
+  showFavourites: PropTypes.bool,
+  setShowFavourites: PropTypes.func.isRequired,
   functions: PropTypes.arrayOf(PropTypes.string).isRequired,
   functionClick: PropTypes.func.isRequired,
   position: PropTypes.number,
@@ -21,6 +24,8 @@ const FunctionBrowser = ({
   queryKeyDown,
   queryInputChange,
   query,
+  showFavourites,
+  setShowFavourites,
   placeholder,
   functions,
   functionClick,
@@ -29,9 +34,22 @@ const FunctionBrowser = ({
   <form className="navbar-form">
     <div className="form-group" style={{ display: 'inline' }}>
       <div className="input-group" style={{ display: 'table' }}>
-        <span className="input-group-addon" style={{ width: '1%' }}>
-          <span className="glyphicon glyphicon-search" />
-        </span>
+        <div className="input-group-btn" style={{ width: '1%' }}>
+          <button
+            type="button"
+            className={`btn btn-default ${showFavourites ? 'active' : ''}`}
+            onClick={() => setShowFavourites(!showFavourites)}
+          >
+            <span className="glyphicon glyphicon-star" />
+          </button>
+          <button
+            type="button"
+            className={`btn btn-default ${!showFavourites ? 'active' : ''}`}
+            onClick={() => setShowFavourites(!showFavourites)}
+          >
+            <span className="glyphicon glyphicon-search" />
+          </button>
+        </div>
         <QueryInput
           queryKeyDown={queryKeyDown}
           queryInputChange={queryInputChange}

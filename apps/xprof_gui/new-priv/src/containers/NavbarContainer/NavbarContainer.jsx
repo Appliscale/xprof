@@ -5,6 +5,7 @@ import {
   functionClick,
   queryKeyDown,
   queryInputChange,
+  setShowFavourites,
 } from '../../actions/NavigationActions';
 import { toggleTraceStatus } from '../../actions/StatusActions';
 // import { getValue } from '../../selectors/NavigationSelectors';
@@ -13,6 +14,7 @@ import {
   getQuery,
   getACfunctions,
   getACposition,
+  getShowFavourites,
 } from '../../selectors/CommonSelectors';
 
 const NavContainer = props => <Navbar {...props} />;
@@ -20,6 +22,7 @@ const NavContainer = props => <Navbar {...props} />;
 const mapStateToProps = state => ({
   status: getStatus(state),
   query: getQuery(state),
+  showFavourites: getShowFavourites(state),
   functions: getACfunctions(state),
   position: getACposition(state),
 });
@@ -27,6 +30,7 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = {
   functionClick,
   toggleTraceStatus,
+  setShowFavourites,
   queryKeyDown,
   queryInputChange,
 };

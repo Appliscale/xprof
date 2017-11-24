@@ -11,3 +11,6 @@ export const STOP_CAPTURE_URL = `${API_HOSTNAME}/api/capture_stop`;
 export const CAPTURE_FUNCTION_DATA_URL = `${API_HOSTNAME}/api/capture_data`;
 export const START_CAPTURE_URL = `${API_HOSTNAME}/api/capture`;
 export const LANGUANGE_MODE_URL = `${API_HOSTNAME}/api/mode`;
+export const ADD_FAVOURITE_FUNCTION_URL = `${API_HOSTNAME}/api/fav_add`;
+export const REMOVE_FAVOURITE_FUNCTION_URL = `${API_HOSTNAME}/api/fav_remove`;
+export const ALL_FAVOURITE_FUNCTIONS_URL = `${API_HOSTNAME}/api/fav_get_all`;

@@ -1,5 +1,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
+import { FavouriteContainer } from '../../containers';
 
 const defaultProps = {
   isHighlighted: false,
@@ -16,7 +17,11 @@ const ACModalRow = ({ functionClick, functionName, isHighlighted }) => (
     className={isHighlighted ? 'row-highlight' : ''}
     onClick={() => functionClick(functionName)}
   >
-    <td>{functionName}</td>
+    <td>{functionName}
+      <span className="pull-right">
+        <FavouriteContainer functionName={functionName} />
+      </span>
+    </td>
   </tr>
 );
 

@@ -10,11 +10,13 @@ import { STATUS_INTERVAL } from '../../constants';
 
 const propTypes = {
   poolTraceStatus: PropTypes.func.isRequired,
+  fetchFavourites: PropTypes.func.isRequired,
 };
 class Root extends React.Component {
   componentWillMount() {
-    const { poolTraceStatus } = this.props;
+    const { poolTraceStatus, fetchFavourites } = this.props;
     poolTraceStatus();
+    fetchFavourites();
     setInterval(poolTraceStatus, STATUS_INTERVAL);
   }
 

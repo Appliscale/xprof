@@ -8,6 +8,7 @@ import TracingSwitch from './TracingSwitch/TracingSwitch';
 import Root from './Root/Root';
 import Navbar from './Navbar/Navbar';
 import Tracing from './Tracing/Tracing';
+import FavouriteButton from './FavouriteButton/FavouriteButton';
 
 export {
   ACModal,
@@ -20,4 +21,5 @@ export {
   Footer,
   Monitoring,
   Tracing,
+  FavouriteButton,
 };

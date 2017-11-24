@@ -29,6 +29,11 @@ const navigation = (state = initialState, action) => {
         ...state,
         functions: action.functions,
       };
+    case types.SET_SHOW_FAVOURITES:
+      return {
+        ...state,
+        showFavourites: action.showFavourites,
+      };
     default:
       return state;
   }

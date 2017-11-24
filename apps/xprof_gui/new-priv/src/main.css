@@ -88,3 +88,19 @@ input#searchBox {
   border-color: transparent;
   width: 100%;
 }
+
+.icon-button {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  outline: none;
+  border: 0;
+  background: transparent;
+  font-size: 1.25em;
+  padding: 2px;
+  opacity: 0.5;
+}
+
+.icon-button:hover {
+  opacity: inherit;
+}
