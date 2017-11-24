@@ -1,10 +1,11 @@
 JS_PRIV=apps/xprof_gui/priv
 BIN_DIR:=node_modules/.bin
+NIF_DIR:=apps/xprof_nif
 
-compile:
+compile: nif
 	./rebar3 compile
 
-dev: webpack
+dev: webpack nif
 	./rebar3 as dev compile, shell
 
 npm:
@@ -23,6 +24,12 @@ webpack: test_front_end
 
 webpack_autoreload: npm
 	cd $(JS_PRIV); $(BIN_DIR)/webpack -w -d
+
+nif:
+	gcc -I /usr/lib/erlang/usr/include/ \
+		  -fPIC -shared \
+			-o $(NIF_DIR)/xprof_core_nif_tracer.so \
+			$(NIF_DIR)/xprof_core_nif_tracer.c
 
 test: compile
 	./rebar3 do eunit -c, ct -c, cover

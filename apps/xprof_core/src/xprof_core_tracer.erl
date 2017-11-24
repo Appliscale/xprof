@@ -136,7 +136,7 @@ handle_info({trace_ts, _Spawner, spawn, NewProc, _MFArgs,_TimeStamp},
 
     case random_uniform() < Sample of
         true ->
-            catch erlang:trace(NewProc, true, [call, procs, timestamp]);
+            catch erlang:trace(NewProc, true, [{tracer, xprof_core_nif_tracer, self()}, call, procs, timestamp]);
         false ->
             ok
     end,
@@ -197,7 +197,7 @@ set_trace_opts(_How, undefined) ->
 
 trace(PidSpec, How, Flags) ->
     try
-        erlang:trace(PidSpec, How, Flags)
+        erlang:trace(PidSpec, How, [{tracer, xprof_core_nif_tracer, self()} | Flags])
     catch
         error:badarg ->
             case is_pid(PidSpec) andalso not is_process_alive(PidSpec) of
