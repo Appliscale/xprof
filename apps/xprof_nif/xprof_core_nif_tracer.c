@@ -257,26 +257,3 @@ static ERL_NIF_TERM trace_call(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv
 
     return enif_make_atom(env, "ok");
 }
-
-//// iterate over map to see keys
-//ERL_NIF_TERM key, value;
-//ErlNifMapIterator iter;
-//enif_map_iterator_create(env, argv[4], &iter, ERL_NIF_MAP_ITERATOR_FIRST);
-//
-//while (enif_map_iterator_get_pair(env, &iter, &key, &value)) {
-//char atom[20] = {0};
-//enif_get_atom(env, key, atom, 20, ERL_NIF_LATIN1);
-//printf("Atom: %s\n", atom);
-////do_something(key,value);
-//enif_map_iterator_next(env, &iter);
-//}
-//
-//enif_map_iterator_destroy(env, &iter);
-
-//// traversing tuple
-//enif_get_tuple(env, argv[3], &arity, &tuple);
-//for (int i = 0; i < arity; ++i) {
-//char atom[256];
-//enif_get_atom(env, tuple[i], atom, 256, ERL_NIF_LATIN1);
-//printf("Elem %d: %s, is tuple? %d\n", i, atom, enif_is_tuple(env, tuple[i]));
-//}
