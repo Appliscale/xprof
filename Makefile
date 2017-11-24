@@ -2,6 +2,8 @@ JS_PRIV=apps/xprof_gui/priv
 BIN_DIR:=node_modules/.bin
 NIF_DIR:=apps/xprof_nif
 
+ERTS_INCLUDE_DIR ?= $(shell erl -noshell -s init stop -eval "io:format(\"~s/erts-~s/include/\", [code:root_dir(), erlang:system_info(version)]).")
+
 compile: nif
 	./rebar3 compile
 
@@ -26,7 +28,7 @@ webpack_autoreload: npm
 	cd $(JS_PRIV); $(BIN_DIR)/webpack -w -d
 
 nif:
-	gcc -I /usr/lib/erlang/usr/include/ \
+	gcc -I $(ERTS_INCLUDE_DIR) \
 		  -fPIC -shared \
 			-o $(NIF_DIR)/xprof_core_nif_tracer.so \
 			$(NIF_DIR)/xprof_core_nif_tracer.c
