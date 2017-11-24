@@ -3,6 +3,8 @@ BIN_DIR:=node_modules/.bin
 NIF_DIR:=apps/xprof_nif
 
 ERTS_INCLUDE_DIR ?= $(shell erl -noshell -s init stop -eval "io:format(\"~s/erts-~s/include/\", [code:root_dir(), erlang:system_info(version)]).")
+ERL_INTERFACE_INCLUDE_DIR ?= $(shell erl -noshell -s init stop -eval "io:format(\"~s\", [code:lib_dir(erl_interface, include)]).")
+ERL_INTERFACE_LIB_DIR ?= $(shell erl -noshell -s init stop -eval "io:format(\"~s\", [code:lib_dir(erl_interface, lib)]).")
 
 compile: nif
 	./rebar3 compile
@@ -29,9 +31,11 @@ webpack_autoreload: npm
 
 nif:
 	gcc -I $(ERTS_INCLUDE_DIR) \
-		  -fPIC -shared \
-			-o $(NIF_DIR)/xprof_core_nif_tracer.so \
-			$(NIF_DIR)/xprof_core_nif_tracer.c
+	-I $(ERL_INTERFACE_INCLUDE_DIR) \
+	-L $(ERL_INTERFACE_LIB_DIR) \
+	-fPIC -shared \
+	-o $(NIF_DIR)/xprof_core_nif_tracer.so \
+	$(NIF_DIR)/xprof_core_nif_tracer.c
 
 test: compile
 	./rebar3 do eunit -c, ct -c, cover
