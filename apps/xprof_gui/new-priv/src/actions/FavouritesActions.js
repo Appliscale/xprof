@@ -1,39 +1,35 @@
 import * as types from '../constants/ActionTypes';
-/* eslint-disable */
+import { callApi } from '../utils/ApiUtils';
 import {
   ADD_FAVOURITE_FUNCTION_URL,
   REMOVE_FAVOURITE_FUNCTION_URL,
   ALL_FAVOURITE_FUNCTIONS_URL,
 } from '../constants/';
-/* eslint-enable */
 
-// let's mock storing favourites for now
-const favs = [
-  'test_module:expensive_fun(Int) when Int > 3',
-  'test_module:expensive_fun(Blah) when Blah > 4',
-];
-
-function removeFromFavourites(fun) {
-  return favs.filter(val => val !== fun);
+async function removeFromFavourites(fun) {
+  const { json } =
+    await callApi(`${REMOVE_FAVOURITE_FUNCTION_URL}?query=${fun}`);
+  return json;
 }
 
-function addToFavourites(fun) {
-  return [...favs, fun];
+async function addToFavourites(fun) {
+  const { json } = await callApi(`${ADD_FAVOURITE_FUNCTION_URL}?query=${fun}`);
+  return json;
 }
 
-export const toggleFavourite = (fun, shouldAdd) => (dispatch) => {
+export const toggleFavourite = (fun, shouldAdd) => async (dispatch) => {
   const updateFunction = shouldAdd ? addToFavourites : removeFromFavourites;
-  const favourites = updateFunction(fun);
+  const favourites = await updateFunction(fun);
   dispatch({
     type: types.UPDATE_FAVOURITES,
     favourites,
   });
 };
 
-export const fetchFavourites = () => (dispatch) => {
-  const favourites = favs;
+export const fetchFavourites = () => async (dispatch) => {
+  const { json } = await callApi(ALL_FAVOURITE_FUNCTIONS_URL);
   dispatch({
     type: types.UPDATE_FAVOURITES,
-    favourites,
+    favourites: json,
   });
 };

@@ -226,7 +226,6 @@
 %% @doc
 handle_req(<<"funs">>, Params) ->
     Query = get_query(Params),
-
     Funs = xprof_core:get_matching_mfas_pp(Query),
     Json = jsone:encode(Funs),
 
@@ -349,6 +348,28 @@ handle_req(<<"capture_data">>, Params) ->
 handle_req(<<"mode">>, _Params) ->
     Mode = xprof_core:get_mode(),
     Json = jsone:encode({[{mode, Mode}]}),
+    {200, Json};
+
+handle_req(<<"fav_enabled">>, _Params) ->
+    FavouritesEnabled = xprof_gui_favourites_config:is_enabled(),
+    Json = jsone:encode({[{enabled, FavouritesEnabled}]}),
+    {200, Json};
+
+handle_req(<<"fav_add">>, Params) ->
+    Query = get_query(Params),
+    Funs = xprof_gui_favourites:add(Query),
+    Json = jsone:encode(Funs),
+    {200, Json};
+
+handle_req(<<"fav_remove">>, Params) ->
+    Query = get_query(Params),
+    Funs = xprof_gui_favourites:remove(Query),
+    Json = jsone:encode(Funs),
+    {200, Json};
+
+handle_req(<<"fav_get_all">>, _Params) ->
+    Funs = xprof_gui_favourites:get_all(),
+    Json = jsone:encode(Funs),
     {200, Json}.
 
 %% Helpers
@@ -379,4 +400,3 @@ get_int(Key, Params, Default) ->
         _ ->
             Default
     end.
-
