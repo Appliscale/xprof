@@ -2,8 +2,7 @@
 
 -export([fun2ms/1,
          default_ms/0,
-         format_error/1,
-         err/1, err/2, err/3
+         format_error/1
         ]).
 
 -spec fun2ms(string()) -> {ok, xprof_core:mfa_spec()}
@@ -44,9 +43,9 @@ ms(Clauses, RecDefs) ->
             workaround_empty_args_ms(
               ms(workaround_empty_args_cl(Clauses), RecDefs));
         {error,[{_, [{Loc ,ms_transform, ERR_HEADMATCH}]}], _} ->
-            err(Loc, ?MODULE, ms_transform_headmatch);
+            xprof_core_lib:err(Loc, ?MODULE, ms_transform_headmatch);
         {error,[{_,[{Loc,Mod,Code}|_]}|_],_} ->
-            err(Loc, Mod, Code);
+            xprof_core_lib:err(Loc, Mod, Code);
         MS ->
             MS
     end.
@@ -174,24 +173,3 @@ format_error(ms_transform_headmatch) ->
     %% translated into match_spec"
     %% (example "fun(T = {tag, _})")
     "matching (=) in fun head cannot be translated into a match-spec".
-
--spec err(string()) -> no_return().
-err(Fmt) ->
-    throw({error, fmt(Fmt, [])}).
-
--spec err(string(), list()) -> no_return().
-err(Fmt, Args) ->
-    throw({error, fmt(Fmt, Args)}).
-
--spec err(tuple() | integer(), module(), term()) -> no_return().
-err({1, StartCol, _EndCol}, Mod, Err) ->
-    err({1, StartCol}, Mod, Err);
-
-err({1, Col}, Mod, Err) ->
-    throw({error, fmt("~s at column ~p", [Mod:format_error(Err), Col])});
-
-err(1, Mod, Err) ->
-    throw({error, fmt(Mod:format_error(Err), [])}).
-
-fmt(Fmt, Args) ->
-    lists:flatten(io_lib:format(Fmt, Args)).

@@ -8,7 +8,9 @@
          get_mode/0,
          get_mode_cb/0,
          prefix/2,
-         prefix_rest/2
+         prefix_rest/2,
+         err/1, err/2, err/3,
+         fmt_err/1, fmt_err/2, fmt_err/3
         ]).
 
 -spec mfaspec2atom(xprof_core:mfa_spec()) -> xprof_core:mfa_name().
@@ -74,3 +76,36 @@ prefix_rest(Prefix, Bin) ->
         <<Prefix:PrefixSize/binary, Rest/binary>> -> Rest;
         _ -> false
     end.
+
+%% @doc Throw an error in a common format
+-spec err(string()) -> no_return().
+err(Fmt) ->
+    throw(fmt_err(Fmt)).
+
+-spec err(string(), list()) -> no_return().
+err(Fmt, Args) ->
+    throw(fmt_err(Fmt, Args)).
+
+-spec err(tuple() | integer(), module(), term()) -> no_return().
+err(Loc, Mod, Err) ->
+    throw(fmt_err(Loc, Mod, Err)).
+
+%% @doc Return an error in a common format
+-spec fmt_err(string()) -> no_return().
+fmt_err(Fmt) ->
+    {error, fmt(Fmt, [])}.
+
+-spec fmt_err(string(), list()) -> no_return().
+fmt_err(Fmt, Args) ->
+    {error, fmt(Fmt, Args)}.
+
+-spec fmt_err(tuple() | integer(), module(), term()) -> {error, string()}.
+fmt_err({1, StartCol, _EndCol}, Mod, Err) ->
+    fmt_err({1, StartCol}, Mod, Err);
+fmt_err({1, Col}, Mod, Err) ->
+    {error, fmt("~s at column ~p", [Mod:format_error(Err), Col])};
+fmt_err(1, Mod, Err) ->
+    {error, fmt(Mod:format_error(Err), [])}.
+
+fmt(Fmt, Args) ->
+    lists:flatten(io_lib:format(Fmt, Args)).
