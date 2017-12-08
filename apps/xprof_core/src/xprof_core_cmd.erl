@@ -10,6 +10,9 @@
 %% for a command behvaiour
 %%
 
+%% Return list of mandatory params
+-callback mandatory_params() -> [atom()].
+
 %% Convert param value from syntax-tree format to Erlang term
 %% (Useful to implement some syntactic sugar/shorthands)
 -callback convert_param(Key :: atom(), Ast :: erl_parse:syntax_tree()) ->
@@ -43,8 +46,11 @@ handle_query(Query, AdditionalParams) ->
             %%   displayed in query string takes effect
             Params = merge_params(QueryParams, AdditionalParams),
 
-            %% * check for missing mandatory params and
-            %% check param value types as much as possible
+            %% * check all mandatory params are present
+            MandatoryParams = CmdCB:mandatory_params(),
+            ok = check_mandatory_params(Params, MandatoryParams),
+
+            %% * check param value types as much as possible
             ok = check_params(Cmd, Params, CmdCB, []),
 
             %% * maybe convert to internal format (eg mfaspec)
@@ -102,6 +108,14 @@ merge_params(P1, P2) ->
       fun({Key, _} = Param, P) ->
               lists:keystore(Key, 1, P, Param)
       end, P2, P1).
+
+check_mandatory_params(Params, MandatoryParams) ->
+    [case lists:keymember(Key, 1, Params) of
+         true -> ok;
+         false -> xprof_core_lib:err("Mandatory param ~p missing", [Key])
+     end
+     || Key <- MandatoryParams],
+    ok.
 
 %% @doc Get expansion suggestions for the given possibly incomplete query.
 -spec expand_query(binary()) -> {CommonPrefix :: binary(), [Match]}

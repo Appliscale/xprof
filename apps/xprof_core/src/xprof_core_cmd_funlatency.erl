@@ -1,8 +1,12 @@
 -module(xprof_core_cmd_funlatency).
 
--export([convert_param/2,
+-export([mandatory_params/0,
+         convert_param/2,
          check_param/2
         ]).
+
+mandatory_params() ->
+    [mfa].
 
 convert_param(mfa, MfaStr) when is_list(MfaStr) ->
     xprof_core_ms:fun2ms(MfaStr);
