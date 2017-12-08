@@ -4,17 +4,17 @@
 
 -define(M, xprof_core_elixir_syntax).
 
-parse_query_test_() ->
+parse_match_spec_test_() ->
     Tests =
         [%% arity explicitly defined
          ?_assertEqual({mfa,{'Elixir.Mod','fun',1}},
-                       ?M:parse_query("Mod.fun/1")),
+                       ?M:parse_match_spec("Mod.fun/1")),
          ?_assertEqual({mfa,{'Elixir.Mod','fun',1}},
-                       ?M:parse_query("Elixir.Mod.fun/1")),
+                       ?M:parse_match_spec("Elixir.Mod.fun/1")),
          ?_assertEqual({mfa,{'Elixir.App.Mod','fun',1}},
-                       ?M:parse_query("App.Mod.fun/1")),
+                       ?M:parse_match_spec("App.Mod.fun/1")),
          ?_assertEqual({mfa,{mod,'fun?',1}},
-                       ?M:parse_query(":mod.fun?/1")),
+                       ?M:parse_match_spec(":mod.fun?/1")),
 
          %% full match-spec funs
          ?_assertEqual({clauses,'Elixir.Mod','fun',
@@ -22,65 +22,65 @@ parse_query_test_() ->
                           [{var,1,'_'}],
                           [],
                           [{call,1,{atom,1,return_trace},[]}]}]},
-                       ?M:parse_query("Mod.fun(_) -> return_trace()")),
+                       ?M:parse_match_spec("Mod.fun(_) -> return_trace()")),
          ?_assertMatch({clauses,'Elixir.App.Mod','fun',
                         [{clause,1,
                           [{var,1,Var_a}, {var,1,'_'}],
                           [],
                           [{call,1,{atom,1,message},[{var, 1, Var_a}]}]}]},
-                       ?M:parse_query("App.Mod.fun a, _ -> message a")),
+                       ?M:parse_match_spec("App.Mod.fun a, _ -> message a")),
          ?_assertEqual({clauses,mod,'fun',
                         [{clause,1,[{atom,0,ok}],[],[{atom,0,true}]}]},
-                       ?M:parse_query(":mod.fun(:ok) -> true")),
+                       ?M:parse_match_spec(":mod.fun(:ok) -> true")),
          ?_assertMatch({clauses,'Elixir.Mod','fun',
                         [{clause,1,
                           [{var,1,Var_a}],
                           [[{op,1,'>',{var,1,Var_a},{integer,0,1}}]],
                           [{call,1,{atom,1,return_trace},[]}]}]},
-                       ?M:parse_query("Mod.fun(a) when a > 1 -> return_trace()")),
+                       ?M:parse_match_spec("Mod.fun(a) when a > 1 -> return_trace()")),
 
          ?_assertMatch(
             {error,"expression is not an xprof match-spec fun" ++ _},
-            catch ?M:parse_query("")),
+            catch ?M:parse_match_spec("")),
          ?_assertMatch(
             {error,"expression is not an xprof match-spec fun" ++ _},
-            catch ?M:parse_query("a+b")),
+            catch ?M:parse_match_spec("a+b")),
 
          %% tokenizer errors
          ?_assertEqual(
             {error,"missing terminator: \" (for string starting at line 1) at column 1"},
-            catch ?M:parse_query("\"Mod.fun/1")),
+            catch ?M:parse_match_spec("\"Mod.fun/1")),
          ?_assertEqual(
             {error,"missing terminator: ' (for string starting at line 1) at column 15"},
-            catch ?M:parse_query("Mod.fun(_) -> 'true")),
+            catch ?M:parse_match_spec("Mod.fun(_) -> 'true")),
          ?_assertEqual(
             {error,"syntax error before:  at column 4"},
-            catch ?M:parse_query("Mod.")),
+            catch ?M:parse_match_spec("Mod.")),
          ?_assertEqual(
             {error,"syntax error before:  at column 9"},
-            catch ?M:parse_query("Mod.fun *")),
+            catch ?M:parse_match_spec("Mod.fun *")),
          %% real-world typo :)
          ?_assertEqual(
             {error,"syntax error before: '->' at column 12"},
-            catch ?M:parse_query("Mod.fun(a) -> when a > 1 -> true")),
+            catch ?M:parse_match_spec("Mod.fun(a) -> when a > 1 -> true")),
 
          %% parse_quoted does not match
          ?_assertMatch(
             {error,"expression is not an xprof match-spec fun"},
-            catch ?M:parse_query("a+b ->")),
+            catch ?M:parse_match_spec("a+b ->")),
          %% fn_to_clauses
          ?_assertMatch(
             {error,"nofile:1: cannot invoke remote function Mod.fun/1 inside match"},
-            catch ?M:parse_query("Mod.fun(1) -> true; Mod.fun(2) -> false")),
+            catch ?M:parse_match_spec("Mod.fun(1) -> true; Mod.fun(2) -> false")),
          ?_assertMatch(
             {error,"nofile:1: cannot mix clauses with different arities in" ++ _},
-            catch ?M:parse_query("Mod.fun(1) -> true; (1, 2) -> false")),
+            catch ?M:parse_match_spec("Mod.fun(1) -> true; (1, 2) -> false")),
 
          ?_assertMatch(
             ok,
-            try ?M:parse_query("Mod.fun f/1") of
+            try ?M:parse_match_spec("Mod.fun f/1") of
                 %% Until Elixir 1.14.2 this was not caught.
-                %% This seems to be a one-arg function which passes parse_query
+                %% This seems to be a one-arg function which passes parse_match_spec
                 %% (same as "Mod.fun(f/1)"
                 %% but will fail conversion to matchspec
                 {clauses,'Elixir.Mod','fun', [_]} -> ok
@@ -93,17 +93,17 @@ parse_query_test_() ->
 
          %% Missing args and body
          ?_assertEqual({clauses,'Elixir.App.Mod','fun',[{clause,1,[],[],[{atom,0,true}]}]},
-                       ?M:parse_query("App.Mod.fun")),
+                       ?M:parse_match_spec("App.Mod.fun")),
          ?_assertEqual({clauses,mod,'fun',[{clause,1,[],[],[{atom,0,true}]}]},
-                       ?M:parse_query(":mod.fun")),
+                       ?M:parse_match_spec(":mod.fun")),
 
          %% Only args present, no body
          ?_assertEqual({clauses,'Elixir.App.Mod','fun',
                         [{clause,1,[{atom,0,ok}],[],[{atom,0,true}]}]},
-                       ?M:parse_query("App.Mod.fun(:ok)")),
+                       ?M:parse_match_spec("App.Mod.fun(:ok)")),
          ?_assertEqual({clauses,mod,'fun',
                         [{clause,1,[{atom,0,ok}],[],[{atom,0,true}]}]},
-                       ?M:parse_query(":mod.fun(:ok)")),
+                       ?M:parse_match_spec(":mod.fun(:ok)")),
 
          %% Args and guards present, but no body
          ?_assertMatch({clauses,'Elixir.App.Mod','fun',
@@ -111,7 +111,7 @@ parse_query_test_() ->
                           [[{op,1,'<',{var,1,Var_a},{integer,0,1}}],
                            [{op,1,'>',{var,1,Var_a},{integer,0,10}}]],
                           [{atom,0,true}]}]},
-                       ?M:parse_query("App.Mod.fun(a) when a < 1 when a > 10"))
+                       ?M:parse_match_spec("App.Mod.fun(a) when a < 1 when a > 10"))
         ],
     xprof_core_test_lib:run_elixir_unit_tests(Tests).
 

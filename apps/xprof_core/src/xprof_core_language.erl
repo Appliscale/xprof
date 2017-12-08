@@ -6,7 +6,8 @@
 
 %% Function for start monitoring
 
--callback parse_query(Query :: string()) ->
+%% Parse a query string that represents an XProf-flavoured match-spec fun
+-callback parse_match_spec(Query :: string()) ->
     Result :: {mfa, xprof_core:mfa_id()}
             | {clauses, module(), atom(), [erl_parse:abstract_clause()]}.
 

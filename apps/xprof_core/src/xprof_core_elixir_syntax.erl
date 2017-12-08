@@ -5,7 +5,7 @@
 
 -behaviour(xprof_core_language).
 
--export([parse_query/1,
+-export([parse_match_spec/1,
          hidden_function/1,
          fmt_mfa/3,
          fmt_mod_and_delim/1,
@@ -27,7 +27,7 @@
 %% or an xprof-flavoured match-spec fun in Elixir syntax.
 %% In the later case the last element of the tuple is the abstract syntax tree
 %% of the clauses of the anonimous function.
-parse_query(Str) ->
+parse_match_spec(Str) ->
     case 'Elixir.Code':string_to_quoted("(" ++ Str ++ ")") of
         {ok, Quoted} ->
             parse_quoted(Quoted);
