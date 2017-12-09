@@ -29,8 +29,42 @@
 
 %% @doc Parse a query string that represents either an xprof-flavoured
 %% match-spec fun or an extended xprof query in Erlang syntax.
-parse_query("#" ++ _ = _Query) ->
-    {error, not_implemented};
+%% The `mfa' key has special handling.
+%%
+%% FIXME: the current logic is the following:
+%% - the query should be fully parsable except the value of mfa key
+%% which may be parsable if it is in the module-function-arity form,
+%% but not in case of an xprof-flavoured match-spec fun
+%% - to address this it is mandatory to have the mfa key as the last one,
+%% if present
+%% - if there is a parsing error, assume that it is because this last mfa value
+%% and try to remove the problematic part from the end until the query is
+%% parsable (it will be parsable when only mod:fun(args) is left
+%% without guards and body)
+%% - if this way the query is parsed we need to verify that the parsing error
+%% was because of the mfa key and not because of other parsing error
+%% - in either way we figure out where the mfa value as string starts in the
+%% original query and return the mfa value as string, so that the old parser
+%% (`parse_match_spec') can do its job on it.
+%%
+%% Current logic puts curly-brackets around the params and parses the whole
+%% query as a record.
+%% Alternatively it would be good to also be able to parse an incomplete
+%% query to support autocomplete (suggesting keys and value type hinst).
+%% For this it might be better to parse the params as a list of comma separated
+%% expression (matching '=' op) one by one.
+-spec parse_query(string()) -> {ok, xprof_core:cmd(),
+                                [{mfa, string()} |
+                                 {atom(), erl_parse:abstract_expr()}]}
+                                   | {error, Reason :: any()}.
+parse_query("#" ++ _ = Query) ->
+    %% extended query
+    try
+        tokens_query(Query)
+    catch
+        throw:Error ->
+            Error
+    end;
 parse_query(Query) ->
     {ok, funlatency, [{mfa, Query}]}.
 
@@ -123,15 +157,15 @@ tokens_from(Loc, Tokens) ->
 %% In the later case the last element of the tuple is the abstract syntax tree
 %% of the clauses of the anonimous function.
 parse_match_spec(Str) ->
-    case tokens(Str) of
+    case tokens_ms(Str) of
         {mfa, _} = MFA ->
             MFA;
         {clauses, M, F, Tokens} ->
-            Clauses = parse(Tokens),
+            Clauses = parse_ms(Tokens),
             {clauses, M, F, Clauses}
     end.
 
-tokens(Str) ->
+tokens_ms(Str) ->
     case erl_scan:string(Str, {1,1}) of
         {error, {_Loc, Mod, Err}, Loc} ->
             xprof_core_lib:err(Loc, Mod, Err);
@@ -170,7 +204,7 @@ ensure_end(Tokens) ->
             lists:reverse(R, [{'end', Loc}, {dot, Loc}])
     end.
 
-parse(Tokens) ->
+parse_ms(Tokens) ->
     case erl_parse:parse_exprs(Tokens) of
         {error, {Loc, Mod, Err}} ->
             xprof_core_lib:err(Loc, Mod, Err);
@@ -179,6 +213,10 @@ parse(Tokens) ->
         {ok, _} ->
             xprof_core_lib:err("expression is not an xprof match-spec fun")
     end.
+
+%% lists:droplast/1 added in OTP 17.0
+droplast([_T])  -> [];
+droplast([H|T]) -> [H|droplast(T)].
 
 %%
 %% Functions for autocomplete
