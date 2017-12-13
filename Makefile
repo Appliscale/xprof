@@ -34,6 +34,6 @@ dialyzer:
 	./rebar3 dialyzer
 
 publish:
-	./rebar3 as publish hex publish
+	./rebar3 as publish hex publish --deps_from_config
 
 .PHONY: compile dev npm bootstrap_front_end check_front_end test_front_end webpack webpack_autoreload test doc dialyzer
