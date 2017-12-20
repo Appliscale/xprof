@@ -92,6 +92,8 @@ process_cmd(Cmd, Params) ->
 
 get_cmd_callback(funlatency) ->
     xprof_core_cmd_funlatency;
+get_cmd_callback(argdist) ->
+    xprof_core_cmd_argdist;
 get_cmd_callback(Cmd) ->
     {error, {unknown_command, Cmd}}.
 

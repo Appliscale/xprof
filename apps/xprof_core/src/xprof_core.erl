@@ -12,6 +12,7 @@
          demonitor/1,
          get_all_monitored/0,
          get_data/2,
+         get_data_pp/2,
          get_called_funs/1,
          get_called_funs_pp/1,
 
@@ -147,6 +148,22 @@ get_all_monitored() ->
                 | memsize | count.
 get_data(MFA, TimeStamp) ->
     xprof_core_trace_handler:data(MFA, TimeStamp).
+
+get_data_pp(MFA, TimeStamp) ->
+    case xprof_core_trace_handler:data(MFA, TimeStamp) of
+        {error, _} = Error ->
+            Error;
+        Items ->
+            ModeCB = xprof_core_lib:get_mode_cb(),
+            [[case is_atom(Key) of
+                  true ->
+                      {Key, Value};
+                  _ ->
+                      {ModeCB:fmt_term(Key), Value}
+              end
+              || {Key, Value} <- Item]
+             || Item <- Items]
+    end.
 
 %% @doc Return list of called functions for given mfa tuple.
 -spec get_called_funs(xprof_core:mfa_id()) -> [xprof_core:mfa_id()].

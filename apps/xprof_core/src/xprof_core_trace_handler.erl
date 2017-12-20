@@ -217,9 +217,9 @@ maybe_make_snapshot(State = #state{name=Name, last_ts=LastTS,
     NowTS = os:timestamp(),
     case timer:now_diff(NowTS, LastTS) of
         DiffMicro when DiffMicro >= ?ONE_SEC ->
-            save_snapshot(NowTS, State),
+            NewState = save_snapshot(NowTS, State),
             remove_outdated_snapshots(Name, xprof_core_lib:now2epoch(NowTS)-WindSize),
-            {calc_next_timeout(DiffMicro), State#state{last_ts=NowTS}};
+            {calc_next_timeout(DiffMicro), NewState#state{last_ts = NowTS}};
         DiffMicro ->
             {calc_next_timeout(DiffMicro), State}
     end.
@@ -228,10 +228,17 @@ calc_next_timeout(DiffMicro) ->
     DiffMilli = DiffMicro div 1000,
     1000 - DiffMilli rem 1000.
 
-save_snapshot(NowTS, #state{name = Name, cb_mod = CmdCB, cb_state = CBState}) ->
+save_snapshot(NowTS, State = #state{name = Name, cb_mod = CmdCB, cb_state = CBState}) ->
     Epoch = xprof_core_lib:now2epoch(NowTS),
-    Snapshot = CmdCB:take_snapshot(CBState),
-    ets:insert(Name, [{{sec, Epoch}, [{time, Epoch}|Snapshot]}]).
+    {Snapshot, NewState} =
+        case CmdCB:take_snapshot(CBState) of
+            {Snapshot0, NewCBState} ->
+                {Snapshot0, State#state{cb_state = NewCBState}};
+            Snapshot0 ->
+                {Snapshot0, State}
+        end,
+    ets:insert(Name, {{sec, Epoch}, [{time, Epoch}|Snapshot]}),
+    NewState.
 
 remove_outdated_snapshots(Name, TS) ->
     ets:select_delete(Name,
