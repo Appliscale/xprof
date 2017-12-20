@@ -5,8 +5,11 @@
          format_error/1
         ]).
 
--spec fun2ms(string()) -> {ok, xprof_core:mfa_spec()}
-                        | {error, string()}.
+-spec fun2ms(mfa() | string()) -> {ok, xprof_core:mfa_spec()}
+                                | {error, string()}.
+fun2ms({Mod, Fun, Arity} = MFA)
+  when is_atom(Mod), is_atom(Fun), is_integer(Arity) ->
+    {ok, {MFA, default_ms()}};
 fun2ms(Str) ->
     ModeCb = xprof_core_lib:get_mode_cb(),
     try

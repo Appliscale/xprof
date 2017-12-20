@@ -9,7 +9,13 @@
 
 -behaviour(gen_server).
 
--export([start_link/2, data/2, capture/3, capture_stop/1, get_captured_data/2]).
+-export([start_link/4,
+         data/2,
+
+         capture/3,
+         capture_stop/1,
+         get_captured_data/2
+        ]).
 
 -export([trace_mfa_off/1]).
 
@@ -21,20 +27,24 @@
          terminate/2,
          code_change/3]).
 
--record(state, {mfa, name, last_ts, hdr_ref,
-                window_size, max_duration, ignore_recursion,
-                capture_spec, capture_id=0, capture_counter=0}).
+-record(state, {mfa_spec,
+                name,
+                last_ts,
+                window_size,
+                capture_spec,
+                capture_id = 0,
+                capture_counter = 0,
+                cb_mod,
+                cb_state}).
 
 -define(ONE_SEC, 1000000). %% Second in microseconds
 -define(WINDOW_SIZE, 10*60). %% 10 min window size
-%% The largest duration value that can be stored in the HDR histogram in ms
--define(MAX_DURATION, 30*1000).
 
 %% @doc Starts new process registered localy.
--spec start_link(xprof_core:mfa_spec(), xprof_core:options()) -> {ok, pid()}.
-start_link(MFASpec, Options) ->
+-spec start_link(xprof_core:cmd(), xprof_core:options(), xprof_core:mfa_spec(), module()) -> {ok, pid()}.
+start_link(_Cmd, Options, MFASpec, CmdCB) ->
     Name = xprof_core_lib:mfaspec2atom(MFASpec),
-    gen_server:start_link({local, Name}, ?MODULE, [Name, MFASpec, Options], []).
+    gen_server:start_link({local, Name}, ?MODULE, [Name, Options, MFASpec, CmdCB], []).
 
 %% @doc Returns histogram data for seconds that occured after FromEpoch.
 -spec data(xprof_core:mfa_id(), non_neg_integer()) -> [proplists:proplist()] |
@@ -115,35 +125,34 @@ get_captured_data(MFA, Offset) when Offset >= 0 ->
 
 %% gen_server callbacks
 
-init([Name, MFASpec, _Options]) ->
-    MaxDuration = application:get_env(xprof_core, max_duration, ?MAX_DURATION) * 1000,
-    IgnoreRecursion = application:get_env(xprof_core, ignore_recursion, true),
-    {ok, HDR} = init_storage(Name, MaxDuration),
+init([Name, Options, MFASpec, CmdCB]) ->
+    {ok, CBState} = CmdCB:init(Options, MFASpec),
+    init_storage(Name),
     %% add trace pattern with args capturing turned off
     capture_args_trace_off(MFASpec),
-    {ok, #state{mfa = MFASpec,
-                hdr_ref = HDR,
+    {ok, #state{mfa_spec = MFASpec,
                 name = Name,
                 last_ts = os:timestamp(),
                 window_size = ?WINDOW_SIZE,
-                max_duration = MaxDuration,
-                ignore_recursion = IgnoreRecursion}, 1000}.
+                cb_mod = CmdCB,
+                cb_state = CBState
+               }, 1000}.
 
 handle_call({capture, Threshold, Limit}, _From,
-            State = #state{mfa = MFA}) ->
+            State = #state{mfa_spec = MFASpec}) ->
     NewId = State#state.capture_id + 1,
     NewState = State#state{capture_spec = {Threshold, Limit},
                            capture_id = NewId,
                            capture_counter = 1},
     init_new_capture_in_ets(NewState),
-    capture_args_trace_on(MFA),
+    capture_args_trace_on(MFASpec),
     {Timeout, NewState2} = maybe_make_snapshot(NewState),
     {reply, {ok, NewId}, NewState2, Timeout};
 handle_call(capture_stop, _From, State = #state{capture_spec = undefined}) ->
     {Timeout, NewState} = maybe_make_snapshot(State),
     {reply, {error, not_captured}, NewState, Timeout};
-handle_call(capture_stop, _From, State = #state{mfa = MFA}) ->
-    capture_args_trace_off(MFA),
+handle_call(capture_stop, _From, State = #state{mfa_spec = MFASpec}) ->
+    capture_args_trace_off(MFASpec),
     #state{capture_spec = {Threshold, Limit},
            name = Name,
            capture_id = Id} = State,
@@ -161,22 +170,27 @@ handle_call(Request, _From, State) ->
 handle_cast(_Msg, State) ->
     {noreply, State}.
 
-handle_info({trace_ts, Pid, call, _MFA, Args, StartTime}, State) ->
-    put_ts_args(Pid, StartTime, Args, State#state.ignore_recursion),
-
-    {Timeout, NewState} = maybe_make_snapshot(State),
-    {noreply, NewState, Timeout};
-handle_info({trace_ts, Pid, Tag, _MFA, RetOrExc, EndTime}, State)
-  when Tag =:= return_from;
-       Tag =:= exception_from ->
-
-    NewState = case get_ts_args(Pid, State#state.ignore_recursion) of
-                   undefined ->
-                       State;
-                   {StartTime, Args} ->
-                       CallTime = timer:now_diff(EndTime, StartTime),
-                       record_results(Pid, CallTime, Args, {Tag, RetOrExc}, State)
-               end,
+handle_info({trace_ts, _Pid, _Tag, _MFA, _Args, _StartTime} = Msg,
+            State = #state{cb_mod = CmdCB,
+                           capture_spec = CaptureSpec,
+                           capture_counter = Count}) ->
+    CaptureThreshold =
+        case CaptureSpec of
+            {Threshold, Limit} when Limit >= Count ->
+                Threshold;
+            _ ->
+                undefined
+        end,
+    NewState =
+        case CmdCB:handle_event(Msg, CaptureThreshold, State#state.cb_state) of
+            ok -> State;
+            {ok, NewCBState} ->
+                State#state{cb_state = NewCBState};
+            {capture, Item} ->
+                capture_item(Item, State);
+            {capture, Item, NewCBState} ->
+                capture_item(Item, State#state{cb_state = NewCBState})
+        end,
 
     {Timeout, NewState2} = maybe_make_snapshot(NewState),
     {noreply, NewState2, Timeout};
@@ -194,10 +208,9 @@ code_change(_OldVsn, State, _Extra) ->
 
 %% Internal functions
 
-init_storage(Name, MaxDuration) ->
+init_storage(Name) ->
     ets:new(Name, [public, named_table]),
-    ets:insert(Name, {capture_spec, -1, -1, -1, -1}),
-    hdr_histogram:open(MaxDuration * 1000, 3).
+    ets:insert(Name, {capture_spec, -1, -1, -1, -1}).
 
 maybe_make_snapshot(State = #state{name=Name, last_ts=LastTS,
                                    window_size=WindSize}) ->
@@ -215,26 +228,10 @@ calc_next_timeout(DiffMicro) ->
     DiffMilli = DiffMicro div 1000,
     1000 - DiffMilli rem 1000.
 
-save_snapshot(NowTS, #state{name=Name, hdr_ref=Ref}) ->
+save_snapshot(NowTS, #state{name = Name, cb_mod = CmdCB, cb_state = CBState}) ->
     Epoch = xprof_core_lib:now2epoch(NowTS),
-    ets:insert(Name, [{{sec, Epoch}, get_current_hist_stats(Ref, Epoch)}]),
-    hdr_histogram:reset(Ref).
-
-get_current_hist_stats(HistRef, Time) ->
-    [{time, Time},
-     {min,      hdr_histogram:min(HistRef)},
-     {mean,     hdr_histogram:mean(HistRef)},
-     %%{median,   hdr_histogram:median(HistRef)},
-     {max,      hdr_histogram:max(HistRef)},
-     %%{stddev,   hdr_histogram:stddev(HistRef)},
-     %%{p25,      hdr_histogram:percentile(HistRef,25.0)},
-     {p50,      hdr_histogram:percentile(HistRef,50.0)},
-     {p75,      hdr_histogram:percentile(HistRef,75.0)},
-     {p90,      hdr_histogram:percentile(HistRef,90.0)},
-     {p99,      hdr_histogram:percentile(HistRef,99.0)},
-     %%{p9999999, hdr_histogram:percentile(HistRef,99.9999)},
-     %%{memsize,  hdr_histogram:get_memory_size(HistRef)},
-     {count,    hdr_histogram:get_total_count(HistRef)}].
+    Snapshot = CmdCB:take_snapshot(CBState),
+    ets:insert(Name, [{{sec, Epoch}, [{time, Epoch}|Snapshot]}]).
 
 remove_outdated_snapshots(Name, TS) ->
     ets:select_delete(Name,
@@ -256,71 +253,18 @@ init_new_capture_in_ets(State) ->
                        }]),
     ets:insert(Name, {capture_spec, Id, Threshold, Limit, Limit}).
 
-put_ts_args(Pid, StartTime, Args, IgnoreRecursion) ->
-    %% Count the depth of recursion in this process
-    CD = case get({Pid, call_depth}) of
-             undefined -> 1;
-             CallDepth -> CallDepth + 1
-         end,
-    put({Pid, call_depth}, CD),
-    case CD =:= 1 orelse not IgnoreRecursion of
-        true ->
-            put({Pid, CD, ts_args}, {StartTime, Args});
-        false ->
-            ok
-    end.
-
-%% @doc If IgnoreRecursion is true only return start time and args
-%% of the outermost call
-get_ts_args(Pid, IgnoreRecursion) ->
-    case get({Pid, call_depth}) of
-        undefined ->
-            %% we missed the call of this function
-            undefined;
-        1 ->
-            erase({Pid, call_depth}),
-            erase({Pid, 1, ts_args});
-        CD when CD > 1 ->
-            put({Pid, call_depth}, CD - 1),
-            case IgnoreRecursion of
-                false ->
-                    erase({Pid, CD, ts_args});
-                true ->
-                    undefined
-            end
-    end.
 
 
-record_results(Pid, CallTime, Args, Res,
-               State = #state{mfa = MFA,
-                              name = Name,
-                              hdr_ref = Ref,
-                              max_duration = MaxDuration,
-                              capture_spec = CaptureSpec,
-                              capture_counter = Count}) ->
-    if CallTime > MaxDuration ->
-            lager:error("Call ~p took ~p ms that is larger than the maximum "
-                        "that can be stored (~p ms)",
-                        [Name, CallTime/1000, MaxDuration div 1000]),
-            ok = hdr_histogram:record(Ref, MaxDuration);
-       true ->
-            ok = hdr_histogram:record(Ref, CallTime)
-    end,
-
-    case CaptureSpec of
-        {Threshold, Limit}
-          when CallTime > Threshold * 1000 andalso
-               Count =< Limit andalso
-               Args =/= arity ->
-            ets:insert(Name, {{args_res, Count},
-                              {Pid, CallTime, Args, Res}}),
-            %% reached limit - turn off args tracing
-            Count =:= Limit andalso
-                capture_args_trace_off(MFA),
-            State#state{capture_counter = Count + 1};
-        _ ->
-            State
-    end.
+capture_item(Item,
+             State = #state{mfa_spec = MFASpec,
+                            name = Name,
+                            capture_spec = {_Threshold, Limit},
+                            capture_counter = Count}) ->
+    ets:insert(Name, {{args_res, Count}, Item}),
+    %% reached limit - turn off args tracing
+    Count =:= Limit andalso
+        capture_args_trace_off(MFASpec),
+    State#state{capture_counter = Count + 1}.
 
 -spec capture_args_trace_on(xprof_core:mfa_spec()) -> any().
 capture_args_trace_on({MFAId, {_MSOff, MSOn}}) ->

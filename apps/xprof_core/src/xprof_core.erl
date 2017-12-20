@@ -6,10 +6,10 @@
 
          %% Monitoring functions
          monitor_pp/1,
+         monitor_pp/2,
          monitor/1,
+         monitor/2,
          demonitor/1,
-         run_pp/1,
-         run/2,
          get_all_monitored/0,
          get_data/2,
          get_called_funs/1,
@@ -37,7 +37,7 @@
          get_mode/0
         ]).
 
--export_type([cmd/0, options/0,
+-export_type([cmd/0, params/0,
               mfa_spec/0, mfa_id/0, mfa_name/0,
               mode/0
              ]).
@@ -45,8 +45,8 @@
 -type cmd() :: atom().
 %% Command name.
 
--type options() :: [{atom(), term()}].
-%% Options passed to commands.
+-type params() :: [{atom(), term()}].
+%% Parameters passed to commands.
 
 -type ms() :: [tuple()].
 %% Match-specification.
@@ -107,25 +107,29 @@ get_matching_mfas_pp(Query) ->
 %% @doc Start monitoring based on the specified query string.
 -spec monitor_pp(binary()) -> ok | {error, Reason :: already_traced | string()}.
 monitor_pp(Query) ->
-    xprof_core_tracer:monitor(unicode:characters_to_list(Query)).
+    monitor_pp(Query, []).
+
+%% @doc Start monitoring based on the specified query string with additional
+%% parameters. Additional parameters have precedence overthe same keys in the
+%% query.
+-spec monitor_pp(binary(), [{binary(), binary()}]) -> ok | {error, Reason :: term()}.
+monitor_pp(Query, AdditionalParams) ->
+    xprof_core_tracer:monitor_query(Query, AdditionalParams).
 
 %% @doc Start monitoring the specified function (MFA).
 -spec monitor(mfa()) -> ok | {error, Reason :: already_traced | string()}.
 monitor(MFA) ->
     xprof_core_tracer:monitor(MFA).
 
+%% @doc Start the specified command.
+-spec monitor(cmd(), params()) -> ok | {error, Reason :: term()}.
+monitor(Cmd, Params) ->
+    xprof_core_tracer:monitor_cmd(Cmd, Params).
+
 %% @doc Stop monitoring the specified function (MFA).
 -spec demonitor(xprof_core:mfa_id()) -> ok.
 demonitor(MFA) ->
     xprof_core_tracer:demonitor(MFA).
-
-%% @doc Start monitoring based on the specified query string.
-run_pp(Query) ->
-    xprof_core_cmd:handle_query(Query).
-
-%% @doc Start command with the given options.
-run(Command, Options) ->
-    xprof_core_tracer:run(Command, Options).
 
 %% @doc Return list of monitored functions
 %% (both as MFA and the original query string).

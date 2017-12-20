@@ -34,6 +34,90 @@ parse_query("#" ++ _ = _Query) ->
 parse_query(Query) ->
     {ok, funlatency, [{mfa, Query}]}.
 
+tokens_query(Str) ->
+    case erl_scan:string(Str, {1,1}) of
+        {error, {_Loc, Mod, Err}, Loc} ->
+            xprof_core_lib:err(Loc, Mod, Err);
+        {ok,[{'#', _} = Hash, {atom, _, _} = CmdToken|Rest], _EndLoc} ->
+            {AST, Trunc} = parse_reduce(Hash, CmdToken, Rest, _Trunc = false),
+            {Cmd, Params} = record_to_opts(AST),
+            case Trunc of
+                false ->
+                    %% all is good, managed to parse the whole query
+                    case replace_mfa_with_string(Str, Rest, AST, Params) of
+                        false ->
+                            {ok, Cmd, Params};
+                        NewParams ->
+                            {ok, Cmd, NewParams}
+                    end;
+                true ->
+                    %% had to truncate the query
+                    %% this is only ok if the last key is `mfa'
+                    case replace_mfa_with_string(Str, Rest, AST, Params) of
+                        false ->
+                            {error, parsing_error};
+                        NewParams ->
+                            {ok, Cmd, NewParams}
+                    end
+            end
+    end.
+
+parse_reduce(Hash, Cmd, Rest, Trunc) ->
+    RecordTokens = braces(Hash, Cmd, Rest),
+    case erl_parse:parse_exprs(RecordTokens) of
+        {error, {ErrLoc, _Mod, _Err}} ->
+            NewRest = case tokens_to(ErrLoc, Rest) of
+                          Rest ->
+                              %% the error is at the end of the tokenlist
+                              %% no token is removed so let's drop the last one and hope for the best
+                              droplast(Rest);
+                          RestHd ->
+                              RestHd
+                      end,
+            parse_reduce(Hash, Cmd, NewRest, true);
+        {ok, AST} ->
+            {AST, Trunc}
+    end.
+
+braces(Hash, {atom, Loc, _} = Cmd, Rest) ->
+    [Hash, Cmd, {'{', Loc}|Rest++[{'}', {2,1}},{dot, {2,2}}]].
+
+record_to_opts([{record, _, Cmd, Fields}]) ->
+    Params = [{Key, ValueAst}
+              || {record_field, _, {atom, _, Key}, ValueAst} <- Fields],
+    {Cmd, Params}.
+
+replace_mfa_with_string(OrigQuery, RestTokens, AST, Params) ->
+    case last_field_is_mfa(AST) of
+        {true, MFAStart} ->
+            [{atom, _, mfa}, {'=', _}, NextElem|_] = tokens_from(MFAStart, RestTokens),
+            {_, MfaValueStartColumn} = element(2, NextElem),
+            MFAQuery = lists:sublist(OrigQuery, MfaValueStartColumn, length(OrigQuery)),
+            lists:keyreplace(mfa, 1, Params, {mfa, MFAQuery});
+        false ->
+            false
+    end.
+
+last_field_is_mfa([{record, _, _, []}]) ->
+    false;
+last_field_is_mfa([{record, _, _, Fields}]) ->
+    case lists:last(Fields) of
+        {record_field, Loc, {atom, _, mfa}, _Value} ->
+            {true, Loc};
+        _ ->
+            false
+    end.
+
+tokens_to(Loc, Tokens) ->
+    lists:takewhile(
+      fun(Token) -> element(2, Token) =/= Loc end,
+      Tokens).
+
+tokens_from(Loc, Tokens) ->
+    lists:dropwhile(
+      fun(Token) -> element(2, Token) =/= Loc end,
+      Tokens).
+
 %% @doc Parse a query string that represents either a module-function-arity
 %% or an xprof-flavoured match-spec fun in Erlang syntax.
 %% In the later case the last element of the tuple is the abstract syntax tree
