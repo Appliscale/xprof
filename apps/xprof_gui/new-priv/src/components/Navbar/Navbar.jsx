@@ -6,6 +6,7 @@ import logo from './logo.png';
 const defaultProps = {
   position: -1,
   showFavourites: false,
+  favouritesEnabled: false,
   placeholder: 'Hello BEAMer! Please specify your trace pattern here.',
 };
 
@@ -16,6 +17,7 @@ const propTypes = {
   queryInputChange: PropTypes.func.isRequired,
   query: PropTypes.string.isRequired,
   showFavourites: PropTypes.bool,
+  favouritesEnabled: PropTypes.bool,
   setShowFavourites: PropTypes.func.isRequired,
   placeholder: PropTypes.string,
   functions: PropTypes.arrayOf(PropTypes.string).isRequired,
@@ -29,6 +31,7 @@ const Navbar = ({
   queryKeyDown,
   queryInputChange,
   query,
+  favouritesEnabled,
   showFavourites,
   setShowFavourites,
   placeholder,
@@ -48,6 +51,7 @@ const Navbar = ({
         queryKeyDown={queryKeyDown}
         queryInputChange={queryInputChange}
         query={query}
+        favouritesEnabled={favouritesEnabled}
         showFavourites={showFavourites}
         setShowFavourites={setShowFavourites}
         placeholder={placeholder}

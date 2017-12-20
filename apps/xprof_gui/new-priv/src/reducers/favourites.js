@@ -11,6 +11,11 @@ const favourites = (state = initialState, action) => {
         ...state,
         favourites: action.favourites,
       };
+    case types.SET_FAVOURITES_ENABLED:
+      return {
+        ...state,
+        favouritesEnabled: action.favouritesEnabled,
+      };
     default:
       return state;
   }

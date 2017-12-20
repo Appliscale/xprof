@@ -15,6 +15,7 @@ import {
   getACfunctions,
   getACposition,
   getShowFavourites,
+  getFavouritesEnabled,
 } from '../../selectors/CommonSelectors';
 
 const NavContainer = props => <Navbar {...props} />;
@@ -22,6 +23,7 @@ const NavContainer = props => <Navbar {...props} />;
 const mapStateToProps = state => ({
   status: getStatus(state),
   query: getQuery(state),
+  favouritesEnabled: getFavouritesEnabled(state),
   showFavourites: getShowFavourites(state),
   functions: getACfunctions(state),
   position: getACposition(state),

@@ -13,6 +13,7 @@ export const getHighlightedFunction = state =>
 export const getMfas = state => state.monitoring.mfas;
 export const getData = state => state.monitoring.data;
 export const getFavourites = state => state.favourites.favourites;
+export const getFavouritesEnabled = state => state.favourites.favouritesEnabled;
 export const getCapture = state => state.tracing.capture;
 export const getCaptureFunction = (state, fun) => state.tracing.capture[fun];
 export const getLastCaptureForFunction = (state, fun) =>
