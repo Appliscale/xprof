@@ -10,9 +10,8 @@ import {
   FUNCTION_AUTOEXPANSION_URL,
   START_MONITORING_FUNCTION_URL,
 } from '../constants';
-// import { STATUS, HANDLED_KEYS } from '../constants';
 import { commonArrayPrefix, isMfa } from '../utils/CommonUtils';
-import { callApi } from '../utils/ApiUtils';
+import { api } from '../utils/ApiUtils';
 
 export const setACfunctions = functions => ({
   type: types.FILL_AUTOCOMPLETER_FUNCTIONS,
@@ -36,8 +35,7 @@ export const setQueryInput = query => ({
 export const queryInputChange = query => async (dispatch) => {
   dispatch(setQueryInput(query));
   if (query) {
-    const endpoint = `${FUNCTION_AUTOEXPANSION_URL}?query=${query}`;
-    const { json } = await callApi(endpoint);
+    const { json } = await api.get(FUNCTION_AUTOEXPANSION_URL, { query });
     dispatch(setACfunctions(json));
     if (json.length === 1) dispatch(setPosition(0));
     else dispatch(setPosition(-1));
@@ -51,8 +49,10 @@ export const functionClick = selected => async (dispatch, getState) => {
   const query = getQuery(state);
   if (selected.startsWith(query) && isMfa(selected)) {
     dispatch(clearFunctionBrowser());
-    const endpoint = `${START_MONITORING_FUNCTION_URL}?query=${selected}`;
-    const { error } = await callApi(endpoint);
+    const { error } = await api.get(START_MONITORING_FUNCTION_URL, {
+      query: selected,
+    });
+
     if (error) console.log('ERROR: ', error);
   } else {
     dispatch(queryInputChange(selected));
@@ -100,9 +100,9 @@ export const queryKeyDown = key => async (dispatch, getState) => {
 
       if (chosenQuery) {
         dispatch(clearFunctionBrowser());
-        const params = `query=${chosenQuery}`;
-        const endpoint = `${START_MONITORING_FUNCTION_URL}?${params}`;
-        const { error } = await callApi(endpoint);
+        const { error } = await api.get(START_MONITORING_FUNCTION_URL, {
+          query: chosenQuery,
+        });
         if (error) console.log('ERROR: ', error);
       }
       break;

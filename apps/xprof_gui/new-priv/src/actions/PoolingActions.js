@@ -1,6 +1,4 @@
-import { isEqual, isEmpty, sortBy, last, takeRight, initial } from 'lodash';
-import { captureDecision } from '../utils/CommonUtils';
-import { CAPTURE_ACTION } from '../constants/TracingConstants';
+import { isEqual, isEmpty, sortBy, last, takeRight } from 'lodash';
 import {
   getMfas,
   getData,
@@ -8,7 +6,7 @@ import {
   getLastCaptureForFunction,
 } from '../selectors/CommonSelectors';
 import * as types from '../constants/ActionTypes';
-import { callApi } from '../utils/ApiUtils';
+import { api } from '../utils/ApiUtils';
 import {
   ALL_MONITORED_FUNCTIONS_URL,
   MONITORED_FUNCTION_DATA_URL,
@@ -16,6 +14,7 @@ import {
   DPS_LIMIT,
 } from '../constants';
 import { updateCallsControls, updateCallsControl } from './TracingActions';
+import { determineNextCapture, determineNextControl } from '../utils';
 
 export const updateListMonitoringFunctions = mfas => ({
   type: types.UPDATE_MONITORED_FUNCTIONS,
@@ -36,7 +35,7 @@ export const poolMonitoredFunctions = () => async (dispatch, getState) => {
   const state = getState();
   const mfas = getMfas(state);
 
-  const { json, error } = await callApi(ALL_MONITORED_FUNCTIONS_URL);
+  const { json, error } = await api.get(ALL_MONITORED_FUNCTIONS_URL);
   if (error) {
     console.log('ERROR: ', error);
   } else if (!isEqual(mfas, json)) {
@@ -62,11 +61,12 @@ export const poolData = () => async (dispatch, getState) => {
     const lastTs =
         currentDps && currentDps.length ? last(currentDps).time / 1000 : 0;
 
-    const { json, error } = await callApi(`${MONITORED_FUNCTION_DATA_URL}?` +
-          `mod=${mfa[0]}&` +
-          `fun=${mfa[1]}&` +
-          `arity=${mfa[2]}&` +
-          `last_ts=${lastTs}`);
+    const { json, error } = await api.get(MONITORED_FUNCTION_DATA_URL, {
+      mod: mfa[0],
+      fun: mfa[1],
+      arity: mfa[2],
+      last_ts: lastTs,
+    });
 
     if (error) {
       console.log('ERROR: ', error);
@@ -99,92 +99,35 @@ export const poolCapture = () => async (dispatch, getState) => {
   await Promise.all(mfas.map(async (mfa) => {
     const completeFunName = mfa[3];
     const lastCapture = getLastCaptureForFunction(state, completeFunName);
-    let nextControl;
 
     const offset =
         lastCapture && lastCapture.items.length
           ? last(lastCapture.items).id
           : 0;
 
-    const { json, error } = await callApi(`${CAPTURE_FUNCTION_DATA_URL}?` +
-          `mod=${mfa[0]}&` +
-          `fun=${mfa[1]}&` +
-          `arity=${mfa[2]}&` +
-          `offset=${offset}`);
+    const { json, error } = await api.get(CAPTURE_FUNCTION_DATA_URL, {
+      mod: mfa[0],
+      fun: mfa[1],
+      arity: mfa[2],
+      offset,
+    });
 
     if (error) {
       console.log('ERROR: ', error);
     } else {
-      switch (captureDecision(json, lastCapture)) {
-        case CAPTURE_ACTION.APP_INITIALIZATION:
-          nextControl = {
-            threshold: undefined,
-            limit: undefined,
-            collecting: false,
-          };
-          dispatch(updateCallsControl(completeFunName, nextControl));
-          nextCapture[completeFunName] = [
-            {
-              captureId: json.capture_id,
-              items: json.items.map(item => ({ ...item, expanded: false })),
-              has_more: json.has_more,
-            },
-          ];
-          break;
-        case CAPTURE_ACTION.START_FIRST_CAPTURE:
-          nextControl = {
-            threshold: json.threshold,
-            limit: json.limit,
-            collecting: true,
-          };
-          dispatch(updateCallsControl(completeFunName, nextControl));
-          nextCapture[completeFunName] = [
-            {
-              captureId: json.capture_id,
-              items: json.items.map(item => ({ ...item, expanded: false })),
-              has_more: json.has_more,
-            },
-          ];
-          break;
-        case CAPTURE_ACTION.START_NEXT_CAPTURE:
-          nextControl = {
-            threshold: json.threshold,
-            limit: json.limit,
-            collecting: true,
-          };
-          dispatch(updateCallsControl(completeFunName, nextControl));
-          nextCapture[completeFunName] = [
-            ...capture[completeFunName],
-            {
-              captureId: json.capture_id,
-              items: json.items.map(item => ({ ...item, expanded: false })),
-              has_more: json.has_more,
-            },
-          ];
-          break;
-        case CAPTURE_ACTION.CAPTURING:
-          if (!json.has_more) {
-            nextControl = {
-              threshold: undefined,
-              limit: undefined,
-              collecting: false,
-            };
-            dispatch(updateCallsControl(completeFunName, nextControl));
-          }
-          nextCapture[completeFunName] = [
-            ...initial(capture[completeFunName]),
-            {
-              captureId: lastCapture.captureId,
-              items: [
-                ...lastCapture.items,
-                ...json.items.map(item => ({ ...item, expanded: false })),
-              ],
-              has_more: json.has_more,
-            },
-          ];
-          break;
-        default:
-          break;
+      const nextControlForFun = determineNextControl(json, lastCapture);
+      if (!isEmpty(nextControlForFun)) {
+        dispatch(updateCallsControl(completeFunName, nextControlForFun));
+      }
+
+      const nextCaptureForFun = determineNextCapture(
+        json,
+        lastCapture,
+        capture,
+        completeFunName,
+      );
+      if (!isEmpty(nextCaptureForFun)) {
+        nextCapture[completeFunName] = nextCaptureForFun;
       }
     }
   }));

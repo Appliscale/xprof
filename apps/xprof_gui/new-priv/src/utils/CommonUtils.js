@@ -39,15 +39,17 @@ export const getLanguageGuides = (mode) => {
 export const captureDecision = (json, lastCapture) => {
   const lastCaptureId = lastCapture ? lastCapture.captureId : undefined;
   let decision;
-  if (json && json.capture_id > 0) {
+  if (json.capture_id > 0) {
     if (!lastCaptureId && !json.has_more) {
       decision = CAPTURE_ACTION.APP_INITIALIZATION;
     } else if (!lastCaptureId) {
       decision = CAPTURE_ACTION.START_FIRST_CAPTURE;
     } else if (json.capture_id !== lastCaptureId) {
       decision = CAPTURE_ACTION.START_NEXT_CAPTURE;
-    } else if (json.items.length) {
+    } else if (json.items.length && json.has_more) {
       decision = CAPTURE_ACTION.CAPTURING;
+    } else if (json.items.length && !json.has_more) {
+      decision = CAPTURE_ACTION.LAST_CAPTURE;
     }
   }
   return decision;

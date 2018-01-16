@@ -3,7 +3,7 @@ import {
   getControlForFunction,
 } from '../selectors/CommonSelectors';
 import * as types from '../constants/ActionTypes';
-import { callApi } from '../utils/ApiUtils';
+import { api } from '../utils/ApiUtils';
 import { STOP_CAPTURE_URL, START_CAPTURE_URL } from '../constants/index';
 
 export const toggleExpand = (functionName, updatedItems) => ({
@@ -51,10 +51,11 @@ export const toggleCallsTracing = mfa => async (dispatch, getState) => {
   let nextControl;
 
   if (collecting) {
-    const { error } = await callApi(`${STOP_CAPTURE_URL}?` +
-        `mod=${mfa[0]}&` +
-        `fun=${mfa[1]}&` +
-        `arity=${mfa[2]}&`);
+    const { error } = await api.get(STOP_CAPTURE_URL, {
+      mod: mfa[0],
+      fun: mfa[1],
+      arity: mfa[2],
+    });
     if (error) console.log('ERROR: ', error);
 
     nextControl = {
@@ -63,12 +64,13 @@ export const toggleCallsTracing = mfa => async (dispatch, getState) => {
       collecting: false,
     };
   } else {
-    const { error } = await callApi(`${START_CAPTURE_URL}?` +
-        `mod=${mfa[0]}&` +
-        `fun=${mfa[1]}&` +
-        `arity=${mfa[2]}&` +
-        `threshold=${threshold}&` +
-        `limit=${limit}`);
+    const { error } = await api.get(START_CAPTURE_URL, {
+      mod: mfa[0],
+      fun: mfa[1],
+      arity: mfa[2],
+      threshold,
+      limit,
+    });
     if (error) console.log('ERROR: ', error);
 
     nextControl = {

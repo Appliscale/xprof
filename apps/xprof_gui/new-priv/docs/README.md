@@ -48,7 +48,7 @@ The project has been bootstrapped using Create React App npm package (create-rea
 
 ### How to handle immutability
 
-- OBJECT: Object.assign({}, object, { value: "new"}) or spread operator { ...object, value: "new" }
+- OBJECT: Spread operator { ...object, value: "new" }
 - ARRAYS: Spread operator for arrays [...arr, ...arr2, item]
 
 

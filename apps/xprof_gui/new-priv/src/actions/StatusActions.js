@@ -1,6 +1,6 @@
 import * as types from '../constants/ActionTypes';
 import { getStatus } from '../selectors/CommonSelectors';
-import { callApi } from '../utils/ApiUtils';
+import { api } from '../utils/ApiUtils';
 import {
   STATUS,
   SET_TRACING_STATUS_URL,
@@ -32,7 +32,7 @@ export const poolTraceStatus = () => async (dispatch, getState) => {
   const state = getState();
   const status = getStatus(state);
 
-  const { json, error } = await callApi(GET_TRACING_STATUS_URL);
+  const { json, error } = await api.get(GET_TRACING_STATUS_URL);
   if (error) console.log('ERROR: ', error);
   else if (json.status !== status) dispatch(setTraceStatus(json.status));
 };
@@ -46,7 +46,7 @@ export const toggleTraceStatus = () => async (dispatch, getState) => {
   const spec = status === STATUS.RUNNING ? SPEC.PAUSE : SPEC.ALL;
   dispatch(setTraceStatusRequest(toggledStatus));
 
-  const { error } = await callApi(`${SET_TRACING_STATUS_URL}?spec=${spec}`);
+  const { error } = await api.get(SET_TRACING_STATUS_URL, { spec });
   if (error) dispatch(setTraceStatusError(status));
   else dispatch(setTraceStatusSuccess(toggledStatus));
 };

@@ -1,17 +1,28 @@
-export const callApi = url =>
-  axios
-    .get(url)
-    .then(response => ({ json: response.data }))
-    .catch(error => {
-      if (error.response) {
-        return {
-          error: {
-            status: error.response.status,
-            data: error.response.data
-          }
-        };
-      }
-      return { error };
-    });
+import axios from 'axios';
 
-export default callApi;
+const handleError = error =>
+  (error.response
+    ? {
+      error: {
+        status: error.response.status,
+        message: error.response.data,
+      },
+    }
+    : { error });
+
+const handleResponse = response => ({ json: response.data });
+
+export const api = {
+  get: (url, params) =>
+    axios
+      .get(url, { params })
+      .then(handleResponse)
+      .catch(handleError),
+  post: (url, payload) =>
+    axios
+      .post(url, payload)
+      .then(handleResponse)
+      .catch(handleError),
+};
+
+export default api;
