@@ -3,6 +3,7 @@
 -behaviour(xprof_core_cmd).
 
 -export([mandatory_params/0,
+         optional_params/0,
          param_from_ast/2,
          param_to_internal/2,
 
@@ -16,6 +17,9 @@
 
 mandatory_params() ->
     [mfa].
+
+optional_params() ->
+    [enum].
 
 param_from_ast(mfa, MfaStr) when is_list(MfaStr) ->
     {ok, MfaStr};

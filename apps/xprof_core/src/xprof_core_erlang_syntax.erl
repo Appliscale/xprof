@@ -6,6 +6,7 @@
 -behaviour(xprof_core_language).
 
 -export([parse_query/1,
+         parse_incomplete_query/1,
          parse_match_spec/1,
          hidden_function/1,
          fmt_mfa/3,
@@ -65,13 +66,139 @@ parse_query("#" ++ _ = Query) ->
         throw:Error ->
             Error
     end;
-parse_query(Query) ->
+parse_query(Query) when is_list(Query) ->
     {ok, funlatency, [{mfa, Query}]}.
+
+-spec parse_incomplete_query(binary()) ->
+    {ok, Cmd, Params}
+  | {incomplete_cmd, CmdPrefix}
+  | {incomplete_key, KeyPrefix, Cmd, ParamsSoFar}
+  | {incomplete_value, Key, ValuePrefix, Cmd, ParamsSoFar}
+  when
+      Cmd :: xprof_core:cmd(),
+      CmdPrefix :: atom(), %% binary()/string() ???
+      Params :: xprof_core:params(),
+      ParamsSoFar :: xprof_core:params(),
+      Key :: atom(),
+      KeyPrefix :: atom(), %% binary()/string() ???
+      ValuePrefix :: string(). %% binary() ???
+%% throw:{error, Reason :: term()}
+parse_incomplete_query(Query) ->
+    {ok, Tokens, Rest} = tokens_query(Query, incomplete),
+    case parse_query_tokens(Tokens, cmd, undefined, []) of
+        %{ok, Cmd, [{LastKey, LastValue}|Params]} when Rest =/= [] ->
+        %    {incomplete_value, LastKey, {LastValue, Rest}, Cmd, Params};
+        {ok, Cmd, Params} ->
+            {incomplete_key, Rest, Cmd, Params};
+        {more, cmd, _, _} ->
+            {incomplete_cmd, Rest};
+        {more, key, Cmd, Params} ->
+            {incomplete_key, Rest, Cmd, Params};
+        {more, {eq, Key}, Cmd, Params} ->
+            {incomplete_key, {Key, Rest}, Cmd, Params};
+        {more, {value, Key, ValueTokens}, Cmd, Params} ->
+            {incomplete_value, Key, {ValueTokens, Rest}, Cmd, Params};
+        {more, {value, Key}, Cmd, Params} ->
+            {incomplete_value, Key, Rest, Cmd, Params};
+        {more, comma, Cmd, Params} when Rest =:= [] ->
+            {ok, Cmd, Params};
+        {more, comma, Cmd, [{LastKey, LastValue}|Params]} ->
+            %% Rest does not start with a comma, hence the value is parsable but incomplete
+            {incomplete_value, LastKey, {LastValue, Rest}, Cmd, Params};
+        {unexpected, _Token, _State} = Un ->
+            {error, Un}
+    end.
+
+tokens_query(Str, error) ->
+    case erl_scan:string(Str, {1, 1}) of
+        {error, {_Loc, Mod, Err}, Loc} ->
+            xprof_core_lib:err(Loc, Mod, Err);
+        {ok, Tokens, _EndLoc} ->
+            {ok, Tokens}
+    end;
+tokens_query(Str, incomplete) ->
+    case erl_scan:tokens([], Str, {1, 1}, [text]) of
+        {done, {ok, _Tokens, _EndLoc}, _Rest} ->
+            %% unexpected - Str contains a dot in the middle
+            %% FIXME extract location - {dot, Loc} = lists:last(Tokens)
+            throw({error, unexpected_dot});
+        {done, {error, {Loc, Mod, Err}, _EndLoc}, _Rest} ->
+            %% FIXME throw or return error
+            xprof_core_lib:err(Loc, Mod, Err);
+        {more, {erl_scan_continuation, Cs, _Col,
+                RevTokens,
+                _Line, _St, Any, _Fun}} when is_list(RevTokens) ->
+            Rest = case {Cs, Any} of
+                       {[], [_|_]} ->
+                           %% unterminated atom
+                           lists:reverse(Any);
+                       {[],{RevCs, _, _StartLine, _StartCol}} ->
+                           %% scan_string/scan_qatom
+                           %% FIXME: add case for "... 'asd" -> Any = {"dsa","dsa",1,11}
+                           %% idea: Str+eof => {done,{error,{_Loc,erl_scan,{string,$',"asd"}},_EndLoc}, eof}
+                           lists:reverse(RevCs);
+                       {[], {BaseInt, NumRev, _TextBase}} when is_integer(BaseInt), is_list(NumRev) ->
+                           %% scan_based_int
+                           integer_to_list(BaseInt) ++ "#" ++ lists:reverse(NumRev);
+                       {[], Int} when is_integer(Int) ->
+                           %% scan whitespace
+                           "";
+                       {_, Any} when is_list(Cs), (Any =:= [] orelse not is_list(Any)) ->
+                           Cs
+                   end,
+            {ok, lists:reverse(RevTokens), Rest}
+    end.
+
+parse_query_tokens([{atom, _, Cmd}|T], cmd, _C, _P) ->
+    parse_query_tokens(T, key, Cmd, []);
+parse_query_tokens([{atom, _, Key}|T], key, Cmd, Params) ->
+    parse_query_tokens(T, {eq, Key}, Cmd, Params);
+parse_query_tokens([{'=', _}|T], {eq, Key}, Cmd, Params) ->
+    parse_query_tokens(T, {value, Key}, Cmd, Params);
+parse_query_tokens([_|_] = T, {value, Key}, Cmd, Params) ->
+    case parse_value(T, []) of
+        {ok, ValueAst, TRest} ->
+            parse_query_tokens(TRest, comma, Cmd, [{Key, ValueAst}|Params]);
+        _Error ->
+            {more, {value, Key, T}, Cmd, Params}
+    end;
+parse_query_tokens([{',', _}|T], comma, Cmd, Params) ->
+    parse_query_tokens(T, key, Cmd, Params);
+parse_query_tokens([], key, Cmd, Params) ->
+    {ok, Cmd, lists:reverse(Params)};
+parse_query_tokens([], State, Cmd, Params) ->
+    {more, State, Cmd, Params};
+parse_query_tokens([H|_], State, _, _) ->
+    {unexpected, H, State}.
+
+
+parse_value([_|_] = T, Head) ->
+    {TH, TT} = tokens_to_comma(T),
+    case {erl_parse:parse_exprs(Head ++ TH ++ [{dot,{2,1}}]), TT} of
+        {{error, _} = Error, []} ->
+            Error;
+        {{error, _} = Error, [{',', _}]} ->
+            Error;
+        {{error, _}, [{',', _} = Comma|TTT]} ->
+            parse_value(TTT, Head ++ TH ++ [Comma]);
+        {{ok, AST}, _} ->
+            {ok, AST, TT}
+    end.
+
+
+tokens_to_comma(Tokens) ->
+    lists:splitwith(
+      fun(Token) -> element(1, Token) =/= ',' end,
+      Tokens).
+
 
 tokens_query(Str) ->
     case erl_scan:string(Str, {1,1}) of
         {error, {_Loc, Mod, Err}, Loc} ->
             xprof_core_lib:err(Loc, Mod, Err);
+        {ok,[{atom, _, Cmd}], _EndLoc} ->
+            %% shortcut
+            {ok, Cmd, []};
         {ok,[{'#', _} = Hash, {atom, _, _} = CmdToken|Rest], _EndLoc} ->
             {AST, Trunc} = parse_reduce(Hash, CmdToken, Rest, _Trunc = false),
             {Cmd, Params} = record_to_opts(AST),

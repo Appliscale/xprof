@@ -33,6 +33,8 @@
 -callback param_to_internal(Key :: atom(), Value :: term()) ->
     {ok, NewValue :: term()} | {error, Reason :: term()}.
 
+-record(cmd, {name, cb_mod, desc}).
+
 process_query(Query, AdditionalParams) ->
     case xprof_core_query:parse_query(Query) of
         {error, _} = Error ->
@@ -145,9 +147,112 @@ expand_query(Query) ->
             Error
     end.
 
+-spec expand_extended_query(string()) -> {CommonPrefix :: binary(), [{Label :: binary(), Hint :: binary()}]}
+                              | {error, Reason ::binary()}.
+expand_extended_query("#" ++ Query) ->
+    case xprof_core_erlang_syntax:parse_incomplete_query(Query) of
+        {incomplete_cmd, CmdPrefix} ->
+            Cmds = filter_cmds(list_to_binary(CmdPrefix)),
+            {"", Cmds};
+        {incomplete_key, {Key, RestStr}, Cmd, Params} when is_atom(Key) ->
+            case lists:keyfind(Cmd, #cmd.name, cmds()) of
+                false ->
+                    xprof_core_lib:fmt_err("unknown command: ~p", [Cmd]);
+                CmdInfo ->
+                    MissingParams = missing_params(CmdInfo, Params),
+                    case lists:member(Key, MissingParams) of
+                        true ->
+                            %% FIXME this is erlang specific - move it from here
+                            case RestStr of
+                                "" ->
+                                    {"= ", [{atom_to_binary(Key, unicode), ""}]};
+                                "=" ->
+                                    {" ", [{atom_to_binary(Key, unicode), ""}]};
+                                _ ->
+                                    xprof_core_lib:fmt_err("'=' expected after param name: ~p", [Key])
+                            end;
+                        false ->
+                            xprof_core_lib:fmt_err("unknown or duplicated param name: ~p", [Key])
+                    end
+            end;
+        {incomplete_key, KeyPrefix, Cmd, Params} when is_list(KeyPrefix) ->
+            case lists:keyfind(Cmd, #cmd.name, cmds()) of
+                false ->
+                    xprof_core_lib:fmt_err("unknown command: ~p", [Cmd]);
+                CmdInfo ->
+                    MissingParams = missing_params(CmdInfo, Params),
+                    ModeCB = xprof_core_erlang_syntax,
+
+                    FilteredParams = [{PBin, ""} || P <- MissingParams,
+                                                    xprof_core_lib:prefix(list_to_binary(KeyPrefix), PBin = ModeCB:fmt_mod(P))],
+                    {[], FilteredParams}
+            end;
+        {incomplete_value, Key, _ValuePrefix, Cmd, Params} ->
+            case lists:keyfind(Cmd, #cmd.name, cmds()) of
+                false ->
+                    xprof_core_lib:fmt_err("unknown command: ~p", [Cmd]);
+                CmdInfo ->
+                    MissingParams = missing_params(CmdInfo, Params),
+                    case lists:member(Key, MissingParams) of
+                        true ->
+                            {"", [{atom_to_binary(Key, unicode), ""}]};
+                        false ->
+                            xprof_core_lib:fmt_err("unknown or duplicated param name: ~p", [Key])
+                    end
+            end;
+        {ok, Cmd, Params} ->
+            case lists:keyfind(Cmd, #cmd.name, cmds()) of
+                false ->
+                    xprof_core_lib:fmt_err("unknown command: ~p", [Cmd]);
+                CmdInfo ->
+                    case missing_params(CmdInfo, Params) of
+                        [] ->
+                            {"", []};
+                        _ ->
+                            {", ", []}
+                    end
+            end;
+        {error, {unexpected, Token, _State}} ->
+            xprof_core_lib:fmt_err("unexpected '~s' at column ~p", [text(Token), column(Token)])
+    end.
+
 expand_match_spec(Query) ->
     Funs = xprof_core_vm_info:get_available_funs(Query),
     _FilteredFuns = [{prefix_tail(Query, Fun), Fun} || Fun <- Funs].
+
+%% erl_anno module and erl_scan:text was introduced in OTP 18.0
+text(Token) ->
+    %% erl_scan:text(Token).
+    proplists:get_value(text, element(2, Token)).
+
+column(Token) ->
+    case element(2, Token) of
+        {_Line, Col} ->
+            Col;
+        Anno when is_list(Anno) ->
+            proplists:get_value(column, Anno)
+    end.
+
+missing_params(CmdInfo, Params) ->
+    CmdCb = CmdInfo#cmd.cb_mod,
+    AllParams = CmdCb:mandatory_params() ++ CmdCb:optional_params(),
+    _MissingParams = [P || P <- AllParams,
+                           not lists:keymember(P, 1, Params)].
+
+filter_cmds(Prefix) ->
+    ModeCB = xprof_core_erlang_syntax,
+    [{CmdBin, Cmd#cmd.desc}
+     || Cmd <- cmds(),
+        xprof_core_lib:prefix(Prefix, CmdBin = ModeCB:fmt_mod(Cmd#cmd.name))].
+
+cmds() ->
+    [#cmd{name = funlatency,
+          cb_mod = xprof_core_cmd_funlatency,
+          desc = "Measure latency of function calls"},
+     #cmd{name = argdist,
+          cb_mod = xprof_core_cmd_argdist,
+          desc = "Distribution of argument values"}
+    ].
 
 prefix_tail(Prefix, Bin) ->
     case xprof_core_lib:prefix_rest(Prefix, Bin) of
