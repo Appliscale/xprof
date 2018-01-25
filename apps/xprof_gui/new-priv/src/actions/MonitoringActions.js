@@ -1,8 +1,7 @@
 import { remove } from 'lodash';
-import * as types from '../constants/ActionTypes';
 import { getMfas } from '../selectors/CommonSelectors';
-import { STOP_MONITORING_FUNCTION_URL } from '../constants/';
-import { api } from '../utils/ApiUtils';
+import * as types from '../constants/ActionTypes';
+import * as XProf from '../api/XProf';
 
 export const stopMonitoringFunctionRequest = mfas => ({
   type: types.STOP_MONITORING_FUNCTION,
@@ -21,10 +20,6 @@ export const stopMonitoringFunction = mfa => async (dispatch, getState) => {
 
   dispatch(stopMonitoringFunctionRequest(mfasReduced));
 
-  const { error } = await api.get(STOP_MONITORING_FUNCTION_URL, {
-    mod: mfa[0],
-    fun: mfa[1],
-    arity: mfa[2],
-  });
+  const { error } = await XProf.stopMonitoringFunction(mfa[0], mfa[1], mfa[2]);
   if (error) dispatch(stopMonitoringFunctionError(mfas));
 };

@@ -2,26 +2,26 @@ import { initial, last } from 'lodash';
 import * as types from '../constants/ActionTypes';
 
 const initialState = {
-  capture: {},
+  calls: {},
   controls: {},
 };
 
 const tracing = (state = initialState, action) => {
   switch (action.type) {
-    case types.UPDATE_CAPTURE:
+    case types.UPDATE_CALLS:
       return {
         ...state,
-        capture: action.capture,
+        calls: action.calls,
       };
     case types.TOGGLE_EXPAND_ITEM:
       return {
         ...state,
-        capture: {
-          ...state.capture,
+        calls: {
+          ...state.calls,
           [action.functionName]: [
-            ...initial(state.capture[action.functionName]),
+            ...initial(state.calls[action.functionName]),
             {
-              ...last(state.capture[action.functionName]),
+              ...last(state.calls[action.functionName]),
               items: action.updatedItems,
             },
           ],

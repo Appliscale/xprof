@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { Tracing } from '../../components';
-import { poolCapture } from '../../actions/PoolingActions';
+import { getFunctionsCalls } from '../../actions/CollectingActions';
 import {
   handleLimitChange,
   handleThresholdChange,
@@ -10,25 +10,26 @@ import {
 } from '../../actions/TracingActions';
 
 import {
-  getCapture,
+  getCalls,
   getControls,
   getMfas,
 } from '../../selectors/CommonSelectors';
 
 const MonitoringContainer = props => <Tracing {...props} />;
 
-const sp = state => ({
+const mapStateToProps = state => ({
   mfas: getMfas(state),
-  capture: getCapture(state),
+  calls: getCalls(state),
   controls: getControls(state),
 });
 
-const dp = {
-  poolCapture,
+const mapDispatchToProps = {
+  getFunctionsCalls,
   toggleCallsTracing,
   toggleExpandItem,
   handleThresholdChange,
   handleLimitChange,
 };
 
-export default connect(sp, dp)(MonitoringContainer);
+const con = connect(mapStateToProps, mapDispatchToProps)(MonitoringContainer);
+export default con;

@@ -1,17 +1,13 @@
 import * as types from '../constants/ActionTypes';
+import * as XProf from '../api/XProf';
 import {
   getACfunctions,
   getACposition,
   getQuery,
   getHighlightedFunction,
 } from '../selectors/CommonSelectors';
-import {
-  HANDLED_KEYS,
-  FUNCTION_AUTOEXPANSION_URL,
-  START_MONITORING_FUNCTION_URL,
-} from '../constants';
+import { HANDLED_KEYS } from '../constants';
 import { commonArrayPrefix, isMfa } from '../utils/CommonUtils';
-import { api } from '../utils/ApiUtils';
 
 export const setACfunctions = functions => ({
   type: types.FILL_AUTOCOMPLETER_FUNCTIONS,
@@ -35,7 +31,7 @@ export const setQueryInput = query => ({
 export const queryInputChange = query => async (dispatch) => {
   dispatch(setQueryInput(query));
   if (query) {
-    const { json } = await api.get(FUNCTION_AUTOEXPANSION_URL, { query });
+    const { json } = await XProf.getFunctionAutoexpansion(query);
     dispatch(setACfunctions(json));
     if (json.length === 1) dispatch(setPosition(0));
     else dispatch(setPosition(-1));
@@ -49,10 +45,8 @@ export const functionClick = selected => async (dispatch, getState) => {
   const query = getQuery(state);
   if (selected.startsWith(query) && isMfa(selected)) {
     dispatch(clearFunctionBrowser());
-    const { error } = await api.get(START_MONITORING_FUNCTION_URL, {
-      query: selected,
-    });
 
+    const { error } = await XProf.startMonitoringFunction(selected);
     if (error) console.log('ERROR: ', error);
   } else {
     dispatch(queryInputChange(selected));
@@ -100,9 +94,7 @@ export const queryKeyDown = key => async (dispatch, getState) => {
 
       if (chosenQuery) {
         dispatch(clearFunctionBrowser());
-        const { error } = await api.get(START_MONITORING_FUNCTION_URL, {
-          query: chosenQuery,
-        });
+        const { error } = await XProf.startMonitoringFunction(chosenQuery);
         if (error) console.log('ERROR: ', error);
       }
       break;
@@ -110,5 +102,3 @@ export const queryKeyDown = key => async (dispatch, getState) => {
       break;
   }
 };
-
-export const A = 1;

@@ -4,11 +4,11 @@ import CallsTable from '../CallsTable/CallsTable';
 import CallsInput from '../CallsInput/CallsInput';
 
 const defaultProps = {
-  lastCapture: {},
+  lastCalls: {},
   sortBy: () => console.log('IMAGINE SORTING ...'),
 };
 const propTypes = {
-  lastCapture: PropTypes.objectOf(PropTypes.any),
+  lastCalls: PropTypes.objectOf(PropTypes.any),
   handleThresholdChange: PropTypes.func.isRequired,
   handleLimitChange: PropTypes.func.isRequired,
   toggleCallsTracing: PropTypes.func.isRequired,
@@ -19,7 +19,7 @@ const propTypes = {
 };
 
 const CallsPanel = ({
-  lastCapture,
+  lastCalls,
   handleThresholdChange,
   handleLimitChange,
   toggleCallsTracing,
@@ -43,7 +43,7 @@ const CallsPanel = ({
     </div>
     <CallsTable
       mfa={mfa}
-      items={lastCapture.items}
+      items={lastCalls.items}
       sortBy={sortBy}
       toggleExpandItem={toggleExpandItem}
     />

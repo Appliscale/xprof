@@ -9,13 +9,13 @@ import { Footer } from '../';
 import { STATUS_INTERVAL } from '../../constants';
 
 const propTypes = {
-  poolTraceStatus: PropTypes.func.isRequired,
+  getTraceStatus: PropTypes.func.isRequired,
 };
 class Root extends React.Component {
   componentWillMount() {
-    const { poolTraceStatus } = this.props;
-    poolTraceStatus();
-    setInterval(poolTraceStatus, STATUS_INTERVAL);
+    const { getTraceStatus } = this.props;
+    getTraceStatus();
+    setInterval(getTraceStatus, STATUS_INTERVAL);
   }
 
   render() {

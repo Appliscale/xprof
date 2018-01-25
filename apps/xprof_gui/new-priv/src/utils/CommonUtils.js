@@ -1,4 +1,4 @@
-import { CAPTURE_ACTION } from '../constants/index';
+import { CAPTURE_CALLS_ACTION, DPS_ACTION } from '../constants';
 
 const commonPrefix = (string1, string2) => {
   const len = string1.length;
@@ -9,6 +9,7 @@ const commonPrefix = (string1, string2) => {
   }
   return string1.substring(0, i);
 };
+
 export const commonArrayPrefix = (sortedArray) => {
   const string1 = sortedArray[0];
   const string2 = sortedArray[sortedArray.length - 1];
@@ -16,6 +17,7 @@ export const commonArrayPrefix = (sortedArray) => {
 };
 
 export const isMfa = str => str.includes(':') && str.includes('/');
+
 export const getLanguageGuides = (mode) => {
   if (!mode) {
     return {
@@ -36,24 +38,38 @@ export const getLanguageGuides = (mode) => {
     example: 'ets:lookup(data, _)',
   };
 };
-export const captureDecision = (json, lastCapture) => {
-  const lastCaptureId = lastCapture ? lastCapture.captureId : undefined;
+
+export const callsDecision = (json, lastCalls) => {
+  const lastCaptureId = lastCalls ? lastCalls.capture_id : undefined;
   let decision;
   if (json.capture_id > 0) {
     if (!lastCaptureId && !json.has_more) {
-      decision = CAPTURE_ACTION.APP_INITIALIZATION;
+      decision = CAPTURE_CALLS_ACTION.APP_INITIALIZATION;
     } else if (!lastCaptureId) {
-      decision = CAPTURE_ACTION.START_FIRST_CAPTURE;
+      decision = CAPTURE_CALLS_ACTION.START_FIRST_CALLS_CAPTURE;
     } else if (json.capture_id !== lastCaptureId) {
-      decision = CAPTURE_ACTION.START_NEXT_CAPTURE;
+      decision = CAPTURE_CALLS_ACTION.START_NEXT_CALLS_CAPTURE;
     } else if (json.items.length && json.has_more) {
-      decision = CAPTURE_ACTION.CAPTURING;
+      decision = CAPTURE_CALLS_ACTION.CAPTURING;
     } else if (json.items.length && !json.has_more) {
-      decision = CAPTURE_ACTION.LAST_CAPTURE;
+      decision = CAPTURE_CALLS_ACTION.LAST_CALLS_CAPTURE;
     }
   }
   return decision;
 };
+
+export const dpsDecision = (dps, ts) => {
+  let decision;
+  if (ts === 0) {
+    decision = DPS_ACTION.FIRST_DPS;
+  } else if (dps[0].time - ts > 1) {
+    decision = DPS_ACTION.MISSING_DPS;
+  } else if (dps[0].time - ts === 1) {
+    decision = DPS_ACTION.CONTINUOUS_DPS;
+  }
+  return decision;
+};
+
 export const isIntegerInRange = (value, lowerLimit, upperLimit) => {
   const numVal = Number(value);
   if (Number.isInteger(numVal)) {

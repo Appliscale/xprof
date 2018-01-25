@@ -12,9 +12,9 @@ const defaultProps = {
 
 const propTypes = {
   mfa: PropTypes.arrayOf(PropTypes.any).isRequired,
-  threshold: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+  threshold: PropTypes.string,
   handleThresholdChange: PropTypes.func.isRequired,
-  limit: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+  limit: PropTypes.string,
   handleLimitChange: PropTypes.func.isRequired,
   toggleCallsTracing: PropTypes.func.isRequired,
   collecting: PropTypes.bool,
@@ -33,14 +33,19 @@ const CallsInput = ({
   let limitClass;
   let error;
 
-  if (threshold && !isIntegerInRange(threshold, 0, THRESHOLD_LIMIT)) {
-    thresholdClass = 'has-error';
+  if (!limit || !threshold) {
     error = true;
+  } else {
+    if (threshold && !isIntegerInRange(threshold, 0, THRESHOLD_LIMIT)) {
+      thresholdClass = 'has-error';
+      error = true;
+    }
+    if (limit && !isIntegerInRange(limit, 1, CALLS_LIMIT)) {
+      limitClass = 'has-error';
+      error = true;
+    }
   }
-  if (limit && !isIntegerInRange(limit, 1, CALLS_LIMIT)) {
-    limitClass = 'has-error';
-    error = true;
-  }
+
   return (
     <form className="form-inline">
       <div className="form-group">

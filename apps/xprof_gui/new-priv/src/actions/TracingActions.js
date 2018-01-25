@@ -1,10 +1,9 @@
 import {
-  getLastCaptureForFunction,
-  getControlForFunction,
+  getLastCallsForFunction,
+  getFunctionsControl,
 } from '../selectors/CommonSelectors';
 import * as types from '../constants/ActionTypes';
-import { api } from '../utils/ApiUtils';
-import { STOP_CAPTURE_URL, START_CAPTURE_URL } from '../constants/index';
+import { determineNextControlSwitch } from '../utils';
 
 export const toggleExpand = (functionName, updatedItems) => ({
   type: types.TOGGLE_EXPAND_ITEM,
@@ -26,9 +25,9 @@ export const updateCallsControl = (functionName, control) => ({
 export const toggleExpandItem = (mfa, item) => (dispatch, getState) => {
   const state = getState();
   const functionName = mfa[3];
-  const lastCaptureFunction = getLastCaptureForFunction(state, functionName);
+  const lastCallsForFunction = getLastCallsForFunction(state, functionName);
 
-  const updatedItems = lastCaptureFunction.items.map((call) => {
+  const updatedItems = lastCallsForFunction.items.map((call) => {
     if (call.id === item.id) {
       return {
         ...call,
@@ -44,48 +43,15 @@ export const toggleExpandItem = (mfa, item) => (dispatch, getState) => {
 export const toggleCallsTracing = mfa => async (dispatch, getState) => {
   const state = getState();
   const functionName = mfa[3];
-  const { threshold, limit, collecting } = getControlForFunction(
-    state,
-    functionName,
-  );
-  let nextControl;
-
-  if (collecting) {
-    const { error } = await api.get(STOP_CAPTURE_URL, {
-      mod: mfa[0],
-      fun: mfa[1],
-      arity: mfa[2],
-    });
-    if (error) console.log('ERROR: ', error);
-
-    nextControl = {
-      threshold,
-      limit,
-      collecting: false,
-    };
-  } else {
-    const { error } = await api.get(START_CAPTURE_URL, {
-      mod: mfa[0],
-      fun: mfa[1],
-      arity: mfa[2],
-      threshold,
-      limit,
-    });
-    if (error) console.log('ERROR: ', error);
-
-    nextControl = {
-      threshold,
-      limit,
-      collecting: true,
-    };
-  }
+  const control = getFunctionsControl(state, functionName);
+  const nextControl = await determineNextControlSwitch(control, mfa);
   dispatch(updateCallsControl(functionName, nextControl));
 };
 
 export const handleThresholdChange = (mfa, value) => (dispatch, getState) => {
   const state = getState();
   const functionName = mfa[3];
-  const { limit, collecting } = getControlForFunction(state, functionName);
+  const { limit, collecting } = getFunctionsControl(state, functionName);
   const nextControl = {
     threshold: value,
     limit,
@@ -97,7 +63,7 @@ export const handleThresholdChange = (mfa, value) => (dispatch, getState) => {
 export const handleLimitChange = (mfa, value) => (dispatch, getState) => {
   const state = getState();
   const functionName = mfa[3];
-  const { threshold, collecting } = getControlForFunction(state, functionName);
+  const { threshold, collecting } = getFunctionsControl(state, functionName);
   const nextControl = {
     threshold,
     limit: value,

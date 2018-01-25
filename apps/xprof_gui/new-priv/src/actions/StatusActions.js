@@ -1,12 +1,7 @@
 import * as types from '../constants/ActionTypes';
+import * as XProf from '../api/XProf';
 import { getStatus } from '../selectors/CommonSelectors';
-import { api } from '../utils/ApiUtils';
-import {
-  STATUS,
-  SET_TRACING_STATUS_URL,
-  GET_TRACING_STATUS_URL,
-  SPEC,
-} from '../constants';
+import { STATUS, SPEC } from '../constants';
 
 export const setTraceStatus = status => ({
   type: types.SET_TRACE_STATUS,
@@ -28,11 +23,11 @@ export const setTraceStatusSuccess = status => ({
   status,
 });
 
-export const poolTraceStatus = () => async (dispatch, getState) => {
+export const getTraceStatus = () => async (dispatch, getState) => {
   const state = getState();
   const status = getStatus(state);
 
-  const { json, error } = await api.get(GET_TRACING_STATUS_URL);
+  const { json, error } = await XProf.getTracingStatus();
   if (error) console.log('ERROR: ', error);
   else if (json.status !== status) dispatch(setTraceStatus(json.status));
 };
@@ -46,7 +41,7 @@ export const toggleTraceStatus = () => async (dispatch, getState) => {
   const spec = status === STATUS.RUNNING ? SPEC.PAUSE : SPEC.ALL;
   dispatch(setTraceStatusRequest(toggledStatus));
 
-  const { error } = await api.get(SET_TRACING_STATUS_URL, { spec });
+  const { error } = await XProf.setTracingStatus(spec);
   if (error) dispatch(setTraceStatusError(status));
   else dispatch(setTraceStatusSuccess(toggledStatus));
 };

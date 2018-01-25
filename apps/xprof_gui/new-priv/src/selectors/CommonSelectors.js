@@ -11,14 +11,8 @@ export const getHighlightedFunction = state =>
     : undefined);
 export const getMfas = state => state.monitoring.mfas;
 export const getData = state => state.monitoring.data;
-export const getCapture = state => state.tracing.capture;
-export const getCaptureFunction = (state, fun) => state.tracing.capture[fun];
-export const getLastCaptureForFunction = (state, fun) =>
-  (state.tracing.capture[fun] ? last(state.tracing.capture[fun]) : undefined);
-export const getLastItems = (state, fun) =>
-  last(state.tracing.capture[fun]).items;
-export const getControlForFunction = (state, fun) => ({
-  threshold: state.tracing.controls[fun].threshold,
-  limit: state.tracing.controls[fun].limit,
-});
+export const getCalls = state => state.tracing.calls;
+export const getLastCallsForFunction = (state, fun) =>
+  (state.tracing.calls[fun] ? last(state.tracing.calls[fun]) : undefined);
+export const getFunctionsControl = (state, fun) => state.tracing.controls[fun];
 export const getControls = state => state.tracing.controls;

@@ -2,12 +2,12 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { last } from 'lodash';
 import CallsPanel from '../CallsPanel/CallsPanel';
-import { CAPTURE_INTERVAL } from '../../constants';
+import { CALLS_INTERVAL } from '../../constants';
 
 const propTypes = {
-  poolCapture: PropTypes.func.isRequired,
+  getFunctionsCalls: PropTypes.func.isRequired,
   mfas: PropTypes.arrayOf(PropTypes.arrayOf(PropTypes.any)).isRequired,
-  capture: PropTypes.objectOf(PropTypes.any).isRequired,
+  calls: PropTypes.objectOf(PropTypes.any).isRequired,
   toggleCallsTracing: PropTypes.func.isRequired,
   toggleExpandItem: PropTypes.func.isRequired,
   handleThresholdChange: PropTypes.func.isRequired,
@@ -17,19 +17,19 @@ const propTypes = {
 
 class Tracing extends React.Component {
   componentWillMount() {
-    const { poolCapture } = this.props;
-    poolCapture();
-    this.captureInterval = setInterval(poolCapture, CAPTURE_INTERVAL);
+    const { getFunctionsCalls } = this.props;
+    getFunctionsCalls();
+    this.callsInterval = setInterval(getFunctionsCalls, CALLS_INTERVAL);
   }
 
   componentWillUnmount() {
-    clearInterval(this.captureInterval);
+    clearInterval(this.callsInterval);
   }
 
   render() {
     const {
       mfas,
-      capture,
+      calls,
       toggleCallsTracing,
       toggleExpandItem,
       handleThresholdChange,
@@ -42,7 +42,7 @@ class Tracing extends React.Component {
           <CallsPanel
             key={mfa[3]}
             mfa={mfa}
-            lastCapture={last(capture[mfa[3]])}
+            lastCalls={last(calls[mfa[3]])}
             control={controls[mfa[3]]}
             handleThresholdChange={handleThresholdChange}
             handleLimitChange={handleLimitChange}

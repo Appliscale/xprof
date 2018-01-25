@@ -4,8 +4,8 @@ import GraphPanel from '../GraphPanel/GraphPanel';
 import { FUNCTIONS_INTERVAL, DATA_INTERVAL } from '../../constants';
 
 const propTypes = {
-  poolMonitoredFunctions: PropTypes.func.isRequired,
-  poolData: PropTypes.func.isRequired,
+  getMonitoredFunctions: PropTypes.func.isRequired,
+  getFunctionsData: PropTypes.func.isRequired,
   mfas: PropTypes.arrayOf(PropTypes.arrayOf(PropTypes.any)).isRequired,
   data: PropTypes.objectOf(PropTypes.any).isRequired,
   stopMonitoringFunction: PropTypes.func.isRequired,
@@ -13,14 +13,14 @@ const propTypes = {
 
 class Monitoring extends React.Component {
   componentWillMount() {
-    const { poolMonitoredFunctions, poolData } = this.props;
-    poolMonitoredFunctions();
-    poolData();
+    const { getMonitoredFunctions, getFunctionsData } = this.props;
+    getMonitoredFunctions();
+    getFunctionsData();
     this.functionInterval = setInterval(
-      poolMonitoredFunctions,
+      getMonitoredFunctions,
       FUNCTIONS_INTERVAL,
     );
-    this.dataInterval = setInterval(poolData, DATA_INTERVAL);
+    this.dataInterval = setInterval(getFunctionsData, DATA_INTERVAL);
   }
 
   componentWillUnmount() {
