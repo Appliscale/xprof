@@ -4,16 +4,17 @@ import {
   getACfunctions,
   getPromptPosition,
   getQuery,
+  getCommonExpansion,
   getHighlightedFunction,
   getRecentQueries,
   getDirtyInput,
 } from '../selectors';
 import { HANDLED_KEYS, NOTIFICATIONS } from '../constants';
-import { commonArrayPrefix } from '../utils';
 import { startMonitoringFunction, addNotification } from './';
 
-const setACfunctions = functions => ({
-  type: types.FILL_AUTOCOMPLETER_FUNCTIONS,
+const setACfunctions = (expansion, functions) => ({
+  type: types.FILL_AUTOCOMPLETER_MATCHES,
+  expansion,
   functions,
 });
 
@@ -60,11 +61,11 @@ export const queryInputChange = query => async (dispatch) => {
   dispatch(setQueryInput(query));
   if (query) {
     const { json } = await XProf.getFunctionAutoexpansion(query);
-    dispatch(setACfunctions(json));
-    if (json.length === 1) dispatch(setPosition(0));
+    dispatch(setACfunctions(json.expansion, json.matches));
+    if (json.matches.length === 1) dispatch(setPosition(0));
     else dispatch(setPosition(-1));
   } else {
-    dispatch(setACfunctions([]));
+    dispatch(setACfunctions('', []));
   }
 };
 
@@ -89,6 +90,7 @@ export const queryKeyDown = key => async (dispatch, getState) => {
   const query = getQuery(state);
   const dirtyInput = getDirtyInput(state);
   const recent = getRecentQueries(state);
+  const commonExpansion = getCommonExpansion(state);
   const highlightedFunction = getHighlightedFunction(state);
   let chosenQuery;
 
@@ -116,17 +118,10 @@ export const queryKeyDown = key => async (dispatch, getState) => {
       }
       break;
     case HANDLED_KEYS.TAB:
-      // Don't modify search box content if it is not a prefix of the
-      // new value, don't want to overwrite a match-spec fun
-      // (for which there are still suggestions) that is being edited
-      // with some arity.
-      if (highlightedFunction && highlightedFunction.startsWith(query)) {
-        dispatch(queryInputChange(highlightedFunction));
-      } else if (
-        functions.length &&
-        commonArrayPrefix(functions).startsWith(query)
-      ) {
-        dispatch(queryInputChange(commonArrayPrefix(functions)));
+      if (highlightedFunction) {
+        dispatch(queryInputChange(query + highlightedFunction.expansion));
+      } else {
+        dispatch(queryInputChange(query + commonExpansion));
       }
       break;
     case HANDLED_KEYS.ESC:
@@ -134,8 +129,9 @@ export const queryKeyDown = key => async (dispatch, getState) => {
       dispatch(setPosition(-1));
       break;
     case HANDLED_KEYS.RETURN:
-      if (highlightedFunction && highlightedFunction.startsWith(query)) {
-        chosenQuery = highlightedFunction;
+      if (highlightedFunction) {
+        chosenQuery = query + highlightedFunction.expansion;
+        // dispatch(queryInputChange(chosenQuery));
       } else if (query) {
         chosenQuery = query;
       }

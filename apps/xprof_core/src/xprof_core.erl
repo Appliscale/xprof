@@ -1,6 +1,7 @@
 -module(xprof_core).
 
 -export([%% Autocomplete
+         expand_query/1,
          get_matching_mfas_pp/1,
 
          %% Monitoring functions
@@ -55,6 +56,25 @@
 %%
 %% Autocomplete
 %%
+
+%% @doc Get expansion suggestions for the given possibly incomplete query.
+-spec expand_query(binary())
+                  -> {CommonPrefix :: binary(), [Match]}
+                         when Match :: {Prefix :: binary(), Label :: binary()}.
+expand_query(Query) ->
+    case xprof_core_cmd:expand_query(Query) of
+        {error, Reason} ->
+            {<<"">>, [{<<"">>, unicode:characters_to_binary(Reason)}]};
+        {Prefix, Choices} ->
+            {Prefix,
+             [case Choice of
+                  {Expand, Label, Hint} ->
+                      {Expand, unicode:characters_to_binary([Label, " - ", Hint])};
+                  {_Expand, _Label} ->
+                      Choice
+              end
+              || Choice <- Choices]}
+    end.
 
 %% @doc Get loaded modules and functions (MFAs) that match the query string.
 %% Used for autocomplete suggestions on the GUI.

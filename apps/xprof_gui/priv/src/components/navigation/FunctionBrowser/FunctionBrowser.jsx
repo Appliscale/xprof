@@ -12,7 +12,7 @@ const propTypes = {
   queryInputChange: PropTypes.func.isRequired,
   query: PropTypes.string.isRequired,
   placeholder: PropTypes.string,
-  functions: PropTypes.arrayOf(PropTypes.string).isRequired,
+  functions: PropTypes.arrayOf(PropTypes.object).isRequired,
   functionClick: PropTypes.func.isRequired,
   position: PropTypes.number,
   setPositionOnFunction: PropTypes.func.isRequired,
