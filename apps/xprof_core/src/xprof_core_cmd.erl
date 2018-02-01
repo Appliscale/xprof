@@ -40,29 +40,35 @@ process_query(Query, AdditionalParams) ->
         {error, _} = Error ->
             Error;
         {ok, Cmd, ParamsAst} ->
-            %% * lookup cmd callback
-            CmdCB = get_cmd_callback(Cmd),
+            try
+                %% * lookup cmd callback
+                CmdCB = get_cmd_callback(Cmd),
 
-            %% * convert params from AST to term
-            %% (could error on unknown params)
-            {ok, QueryParams} = params_from_ast(Cmd, ParamsAst, CmdCB, []),
+                %% * convert params from AST to term
+                %% (FIXME could error on unknown params)
+                {ok, QueryParams} = params_from_ast(Cmd, ParamsAst, CmdCB, []),
 
-            %% * merge additional params
-            %% - if additional params have precedence then it is possible to
-            %%   modify the query from gui menu/buttons
-            %% - if query params have precedence then we make sure what is
-            %%   displayed in query string takes effect
-            Params = merge_params(QueryParams, AdditionalParams),
+                %% * merge additional params
+                %% - if additional params have precedence then it is possible to
+                %%   modify the query from gui menu/buttons
+                %% - if query params have precedence then we make sure what is
+                %%   displayed in query string takes effect
+                Params = merge_params(QueryParams, AdditionalParams),
 
-            %% * check all mandatory params are present
-            MandatoryParams = CmdCB:mandatory_params(),
-            ok = check_mandatory_params(Params, MandatoryParams),
+                %% * check all mandatory params are present
+                MandatoryParams = CmdCB:mandatory_params(),
+                ok = check_mandatory_params(Params, MandatoryParams),
 
-            %% * check param value types as much as possible
-            %%   and maybe convert to internal format (eg mfaspec)
-            {ok, Options} = params_to_internal(Cmd, Params, CmdCB, []),
+                %% * check param value types as much as possible
+                %%   and maybe convert to internal format (eg mfaspec)
+                {ok, Options} = params_to_internal(Cmd, Params, CmdCB, []),
 
-            {start_cmd, Cmd, Options, CmdCB, Query}
+                {start_cmd, Cmd, Options, CmdCB, Query}
+            catch throw:{error, _} = Error ->
+                    Error;
+                  error:{badmatch, {error, _} = Error} ->
+                    Error
+            end
     end.
 
 process_cmd(Cmd, Params) ->
@@ -140,85 +146,95 @@ check_mandatory_params(Params, MandatoryParams) ->
       Match :: {Prefix :: binary(), Label :: binary(), Hint :: binary()}
              | {Prefix :: binary(), Label :: binary()}.
 expand_query(Query) ->
+    Mode = xprof_core_lib:get_mode(),
     try
-        Result = expand_match_spec(Query),
+        Result =
+            case {Mode, Query} of
+                {erlang, <<"#", Q/binary>>} ->
+                    expand_extended_query(Q);
+                {elixir, <<"%", Q/binary>>} ->
+                    expand_extended_query(Q);
+                _ ->
+                    expand_match_spec(Query)
+            end,
         maybe_add_common_prefix(Result)
     catch throw:{error, _} = Error ->
             Error
     end.
 
--spec expand_extended_query(string()) -> {CommonPrefix :: binary(), [{Label :: binary(), Hint :: binary()}]}
-                              | {error, Reason ::binary()}.
-expand_extended_query("#" ++ Query) ->
-    case xprof_core_erlang_syntax:parse_incomplete_query(Query) of
+expand_extended_query(Query) ->
+    ModeCb = xprof_core_lib:get_mode_cb(),
+    case ModeCb:parse_incomplete_query(unicode:characters_to_list(Query)) of
         {incomplete_cmd, CmdPrefix} ->
-            Cmds = filter_cmds(list_to_binary(CmdPrefix)),
-            {"", Cmds};
-        {incomplete_key, {Key, RestStr}, Cmd, Params} when is_atom(Key) ->
-            case lists:keyfind(Cmd, #cmd.name, cmds()) of
-                false ->
-                    xprof_core_lib:fmt_err("unknown command: ~p", [Cmd]);
-                CmdInfo ->
-                    MissingParams = missing_params(CmdInfo, Params),
-                    case lists:member(Key, MissingParams) of
-                        true ->
-                            %% FIXME this is erlang specific - move it from here
-                            case RestStr of
-                                "" ->
-                                    {"= ", [{atom_to_binary(Key, unicode), ""}]};
-                                "=" ->
-                                    {" ", [{atom_to_binary(Key, unicode), ""}]};
-                                _ ->
-                                    xprof_core_lib:fmt_err("'=' expected after param name: ~p", [Key])
-                            end;
-                        false ->
-                            xprof_core_lib:fmt_err("unknown or duplicated param name: ~p", [Key])
-                    end
-            end;
+            _FilteredCmds = filter_cmds(unicode:characters_to_binary(CmdPrefix), ModeCb);
         {incomplete_key, KeyPrefix, Cmd, Params} when is_list(KeyPrefix) ->
-            case lists:keyfind(Cmd, #cmd.name, cmds()) of
+            CmdInfo = get_cmd_info_or_fail(Cmd),
+            MissingParams = missing_params(CmdInfo, Params),
+            _FilteredParams = filter_params(unicode:characters_to_binary(KeyPrefix), MissingParams, ModeCb);
+        {incomplete_key, {Key, RestStr}, Cmd, Params} when is_atom(Key) ->
+            CmdInfo = get_cmd_info_or_fail(Cmd),
+            MissingParams = missing_params(CmdInfo, Params),
+            case lists:member(Key, MissingParams) of
+                true ->
+                    %% FIXME this is erlang specific - move it from here
+                    case RestStr of
+                        "" ->
+                            [{<<"= ">>, atom_to_binary(Key, unicode)}];
+                        "=" ->
+                            [{<<" ">>, atom_to_binary(Key, unicode)}];
+                        _ ->
+                            xprof_core_lib:err("'=' expected after param name: ~p", [Key])
+                    end;
                 false ->
-                    xprof_core_lib:fmt_err("unknown command: ~p", [Cmd]);
-                CmdInfo ->
-                    MissingParams = missing_params(CmdInfo, Params),
-                    ModeCB = xprof_core_erlang_syntax,
-
-                    FilteredParams = [{PBin, ""} || P <- MissingParams,
-                                                    xprof_core_lib:prefix(list_to_binary(KeyPrefix), PBin = ModeCB:fmt_mod(P))],
-                    {[], FilteredParams}
+                    xprof_core_lib:err("unknown or duplicated param name: ~p", [Key])
             end;
-        {incomplete_value, Key, _ValuePrefix, Cmd, Params} ->
-            case lists:keyfind(Cmd, #cmd.name, cmds()) of
+        {incomplete_value, Key, ValuePrefix, Cmd, Params} ->
+            CmdInfo = get_cmd_info_or_fail(Cmd),
+            MissingParams = missing_params(CmdInfo, Params),
+            case lists:member(Key, MissingParams) of
+                true ->
+                    case Key of
+                        mfa ->
+                            %% special case `mfa'
+
+                            ValueBin = case ValuePrefix of
+                                           {TokensSoFar, _RestStr} ->
+                                               StartCol = column(hd(TokensSoFar)),
+                                               ValueLen = byte_size(Query) - StartCol + 1,
+                                               binary:part(Query, StartCol - 1, ValueLen);
+                                           _ when is_list(ValuePrefix) ->
+                                               unicode:characters_to_binary(ValuePrefix)
+                                       end,
+                            expand_match_spec(ValueBin);
+                        _ ->
+                            [{<<>>, atom_to_binary(Key, unicode)}]
+                    end;
                 false ->
-                    xprof_core_lib:fmt_err("unknown command: ~p", [Cmd]);
-                CmdInfo ->
-                    MissingParams = missing_params(CmdInfo, Params),
-                    case lists:member(Key, MissingParams) of
-                        true ->
-                            {"", [{atom_to_binary(Key, unicode), ""}]};
-                        false ->
-                            xprof_core_lib:fmt_err("unknown or duplicated param name: ~p", [Key])
-                    end
+                    xprof_core_lib:err("unknown or duplicated param name: ~p", [Key])
             end;
         {ok, Cmd, Params} ->
-            case lists:keyfind(Cmd, #cmd.name, cmds()) of
-                false ->
-                    xprof_core_lib:fmt_err("unknown command: ~p", [Cmd]);
-                CmdInfo ->
+            CmdInfo = get_cmd_info_or_fail(Cmd),
+            case lists:last(Params) of
+                {mfa, _} ->
+                    %% mfa must be the last param
+                    [];
+                _ ->
                     case missing_params(CmdInfo, Params) of
                         [] ->
-                            {"", []};
+                            [];
                         _ ->
-                            {", ", []}
+                            {<<", ">>, []}
                     end
+
             end;
         {error, {unexpected, Token, _State}} ->
-            xprof_core_lib:fmt_err("unexpected '~s' at column ~p", [text(Token), column(Token)])
+            xprof_core_lib:err("unexpected '~s' at column ~p", [text(Token), column(Token)])
     end.
 
 expand_match_spec(Query) ->
     Funs = xprof_core_vm_info:get_available_funs(Query),
     _FilteredFuns = [{prefix_tail(Query, Fun), Fun} || Fun <- Funs].
+
 
 %% erl_anno module and erl_scan:text was introduced in OTP 18.0
 text(Token) ->
@@ -230,7 +246,12 @@ column(Token) ->
         {_Line, Col} ->
             Col;
         Anno when is_list(Anno) ->
-            proplists:get_value(column, Anno)
+            case {proplists:get_value(column, Anno),
+                  proplists:get_value(location, Anno)} of
+                {Col, undefined} when is_integer(Col) -> Col;
+                {undefined, {_Line, Col}} -> Col;
+                _ -> undefined
+            end
     end.
 
 missing_params(CmdInfo, Params) ->
@@ -239,19 +260,44 @@ missing_params(CmdInfo, Params) ->
     _MissingParams = [P || P <- AllParams,
                            not lists:keymember(P, 1, Params)].
 
-filter_cmds(Prefix) ->
-    ModeCB = xprof_core_erlang_syntax,
-    [{CmdBin, Cmd#cmd.desc}
+filter_cmds(Prefix, ModeCb) ->
+    [{<<Rest/binary, " ">>, CmdBin, Cmd#cmd.desc}
      || Cmd <- cmds(),
-        xprof_core_lib:prefix(Prefix, CmdBin = ModeCB:fmt_mod(Cmd#cmd.name))].
+        begin
+            CmdBin = ModeCb:fmt_mod(Cmd#cmd.name),
+            Rest = xprof_core_lib:prefix_rest(Prefix, CmdBin),
+            Rest =/= false
+        end].
+
+filter_params(KeyPrefix, MissingParams, ModeCb) ->
+    %% FIXME '=' delimiter is erlang specific
+    [{<<Rest/binary, " = ">>, PBin}
+     || P <- MissingParams,
+        begin
+            PBin = ModeCb:fmt_mod(P),
+            Rest = xprof_core_lib:prefix_rest(KeyPrefix, PBin),
+            Rest =/= false
+        end].
+
+
+get_cmd_info_or_fail(Cmd) ->
+    case lists:keyfind(Cmd, #cmd.name, cmds()) of
+        false ->
+            xprof_core_lib:err("unknown command: ~p", [Cmd]);
+        CmdInfo ->
+            CmdInfo
+    end.
 
 cmds() ->
     [#cmd{name = funlatency,
           cb_mod = xprof_core_cmd_funlatency,
-          desc = "Measure latency of function calls"},
+          desc = <<"Measure latency of function calls">>},
      #cmd{name = argdist,
           cb_mod = xprof_core_cmd_argdist,
-          desc = "Distribution of argument values"}
+          desc = <<"Distribution of argument values">>},
+     #cmd{name = funcount,
+          cb_mod = xprof_core_cmd_funlatency,
+          desc = <<"Test">>}
     ].
 
 prefix_tail(Prefix, Bin) ->

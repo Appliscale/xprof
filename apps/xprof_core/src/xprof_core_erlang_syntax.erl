@@ -69,27 +69,26 @@ parse_query("#" ++ _ = Query) ->
 parse_query(Query) when is_list(Query) ->
     {ok, funlatency, [{mfa, Query}]}.
 
--spec parse_incomplete_query(binary()) ->
+-spec parse_incomplete_query(string()) ->
     {ok, Cmd, Params}
   | {incomplete_cmd, CmdPrefix}
   | {incomplete_key, KeyPrefix, Cmd, ParamsSoFar}
   | {incomplete_value, Key, ValuePrefix, Cmd, ParamsSoFar}
+  | {error, Reason :: any()}
   when
       Cmd :: xprof_core:cmd(),
-      CmdPrefix :: atom(), %% binary()/string() ???
+      CmdPrefix :: string(),
       Params :: xprof_core:params(),
       ParamsSoFar :: xprof_core:params(),
       Key :: atom(),
-      KeyPrefix :: atom(), %% binary()/string() ???
-      ValuePrefix :: string(). %% binary() ???
+      KeyPrefix :: string(),
+      ValuePrefix :: string().
 %% throw:{error, Reason :: term()}
 parse_incomplete_query(Query) ->
     {ok, Tokens, Rest} = tokens_query(Query, incomplete),
-    case parse_query_tokens(Tokens, cmd, undefined, []) of
-        %{ok, Cmd, [{LastKey, LastValue}|Params]} when Rest =/= [] ->
-        %    {incomplete_value, LastKey, {LastValue, Rest}, Cmd, Params};
+    case parse_query_tokens(Tokens, cmd, undefined, [], Rest =/= []) of
         {ok, Cmd, Params} ->
-            {incomplete_key, Rest, Cmd, Params};
+            {ok, Cmd, Params};
         {more, cmd, _, _} ->
             {incomplete_cmd, Rest};
         {more, key, Cmd, Params} ->
@@ -100,11 +99,6 @@ parse_incomplete_query(Query) ->
             {incomplete_value, Key, {ValueTokens, Rest}, Cmd, Params};
         {more, {value, Key}, Cmd, Params} ->
             {incomplete_value, Key, Rest, Cmd, Params};
-        {more, comma, Cmd, Params} when Rest =:= [] ->
-            {ok, Cmd, Params};
-        {more, comma, Cmd, [{LastKey, LastValue}|Params]} ->
-            %% Rest does not start with a comma, hence the value is parsable but incomplete
-            {incomplete_value, LastKey, {LastValue, Rest}, Cmd, Params};
         {unexpected, _Token, _State} = Un ->
             {error, Un}
     end.
@@ -132,6 +126,9 @@ tokens_query(Str, incomplete) ->
                        {[], [_|_]} ->
                            %% unterminated atom
                            lists:reverse(Any);
+                       {".", [_|_]} ->
+                           %% unterminated float
+                           lists:reverse(Any, ".");
                        {[],{RevCs, _, _StartLine, _StartCol}} ->
                            %% scan_string/scan_qatom
                            %% FIXME: add case for "... 'asd" -> Any = {"dsa","dsa",1,11}
@@ -149,26 +146,36 @@ tokens_query(Str, incomplete) ->
             {ok, lists:reverse(RevTokens), Rest}
     end.
 
-parse_query_tokens([{atom, _, Cmd}|T], cmd, _C, _P) ->
-    parse_query_tokens(T, key, Cmd, []);
-parse_query_tokens([{atom, _, Key}|T], key, Cmd, Params) ->
-    parse_query_tokens(T, {eq, Key}, Cmd, Params);
-parse_query_tokens([{'=', _}|T], {eq, Key}, Cmd, Params) ->
-    parse_query_tokens(T, {value, Key}, Cmd, Params);
-parse_query_tokens([_|_] = T, {value, Key}, Cmd, Params) ->
+parse_query_tokens([{atom, _, Cmd}|T], cmd, _C, _P, MoreStr) ->
+    parse_query_tokens(T, key, Cmd, [], MoreStr);
+parse_query_tokens([{atom, _, Key}|T], key, Cmd, Params, MoreStr) ->
+    parse_query_tokens(T, {eq, Key}, Cmd, Params, MoreStr);
+parse_query_tokens([{'=', _}|T], {eq, Key}, Cmd, Params, MoreStr) ->
+    parse_query_tokens(T, {value, Key}, Cmd, Params, MoreStr);
+parse_query_tokens([_|_] = T, {value, Key}, Cmd, Params, MoreStr) ->
     case parse_value(T, []) of
+        {ok, _ValueAst, []} when MoreStr =:= true ->
+            %% There is non-empty trailing string that cannot be scanned yet.
+            %% If it would start with a comma that would be scannable,
+            %% so it does not start with a comma.
+            %% Hence we need to assume that it still belongs to the current value
+            {more, {value, Key, T}, Cmd, Params};
+        {ok, _ValueAst, TRest} when Key =:= mfa ->
+            %% spec handling of `mfa' - store the tokens instead of the AST
+            ValueToken = lists:sublist(T, 1, length(T) - length(TRest)),
+            parse_query_tokens(TRest, comma, Cmd, [{Key, ValueToken}|Params], MoreStr);
         {ok, ValueAst, TRest} ->
-            parse_query_tokens(TRest, comma, Cmd, [{Key, ValueAst}|Params]);
+            parse_query_tokens(TRest, comma, Cmd, [{Key, ValueAst}|Params], MoreStr);
         _Error ->
             {more, {value, Key, T}, Cmd, Params}
     end;
-parse_query_tokens([{',', _}|T], comma, Cmd, Params) ->
-    parse_query_tokens(T, key, Cmd, Params);
-parse_query_tokens([], key, Cmd, Params) ->
+parse_query_tokens([{',', _}|T], comma, Cmd, Params, MoreStr) ->
+    parse_query_tokens(T, key, Cmd, Params, MoreStr);
+parse_query_tokens([], comma, Cmd, Params, _MoreStr = false) ->
     {ok, Cmd, lists:reverse(Params)};
-parse_query_tokens([], State, Cmd, Params) ->
+parse_query_tokens([], State, Cmd, Params, _MoreStr) ->
     {more, State, Cmd, Params};
-parse_query_tokens([H|_], State, _, _) ->
+parse_query_tokens([H|_], State, _, _, _) ->
     {unexpected, H, State}.
 
 
