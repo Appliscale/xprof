@@ -2,7 +2,7 @@ export const STATUS_INTERVAL = 1000;
 export const FUNCTIONS_INTERVAL = 1000;
 export const CALLS_INTERVAL = 1000;
 export const DATA_INTERVAL = 1000;
-export const DPS_LIMIT = 180;
+export const DPS_LIMIT = 120;
 
 export const DPS_ACTION = {
   FIRST_DPS: 'FIRST_DPS',

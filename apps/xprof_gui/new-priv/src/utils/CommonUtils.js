@@ -1,4 +1,5 @@
-import { CAPTURE_CALLS_ACTION, DPS_ACTION } from '../constants';
+import { sortBy } from 'lodash';
+import { CAPTURE_CALLS_ACTION, DPS_ACTION, SORT } from '../constants';
 
 const commonPrefix = (string1, string2) => {
   const len = string1.length;
@@ -17,6 +18,13 @@ export const commonArrayPrefix = (sortedArray) => {
 };
 
 export const isMfa = str => str.includes(':') && str.includes('/');
+
+export const parseToMfa = fullName => [
+  fullName.split(':')[0],
+  fullName.split('/')[0].split(':')[1],
+  +fullName.split('/')[1],
+  fullName,
+];
 
 export const getLanguageGuides = (mode) => {
   if (!mode) {
@@ -77,3 +85,8 @@ export const isIntegerInRange = (value, lowerLimit, upperLimit) => {
   }
   return false;
 };
+
+export const sortItems = (items, column, order) =>
+  (order === SORT.ASCENDING
+    ? sortBy(items, column)
+    : sortBy(items, column).reverse());

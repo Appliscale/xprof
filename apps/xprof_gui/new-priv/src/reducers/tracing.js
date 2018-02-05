@@ -4,6 +4,7 @@ import * as types from '../constants/ActionTypes';
 const initialState = {
   calls: {},
   controls: {},
+  panel: {},
 };
 
 const tracing = (state = initialState, action) => {
@@ -22,26 +23,23 @@ const tracing = (state = initialState, action) => {
             ...initial(state.calls[action.functionName]),
             {
               ...last(state.calls[action.functionName]),
-              items: action.updatedItems,
+              sort: {
+                ...last(state.calls[action.functionName]).sort,
+                items: action.updatedItems,
+              },
             },
           ],
         },
       };
-    case types.UPDATE_CALLS_CONTROLS:
+    case types.SORT_CALLS:
       return {
         ...state,
-        controls: {
-          ...action.mfas.reduce(
-            (control, mfa) => ({
-              ...control,
-              [mfa[3]]: {
-                threshold: undefined,
-                limit: undefined,
-                collecting: false,
-              },
-            }),
-            {},
-          ),
+        calls: {
+          ...state.calls,
+          [action.functionName]: [
+            ...initial(state.calls[action.functionName]),
+            action.sortedCalls,
+          ],
         },
       };
     case types.SET_CALLS_CONTROL:
@@ -49,7 +47,7 @@ const tracing = (state = initialState, action) => {
         ...state,
         controls: {
           ...state.controls,
-          [action.functionName]: action.control,
+          ...action.control,
         },
       };
     default:

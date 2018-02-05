@@ -1,11 +1,8 @@
-import NavbarContainer from './NavbarContainer/NavbarContainer';
-import RootContainer from './RootContainer/RootContainer';
-import MonitoringContainer from './MonitoringContainer/MonitoringContainer';
-import TracingContainer from './TracingContainer/TracingContainer';
-
+export { default as NavbarContainer } from './NavbarContainer/NavbarContainer';
+export { default as RootContainer } from './RootContainer/RootContainer';
 export {
-  NavbarContainer,
-  RootContainer,
-  MonitoringContainer,
-  TracingContainer,
-};
+  default as MonitoringContainer,
+} from './MonitoringContainer/MonitoringContainer';
+export {
+  default as TracingContainer,
+} from './TracingContainer/TracingContainer';

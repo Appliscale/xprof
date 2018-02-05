@@ -1,29 +1,30 @@
 import * as types from '../constants/ActionTypes';
-import * as XProf from '../api/XProf';
+import * as XProf from '../api';
 import {
   getACfunctions,
   getACposition,
   getQuery,
   getHighlightedFunction,
-} from '../selectors/CommonSelectors';
+} from '../selectors';
 import { HANDLED_KEYS } from '../constants';
-import { commonArrayPrefix, isMfa } from '../utils/CommonUtils';
+import { commonArrayPrefix, isMfa } from '../utils';
+import { startMonitoringFunction } from './';
 
-export const setACfunctions = functions => ({
+const setACfunctions = functions => ({
   type: types.FILL_AUTOCOMPLETER_FUNCTIONS,
   functions,
 });
 
-export const setPosition = position => ({
+const setPosition = position => ({
   type: types.SET_POSITION,
   position,
 });
 
-export const clearFunctionBrowser = () => ({
+const clearFunctionBrowser = () => ({
   type: types.CLEAR_FUNCTION_BROWSER,
 });
 
-export const setQueryInput = query => ({
+const setQueryInput = query => ({
   type: types.QUERY_INPUT_CHANGE,
   query,
 });
@@ -45,9 +46,7 @@ export const functionClick = selected => async (dispatch, getState) => {
   const query = getQuery(state);
   if (selected.startsWith(query) && isMfa(selected)) {
     dispatch(clearFunctionBrowser());
-
-    const { error } = await XProf.startMonitoringFunction(selected);
-    if (error) console.log('ERROR: ', error);
+    dispatch(startMonitoringFunction(selected));
   } else {
     dispatch(queryInputChange(selected));
   }
@@ -92,13 +91,19 @@ export const queryKeyDown = key => async (dispatch, getState) => {
         chosenQuery = query;
       }
 
-      if (chosenQuery) {
+      if (isMfa(chosenQuery)) {
         dispatch(clearFunctionBrowser());
-        const { error } = await XProf.startMonitoringFunction(chosenQuery);
-        if (error) console.log('ERROR: ', error);
+        dispatch(startMonitoringFunction(chosenQuery));
       }
       break;
     default:
       break;
   }
+};
+
+export const setPositionOnFunction = name => (dispatch, getState) => {
+  const state = getState();
+  const functions = getACfunctions(state);
+  const position = functions.indexOf(name);
+  dispatch(setPosition(position));
 };

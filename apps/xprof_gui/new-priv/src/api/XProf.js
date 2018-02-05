@@ -99,3 +99,5 @@ export const startCapturingFunctionsCalls = async (
   });
 export const stopCapturingFunctionsCalls = (mod, fun, arity) =>
   request.get(URL.STOP_CAPTURING_CALLS, { mod, fun, arity });
+export const getFunctionsCallees = (mod, fun, arity) =>
+  request.get(URL.GET_FUNCTIONS_CALLEES, { mod, fun, arity });

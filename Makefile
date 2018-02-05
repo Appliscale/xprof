@@ -1,4 +1,5 @@
 JS_PRIV=apps/xprof_gui/priv
+JS_NEW_PRIV=apps/xprof_gui/new-priv
 BIN_DIR:=node_modules/.bin
 
 compile:
@@ -9,6 +10,13 @@ dev: webpack
 
 npm:
 	cd $(JS_PRIV); npm install
+	cd $(JS_NEW_PRIV); npm install
+
+dev_new_front:
+	cd $(JS_NEW_PRIV); npm start
+
+serve_new_front:
+	cd $(JS_NEW_PRIV); npm run build; npm install -g serve; serve -s build
 
 bootstrap_front_end: npm
 
@@ -36,4 +44,4 @@ dialyzer:
 publish:
 	./rebar3 as publish hex publish --deps_from_config
 
-.PHONY: compile dev npm bootstrap_front_end check_front_end test_front_end webpack webpack_autoreload test doc dialyzer
+.PHONY: compile dev npm bootstrap_front_end check_front_end test_front_end webpack webpack_autoreload test doc dialyzer dev_new_front serve_new_front

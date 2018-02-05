@@ -11,3 +11,4 @@ export const STOP_CAPTURING_CALLS = `${API_HOSTNAME}api/capture_stop`;
 export const GET_CALLS_FUNCTION = `${API_HOSTNAME}api/capture_data`;
 export const START_CAPTURING_CALLS = `${API_HOSTNAME}api/capture`;
 export const LANGUANGE_MODE = `${API_HOSTNAME}api/mode`;
+export const GET_FUNCTIONS_CALLEES = `${API_HOSTNAME}api/get_callees`;

@@ -1,8 +1,8 @@
 import { isEqual, isEmpty } from 'lodash';
 import * as types from '../constants/ActionTypes';
-import * as XProf from '../api/XProf';
-import { getMfas, getData, getCalls } from '../selectors/CommonSelectors';
-import { updateCallsControls } from './TracingActions';
+import * as XProf from '../api';
+import { getMfas, getData, getCalls } from '../selectors';
+import { setCallsControl } from './';
 import { determineNextData, determineNextCalls } from '../utils';
 
 export const updateListMonitoringFunctions = mfas => ({
@@ -10,12 +10,12 @@ export const updateListMonitoringFunctions = mfas => ({
   mfas,
 });
 
-export const updateData = data => ({
+const updateData = data => ({
   type: types.UPDATE_DATA,
   data,
 });
 
-export const updateCalls = calls => ({
+const updateCalls = calls => ({
   type: types.UPDATE_CALLS,
   calls,
 });
@@ -25,16 +25,25 @@ export const getMonitoredFunctions = () => async (dispatch, getState) => {
   const mfas = getMfas(state);
 
   const { json, error } = await XProf.getAllMonitoredFunctions();
+
   if (error) {
     console.log('ERROR: ', error);
   } else if (!isEqual(mfas, json)) {
-    if (json.length < mfas.length) {
-      dispatch(updateListMonitoringFunctions(json));
-      dispatch(updateCallsControls(json));
-    } else {
-      dispatch(updateCallsControls(json));
-      dispatch(updateListMonitoringFunctions(json));
-    }
+    const newMfas = json.filter(mfa => !mfas.map(f => f[3]).includes(mfa[3]));
+    const newControls = newMfas.reduce(
+      (control, mfa) => ({
+        ...control,
+        [mfa[3]]: {
+          threshold: undefined,
+          limit: undefined,
+          collecting: false,
+        },
+      }),
+      {},
+    );
+
+    dispatch(setCallsControl(newControls));
+    dispatch(updateListMonitoringFunctions(json));
   }
 };
 

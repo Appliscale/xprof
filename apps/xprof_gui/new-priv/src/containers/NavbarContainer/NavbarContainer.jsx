@@ -1,19 +1,19 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { Navbar } from '../../components';
+import { Navbar } from '../../components/navigation';
 import {
   functionClick,
   queryKeyDown,
   queryInputChange,
-} from '../../actions/NavigationActions';
-import { toggleTraceStatus } from '../../actions/StatusActions';
-// import { getValue } from '../../selectors/NavigationSelectors';
+  toggleTraceStatus,
+  setPositionOnFunction,
+} from '../../actions';
 import {
   getStatus,
   getQuery,
   getACfunctions,
   getACposition,
-} from '../../selectors/CommonSelectors';
+} from '../../selectors';
 
 const NavContainer = props => <Navbar {...props} />;
 
@@ -29,6 +29,7 @@ const mapDispatchToProps = {
   toggleTraceStatus,
   queryKeyDown,
   queryInputChange,
+  setPositionOnFunction,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(NavContainer);

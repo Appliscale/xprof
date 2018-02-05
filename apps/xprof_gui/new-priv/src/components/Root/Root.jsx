@@ -5,7 +5,7 @@ import {
   MonitoringContainer,
   TracingContainer,
 } from '../../containers';
-import { Footer } from '../';
+import { Footer } from '../navigation';
 import { STATUS_INTERVAL } from '../../constants';
 
 const propTypes = {

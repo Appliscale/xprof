@@ -1,19 +1,22 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { Tracing } from '../../components';
-import { getFunctionsCalls } from '../../actions/CollectingActions';
+import { Tracing } from '../../components/tracing';
 import {
+  getFunctionsCalls,
   handleLimitChange,
   handleThresholdChange,
   toggleCallsTracing,
   toggleExpandItem,
-} from '../../actions/TracingActions';
-
+  sortCallsBy,
+  expandTracingPanel,
+  shrinkTracingPanel,
+} from '../../actions';
 import {
   getCalls,
   getControls,
   getMfas,
-} from '../../selectors/CommonSelectors';
+  getTracingVisibility,
+} from '../../selectors';
 
 const MonitoringContainer = props => <Tracing {...props} />;
 
@@ -21,6 +24,7 @@ const mapStateToProps = state => ({
   mfas: getMfas(state),
   calls: getCalls(state),
   controls: getControls(state),
+  panelVisibility: getTracingVisibility(state),
 });
 
 const mapDispatchToProps = {
@@ -29,6 +33,9 @@ const mapDispatchToProps = {
   toggleExpandItem,
   handleThresholdChange,
   handleLimitChange,
+  sortCallsBy,
+  expandTracingPanel,
+  shrinkTracingPanel,
 };
 
 const con = connect(mapStateToProps, mapDispatchToProps)(MonitoringContainer);

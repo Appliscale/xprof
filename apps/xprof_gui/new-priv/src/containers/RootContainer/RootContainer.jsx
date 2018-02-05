@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { Root } from '../../components';
-import { getTraceStatus } from '../../actions/StatusActions';
+import Root from '../../components/Root';
+import { getTraceStatus } from '../../actions';
 
 const RootContainer = props => <Root {...props} />;
 

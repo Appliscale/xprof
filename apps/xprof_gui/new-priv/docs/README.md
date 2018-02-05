@@ -51,7 +51,6 @@ The project has been bootstrapped using Create React App npm package (create-rea
 - OBJECT: Spread operator { ...object, value: "new" }
 - ARRAYS: Spread operator for arrays [...arr, ...arr2, item]
 
-
 ### TO READ
 
 - http://redux.js.org/docs/basics/UsageWithReact.html

@@ -1,20 +1,32 @@
 import { isEmpty, sortBy, last, takeRight, initial, range } from 'lodash';
-import { callsDecision, dpsDecision } from '../utils/CommonUtils';
-import { getLastCallsForFunction } from '../selectors/CommonSelectors';
-import { CAPTURE_CALLS_ACTION, DPS_LIMIT, DPS_ACTION } from '../constants';
-import { updateCallsControl } from '../actions/TracingActions';
-import * as XProf from '../api/XProf';
+import { callsDecision, dpsDecision, sortItems } from '../utils';
+import { getLastCallsForFunction } from '../selectors';
+import {
+  CAPTURE_CALLS_ACTION,
+  DPS_LIMIT,
+  DPS_ACTION,
+  CALLS_COLUMNS,
+  SORT,
+} from '../constants';
+import { setCallsControl } from '../actions';
+import * as XProf from '../api';
 
 const determineNextCallsForFun = (json, lastCalls, calls, name) => {
   let callsForFun;
+
   switch (callsDecision(json, lastCalls)) {
     case CAPTURE_CALLS_ACTION.APP_INITIALIZATION:
     case CAPTURE_CALLS_ACTION.START_FIRST_CALLS_CAPTURE:
       callsForFun = [
         {
           capture_id: json.capture_id,
-          items: json.items.map(item => ({ ...item, expanded: false })),
+          items: json.items,
           has_more: json.has_more,
+          sort: {
+            items: json.items.map(item => ({ ...item, expanded: false })),
+            column: CALLS_COLUMNS.ID,
+            order: SORT.ASCENDING,
+          },
         },
       ];
       break;
@@ -23,8 +35,13 @@ const determineNextCallsForFun = (json, lastCalls, calls, name) => {
         ...calls[name],
         {
           capture_id: json.capture_id,
-          items: json.items.map(item => ({ ...item, expanded: false })),
+          items: json.items,
           has_more: json.has_more,
+          sort: {
+            items: json.items.map(item => ({ ...item, expanded: false })),
+            column: CALLS_COLUMNS.ID,
+            order: SORT.ASCENDING,
+          },
         },
       ];
       break;
@@ -33,12 +50,28 @@ const determineNextCallsForFun = (json, lastCalls, calls, name) => {
       callsForFun = [
         ...initial(calls[name]),
         {
-          capture_id: lastCalls.capture_id,
-          items: [
-            ...lastCalls.items,
-            ...json.items.map(item => ({ ...item, expanded: false })),
-          ],
+          ...lastCalls,
+          items: [...lastCalls.items, ...json.items],
           has_more: json.has_more,
+          sort: {
+            items:
+              lastCalls.sort.column === CALLS_COLUMNS.PID &&
+              lastCalls.sort.order === SORT.ASCENDING
+                ? [
+                  ...lastCalls.sort.items,
+                  ...json.items.map(item => ({ ...item, expanded: false })),
+                ]
+                : sortItems(
+                  [
+                    ...lastCalls.sort.items,
+                    ...json.items.map(item => ({ ...item, expanded: false })),
+                  ],
+                  lastCalls.sort.column,
+                  lastCalls.sort.order,
+                ),
+            column: lastCalls.sort.column,
+            order: lastCalls.sort.order,
+          },
         },
       ];
       break;
@@ -134,6 +167,7 @@ export const determineNextData = async (mfas, data) => {
       mfa[2],
       lastTs,
     );
+
     if (error) {
       console.log('ERROR: ', error);
     } else if (json.length) {
@@ -156,7 +190,6 @@ export const determineNextCalls = async (dispatch, state, mfas, calls) => {
   await Promise.all(mfas.map(async (mfa) => {
     const completeFunName = mfa[3];
     const lastCalls = getLastCallsForFunction(state, completeFunName);
-
     const offset =
         lastCalls && lastCalls.items.length ? last(lastCalls.items).id : 0;
 
@@ -166,12 +199,13 @@ export const determineNextCalls = async (dispatch, state, mfas, calls) => {
       mfa[2],
       offset,
     );
+
     if (error) {
       console.log('ERROR: ', error);
     } else {
       const nextControlForFun = determineNextControl(json, lastCalls);
       if (!isEmpty(nextControlForFun)) {
-        dispatch(updateCallsControl(completeFunName, nextControlForFun));
+        dispatch(setCallsControl({ [completeFunName]: nextControlForFun }));
       }
 
       const nextCallsForFun = determineNextCallsForFun(
@@ -199,6 +233,7 @@ export const determineNextControlSwitch = async (control, mfa) => {
       mfa[1],
       mfa[2],
     );
+
     if (error) console.log('ERROR: ', error);
     nextControl.collecting = false;
   } else {
@@ -209,6 +244,7 @@ export const determineNextControlSwitch = async (control, mfa) => {
       threshold,
       limit,
     );
+
     if (error) console.log('ERROR: ', error);
     nextControl.collecting = true;
   }

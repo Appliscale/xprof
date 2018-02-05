@@ -1,25 +1,23 @@
-import {
-  getLastCallsForFunction,
-  getFunctionsControl,
-} from '../selectors/CommonSelectors';
+import { getLastCallsForFunction, getFunctionsControl } from '../selectors';
 import * as types from '../constants/ActionTypes';
-import { determineNextControlSwitch } from '../utils';
+import { determineNextControlSwitch, sortItems } from '../utils';
+import { SORT } from '../constants';
 
-export const toggleExpand = (functionName, updatedItems) => ({
+const toggleExpand = (functionName, updatedItems) => ({
   type: types.TOGGLE_EXPAND_ITEM,
   functionName,
   updatedItems,
 });
 
-export const updateCallsControls = mfas => ({
-  type: types.UPDATE_CALLS_CONTROLS,
-  mfas,
+export const setCallsControl = control => ({
+  type: types.SET_CALLS_CONTROL,
+  control,
 });
 
-export const updateCallsControl = (functionName, control) => ({
-  type: types.SET_CALLS_CONTROL,
+const updateLastCallsForFunction = (functionName, sortedCalls) => ({
+  type: types.SORT_CALLS,
   functionName,
-  control,
+  sortedCalls,
 });
 
 export const toggleExpandItem = (mfa, item) => (dispatch, getState) => {
@@ -27,7 +25,7 @@ export const toggleExpandItem = (mfa, item) => (dispatch, getState) => {
   const functionName = mfa[3];
   const lastCallsForFunction = getLastCallsForFunction(state, functionName);
 
-  const updatedItems = lastCallsForFunction.items.map((call) => {
+  const updatedItems = lastCallsForFunction.sort.items.map((call) => {
     if (call.id === item.id) {
       return {
         ...call,
@@ -45,7 +43,7 @@ export const toggleCallsTracing = mfa => async (dispatch, getState) => {
   const functionName = mfa[3];
   const control = getFunctionsControl(state, functionName);
   const nextControl = await determineNextControlSwitch(control, mfa);
-  dispatch(updateCallsControl(functionName, nextControl));
+  dispatch(setCallsControl({ [functionName]: nextControl }));
 };
 
 export const handleThresholdChange = (mfa, value) => (dispatch, getState) => {
@@ -57,7 +55,7 @@ export const handleThresholdChange = (mfa, value) => (dispatch, getState) => {
     limit,
     collecting,
   };
-  dispatch(updateCallsControl(functionName, nextControl));
+  dispatch(setCallsControl({ [functionName]: nextControl }));
 };
 
 export const handleLimitChange = (mfa, value) => (dispatch, getState) => {
@@ -69,5 +67,27 @@ export const handleLimitChange = (mfa, value) => (dispatch, getState) => {
     limit: value,
     collecting,
   };
-  dispatch(updateCallsControl(functionName, nextControl));
+  dispatch(setCallsControl({ [functionName]: nextControl }));
+};
+
+export const sortCallsBy = (mfa, column) => (dispatch, getState) => {
+  const state = getState();
+  const functionName = mfa[3];
+  const lastCallsForFunction = getLastCallsForFunction(state, functionName);
+  const order =
+    lastCallsForFunction.sort.column === column &&
+    lastCallsForFunction.sort.order === SORT.ASCENDING
+      ? SORT.DESCENDING
+      : SORT.ASCENDING;
+
+  const sortLastCalls = {
+    ...lastCallsForFunction,
+    sort: {
+      items: sortItems(lastCallsForFunction.items, column, order),
+      column,
+      order,
+    },
+  };
+
+  dispatch(updateLastCallsForFunction(functionName, sortLastCalls));
 };

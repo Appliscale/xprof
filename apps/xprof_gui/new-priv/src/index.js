@@ -5,12 +5,11 @@ import ReactDOM from 'react-dom';
 import { AppContainer } from 'react-hot-loader';
 import { Provider } from 'react-redux';
 
-import RootContainer from './containers/RootContainer/RootContainer';
+import { RootContainer } from './containers';
 import configureStore from './store/configureStore';
 
 import 'bootswatch/flatly/bootstrap.css';
 import './main.css';
-// import 'bootswatch/flatly/bootstrap.css';
 
 const render = Component => {
   ReactDOM.render(

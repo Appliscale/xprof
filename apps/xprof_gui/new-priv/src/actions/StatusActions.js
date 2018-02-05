@@ -1,24 +1,24 @@
 import * as types from '../constants/ActionTypes';
-import * as XProf from '../api/XProf';
-import { getStatus } from '../selectors/CommonSelectors';
+import * as XProf from '../api';
+import { getStatus } from '../selectors';
 import { STATUS, SPEC } from '../constants';
 
-export const setTraceStatus = status => ({
+const setTraceStatus = status => ({
   type: types.SET_TRACE_STATUS,
   status,
 });
 
-export const setTraceStatusRequest = status => ({
+const setTraceStatusRequest = status => ({
   type: types.TOGGLE_TRACE_STATUS,
   status,
 });
 
-export const setTraceStatusError = status => ({
+const setTraceStatusError = status => ({
   type: types.TOGGLE_TRACE_STATUS_ERROR,
   status,
 });
 
-export const setTraceStatusSuccess = status => ({
+const setTraceStatusSuccess = status => ({
   type: types.TOGGLE_TRACE_STATUS_SUCCESS,
   status,
 });
