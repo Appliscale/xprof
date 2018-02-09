@@ -12,21 +12,20 @@ import {
   calleeClick,
 } from '../../actions';
 import {
-  getData,
-  getMfas,
-  getCallees,
-  getCalleesVisibility,
-  getGraphVisibility,
+  getFunctionData,
+  getFunctionCallees,
+  getFunctionCalleesVisibility,
+  getFunctionGraphVisibility,
 } from '../../selectors';
 
 const MonitoringContainer = props => <Monitoring {...props} />;
 
-const mapStateToProps = state => ({
-  mfas: getMfas(state),
-  data: getData(state),
-  callees: getCallees(state),
-  calleesVisibility: getCalleesVisibility(state),
-  panelVisibility: getGraphVisibility(state),
+const mapStateToProps = (state, ownProps) => ({
+  mfa: ownProps.mfa,
+  data: getFunctionData(state, ownProps.mfa[3]),
+  callees: getFunctionCallees(state, ownProps.mfa[3]),
+  calleesVisibility: getFunctionCalleesVisibility(state, ownProps.mfa[3]),
+  panelVisibility: getFunctionGraphVisibility(state, ownProps.mfa[3]),
 });
 
 const mapDispatchToProps = {

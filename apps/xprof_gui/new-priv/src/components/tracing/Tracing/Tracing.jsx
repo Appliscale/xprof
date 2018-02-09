@@ -5,20 +5,21 @@ import { CallsPanel } from '../';
 import { CALLS_INTERVAL } from '../../../constants';
 
 const defaultProps = {
-  panelVisibility: {},
+  panelVisibility: false,
+  calls: [],
 };
 
 const propTypes = {
+  mfa: PropTypes.arrayOf(PropTypes.any).isRequired,
   getFunctionsCalls: PropTypes.func.isRequired,
-  mfas: PropTypes.arrayOf(PropTypes.arrayOf(PropTypes.any)).isRequired,
-  calls: PropTypes.objectOf(PropTypes.any).isRequired,
+  calls: PropTypes.arrayOf(PropTypes.object),
   toggleCallsTracing: PropTypes.func.isRequired,
   toggleExpandItem: PropTypes.func.isRequired,
   handleThresholdChange: PropTypes.func.isRequired,
   handleLimitChange: PropTypes.func.isRequired,
   controls: PropTypes.objectOf(PropTypes.any).isRequired,
   sortCallsBy: PropTypes.func.isRequired,
-  panelVisibility: PropTypes.objectOf(PropTypes.bool),
+  panelVisibility: PropTypes.bool,
   expandTracingPanel: PropTypes.func.isRequired,
   shrinkTracingPanel: PropTypes.func.isRequired,
 };
@@ -36,7 +37,7 @@ class Tracing extends React.Component {
 
   render() {
     const {
-      mfas,
+      mfa,
       calls,
       toggleCallsTracing,
       toggleExpandItem,
@@ -50,22 +51,20 @@ class Tracing extends React.Component {
     } = this.props;
     return (
       <div>
-        {mfas.map(mfa => (
-          <CallsPanel
-            key={mfa[3]}
-            mfa={mfa}
-            lastCalls={last(calls[mfa[3]])}
-            control={controls[mfa[3]]}
-            handleThresholdChange={handleThresholdChange}
-            handleLimitChange={handleLimitChange}
-            toggleCallsTracing={toggleCallsTracing}
-            sortCallsBy={sortCallsBy}
-            toggleExpandItem={toggleExpandItem}
-            panelVisibility={panelVisibility[mfa[3]]}
-            expand={expandTracingPanel}
-            shrink={shrinkTracingPanel}
-          />
-        ))}
+        <CallsPanel
+          key={mfa[3]}
+          mfa={mfa}
+          lastCalls={last(calls)}
+          control={controls}
+          handleThresholdChange={handleThresholdChange}
+          handleLimitChange={handleLimitChange}
+          toggleCallsTracing={toggleCallsTracing}
+          sortCallsBy={sortCallsBy}
+          toggleExpandItem={toggleExpandItem}
+          panelVisibility={panelVisibility}
+          expand={expandTracingPanel}
+          shrink={shrinkTracingPanel}
+        />
       </div>
     );
   }

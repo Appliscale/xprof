@@ -1,10 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import {
-  NavbarContainer,
-  MonitoringContainer,
-  TracingContainer,
-} from '../../containers';
+import { NavbarContainer, FunctionsContainer } from '../../containers';
 import { Footer } from '../navigation';
 import { STATUS_INTERVAL } from '../../constants';
 
@@ -22,8 +18,7 @@ class Root extends React.Component {
     return (
       <div>
         <NavbarContainer />
-        <MonitoringContainer />
-        <TracingContainer />
+        <FunctionsContainer />
         <Footer />
       </div>
     );

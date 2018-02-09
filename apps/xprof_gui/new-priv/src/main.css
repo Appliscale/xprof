@@ -172,3 +172,9 @@ input#searchBox {
 .callee-item:hover {
   font-weight: bold;
 }
+
+.function-separator {
+  margin-top: 30px;
+  margin-bottom: 30px;
+  border-top: 2px solid #fe6b2740;
+}

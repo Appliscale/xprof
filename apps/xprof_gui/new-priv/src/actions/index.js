@@ -29,6 +29,7 @@ export {
   showCallees,
   calleeClick,
   getCallees,
+  getCalleesForFunctions,
 } from './ExploringActions';
 export {
   expandGraphPanel,

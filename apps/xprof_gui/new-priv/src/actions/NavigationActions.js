@@ -7,7 +7,7 @@ import {
   getHighlightedFunction,
 } from '../selectors';
 import { HANDLED_KEYS } from '../constants';
-import { commonArrayPrefix, isMfa } from '../utils';
+import { commonArrayPrefix } from '../utils';
 import { startMonitoringFunction } from './';
 
 const setACfunctions = functions => ({
@@ -44,7 +44,7 @@ export const queryInputChange = query => async (dispatch) => {
 export const functionClick = selected => async (dispatch, getState) => {
   const state = getState();
   const query = getQuery(state);
-  if (selected.startsWith(query) && isMfa(selected)) {
+  if (selected.startsWith(query)) {
     dispatch(clearFunctionBrowser());
     dispatch(startMonitoringFunction(selected));
   } else {
@@ -91,10 +91,8 @@ export const queryKeyDown = key => async (dispatch, getState) => {
         chosenQuery = query;
       }
 
-      if (isMfa(chosenQuery)) {
-        dispatch(clearFunctionBrowser());
-        dispatch(startMonitoringFunction(chosenQuery));
-      }
+      dispatch(clearFunctionBrowser());
+      dispatch(startMonitoringFunction(chosenQuery));
       break;
     default:
       break;

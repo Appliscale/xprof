@@ -17,8 +17,6 @@ export const commonArrayPrefix = (sortedArray) => {
   return commonPrefix(string1, string2);
 };
 
-export const isMfa = str => str.includes(':') && str.includes('/');
-
 export const parseToMfa = fullName => [
   fullName.split(':')[0],
   fullName.split('/')[0].split(':')[1],

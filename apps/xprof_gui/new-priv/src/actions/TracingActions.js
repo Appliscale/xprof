@@ -1,4 +1,4 @@
-import { getLastCallsForFunction, getFunctionsControl } from '../selectors';
+import { getLastCallsForFunction, getFunctionControl } from '../selectors';
 import * as types from '../constants/ActionTypes';
 import { determineNextControlSwitch, sortItems } from '../utils';
 import { SORT } from '../constants';
@@ -41,7 +41,7 @@ export const toggleExpandItem = (mfa, item) => (dispatch, getState) => {
 export const toggleCallsTracing = mfa => async (dispatch, getState) => {
   const state = getState();
   const functionName = mfa[3];
-  const control = getFunctionsControl(state, functionName);
+  const control = getFunctionControl(state, functionName);
   const nextControl = await determineNextControlSwitch(control, mfa);
   dispatch(setCallsControl({ [functionName]: nextControl }));
 };
@@ -49,7 +49,7 @@ export const toggleCallsTracing = mfa => async (dispatch, getState) => {
 export const handleThresholdChange = (mfa, value) => (dispatch, getState) => {
   const state = getState();
   const functionName = mfa[3];
-  const { limit, collecting } = getFunctionsControl(state, functionName);
+  const { limit, collecting } = getFunctionControl(state, functionName);
   const nextControl = {
     threshold: value,
     limit,
@@ -61,7 +61,7 @@ export const handleThresholdChange = (mfa, value) => (dispatch, getState) => {
 export const handleLimitChange = (mfa, value) => (dispatch, getState) => {
   const state = getState();
   const functionName = mfa[3];
-  const { threshold, collecting } = getFunctionsControl(state, functionName);
+  const { threshold, collecting } = getFunctionControl(state, functionName);
   const nextControl = {
     threshold,
     limit: value,

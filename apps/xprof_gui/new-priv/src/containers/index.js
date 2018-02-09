@@ -6,3 +6,6 @@ export {
 export {
   default as TracingContainer,
 } from './TracingContainer/TracingContainer';
+export {
+  default as FunctionsContainer,
+} from './FunctionsContainer/FunctionsContainer';

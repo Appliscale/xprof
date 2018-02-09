@@ -1,8 +1,6 @@
 import { getMfas } from '../selectors';
 import * as types from '../constants/ActionTypes';
 import * as XProf from '../api';
-import { updateListMonitoringFunctions, setCallsControl, getCallees } from './';
-import { parseToMfa } from '../utils';
 
 const stopMonitoringFunctionRequest = mfas => ({
   type: types.STOP_MONITORING_FUNCTION,
@@ -37,21 +35,7 @@ export const startMonitoringFunction = functionName => async (
   const isMonitored = mfas.filter(mfa => mfa[3] === functionName).length;
 
   if (!isMonitored) {
-    const mfa = parseToMfa(functionName);
-    const control = {
-      threshold: undefined,
-      limit: undefined,
-      collecting: false,
-    };
-
-    dispatch(setCallsControl({ [functionName]: control }));
-    dispatch(updateListMonitoringFunctions([mfa, ...mfas]));
-    dispatch(getCallees(mfa));
-
     const { error } = await XProf.startMonitoringFunction(functionName);
-    if (error) {
-      console.log('ERROR: ', error);
-      dispatch(updateListMonitoringFunctions(mfas));
-    }
+    if (error) console.log('ERROR: ', error);
   }
 };

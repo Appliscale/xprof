@@ -12,19 +12,18 @@ import {
   shrinkTracingPanel,
 } from '../../actions';
 import {
-  getCalls,
-  getControls,
-  getMfas,
-  getTracingVisibility,
+  getFunctionCalls,
+  getFunctionControl,
+  getFunctionTracingVisibility,
 } from '../../selectors';
 
-const MonitoringContainer = props => <Tracing {...props} />;
+const TracingContainer = props => <Tracing {...props} />;
 
-const mapStateToProps = state => ({
-  mfas: getMfas(state),
-  calls: getCalls(state),
-  controls: getControls(state),
-  panelVisibility: getTracingVisibility(state),
+const mapStateToProps = (state, ownProps) => ({
+  mfa: ownProps.mfa,
+  calls: getFunctionCalls(state, ownProps.mfa[3]),
+  controls: getFunctionControl(state, ownProps.mfa[3]),
+  panelVisibility: getFunctionTracingVisibility(state, ownProps.mfa[3]),
 });
 
 const mapDispatchToProps = {
@@ -38,5 +37,5 @@ const mapDispatchToProps = {
   shrinkTracingPanel,
 };
 
-const con = connect(mapStateToProps, mapDispatchToProps)(MonitoringContainer);
+const con = connect(mapStateToProps, mapDispatchToProps)(TracingContainer);
 export default con;

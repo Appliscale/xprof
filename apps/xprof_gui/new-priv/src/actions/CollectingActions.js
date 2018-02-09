@@ -2,7 +2,7 @@ import { isEqual, isEmpty } from 'lodash';
 import * as types from '../constants/ActionTypes';
 import * as XProf from '../api';
 import { getMfas, getData, getCalls } from '../selectors';
-import { setCallsControl } from './';
+import { setCallsControl, getCalleesForFunctions } from './';
 import { determineNextData, determineNextCalls } from '../utils';
 
 export const updateListMonitoringFunctions = mfas => ({
@@ -42,6 +42,7 @@ export const getMonitoredFunctions = () => async (dispatch, getState) => {
       {},
     );
 
+    dispatch(getCalleesForFunctions(newMfas));
     dispatch(setCallsControl(newControls));
     dispatch(updateListMonitoringFunctions(json));
   }
