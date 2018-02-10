@@ -378,7 +378,12 @@ restore_default_mode() ->
     application:set_env(xprof, mode, erlang).
 
 long_function() ->
-    timer:sleep(50).
+    timer:sleep(50),
+    %% This list used to be formatted as a latin1 printable string
+    %% and the json encoder used to crash on it when returning the
+    %% captured return value.
+    %% Now it should be formatted as a unicode string.
+    [164].
 
 crash_function() ->
     dummy = timer:sleep(50).

@@ -116,7 +116,7 @@ fmt_exception(Class, Reason) ->
                    _ -> latin1
                end,
 
-    list_to_binary(
+    unicode:characters_to_binary(
       ["** "|lib:format_exception(1, Class, Reason, Stacktrace,
                                   SkipFun, PrettyFun, Encoding)]).
 
@@ -124,4 +124,4 @@ fmt_term(Term) ->
     fmt("~p", [Term]).
 
 fmt(Fmt, Args) ->
-    list_to_binary(io_lib:format(Fmt, Args)).
+    unicode:characters_to_binary(io_lib:format(Fmt, Args)).

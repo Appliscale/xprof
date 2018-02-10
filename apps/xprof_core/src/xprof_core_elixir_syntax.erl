@@ -236,4 +236,4 @@ fmt_term(Term) ->
     'Elixir.Kernel':inspect(Term).
 
 fmt(Fmt, Args) ->
-    list_to_binary(io_lib:format(Fmt, Args)).
+    unicode:characters_to_binary(io_lib:format(Fmt, Args)).

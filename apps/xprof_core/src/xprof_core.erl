@@ -69,7 +69,7 @@ get_matching_mfas_pp(Query) ->
 %% @doc Start monitoring based on the specified query string.
 -spec monitor_pp(binary()) -> ok | {error, Reason :: term()}.
 monitor_pp(Query) ->
-    xprof_core_tracer:monitor(binary_to_list(Query)).
+    xprof_core_tracer:monitor(unicode:characters_to_list(Query)).
 
 %% @doc Start monitoring the specified function (MFA).
 -spec monitor(mfa()) -> ok | {error, Reason :: already_traced}.
