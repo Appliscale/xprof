@@ -140,7 +140,8 @@ get_called_funs({Mod, Fun, Arity}) ->
 
         %% return filtered and sorted list of calls
         ModeCB = xprof_core_lib:get_mode_cb(),
-        FilterList = [{erlang, nif_error, 1}],
+        FilterList = [{Mod, Fun, Arity},
+                      {erlang, nif_error, 1}],
 
         lists:usort([Call || Call = {_, F, _} <- Calls,
                      not ModeCB:hidden_function(F),

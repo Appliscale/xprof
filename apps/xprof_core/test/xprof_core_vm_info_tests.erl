@@ -82,6 +82,10 @@ get_called_funs_test_() ->
      fun() ->
              ?assertEqual([], ?M:get_called_funs({lists, reverse, 2}))
      end},
+     {"Doesn't list itself in case of recursive function",
+      fun() ->
+              ?assertEqual([], ?M:get_called_funs({lists, nth, 2}))
+      end},
      {"Extract calls from loaded xprof modules",
      fun() ->
              code:load_file(xprof_core_lib),
