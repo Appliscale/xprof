@@ -121,7 +121,7 @@ fmt_exception(Class, Reason) ->
                                   SkipFun, PrettyFun, Encoding)]).
 
 fmt_term(Term) ->
-    fmt("~p", [Term]).
+    fmt("~w", [Term]).
 
 fmt(Fmt, Args) ->
     list_to_binary(io_lib:format(Fmt, Args)).
