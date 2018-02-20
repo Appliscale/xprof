@@ -205,21 +205,25 @@ fmt_mod(Mod) ->
 fmt_mod_and_delim(Mod) ->
     fmt("~ts.", [fmt_mod(Mod)]).
 
-%% escape_name was only introduced after Elixir 1.4.0
+%% `Inspect.Function.escape_name/1` was only introduced after Elixir 1.4.0
+%% and was in turn replaced by `Code.Identifier.inspect_as_function/1`
+%% in Elixir 1.6.0 (with the introduction of unquoted unicode function names,
+%% and in OTP 20 unicode atoms).
+%% The most compatible solution is to cut the interesting part
+%% from the documented `Exception.format_mfa/3` (which had known bugs
+%% in some Elixir versions, but that's life).
 fmt_fun('') ->
     <<":\"\"">>;
 fmt_fun(Fun) ->
     %%'Elixir.Inspect.Function':escape_name(Fun).
-    FunStr = atom_to_list(Fun),
-    case callable_atom(FunStr) of
-        true ->
-            list_to_binary(FunStr);
-        false ->
-            fmt("\"~ts\"", [FunStr])
-    end.
+    FunArity = fmt_fun_and_arity(Fun, 0),
+    FunSize = byte_size(FunArity) - 2,
+    <<FunBin:FunSize/binary, "/0">> = FunArity,
+    FunBin.
 
 fmt_fun_and_arity(Fun, Arity) ->
-    fmt("~ts/~b", [fmt_fun(Fun), Arity]).
+    <<":\"\".", FunArity/binary>> = 'Elixir.Exception':format_mfa('', Fun, Arity),
+    FunArity.
 
 fmt_exception(Class, Reason) ->
     %% Enforce empty stacktrace
@@ -232,23 +236,4 @@ fmt_term(Term) ->
     'Elixir.Kernel':inspect(Term).
 
 fmt(Fmt, Args) ->
-    list_to_binary(io_lib:format(Fmt, Args)).
-
-callable_atom([C|T]) when
-      (C >= $a andalso C =< $z) orelse
-      C =:= $_ ->
-    callable_atom_rest(T);
-callable_atom(_) ->
-    false.
-
-callable_atom_rest([]) -> true;
-callable_atom_rest("?") -> true;
-callable_atom_rest("!") -> true;
-callable_atom_rest([C|T]) when
-      (C >= $a andalso C =< $z) orelse
-      (C >= $A andalso C =< $Z) orelse
-      (C >= $0 andalso C=< $9) orelse
-      C =:= $_ orelse C =:= $@ ->
-    callable_atom_rest(T);
-callable_atom_rest(_) ->
-    false.
+    unicode:characters_to_binary(io_lib:format(Fmt, Args)).
