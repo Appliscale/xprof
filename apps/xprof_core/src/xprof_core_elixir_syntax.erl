@@ -124,15 +124,21 @@ pretty_err(Str) ->
 
 tokenizer_err(Str) ->
     case elixir_tokenizer:tokenize(Str, 1, []) of
-        {ok, _, _, Tokens} ->
+        {ok, Tokens} ->
             Tokens;
-        {error, {_Line, Error, Token}, _Rest, SoFar} ->
-            xprof_core_ms:err(err_str(Error), [Token, get_next_col(SoFar)])
+        {ok, _Line, _Column, Tokens} ->
+            %% old format returned before Elixir 1.6.0
+            Tokens;
+        {error, {_Line, Error, Token}, Rest, _SoFar} ->
+            NextCol = length(Str) - length(Rest) + 1,
+            xprof_core_ms:err(err_str(Error), [Token, NextCol])
     end.
 
 %% @doc 
 parser_err(Tokens) ->
     put(elixir_parser_file, <<"nofile">>),
+    put(elixir_formatter_metadata, false),
+
     try elixir_parser:parse(Tokens) of
         {error, {Loc, Mod, Err}} ->
             xprof_core_ms:err(Loc, Mod, Err);
@@ -140,24 +146,18 @@ parser_err(Tokens) ->
             quoted_to_ast(Quoted)
     catch
         %% I couldn't find a case where an error is thrown instead of returned
-        %% but elixir:string_to_string does catch too
+        %% but elixir:string_to_quoted does catch too
         {error, {Loc, Mod, Err}} ->
             xprof_core_ms:err(Loc, Mod, Err)
     after
-        erase(elixir_parser_file)
+        erase(elixir_parser_file),
+        erase(elixir_formatter_metadata)
     end.
 
 err_str({ErrorPrefix, ErrorSuffix}) ->
     lists:flatten([ErrorPrefix, "~s", ErrorSuffix, " at column ~p"]);
 err_str(Error) ->
     lists:flatten([Error, "~s at column ~p"]).
-
-get_next_col([]) ->
-    1;
-get_next_col([{_, {_Line, _StartCol, EndCol}}|_]) ->
-    EndCol + 1;
-get_next_col([{_, {_Line, _StartCol, EndCol}, _}|_]) ->
-    EndCol + 1.
 
 %% @doc Convert an Elixir quoted expression representing an Elixir module
 %% identifier (an atom or a dot-delimited alias list) into an Erlang module name
