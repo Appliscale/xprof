@@ -1,10 +1,17 @@
 JS_PRIV=apps/xprof_gui/priv
 BIN_DIR:=node_modules/.bin
 
+# this will update cowboy version based on rebar.config overwriting the lock file
+ifdef COWBOY_VERSION
+	MAYBE_UPDATE_COWBOY = ./rebar3 upgrade cowboy
+endif
+
 compile:
+	$(MAYBE_UPDATE_COWBOY)
 	./rebar3 compile
 
 dev: webpack
+	$(MAYBE_UPDATE_COWBOY)
 	./rebar3 as dev compile, shell
 
 npm:
@@ -25,12 +32,14 @@ webpack_autoreload: npm
 	cd $(JS_PRIV); $(BIN_DIR)/webpack -w -d
 
 test: compile
+	$(MAYBE_UPDATE_COWBOY)
 	./rebar3 do eunit -c, ct -c, cover
 
 doc:
 	./rebar3 edoc
 
 dialyzer:
+	$(MAYBE_UPDATE_COWBOY)
 	./rebar3 dialyzer
 
 publish:

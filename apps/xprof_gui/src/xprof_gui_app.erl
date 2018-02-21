@@ -11,6 +11,11 @@
 -define(APP, xprof_gui).
 -define(DEF_WEB_IF_PORT, 7890).
 -define(LISTENER, xprof_http_listener).
+-ifdef(COWBOY_VERSION_1).
+-define(HANDLER_MOD, xprof_gui_cowboy1_handler).
+-else.
+-define(HANDLER_MOD, xprof_gui_cowboy2_handler).
+-endif.
 
 %% Application callbacks
 
@@ -30,8 +35,8 @@ stop(_State) ->
 
 start_cowboy() ->
     Port = application:get_env(?APP, port, ?DEF_WEB_IF_PORT),
-    Dispatch = cowboy_dispatch(xprof_gui_cowboy1_handler),
-    xprof_gui_cowboy1_handler:start_listener(?LISTENER, Port, Dispatch).
+    Dispatch = cowboy_dispatch(?HANDLER_MOD),
+    ?HANDLER_MOD:start_listener(?LISTENER, Port, Dispatch).
 
 cowboy_dispatch(Mod) ->
     Routes =
