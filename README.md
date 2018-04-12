@@ -44,7 +44,7 @@ The preferred way is to add the `xprof` *Hex* package as a dependency to you reb
 
 {deps, [
        ...
-       {xprof, "1.3.0"}
+       {xprof, "2.0.0-rc.0"}
 ]}.
 ```
 
@@ -54,17 +54,21 @@ The preferred way is to add the `xprof` *Hex* package as a dependency to you reb
 defp deps do
     [
       ...
-      {:xprof, "~> 1.3.0"}
+      {:xprof, "~> 2.0.0-rc.0"}
     ]
   end
 ```
 
-You can also fetch from the github repository:
+You can also fetch from the github repository (not recommended, only for development):
+(TODO: finalize below example, needs raw and rsync resouce plugins)
 
 ```erlang
 {deps, [
        ...
-       {xprof, {git, "https://github.com/appliscale/xprof.git", {tag, "1.3.0"}}}
+       {xprof_umbrella, {raw, {git, "https://github.com/appliscale/xprof.git", {tag, "2.0.0-rc.0"}}}},
+       {xprof_core, {rsync, "_build/default/lib/xprof_umbrella/apps/xprof_core"}},
+       {xprof_gui, {rsync, "_build/default/lib/xprof_umbrella/apps/xprof_gui"}},
+       {xprof, {rsync, "_build/default/lib/xprof_umbrella/apps/xprof"}},
 ]}.
 ```
 

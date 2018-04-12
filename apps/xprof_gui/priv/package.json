@@ -1,7 +1,7 @@
 {
   "name": "xprof",
-  "version": "1.3.0",
-  "description": "XProf - BEAM profiler",
+  "version": "2.0.0-rc.0",
+  "description": "XProf - Visual tracer and profiler for BEAM languages",
   "repository": {
     "type": "git",
     "url": "https://github.com/appliscale/xprof.git"
