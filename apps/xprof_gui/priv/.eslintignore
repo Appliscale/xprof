@@ -1,2 +1,3 @@
-build/*.js
-build/*.js.map
+src/utils/registerServiceWorker.js
+scripts/*.js
+config/**/*.js
