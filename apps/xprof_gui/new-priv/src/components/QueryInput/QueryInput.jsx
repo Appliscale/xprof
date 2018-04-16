@@ -4,6 +4,7 @@ import { HANDLED_KEY_CODES } from '../../constants';
 
 const defaultProps = {
   placeholder: 'Hello BEAMer! Please specify your trace pattern here.',
+  error: false,
 };
 
 const propTypes = {
@@ -11,6 +12,7 @@ const propTypes = {
   queryInputChange: PropTypes.func.isRequired,
   query: PropTypes.string.isRequired,
   placeholder: PropTypes.string,
+  error: PropTypes.bool,
 };
 
 class QueryInput extends React.Component {
@@ -34,13 +36,21 @@ class QueryInput extends React.Component {
   }
 
   render() {
-    const { query, placeholder } = this.props;
+    const { query } = this.props;
+    let errorClass = '';
+    let { placeholder } = this.props;
+
+    if (this.props.error) {
+      errorClass = 'is-invalid';
+      placeholder = 'No such function!';
+    }
+
     return (
       <div>
         <input
           id="searchBox"
           type="text"
-          className="form-control"
+          className={`${errorClass} form-control`}
           placeholder={placeholder}
           aria-describedby="sizing-addon3"
           autoComplete="off"

@@ -5,6 +5,7 @@ import { QueryInput, ACModal } from '../';
 const defaultProps = {
   position: -1,
   placeholder: 'Hello BEAMer! Please specify your trace pattern here.',
+  error: false,
 };
 
 const propTypes = {
@@ -15,6 +16,7 @@ const propTypes = {
   functions: PropTypes.arrayOf(PropTypes.string).isRequired,
   functionClick: PropTypes.func.isRequired,
   position: PropTypes.number,
+  error: PropTypes.bool,
 };
 
 const FunctionBrowser = ({
@@ -25,6 +27,7 @@ const FunctionBrowser = ({
   functions,
   functionClick,
   position,
+  error,
 }) => (
   <form className="navbar-form">
     <div className="form-group" style={{ display: 'inline' }}>
@@ -37,6 +40,7 @@ const FunctionBrowser = ({
           queryInputChange={queryInputChange}
           query={query}
           placeholder={placeholder}
+          error={error}
         />
         <ACModal
           functions={functions}

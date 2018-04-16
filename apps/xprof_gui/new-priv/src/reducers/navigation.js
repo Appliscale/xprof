@@ -4,6 +4,7 @@ const initialState = {
   query: '',
   functions: [],
   position: -1,
+  error: false,
 };
 
 const navigation = (state = initialState, action) => {
@@ -12,12 +13,14 @@ const navigation = (state = initialState, action) => {
       return {
         ...state,
         query: action.query,
+        error: false,
       };
     case types.CLEAR_FUNCTION_BROWSER:
       return {
         ...state,
         query: '',
         functions: [],
+        error: false,
       };
     case types.SET_POSITION:
       return {
@@ -28,7 +31,14 @@ const navigation = (state = initialState, action) => {
       return {
         ...state,
         functions: action.functions,
+        error: false,
       };
+    case types.NO_SUCH_FUNCTION_ERROR:
+      return {
+        ...state,
+        error: true,
+      };
+
     default:
       return state;
   }

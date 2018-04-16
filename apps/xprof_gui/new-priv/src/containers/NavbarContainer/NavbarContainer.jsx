@@ -13,6 +13,7 @@ import {
   getQuery,
   getACfunctions,
   getACposition,
+  getError,
 } from '../../selectors/CommonSelectors';
 
 const NavContainer = props => <Navbar {...props} />;
@@ -22,6 +23,7 @@ const mapStateToProps = state => ({
   query: getQuery(state),
   functions: getACfunctions(state),
   position: getACposition(state),
+  error: getError(state),
 });
 
 const mapDispatchToProps = {
