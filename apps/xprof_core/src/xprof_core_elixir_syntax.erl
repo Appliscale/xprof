@@ -6,6 +6,7 @@
 -behaviour(xprof_core_language).
 
 -export([parse_query/1,
+         parse_incomplete_query/1,
          parse_match_spec/1,
          hidden_function/1,
          fmt_mfa/3,
@@ -30,6 +31,28 @@ parse_query("%" ++ _ = _Query) ->
     {error, not_implemented};
 parse_query(Query) ->
     {ok, funlatency, [{mfa, Query}]}.
+
+-spec parse_incomplete_query(string()) ->
+    {ok, Cmd, Params}
+  | {incomplete_cmd, CmdPrefix}
+  | {incomplete_key, KeyPrefix, Cmd, ParamsSoFar}
+  | {incomplete_value, Key, ValuePrefix, Cmd, ParamsSoFar}
+  when
+      Cmd :: xprof_core:cmd(),
+      CmdPrefix :: atom(), %% binary()/string() ???
+      Params :: xprof_core:params(),
+      ParamsSoFar :: xprof_core:params(),
+      Key :: atom(),
+      KeyPrefix :: atom(), %% binary()/string() ???
+      ValuePrefix :: string(). %% binary() ???
+%% throw:{error, Reason :: term()}
+parse_incomplete_query(_Query) ->
+    %%{ok, Tokens, Rest} = tokens_query(Query, incomplete),
+    %%case parse_query_tokens(Tokens, cmd, undefined, []) of
+    %%    _ ->
+    %%        []
+    %%end.
+    [].
 
 %% @doc Parse a query string that represents either a module-funtion-arity
 %% or an xprof-flavoured match-spec fun in Elixir syntax.
