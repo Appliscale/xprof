@@ -110,18 +110,14 @@ fmt_fun_and_arity(Fun, Arity) ->
 fmt_exception(Class, Reason) ->
     Stacktrace = [],
     SkipFun = fun(_M, _F, _A) -> false end,
-    PrettyFun = fun(Term, _Indent) -> io_lib:format("~w", [Term]) end,
-    Encoding = case lists:keyfind(encoding, 1, io:getopts()) of
-                   {_, Enc} -> Enc;
-                   _ -> latin1
-               end,
-
-    list_to_binary(
+    PrettyFun = fun(Term, _Indent) -> io_lib:format("~tp", [Term]) end,
+    Encoding = unicode,
+    unicode:characters_to_binary(
       ["** "|lib:format_exception(1, Class, Reason, Stacktrace,
                                   SkipFun, PrettyFun, Encoding)]).
 
 fmt_term(Term) ->
-    fmt("~p", [Term]).
+    fmt("~tp", [Term]).
 
 fmt(Fmt, Args) ->
-    list_to_binary(io_lib:format(Fmt, Args)).
+    unicode:characters_to_binary(io_lib:format(Fmt, Args)).

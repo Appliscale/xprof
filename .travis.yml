@@ -3,12 +3,16 @@ branches:
     only:
         - master
         - release_2.0
-otp_release:
-    - 20.0
-    - 19.3
-    - 18.3
-    - 17.5
-    - R16B03-1
+matrix:
+    include:
+        - otp_release: 20.0
+        - otp_release: 19.3
+        - otp_release: 18.3
+          env: COWBOY_VERSION=1.1.2
+        - otp_release: 17.5
+          env: COWBOY_VERSION=1.1.2
+        - otp_release: R16B03-1
+          env: COWBOY_VERSION=1.1.2
 cache:
     directories:
         - $HOME/.cache/rebar3
@@ -21,6 +25,7 @@ script:
     - make test
     - make test_front_end
     - if [ $TRAVIS_OTP_RELEASE = "20.0" ]; then make doc dialyzer; fi
+    - if [ $TRAVIS_OTP_RELEASE = "17.5" ]; then make dialyzer; fi   # run dialyzer with cowboy 1.x too
 after_success:
     - ./rebar3 cover
-    - if [ $TRAVIS_OTP_RELEASE = "18.3" ]; then ./rebar3 coveralls send; fi
+    - if [ $TRAVIS_OTP_RELEASE = "20.0" ]; then ./rebar3 coveralls send; fi

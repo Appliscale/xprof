@@ -38,7 +38,7 @@ monitor(Query) when is_list(Query) ->
         {ok, MFASpec} ->
             lager:info("Starting monitoring ~s",[Query]),
             gen_server:call(
-              ?MODULE, {monitor, MFASpec, list_to_binary(Query)});
+              ?MODULE, {monitor, MFASpec, unicode:characters_to_binary(Query)});
         {error, Reason} = Error ->
             lager:error(Reason),
             Error
