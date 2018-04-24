@@ -4,11 +4,12 @@ import FunctionBrowser from './FunctionBrowser';
 
 describe('FunctionBrowser component', () => {
   const props = {
-    handleKeyDown: jest.fn(),
-    handleInputChange: jest.fn(),
-    value: '',
+    queryKeyDown: jest.fn(),
+    queryInputChange: jest.fn(),
+    query: '',
     functions: [''],
-    onFunctionClickedModal: jest.fn(),
+    functionClick: jest.fn(),
+    setPositionOnFunction: jest.fn(),
   };
   it('renders', () => {
     const wrapper = shallow(<FunctionBrowser {...props} />);

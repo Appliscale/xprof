@@ -7,8 +7,9 @@ import { MAX_FUNCTIONS_AUTOCOMPLETER } from '../../../constants';
 describe('ACModal component', () => {
   const props = {
     functions: ['fun1', 'fun2', 'fun3'],
-    onFunctionClickedModal: jest.fn(),
+    functionClick: jest.fn(),
     position: 1,
+    setPositionOnFunction: jest.fn(),
   };
   const wrapper = shallow(<ACModal {...props} />);
 

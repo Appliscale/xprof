@@ -3,8 +3,18 @@ import { shallow } from 'enzyme';
 import Root from './Root';
 
 describe('Root component', () => {
+  let props;
+  let wrapper;
+
+  beforeEach(() => {
+    props = {
+      getTraceStatus: jest.fn(),
+      getMode: jest.fn(),
+    };
+    wrapper = shallow(<Root {...props} />);
+  });
+
   it('renders', () => {
-    const wrapper = shallow(<Root />);
     expect(wrapper).toBePresent();
   });
 });

@@ -6,11 +6,12 @@ describe('Navbar component', () => {
   const props = {
     status: '',
     toggleTraceStatus: jest.fn(),
-    handleKeyDown: jest.fn(),
-    handleInputChange: jest.fn(),
-    value: '',
+    queryKeyDown: jest.fn(),
+    queryInputChange: jest.fn(),
+    query: '',
     functions: [''],
-    onFunctionClickedModal: jest.fn(),
+    functionClick: jest.fn(),
+    setPositionOnFunction: jest.fn(),
   };
   it('renders', () => {
     const wrapper = shallow(<Navbar {...props} />);
