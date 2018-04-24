@@ -16,7 +16,6 @@ matrix:
 cache:
     directories:
         - $HOME/.cache/rebar3
-        - priv/node_modules
 install:
     - ./rebar3 deps
     - nvm install 6.2 && nvm use 6.2
