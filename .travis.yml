@@ -16,7 +16,7 @@ matrix:
 cache:
     directories:
         - $HOME/.cache/rebar3
-        - priv/node_modules
+        - apps/xprof_gui/priv/node_modules
 install:
     - ./rebar3 deps
     - nvm install 8.11.1 && nvm use 8.11.1
