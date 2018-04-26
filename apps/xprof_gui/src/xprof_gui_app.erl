@@ -41,10 +41,8 @@ start_cowboy() ->
 cowboy_dispatch(Mod) ->
     Routes =
         [{'_', [{"/api/:what", Mod, []},
-                {"/build/[...]", cowboy_static, {priv_dir, ?APP, "build"}},
-                {"/styles/[...]", cowboy_static, {priv_dir, ?APP, "styles"}},
-                {"/img/[...]", cowboy_static, {priv_dir, ?APP, "img"}},
-                {"/", cowboy_static, {priv_file, ?APP, "index.html"}}
+                {"/", cowboy_static, {priv_file, ?APP, "build/index.html"}},
+                {"/[...]", cowboy_static, {priv_dir, ?APP, "build"}}
                ]}],
     cowboy_router:compile(Routes).
 
