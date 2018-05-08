@@ -12,7 +12,11 @@ const propTypes = {
   handleThresholdChange: PropTypes.func.isRequired,
   handleLimitChange: PropTypes.func.isRequired,
   toggleCallsTracing: PropTypes.func.isRequired,
-  mfa: PropTypes.arrayOf(PropTypes.any).isRequired,
+  mfa: PropTypes.shape({
+    graph_type: PropTypes.string,
+    mfa: PropTypes.arrayOf(PropTypes.any),
+    query: PropTypes.string,
+  }).isRequired,
   sortCallsBy: PropTypes.func.isRequired,
   toggleExpandItem: PropTypes.func.isRequired,
   control: PropTypes.objectOf(PropTypes.any).isRequired,
@@ -38,11 +42,11 @@ const CallsPanel = ({
     <div className="panel-heading">
       <CallsUtilsButtons
         panelVisibility={panelVisibility}
-        expand={() => expand(mfa[3])}
-        shrink={() => shrink(mfa[3])}
+        expand={() => expand(mfa.query)}
+        shrink={() => shrink(mfa.query)}
       />
       <h3 className="panel-title">
-        {mfa[3]}
+        {mfa.query}
         <span className="panel-subtitle"> - Slow calls tracing</span>
       </h3>
     </div>

@@ -22,7 +22,7 @@ const updateLastCallsForFunction = (functionName, sortedCalls) => ({
 
 export const toggleExpandItem = (mfa, item) => (dispatch, getState) => {
   const state = getState();
-  const functionName = mfa[3];
+  const functionName = mfa.query;
   const lastCallsForFunction = getLastCallsForFunction(state, functionName);
 
   const updatedItems = lastCallsForFunction.sort.items.map((call) => {
@@ -40,7 +40,7 @@ export const toggleExpandItem = (mfa, item) => (dispatch, getState) => {
 
 export const toggleCallsTracing = mfa => async (dispatch, getState) => {
   const state = getState();
-  const functionName = mfa[3];
+  const functionName = mfa.query;
   const control = getFunctionControl(state, functionName);
   const nextControl = await determineNextControlSwitch(control, mfa);
   dispatch(setCallsControl({ [functionName]: nextControl }));
@@ -48,7 +48,7 @@ export const toggleCallsTracing = mfa => async (dispatch, getState) => {
 
 export const handleThresholdChange = (mfa, value) => (dispatch, getState) => {
   const state = getState();
-  const functionName = mfa[3];
+  const functionName = mfa.query;
   const { limit, collecting } = getFunctionControl(state, functionName);
   const nextControl = {
     threshold: value,
@@ -60,7 +60,7 @@ export const handleThresholdChange = (mfa, value) => (dispatch, getState) => {
 
 export const handleLimitChange = (mfa, value) => (dispatch, getState) => {
   const state = getState();
-  const functionName = mfa[3];
+  const functionName = mfa.query;
   const { threshold, collecting } = getFunctionControl(state, functionName);
   const nextControl = {
     threshold,
@@ -72,7 +72,7 @@ export const handleLimitChange = (mfa, value) => (dispatch, getState) => {
 
 export const sortCallsBy = (mfa, column) => (dispatch, getState) => {
   const state = getState();
-  const functionName = mfa[3];
+  const functionName = mfa.query;
   const lastCallsForFunction = getLastCallsForFunction(state, functionName);
   const order =
     lastCallsForFunction.sort.column === column &&

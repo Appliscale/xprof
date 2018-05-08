@@ -29,11 +29,13 @@ export const getMonitoredFunctions = () => async (dispatch, getState) => {
   if (error) {
     console.log('ERROR: ', error);
   } else if (!isEqual(mfas, json)) {
-    const newMfas = json.filter(mfa => !mfas.map(f => f[3]).includes(mfa[3]));
+    const newMfas = json
+      .filter(mfa => !mfas.map(f => f.query)
+        .includes(mfa.query));
     const newControls = newMfas.reduce(
       (control, mfa) => ({
         ...control,
-        [mfa[3]]: {
+        [mfa.query]: {
           threshold: undefined,
           limit: undefined,
           collecting: false,

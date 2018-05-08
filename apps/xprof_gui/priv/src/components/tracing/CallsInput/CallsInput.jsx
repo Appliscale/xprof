@@ -11,7 +11,11 @@ const defaultProps = {
 };
 
 const propTypes = {
-  mfa: PropTypes.arrayOf(PropTypes.any).isRequired,
+  mfa: PropTypes.shape({
+    graph_type: PropTypes.string,
+    mfa: PropTypes.arrayOf(PropTypes.any),
+    query: PropTypes.string,
+  }).isRequired,
   threshold: PropTypes.string,
   handleThresholdChange: PropTypes.func.isRequired,
   limit: PropTypes.string,

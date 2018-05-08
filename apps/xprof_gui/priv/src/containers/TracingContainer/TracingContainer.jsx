@@ -21,9 +21,9 @@ const TracingContainer = props => <Tracing {...props} />;
 
 const mapStateToProps = (state, ownProps) => ({
   mfa: ownProps.mfa,
-  calls: getFunctionCalls(state, ownProps.mfa[3]),
-  controls: getFunctionControl(state, ownProps.mfa[3]),
-  panelVisibility: getFunctionTracingVisibility(state, ownProps.mfa[3]),
+  calls: getFunctionCalls(state, ownProps.mfa.query),
+  controls: getFunctionControl(state, ownProps.mfa.query),
+  panelVisibility: getFunctionTracingVisibility(state, ownProps.mfa.query),
 });
 
 const mapDispatchToProps = {

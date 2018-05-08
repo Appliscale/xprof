@@ -22,13 +22,13 @@ export const calleeClick = callee => (dispatch) => {
   dispatch(startMonitoringFunction(callee));
 };
 
-export const getCallees = mfa => async (dispatch) => {
-  const name = mfa[3];
+export const getCallees = m => async (dispatch) => {
+  const name = m.query;
 
   const { json, error } = await XProf.getFunctionsCallees(
-    mfa[0],
-    mfa[1],
-    mfa[2],
+    m.mfa[0],
+    m.mfa[1],
+    m.mfa[2],
   );
 
   if (error) console.log('ERROR');
@@ -39,13 +39,13 @@ export const getCallees = mfa => async (dispatch) => {
 export const getCalleesForFunctions = mfas => async (dispatch) => {
   const callees = {};
 
-  await Promise.all(mfas.map(async (mfa) => {
-    const fun = mfa[3];
+  await Promise.all(mfas.map(async (m) => {
+    const fun = m.query;
 
     const { json, error } = await XProf.getFunctionsCallees(
-      mfa[0],
-      mfa[1],
-      mfa[2],
+      m.mfa[0],
+      m.mfa[1],
+      m.mfa[2],
     );
 
     if (error) console.log('ERROR');

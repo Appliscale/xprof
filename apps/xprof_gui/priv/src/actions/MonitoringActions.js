@@ -12,14 +12,18 @@ const stopMonitoringFunctionError = mfas => ({
   mfas,
 });
 
-export const stopMonitoringFunction = mfa => async (dispatch, getState) => {
+export const stopMonitoringFunction = m => async (dispatch, getState) => {
   const state = getState();
   const mfas = getMfas(state);
-  const mfasReduced = mfas.filter(m => m[3] !== mfa[3]);
+  const mfasReduced = mfas.filter(f => f.query !== m.query);
 
   dispatch(stopMonitoringFunctionRequest(mfasReduced));
 
-  const { error } = await XProf.stopMonitoringFunction(mfa[0], mfa[1], mfa[2]);
+  const { error } = await XProf.stopMonitoringFunction(
+    m.mfa[0],
+    m.mfa[1],
+    m.mfa[2],
+  );
   if (error) {
     console.log('ERROR: ', error);
     dispatch(stopMonitoringFunctionError(mfas));
@@ -32,7 +36,7 @@ export const startMonitoringFunction = functionName => async (
 ) => {
   const state = getState();
   const mfas = getMfas(state);
-  const isMonitored = mfas.filter(mfa => mfa[3] === functionName).length;
+  const isMonitored = mfas.filter(mfa => mfa.query === functionName).length;
 
   if (!isMonitored) {
     const { error } = await XProf.startMonitoringFunction(functionName);

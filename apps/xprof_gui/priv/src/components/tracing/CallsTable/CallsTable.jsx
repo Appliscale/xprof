@@ -7,7 +7,11 @@ const defaultProps = {
   sort: { items: [] },
 };
 const propTypes = {
-  mfa: PropTypes.arrayOf(PropTypes.any).isRequired,
+  mfa: PropTypes.shape({
+    graph_type: PropTypes.string,
+    mfa: PropTypes.arrayOf(PropTypes.any),
+    query: PropTypes.string,
+  }).isRequired,
   sort: PropTypes.objectOf(PropTypes.any),
   sortCallsBy: PropTypes.func.isRequired,
   toggleExpandItem: PropTypes.func.isRequired,

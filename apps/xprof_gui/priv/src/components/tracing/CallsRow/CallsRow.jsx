@@ -11,7 +11,11 @@ const propTypes = {
     expanded: PropTypes.bool,
   }).isRequired,
   toggleExpandItem: PropTypes.func.isRequired,
-  mfa: PropTypes.arrayOf(PropTypes.any).isRequired,
+  mfa: PropTypes.shape({
+    graph_type: PropTypes.string,
+    mfa: PropTypes.arrayOf(PropTypes.any),
+    query: PropTypes.string,
+  }).isRequired,
 };
 
 const CallsRow = ({ mfa, item, toggleExpandItem }) => {

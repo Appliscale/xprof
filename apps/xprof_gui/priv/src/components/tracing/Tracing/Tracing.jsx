@@ -10,7 +10,11 @@ const defaultProps = {
 };
 
 const propTypes = {
-  mfa: PropTypes.arrayOf(PropTypes.any).isRequired,
+  mfa: PropTypes.shape({
+    graph_type: PropTypes.string,
+    mfa: PropTypes.arrayOf(PropTypes.any),
+    query: PropTypes.string,
+  }).isRequired,
   getFunctionsCalls: PropTypes.func.isRequired,
   calls: PropTypes.arrayOf(PropTypes.object),
   toggleCallsTracing: PropTypes.func.isRequired,
@@ -52,7 +56,7 @@ class Tracing extends React.Component {
     return (
       <div>
         <CallsPanel
-          key={mfa[3]}
+          key={mfa.query}
           mfa={mfa}
           lastCalls={last(calls)}
           control={controls}

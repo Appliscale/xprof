@@ -10,7 +10,11 @@ const defaultProps = {
 };
 
 const propTypes = {
-  mfa: PropTypes.arrayOf(PropTypes.any).isRequired,
+  mfa: PropTypes.shape({
+    graph_type: PropTypes.string,
+    mfa: PropTypes.arrayOf(PropTypes.any),
+    query: PropTypes.string,
+  }).isRequired,
   dps: PropTypes.arrayOf(PropTypes.object),
   stopMonitoringFunction: PropTypes.func.isRequired,
   callees: PropTypes.arrayOf(PropTypes.string),
@@ -42,16 +46,16 @@ const GraphPanel = ({
       stopMonitoringFunction={() => stopMonitoringFunction(mfa)}
       callees={callees}
       calleesVisibility={calleesVisibility}
-      showCallees={() => showCallees(mfa[3])}
-      hideCallees={() => hideCallees(mfa[3])}
+      showCallees={() => showCallees(mfa.query)}
+      hideCallees={() => hideCallees(mfa.query)}
       panelVisibility={panelVisibility}
-      expand={() => expand(mfa[3])}
-      shrink={() => shrink(mfa[3])}
+      expand={() => expand(mfa.query)}
+      shrink={() => shrink(mfa.query)}
       calleeClick={calleeClick}
     />
     {panelVisibility ? (
       <div className="panel-body">
-        <Graph dps={dps} />
+        <Graph dps={dps} type={mfa.graph_type} />
       </div>
     ) : null}
   </div>
