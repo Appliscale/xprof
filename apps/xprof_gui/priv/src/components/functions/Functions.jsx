@@ -6,6 +6,7 @@ import { FUNCTIONS_INTERVAL } from '../../constants';
 const propTypes = {
   getMonitoredFunctions: PropTypes.func.isRequired,
   mfas: PropTypes.arrayOf(PropTypes.arrayOf(PropTypes.any)).isRequired,
+  running: PropTypes.bool.isRequired,
 };
 
 class Functions extends React.Component {
@@ -24,12 +25,12 @@ class Functions extends React.Component {
   }
 
   render() {
-    const { mfas } = this.props;
+    const { mfas, running } = this.props;
     return (
       <div>
         {mfas.map((mfa, index) => (
           <div key={mfa[3]}>
-            <MonitoringContainer mfa={mfa} />
+            <MonitoringContainer mfa={mfa} running={running} />
             <TracingContainer mfa={mfa} />
             {index < mfas.length - 1 ? (
               <hr className="function-separator" />
