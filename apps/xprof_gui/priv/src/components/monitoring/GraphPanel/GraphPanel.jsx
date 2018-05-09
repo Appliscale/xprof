@@ -55,7 +55,7 @@ const GraphPanel = ({
     />
     {panelVisibility ? (
       <div className="panel-body">
-        <Graph dps={dps} type={mfa.graph_type} />
+        <Graph dps={dps} type={mfa.graph_type} query={mfa.query} />
       </div>
     ) : null}
   </div>

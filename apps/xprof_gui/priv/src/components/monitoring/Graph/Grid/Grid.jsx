@@ -15,7 +15,6 @@ import {
   renderTooltip,
   calcFont,
 } from './gridUtils';
-// import scaleCluster from 'd3-scale-cluster';
 
 class Grid extends React.Component {
   constructor(props) {
@@ -35,18 +34,20 @@ class Grid extends React.Component {
 
   componentWillMount() {
     // Create tooltip - then it will be only relocated.
-    d3.select('#root').append('div')
-      .attr('id', 'tip')
-      .style('position', 'absolute')
-      .style('padding', '2px')
-      .style('font', '0.75em sans-serif')
-      .style('background', '#f5f5f5')
-      .style('border', '20px')
-      .style('border-radius', '2px')
-      .style('pointer-events', 'none')
-      .style('visibility', 'visible')
-      .style('opacity', 0.9)
-      .style('z-index', 99);
+    if (!document.getElementById('tip')) {
+      d3.select('#root').append('div')
+        .attr('id', 'tip')
+        .style('position', 'absolute')
+        .style('padding', '2px')
+        .style('font', '0.75em sans-serif')
+        .style('background', '#f5f5f5')
+        .style('border', '20px')
+        .style('border-radius', '2px')
+        .style('pointer-events', 'none')
+        .style('visibility', 'visible')
+        .style('opacity', 0.9)
+        .style('z-index', 99);
+    }
   }
 
   componentDidMount() {
@@ -71,14 +72,15 @@ class Grid extends React.Component {
       The chart is constantly redrawing itself
       in a cycle of collapsing and self-creation.
     */
-    d3.select('#gridTable').remove();
-    d3.select('#xAxis').remove();
-    d3.select('#yAxis').remove();
+    const { graphID } = this.props;
+    d3.select(`#gridTable-${graphID}`).remove();
+    d3.select(`#xAxis-${graphID}`).remove();
+    d3.select(`#yAxis-${graphID}`).remove();
     d3.select('#tip').style('visibility', 'hidden');
   }
 
   componentDidUpdate() {
-    const { data } = this.props;
+    const { data, graphID } = this.props;
     const { size } = this.state;
     const dataArray = dataTransform(data);
 
@@ -98,9 +100,9 @@ class Grid extends React.Component {
     const tooltip = d3.select('#tip');
 
     // Append chart
-    const grid = d3.select('#grid')
+    const grid = d3.select(`#grid-${graphID}`)
       .append('svg')
-      .attr('id', 'gridTable')
+      .attr('id', `gridTable-${graphID}`)
       .attr('width', size.width)
       .attr('height', size.height)
       /*
@@ -138,16 +140,16 @@ class Grid extends React.Component {
 
     // Append x axis
     // creating the xAxis abstract container
-    const xAxis = d3.select('#x')
+    const xAxis = d3.select(`#x-${graphID}`)
       .append('svg')
-      .attr('id', 'xAxis')
+      .attr('id', `xAxis-${graphID}`)
       .attr('width', size.width + 20)
       .attr('height', size.marginBottom);
 
     /*
       The axis won't be a common d3 axis as the heatmap looks better
       with so-called bar-axis. Every color-rectangle will have
-      corresponding axis-rectangle below and on the right side of the grid.
+      corresponding axis-rectangle below and on the left side of the grid.
       That's why we are not calling the d3 axis method but instead we
       create a single, special grid-row and grid-column.
     */
@@ -195,9 +197,9 @@ class Grid extends React.Component {
 
     // Append y axis
 
-    const yAxis = d3.select('#y')
+    const yAxis = d3.select(`#y-${graphID}`)
       .append('svg')
-      .attr('id', 'yAxis')
+      .attr('id', `yAxis-${graphID}`)
       .attr('width', size.marginLeft)
       .attr('height', size.height);
 
@@ -271,20 +273,21 @@ class Grid extends React.Component {
   }
 
   render() {
+    const { graphID } = this.props;
     return (
       <div style={{ display: 'inline-block' }}>
         <div style={{ display: 'inline-block' }}>
           <div
-            id="y"
+            id={`y-${graphID}`}
             style={{
               display: 'inline-block',
               marginRight: 7, // the little space between bar-axis and the grid
             }}
           />
-          <div id="grid" style={{ display: 'inline-block' }} />
+          <div id={`grid-${graphID}`} style={{ display: 'inline-block' }} />
         </div>
         <div
-          id="x"
+          id={`x-${graphID}`}
           style={{
             height: this.state.size.marginBottom,
             width: this.state.size.width,
@@ -306,6 +309,7 @@ Grid.propTypes = {
     names: {},
   }).isRequired,
   outerWidth: PropTypes.number.isRequired,
+  graphID: PropTypes.string.isRequired,
 };
 
 export default Grid;
