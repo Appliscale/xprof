@@ -27,13 +27,29 @@ const propTypes = {
   expandGraphPanel: PropTypes.func.isRequired,
   shrinkGraphPanel: PropTypes.func.isRequired,
   calleeClick: PropTypes.func.isRequired,
+  running: PropTypes.bool.isRequired,
 };
 
 class Monitoring extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      snapshot: null,
+    };
+  }
+
   componentWillMount() {
-    const { getFunctionsData } = this.props;
+    const { getFunctionsData, data } = this.props;
     getFunctionsData();
     this.dataInterval = setInterval(getFunctionsData, DATA_INTERVAL);
+    this.setState({ snapshot: data });
+  }
+
+  componentWillReceiveProps(nextProps) {
+    const { running, data } = this.props;
+    if (nextProps.running !== running && running === true) {
+      this.setState({ snapshot: data });
+    }
   }
 
   componentWillUnmount() {
@@ -54,13 +70,15 @@ class Monitoring extends React.Component {
       expandGraphPanel,
       shrinkGraphPanel,
       calleeClick,
+      running,
     } = this.props;
+    const { snapshot } = this.state;
     return (
       <div>
         <GraphPanel
           key={mfa.query}
           mfa={mfa}
-          dps={data}
+          dps={running ? data : snapshot}
           stopMonitoringFunction={stopMonitoringFunction}
           callees={callees}
           calleesVisibility={calleesVisibility}

@@ -10,6 +10,7 @@ const propTypes = {
     mfa: PropTypes.arrayOf(PropTypes.any),
     query: PropTypes.string,
   })).isRequired,
+  running: PropTypes.bool.isRequired,
 };
 
 class Functions extends React.Component {
@@ -28,12 +29,12 @@ class Functions extends React.Component {
   }
 
   render() {
-    const { mfas } = this.props;
+    const { mfas, running } = this.props;
     return (
       <div>
         {mfas.map((m, index) => (
           <div key={m.query}>
-            <MonitoringContainer mfa={m} />
+            <MonitoringContainer mfa={m} running={running} />
             <TracingContainer mfa={m} />
             {index < mfas.length - 1 ? (
               <hr className="function-separator" />

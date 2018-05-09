@@ -26,6 +26,7 @@ const mapStateToProps = (state, ownProps) => ({
   callees: getFunctionCallees(state, ownProps.mfa.query),
   calleesVisibility: getFunctionCalleesVisibility(state, ownProps.mfa.query),
   panelVisibility: getFunctionGraphVisibility(state, ownProps.mfa.query),
+  running: ownProps.running,
 });
 
 const mapDispatchToProps = {
