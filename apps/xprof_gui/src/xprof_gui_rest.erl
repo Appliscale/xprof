@@ -287,7 +287,10 @@ do_handle_req(<<"mon_get_all">>, _Params) ->
     Funs = xprof_core:get_all_monitored(),
     FunsArr = [{[{<<"mfa">>, [Mod, Fun, Arity]},
                  {<<"query">>, Query},
-                 {<<"graph_type">>, <<"percentiles">>}
+                 {<<"graph_type">>, case Query of
+                                        <<"#argdist ", _/binary>> -> <<"grid">>;
+                                        _ -> <<"percentiles">>
+                                    end}
                 ]}
                || {{Mod, Fun, Arity}, Query} <- Funs],
     Json = jsone:encode(FunsArr),
