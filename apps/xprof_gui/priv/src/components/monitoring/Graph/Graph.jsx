@@ -20,11 +20,13 @@ const propTypes = {
 };
 
 const Graph = ({ dps, type, query }) => {
-  const wrapper = document.getElementById(`graphWrapper-${composeID(query)}`);
+  const queryID = composeID(query);
+  const wrapperID = `graphWrapper-${queryID}`;
+  const wrapper = document.getElementById(wrapperID);
   if (type === 'grid') {
     return (
       <div
-        id={`graphWrapper-${composeID(query)}`}
+        id={wrapperID}
         style={{
           textAlign: 'center',
           justifyContent: 'center',
@@ -33,7 +35,7 @@ const Graph = ({ dps, type, query }) => {
         {wrapper && <Grid
           data={{ ...DATA, json: dps }}
           outerWidth={wrapper.clientWidth}
-          graphID={composeID(query)}
+          graphID={queryID}
         />}
       </div>
     );
