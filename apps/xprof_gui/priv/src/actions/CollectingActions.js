@@ -54,7 +54,8 @@ export const getFunctionsData = () => async (dispatch, getState) => {
   const state = getState();
   const mfas = getMfas(state);
   const data = getData(state);
-  const nextData = await determineNextData(mfas, data);
+  const running = state.status.status === 'running';
+  const nextData = running && await determineNextData(mfas, data);
 
   if (!isEmpty(nextData)) {
     dispatch(updateData({ ...data, ...nextData }));
@@ -65,7 +66,9 @@ export const getFunctionsCalls = () => async (dispatch, getState) => {
   const state = getState();
   const mfas = getMfas(state);
   const calls = getCalls(state);
-  const nextCalls = await determineNextCalls(dispatch, state, mfas, calls);
+  const running = state.status.status === 'running';
+  const nextCalls = running
+  && await determineNextCalls(dispatch, state, mfas, calls);
 
   if (!isEmpty(nextCalls)) {
     dispatch(updateCalls({ ...calls, ...nextCalls }));
