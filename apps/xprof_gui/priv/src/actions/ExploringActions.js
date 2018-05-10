@@ -36,8 +36,7 @@ export const getCallees = monitored => async (dispatch) => {
   else console.log('NO CALLES FOUND!');
 };
 
-export const getCalleesForFunctions = monitoredCollection => async (
-  dispatch,
+export const getCalleesForFunctions = monitoredCollection => async (dispatch,
 ) => {
   const callees = {};
 
