@@ -1,32 +1,35 @@
-import { getMfas } from '../selectors';
+import { getAllMonitored } from '../selectors';
 import * as types from '../constants/ActionTypes';
 import * as XProf from '../api';
 
-const stopMonitoringFunctionRequest = mfas => ({
+const stopMonitoringFunctionRequest = monitoredCollection => ({
   type: types.STOP_MONITORING_FUNCTION,
-  mfas,
+  monitoredCollection,
 });
 
-const stopMonitoringFunctionError = mfas => ({
+const stopMonitoringFunctionError = monitoredCollection => ({
   type: types.STOP_MONITORING_FUNCTION_ERROR,
-  mfas,
+  monitoredCollection,
 });
 
-export const stopMonitoringFunction = m => async (dispatch, getState) => {
+export const stopMonitoringFunction = monitored => async (
+  dispatch, getState,
+) => {
   const state = getState();
-  const mfas = getMfas(state);
-  const mfasReduced = mfas.filter(f => f.query !== m.query);
+  const monitoredCollection = getAllMonitored(state);
+  const monitoredCollectionReduced = monitoredCollection
+    .filter(f => f.query !== monitored.query);
 
-  dispatch(stopMonitoringFunctionRequest(mfasReduced));
+  dispatch(stopMonitoringFunctionRequest(monitoredCollectionReduced));
 
   const { error } = await XProf.stopMonitoringFunction(
-    m.mfa[0],
-    m.mfa[1],
-    m.mfa[2],
+    monitored.mfa[0],
+    monitored.mfa[1],
+    monitored.mfa[2],
   );
   if (error) {
     console.log('ERROR: ', error);
-    dispatch(stopMonitoringFunctionError(mfas));
+    dispatch(stopMonitoringFunctionError(monitoredCollection));
   }
 };
 
@@ -35,8 +38,9 @@ export const startMonitoringFunction = functionName => async (
   getState,
 ) => {
   const state = getState();
-  const mfas = getMfas(state);
-  const isMonitored = mfas.filter(mfa => mfa.query === functionName).length;
+  const monitoredCollection = getAllMonitored(state);
+  const isMonitored = monitoredCollection
+    .filter(monitored => monitored.query === functionName).length;
 
   if (!isMonitored) {
     const { error } = await XProf.startMonitoringFunction(functionName);

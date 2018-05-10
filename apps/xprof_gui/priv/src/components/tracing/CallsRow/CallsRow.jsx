@@ -11,14 +11,14 @@ const propTypes = {
     expanded: PropTypes.bool,
   }).isRequired,
   toggleExpandItem: PropTypes.func.isRequired,
-  mfa: PropTypes.shape({
+  monitored: PropTypes.shape({
     graph_type: PropTypes.string,
     mfa: PropTypes.arrayOf(PropTypes.any),
     query: PropTypes.string,
   }).isRequired,
 };
 
-const CallsRow = ({ mfa, item, toggleExpandItem }) => {
+const CallsRow = ({ monitored, item, toggleExpandItem }) => {
   const dir = item.expanded ? 'down' : 'right';
   const rowType = item.expanded ? 'expanded' : 'normal';
 
@@ -26,7 +26,7 @@ const CallsRow = ({ mfa, item, toggleExpandItem }) => {
     <tr data-expanded={item.expanded} className={`row-${rowType}`}>
       <td>
         <button
-          onClick={() => toggleExpandItem(mfa, item)}
+          onClick={() => toggleExpandItem(monitored, item)}
           type="button"
           className="btn btn-default"
         >

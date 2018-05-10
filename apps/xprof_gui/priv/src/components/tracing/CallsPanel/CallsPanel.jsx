@@ -12,7 +12,7 @@ const propTypes = {
   handleThresholdChange: PropTypes.func.isRequired,
   handleLimitChange: PropTypes.func.isRequired,
   toggleCallsTracing: PropTypes.func.isRequired,
-  mfa: PropTypes.shape({
+  monitored: PropTypes.shape({
     graph_type: PropTypes.string,
     mfa: PropTypes.arrayOf(PropTypes.any),
     query: PropTypes.string,
@@ -30,7 +30,7 @@ const CallsPanel = ({
   handleThresholdChange,
   handleLimitChange,
   toggleCallsTracing,
-  mfa,
+  monitored,
   sortCallsBy,
   toggleExpandItem,
   control,
@@ -42,18 +42,18 @@ const CallsPanel = ({
     <div className="panel-heading">
       <CallsUtilsButtons
         panelVisibility={panelVisibility}
-        expand={() => expand(mfa.query)}
-        shrink={() => shrink(mfa.query)}
+        expand={() => expand(monitored.query)}
+        shrink={() => shrink(monitored.query)}
       />
       <h3 className="panel-title">
-        {mfa.query}
+        {monitored.query}
         <span className="panel-subtitle"> - Slow calls tracing</span>
       </h3>
     </div>
     {panelVisibility ? (
       <div className="panel-body">
         <CallsInput
-          mfa={mfa}
+          monitored={monitored}
           collecting={control.collecting}
           threshold={control.threshold}
           handleThresholdChange={handleThresholdChange}
@@ -65,7 +65,7 @@ const CallsPanel = ({
     ) : null}
     {panelVisibility ? (
       <CallsTable
-        mfa={mfa}
+        monitored={monitored}
         sort={lastCalls.sort}
         sortCallsBy={sortCallsBy}
         toggleExpandItem={toggleExpandItem}

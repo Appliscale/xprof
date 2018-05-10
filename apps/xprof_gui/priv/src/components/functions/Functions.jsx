@@ -5,7 +5,7 @@ import { FUNCTIONS_INTERVAL } from '../../constants';
 
 const propTypes = {
   getMonitoredFunctions: PropTypes.func.isRequired,
-  mfas: PropTypes.arrayOf(PropTypes.shape({
+  monitoredCollection: PropTypes.arrayOf(PropTypes.shape({
     graph_type: PropTypes.string,
     mfa: PropTypes.arrayOf(PropTypes.any),
     query: PropTypes.string,
@@ -28,14 +28,14 @@ class Functions extends React.Component {
   }
 
   render() {
-    const { mfas } = this.props;
+    const { monitoredCollection } = this.props;
     return (
       <div>
-        {mfas.map((m, index) => (
-          <div key={m.query}>
-            <MonitoringContainer mfa={m} />
-            <TracingContainer mfa={m} />
-            {index < mfas.length - 1 ? (
+        {monitoredCollection.map((monitored, index) => (
+          <div key={monitored.query}>
+            <MonitoringContainer monitored={monitored} />
+            <TracingContainer monitored={monitored} />
+            {index < monitoredCollection.length - 1 ? (
               <hr className="function-separator" />
             ) : null}
           </div>

@@ -1,7 +1,7 @@
 import * as types from '../constants/ActionTypes';
 
 const initialState = {
-  mfas: [],
+  monitoredCollection: [],
   data: {},
   panel: {},
   callees: {},
@@ -14,7 +14,7 @@ const monitoring = (state = initialState, action) => {
     case types.UPDATE_MONITORED_FUNCTIONS:
       return {
         ...state,
-        mfas: action.mfas,
+        monitoredCollection: action.monitoredCollection,
       };
     case types.UPDATE_DATA:
       return {

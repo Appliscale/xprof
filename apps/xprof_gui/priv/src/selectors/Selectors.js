@@ -11,7 +11,7 @@ export const getLastCallsForFunction = (state, fun) =>
   (state.tracing.calls[fun] ? last(state.tracing.calls[fun]) : undefined);
 
 // monitoring
-export const getMfas = state => state.monitoring.mfas;
+export const getAllMonitored = state => state.monitoring.monitoredCollection;
 export const getData = state => state.monitoring.data;
 export const getFunctionData = (state, fun) => state.monitoring.data[fun];
 

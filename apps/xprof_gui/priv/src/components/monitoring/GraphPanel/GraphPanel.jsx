@@ -10,7 +10,7 @@ const defaultProps = {
 };
 
 const propTypes = {
-  mfa: PropTypes.shape({
+  monitored: PropTypes.shape({
     graph_type: PropTypes.string,
     mfa: PropTypes.arrayOf(PropTypes.any),
     query: PropTypes.string,
@@ -28,7 +28,7 @@ const propTypes = {
 };
 
 const GraphPanel = ({
-  mfa,
+  monitored,
   dps,
   stopMonitoringFunction,
   callees,
@@ -42,20 +42,20 @@ const GraphPanel = ({
 }) => (
   <div className="panel panel-default">
     <GraphPanelHeading
-      mfa={mfa}
-      stopMonitoringFunction={() => stopMonitoringFunction(mfa)}
+      monitored={monitored}
+      stopMonitoringFunction={() => stopMonitoringFunction(monitored)}
       callees={callees}
       calleesVisibility={calleesVisibility}
-      showCallees={() => showCallees(mfa.query)}
-      hideCallees={() => hideCallees(mfa.query)}
+      showCallees={() => showCallees(monitored.query)}
+      hideCallees={() => hideCallees(monitored.query)}
       panelVisibility={panelVisibility}
-      expand={() => expand(mfa.query)}
-      shrink={() => shrink(mfa.query)}
+      expand={() => expand(monitored.query)}
+      shrink={() => shrink(monitored.query)}
       calleeClick={calleeClick}
     />
     {panelVisibility ? (
       <div className="panel-body">
-        <Graph dps={dps} type={mfa.graph_type} query={mfa.query} />
+        <Graph dps={dps} type={monitored.graph_type} query={monitored.query} />
       </div>
     ) : null}
   </div>

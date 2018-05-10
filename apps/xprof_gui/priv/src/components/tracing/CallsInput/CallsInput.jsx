@@ -11,7 +11,7 @@ const defaultProps = {
 };
 
 const propTypes = {
-  mfa: PropTypes.shape({
+  monitored: PropTypes.shape({
     graph_type: PropTypes.string,
     mfa: PropTypes.arrayOf(PropTypes.any),
     query: PropTypes.string,
@@ -25,7 +25,7 @@ const propTypes = {
 };
 
 const CallsInput = ({
-  mfa,
+  monitored,
   threshold,
   handleThresholdChange,
   limit,
@@ -61,7 +61,7 @@ const CallsInput = ({
               className="form-control"
               placeholder={`0 - ${THRESHOLD_LIMIT}`}
               value={threshold}
-              onChange={e => handleThresholdChange(mfa, e.target.value)}
+              onChange={e => handleThresholdChange(monitored, e.target.value)}
               disabled={collecting}
             />
           </span>
@@ -78,7 +78,7 @@ const CallsInput = ({
               className="form-control"
               placeholder={`1 - ${CALLS_LIMIT}`}
               value={limit}
-              onChange={e => handleLimitChange(mfa, e.target.value)}
+              onChange={e => handleLimitChange(monitored, e.target.value)}
               disabled={collecting}
             />
           </span>
@@ -88,7 +88,7 @@ const CallsInput = ({
       <span>
         {error}
         <CallsSwitch
-          mfa={mfa}
+          monitored={monitored}
           disabled={error}
           collecting={collecting}
           toggleCallsTracing={toggleCallsTracing}

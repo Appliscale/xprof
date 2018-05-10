@@ -152,19 +152,19 @@ const determineIncomingDps = (dps, ts) => {
   }));
 };
 
-export const determineNextData = async (mfas, data) => {
+export const determineNextData = async (monitoredCollection, data) => {
   const nextData = {};
 
-  await Promise.all(mfas.map(async (m) => {
-    const completeFunName = m.query;
+  await Promise.all(monitoredCollection.map(async (monitored) => {
+    const completeFunName = monitored.query;
     const currentDps = data[completeFunName];
     const lastTs =
         currentDps && currentDps.length ? last(currentDps).time / 1000 : 0;
 
     const { json, error } = await XProf.getFunctionsSamples(
-      m.mfa[0],
-      m.mfa[1],
-      m.mfa[2],
+      monitored.mfa[0],
+      monitored.mfa[1],
+      monitored.mfa[2],
       lastTs,
     );
 
@@ -184,19 +184,21 @@ export const determineNextData = async (mfas, data) => {
   return nextData;
 };
 
-export const determineNextCalls = async (dispatch, state, mfas, calls) => {
+export const determineNextCalls = async (
+  dispatch, state, monitoredCollection, calls,
+) => {
   const nextCalls = {};
 
-  await Promise.all(mfas.map(async (m) => {
-    const completeFunName = m.query;
+  await Promise.all(monitoredCollection.map(async (monitored) => {
+    const completeFunName = monitored.query;
     const lastCalls = getLastCallsForFunction(state, completeFunName);
     const offset =
         lastCalls && lastCalls.items.length ? last(lastCalls.items).id : 0;
 
     const { json, error } = await XProf.getFunctionsCalls(
-      m.mfa[0],
-      m.mfa[1],
-      m.mfa[2],
+      monitored.mfa[0],
+      monitored.mfa[1],
+      monitored.mfa[2],
       offset,
     );
 
@@ -223,24 +225,24 @@ export const determineNextCalls = async (dispatch, state, mfas, calls) => {
   return nextCalls;
 };
 
-export const determineNextControlSwitch = async (control, m) => {
+export const determineNextControlSwitch = async (control, monitored) => {
   const { threshold, limit, collecting } = control;
   const nextControl = { ...control };
 
   if (collecting) {
     const { error } = await XProf.stopCapturingFunctionsCalls(
-      m.mfa[0],
-      m.mfa[1],
-      m.mfa[2],
+      monitored.mfa[0],
+      monitored.mfa[1],
+      monitored.mfa[2],
     );
 
     if (error) console.log('ERROR: ', error);
     nextControl.collecting = false;
   } else {
     const { error } = await XProf.startCapturingFunctionsCalls(
-      m.mfa[0],
-      m.mfa[1],
-      m.mfa[2],
+      monitored.mfa[0],
+      monitored.mfa[1],
+      monitored.mfa[2],
       threshold,
       limit,
     );

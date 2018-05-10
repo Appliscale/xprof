@@ -2,12 +2,12 @@ import React from 'react';
 import { connect } from 'react-redux';
 import Functions from '../../components/functions';
 import { getMonitoredFunctions } from '../../actions';
-import { getMfas } from '../../selectors';
+import { getAllMonitored } from '../../selectors';
 
 const FunctionsContainer = props => <Functions {...props} />;
 
 const mapStateToProps = state => ({
-  mfas: getMfas(state),
+  monitoredCollection: getAllMonitored(state),
 });
 
 const mapDispatchToProps = {

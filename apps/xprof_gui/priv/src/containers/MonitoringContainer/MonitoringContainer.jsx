@@ -21,11 +21,14 @@ import {
 const MonitoringContainer = props => <Monitoring {...props} />;
 
 const mapStateToProps = (state, ownProps) => ({
-  mfa: ownProps.mfa,
-  data: getFunctionData(state, ownProps.mfa.query),
-  callees: getFunctionCallees(state, ownProps.mfa.query),
-  calleesVisibility: getFunctionCalleesVisibility(state, ownProps.mfa.query),
-  panelVisibility: getFunctionGraphVisibility(state, ownProps.mfa.query),
+  monitored: ownProps.monitored,
+  data: getFunctionData(state, ownProps.monitored.query),
+  callees: getFunctionCallees(state, ownProps.monitored.query),
+  calleesVisibility: getFunctionCalleesVisibility(
+    state,
+    ownProps.monitored.query,
+  ),
+  panelVisibility: getFunctionGraphVisibility(state, ownProps.monitored.query),
 });
 
 const mapDispatchToProps = {

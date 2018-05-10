@@ -5,13 +5,7 @@ import 'c3/c3.css';
 import { AXIS, DATA, GRID, POINT, TRANSITION } from '../../../constants';
 import Grid from './Grid/Grid';
 
-function composeID(q) {
-  const modFuncArity = q.split(':');
-  const mod = modFuncArity[0];
-  const func = modFuncArity[1].split('/')[0];
-  const arity = modFuncArity[1].split('/')[1];
-  return `${mod}${func}${arity}`;
-}
+const composeID = q => `${q.replace(/[^A-Za-z0-9_-]/g, '-')}`;
 
 const propTypes = {
   dps: PropTypes.arrayOf(PropTypes.object).isRequired,

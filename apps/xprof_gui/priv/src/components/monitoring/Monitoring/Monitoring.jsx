@@ -11,7 +11,7 @@ const defaultProps = {
 };
 
 const propTypes = {
-  mfa: PropTypes.shape({
+  monitored: PropTypes.shape({
     graph_type: PropTypes.string,
     mfa: PropTypes.arrayOf(PropTypes.any),
     query: PropTypes.string,
@@ -43,7 +43,7 @@ class Monitoring extends React.Component {
 
   render() {
     const {
-      mfa,
+      monitored,
       data,
       stopMonitoringFunction,
       callees,
@@ -58,8 +58,8 @@ class Monitoring extends React.Component {
     return (
       <div>
         <GraphPanel
-          key={mfa.query}
-          mfa={mfa}
+          key={monitored.query}
+          monitored={monitored}
           dps={data}
           stopMonitoringFunction={stopMonitoringFunction}
           callees={callees}
