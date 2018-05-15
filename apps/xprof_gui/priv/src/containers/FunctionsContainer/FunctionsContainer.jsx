@@ -8,7 +8,6 @@ const FunctionsContainer = props => <Functions {...props} />;
 
 const mapStateToProps = state => ({
   mfas: getMfas(state),
-  running: state.status.status === 'running',
 });
 
 const mapDispatchToProps = {
