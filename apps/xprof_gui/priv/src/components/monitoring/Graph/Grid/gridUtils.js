@@ -74,7 +74,7 @@ export function dataTransform(dataInput) {
       if (f[0] === 'time') {
         time = f;
         timeArray.push(f[1]);
-      } else if (f[0] !== 'memsize') {
+      } else {
         valuesRow.push(f);
         allValues.push(f[1]);
       }
@@ -128,18 +128,17 @@ export function dataTransform(dataInput) {
   // names - the unique list of bucket names.
 }
 
-export function getColor(d, arr) {
-  const dID = d.id.split(':'); // the dID holds the in-grid location
+export function getAttr(id, arr, name) {
+  const dID = id.split(':'); // the dID holds the in-grid location
   const dataRow = parseInt(dID[0], 10); // is representing the bucket
   const dataCol = parseInt(dID[1], 10); // is representing the time moment
-  let hue = null;
+  let attrValue = null;
   arr.forEach((dg) => {
     if (dg.column === dataCol && dg.row === dataRow) {
-      const { color } = dg;
-      hue = color;
+      attrValue = dg[name];
     }
   });
-  return hue;
+  return attrValue;
 }
 
 export function label(direction, id) {
@@ -283,39 +282,67 @@ export function getPositionX(d, i, time) {
   return d.x;
 }
 
-export function getTooltip(d, arr) {
-  const dID = d.id.split(':');
+export function getData(id, data, d) {
+  const dID = id.split(':'); // the dID holds the in-grid location
   const dataRow = parseInt(dID[0], 10); // is representing the bucket
   const dataCol = parseInt(dID[1], 10); // is representing the time moment
-  const tooltip = [];
-  arr.forEach((dg) => {
-    /*
-      The function is not rendering the tooltip.
-      It only recovers its to-be-displayed data
-      from the data array.
-    */
-    const { key } = dg;
-    if (dg.column === dataCol && dg.row === dataRow) {
-      tooltip.push(dg.time); // Time
-      tooltip.push(dg.key); // The bucket name
-      tooltip.push(dg[key]); // The bucket value
-    }
-  });
-  return tooltip;
+  const row = data[dataRow];
+  return row[dataCol][d];
 }
 
-export function renderTooltip(tooltipSelection, data) {
+function getCoordsFromAttr() {
+  const xy = document.querySelector('#tip')
+    .getAttribute('coords')
+    .split(',');
+
+  return [
+    parseInt(xy[0], 10),
+    parseInt(xy[1], 10),
+  ];
+}
+
+export function passCursorCoords(e) {
+  d3.select('#tip')
+    .attr('coords', `${e.pageX},${e.pageY}`);
+  /*
+    We have to pass it that way - every d3.attr ends as string
+    so we'll be getting the numbers in getCoordsFromAttr()
+  */
+}
+
+export function trackCursor(func) {
+  if (window.Event) {
+    document.captureEvents(Event.MOUSEMOVE);
+  }
+  document.onmousemove = func;
+}
+
+function collectData(el) {
+  return [
+    el.getAttribute('time'),
+    el.getAttribute('key'),
+    el.getAttribute('value'),
+  ];
+}
+
+function renderTooltip(tooltipSelection, coords, data) {
   const baseStyle = 'border: 1px solid darkgrey; padding: 4px';
   const labelStyle = `style="${baseStyle}"`;
   const dataStyle = `style="${baseStyle}; text-align: center"`;
-  /* When the browser window is very small and we are near the window contour,
-  we have to flip the tooltip, otherwise it will flow outside the window */
-  const flipSide = d3.event.pageX > 0.7 * window.innerWidth ? -100 : 10;
+  /*
+    When the browser window is very small and we are near the window contour,
+    we have to flip the tooltip, otherwise it will flow outside the window
+  */
+  const flipSide = coords[0] > 0.7 * window.innerWidth ? -100 : 10;
   tooltipSelection
-    .style('top', `${d3.event.pageY + 10}px`)
-    .style('left', `${d3.event.pageX + flipSide}px`)
+    .style('top', `${coords[1] + 10}px`)
+    .style('left', `${coords[0] + flipSide}px`)
     .style('visibility', 'visible')
-    .html(`<table>
+    // eslint-disable-next-line
+    .html(`<table><tbody><tr><td ${labelStyle}><strong>Time</strong></td><td ${dataStyle}>${d3.timeFormat('%H:%M:%S')(data[0])}</td></tr><tr><td ${labelStyle}><strong>${data[1]}</strong></td><td ${dataStyle}>${data[2]}</td></tr><tbody/></table>`);
+  /*
+  It expands into this:
+  .html(`<table>
               <tbody>
                 <tr>
                   <td ${labelStyle}>
@@ -338,7 +365,17 @@ export function renderTooltip(tooltipSelection, data) {
                   </td>
                 </tr>
               <tbody/>
-            </table>`);
+            </table>`); */
+}
+
+export function initTooltip(rect, tooltip) {
+  if (rect) {
+    renderTooltip(
+      tooltip,
+      getCoordsFromAttr(),
+      collectData(rect),
+    );
+  }
 }
 
 export function calcFont(axis) {

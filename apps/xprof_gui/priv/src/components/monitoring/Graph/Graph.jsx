@@ -11,9 +11,15 @@ const propTypes = {
   dps: PropTypes.arrayOf(PropTypes.object).isRequired,
   type: PropTypes.string.isRequired,
   query: PropTypes.string.isRequired,
+  passId: PropTypes.number.isRequired,
 };
 
-const Graph = ({ dps, type, query }) => {
+const Graph = ({
+  dps,
+  type,
+  query,
+  passId,
+}) => {
   const queryID = composeID(query);
   const wrapperID = `graphWrapper-${queryID}`;
   const wrapper = document.getElementById(wrapperID);
@@ -29,7 +35,7 @@ const Graph = ({ dps, type, query }) => {
         {wrapper && <Grid
           data={{ ...DATA, json: dps }}
           outerWidth={wrapper.clientWidth}
-          graphID={queryID}
+          graphID={passId}
         />}
       </div>
     );

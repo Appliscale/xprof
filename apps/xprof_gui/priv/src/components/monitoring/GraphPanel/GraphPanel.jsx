@@ -25,6 +25,7 @@ const propTypes = {
   expand: PropTypes.func.isRequired,
   shrink: PropTypes.func.isRequired,
   calleeClick: PropTypes.func.isRequired,
+  passId: PropTypes.number.isRequired,
 };
 
 const GraphPanel = ({
@@ -39,6 +40,7 @@ const GraphPanel = ({
   expand,
   shrink,
   calleeClick,
+  passId,
 }) => (
   <div className="panel panel-default">
     <GraphPanelHeading
@@ -55,7 +57,12 @@ const GraphPanel = ({
     />
     {panelVisibility ? (
       <div className="panel-body">
-        <Graph dps={dps} type={monitored.graph_type} query={monitored.query} />
+        <Graph
+          dps={dps}
+          type={monitored.graph_type}
+          query={monitored.query}
+          passId={passId}
+        />
       </div>
     ) : null}
   </div>
