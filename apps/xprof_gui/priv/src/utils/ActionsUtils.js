@@ -11,7 +11,7 @@ import {
 import { setCallsControl } from '../actions';
 import * as XProf from '../api';
 
-const determineNextCallsForFun = (json, lastCalls, calls, name) => {
+export const determineNextCallsForFun = (json, lastCalls, calls, name) => {
   let callsForFun;
 
   switch (callsDecision(json, lastCalls)) {
@@ -55,7 +55,7 @@ const determineNextCallsForFun = (json, lastCalls, calls, name) => {
           has_more: json.has_more,
           sort: {
             items:
-              lastCalls.sort.column === CALLS_COLUMNS.PID &&
+              lastCalls.sort.column === CALLS_COLUMNS.ID &&
               lastCalls.sort.order === SORT.ASCENDING
                 ? [
                   ...lastCalls.sort.items,
@@ -81,7 +81,7 @@ const determineNextCallsForFun = (json, lastCalls, calls, name) => {
   return callsForFun;
 };
 
-const determineNextControl = (json, lastcalls) => {
+export const determineNextControl = (json, lastcalls) => {
   let control;
   switch (callsDecision(json, lastcalls)) {
     case CAPTURE_CALLS_ACTION.APP_INITIALIZATION:
@@ -106,9 +106,9 @@ const determineNextControl = (json, lastcalls) => {
   return control;
 };
 
-const determineIncomingDps = (dps, ts) => {
+export const determineIncomingDps = (dps, ts) => {
   let missingDps;
-  let mergedDps;
+  let mergedDps = [];
   const zeros = {
     min: 0,
     mean: 0,
