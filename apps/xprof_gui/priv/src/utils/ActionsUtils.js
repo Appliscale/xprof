@@ -155,33 +155,31 @@ export const determineIncomingDps = (dps, ts) => {
 export const determineNextData = async (monitoredCollection, data) => {
   const nextData = {};
 
-  if (monitoredCollection) {
-    await Promise.all(monitoredCollection.map(async (monitored) => {
-      const completeFunName = monitored.query;
-      const currentDps = data[completeFunName];
-      const lastTs =
+  await Promise.all(monitoredCollection.map(async (monitored) => {
+    const completeFunName = monitored.query;
+    const currentDps = data[completeFunName];
+    const lastTs =
         currentDps && currentDps.length ? last(currentDps).time / 1000 : 0;
 
-      const { json, error } = await XProf.getFunctionsSamples(
-        monitored.mfa[0],
-        monitored.mfa[1],
-        monitored.mfa[2],
-        lastTs,
-      );
+    const { json, error } = await XProf.getFunctionsSamples(
+      monitored.mfa[0],
+      monitored.mfa[1],
+      monitored.mfa[2],
+      lastTs,
+    );
 
-      if (error) {
-        console.log('ERROR: ', error);
-      } else if (json.length) {
-        const incomingDpsSorted = sortBy(json, 'time');
-        const incomingDps = determineIncomingDps(incomingDpsSorted, lastTs);
-        const concatenatedDps = currentDps
-          ? [...currentDps, ...incomingDps]
-          : incomingDps;
-        const nextDps = takeRight(concatenatedDps, DPS_LIMIT);
-        nextData[completeFunName] = nextDps;
-      }
-    }));
-  }
+    if (error) {
+      console.log('ERROR: ', error);
+    } else if (json.length) {
+      const incomingDpsSorted = sortBy(json, 'time');
+      const incomingDps = determineIncomingDps(incomingDpsSorted, lastTs);
+      const concatenatedDps = currentDps
+        ? [...currentDps, ...incomingDps]
+        : incomingDps;
+      const nextDps = takeRight(concatenatedDps, DPS_LIMIT);
+      nextData[completeFunName] = nextDps;
+    }
+  }));
 
   return nextData;
 };
@@ -191,40 +189,38 @@ export const determineNextCalls = async (
 ) => {
   const nextCalls = {};
 
-  if (monitoredCollection) {
-    await Promise.all(monitoredCollection.map(async (monitored) => {
-      const completeFunName = monitored.query;
-      const lastCalls = getLastCallsForFunction(state, completeFunName);
-      const offset =
+  await Promise.all(monitoredCollection.map(async (monitored) => {
+    const completeFunName = monitored.query;
+    const lastCalls = getLastCallsForFunction(state, completeFunName);
+    const offset =
         lastCalls && lastCalls.items.length ? last(lastCalls.items).id : 0;
 
-      const { json, error } = await XProf.getFunctionsCalls(
-        monitored.mfa[0],
-        monitored.mfa[1],
-        monitored.mfa[2],
-        offset,
-      );
+    const { json, error } = await XProf.getFunctionsCalls(
+      monitored.mfa[0],
+      monitored.mfa[1],
+      monitored.mfa[2],
+      offset,
+    );
 
-      if (error) {
-        console.log('ERROR: ', error);
-      } else {
-        const nextControlForFun = determineNextControl(json, lastCalls);
-        if (!isEmpty(nextControlForFun)) {
-          dispatch(setCallsControl({ [completeFunName]: nextControlForFun }));
-        }
-
-        const nextCallsForFun = determineNextCallsForFun(
-          json,
-          lastCalls,
-          calls,
-          completeFunName,
-        );
-        if (!isEmpty(nextCallsForFun)) {
-          nextCalls[completeFunName] = nextCallsForFun;
-        }
+    if (error) {
+      console.log('ERROR: ', error);
+    } else {
+      const nextControlForFun = determineNextControl(json, lastCalls);
+      if (!isEmpty(nextControlForFun)) {
+        dispatch(setCallsControl({ [completeFunName]: nextControlForFun }));
       }
-    }));
-  }
+
+      const nextCallsForFun = determineNextCallsForFun(
+        json,
+        lastCalls,
+        calls,
+        completeFunName,
+      );
+      if (!isEmpty(nextCallsForFun)) {
+        nextCalls[completeFunName] = nextCallsForFun;
+      }
+    }
+  }));
 
   return nextCalls;
 };
