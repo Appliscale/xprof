@@ -1,6 +1,6 @@
 {
   "name": "xprof-gui",
-  "version": "2.0.0-rc.0",
+  "version": "2.0.0-rc.1",
   "description": "XProf - Visual tracer and profiler for BEAM languages",
   "repository": {
     "type": "git",
@@ -89,7 +89,7 @@
     "start": "node scripts/start.js",
     "start:with-cowboy": "node scripts/start-with-cowboy.js",
     "build": "node scripts/build.js",
-    "test": "node scripts/test.js --env=jsdom",
+    "test": "node --inspect scripts/test.js --env=jsdom",
     "test:single-run": "node scripts/test.js --env=jsdom --coverage"
   },
   "lint-staged": {
