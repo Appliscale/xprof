@@ -88,3 +88,23 @@ export const sortItems = (items, column, order) =>
   (order === SORT.ASCENDING
     ? sortBy(items, column)
     : sortBy(items, column).reverse());
+
+export function roll(func) {
+  const r = Math.trunc(Math.random() * 100);
+  if (document.getElementById(`grid-${r}`) || r === 0) {
+    func();
+  }
+  return r;
+}
+
+export const getAssociatedID = (arr, query) => {
+  let r = null;
+  Object.entries(arr).forEach((a) => {
+    const [q, v] = a;
+    if (q === query) {
+      r = v;
+    }
+    return r;
+  });
+  return r;
+};

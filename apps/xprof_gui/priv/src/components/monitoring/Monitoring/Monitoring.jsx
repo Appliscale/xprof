@@ -2,20 +2,22 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { GraphPanel } from '../';
 import { DATA_INTERVAL } from '../../../constants';
-
-function roll(func) {
-  const r = Math.trunc(Math.random() * 100);
-  if (document.getElementById(`grid-${r}`)) {
-    func();
-  }
-  return r;
-}
+import { getAssociatedID } from '../../../utils';
 
 const defaultProps = {
   panelVisibility: true,
   data: [],
   callees: [],
   calleesVisibility: false,
+  IDs: {},
+  size: {
+    width: 0,
+    height: 0,
+    marginTop: 20,
+    marginRight: 0,
+    marginBottom: 70,
+    marginLeft: 0,
+  },
 };
 
 const propTypes = {
@@ -25,6 +27,7 @@ const propTypes = {
     query: PropTypes.string,
   }).isRequired,
   getFunctionsData: PropTypes.func.isRequired,
+  setIDs: PropTypes.func.isRequired,
   data: PropTypes.arrayOf(PropTypes.object),
   stopMonitoringFunction: PropTypes.func.isRequired,
   callees: PropTypes.arrayOf(PropTypes.string),
@@ -35,34 +38,17 @@ const propTypes = {
   expandGraphPanel: PropTypes.func.isRequired,
   shrinkGraphPanel: PropTypes.func.isRequired,
   calleeClick: PropTypes.func.isRequired,
+  IDs: PropTypes.shape(PropTypes.shape(PropTypes.any)),
+  setSize: PropTypes.func.isRequired,
+  size: PropTypes.shape(PropTypes.any),
 };
 
 class Monitoring extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      passId: 0,
-    };
-  }
-
   componentWillMount() {
-    const { getFunctionsData } = this.props;
+    const { getFunctionsData, setIDs } = this.props;
     getFunctionsData();
+    setIDs();
     this.dataInterval = setInterval(getFunctionsData, DATA_INTERVAL);
-    /*
-        passId is a random number from the range 0-100;
-        as the D3 is working on the whole document context,
-        literally every graph element should have a unique ID
-        (if not, the animation will be passed only to the lastly invoked);
-        we could pass the MFA as the ID suffix but when we iterate over
-        huge dataset of rectangles and every of them is referenced by ID,
-        we have to find a shorter suffix - so instead of passing
-        long function names, we are passing a random number (but checking if
-        is it unique number for the whole document; we are securing ourselves by
-        setting the range to 0-100 - the user will be unable to open 100 graphs
-        at once)
-    */
-    this.setState({ passId: roll(roll) });
   }
 
   componentWillUnmount() {
@@ -83,8 +69,11 @@ class Monitoring extends React.Component {
       expandGraphPanel,
       shrinkGraphPanel,
       calleeClick,
+      IDs,
+      setSize,
+      size,
     } = this.props;
-    const { passId } = this.state;
+    const associatedID = getAssociatedID(IDs, monitored.query);
     return (
       <div>
         <GraphPanel
@@ -100,7 +89,9 @@ class Monitoring extends React.Component {
           expand={expandGraphPanel}
           shrink={shrinkGraphPanel}
           calleeClick={calleeClick}
-          passId={passId}
+          associatedID={associatedID}
+          setSize={setSize}
+          size={size}
         />
       </div>
     );

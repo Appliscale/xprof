@@ -14,6 +14,8 @@ export const getLastCallsForFunction = (state, fun) =>
 export const getAllMonitored = state => state.monitoring.monitoredCollection;
 export const getData = state => state.monitoring.data;
 export const getFunctionData = (state, fun) => state.monitoring.data[fun];
+export const getIDs = state => state.monitoring.ids;
+export const getSize = state => state.monitoring.size;
 
 // navigation
 export const getQuery = state => state.navigation.query;

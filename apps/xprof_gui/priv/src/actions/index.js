@@ -3,6 +3,8 @@ export {
   getMonitoredFunctions,
   getFunctionsData,
   getFunctionsCalls,
+  setIDs,
+  setSize,
 } from './CollectingActions';
 export {
   stopMonitoringFunction,

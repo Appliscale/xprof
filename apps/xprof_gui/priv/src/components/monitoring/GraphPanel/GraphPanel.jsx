@@ -25,7 +25,9 @@ const propTypes = {
   expand: PropTypes.func.isRequired,
   shrink: PropTypes.func.isRequired,
   calleeClick: PropTypes.func.isRequired,
-  passId: PropTypes.number.isRequired,
+  associatedID: PropTypes.number.isRequired,
+  setSize: PropTypes.func.isRequired,
+  size: PropTypes.shape(PropTypes.any).isRequired,
 };
 
 const GraphPanel = ({
@@ -40,7 +42,9 @@ const GraphPanel = ({
   expand,
   shrink,
   calleeClick,
-  passId,
+  associatedID,
+  setSize,
+  size,
 }) => (
   <div className="panel panel-default">
     <GraphPanelHeading
@@ -61,7 +65,9 @@ const GraphPanel = ({
           dps={dps}
           type={monitored.graph_type}
           query={monitored.query}
-          passId={passId}
+          associatedID={associatedID}
+          setSize={setSize}
+          size={size}
         />
       </div>
     ) : null}

@@ -5,6 +5,15 @@ const initialState = {
   data: {},
   panel: {},
   callees: {},
+  ids: {},
+  size: {
+    width: 0,
+    height: 0,
+    marginTop: 20,
+    marginRight: 0,
+    marginBottom: 70,
+    marginLeft: 0,
+  },
 };
 
 const monitoring = (state = initialState, action) => {
@@ -20,6 +29,19 @@ const monitoring = (state = initialState, action) => {
       return {
         ...state,
         data: action.data,
+      };
+    case types.ASSIGN_GRAPH_ID:
+      return {
+        ...state,
+        ids: action.ids,
+      };
+    case types.CHANGE_SIZE:
+      return {
+        ...state,
+        size: {
+          ...state.size,
+          [action.property]: action.value,
+        },
       };
     default:
       return state;

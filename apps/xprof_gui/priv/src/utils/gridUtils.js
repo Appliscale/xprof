@@ -1,11 +1,13 @@
 import _ from 'lodash';
 import * as d3 from 'd3';
 
+export const composeID = (row, column) => `${row}:${column}`;
+
 /*
   Creates the desired rectangle grid data,
   ready to be transformed into SVG representation.
 */
-export function gridData(rows, columns, width, height) {
+export function gridData(rows, columns, width, height, names = false) {
   const data = [];
   let xpos = 1;
   let ypos = 1;
@@ -19,6 +21,7 @@ export function gridData(rows, columns, width, height) {
         width,
         height,
         id: `${row}:${column}`,
+        rowName: names ? names[row] : '',
       });
       xpos += width;
     }
@@ -27,6 +30,68 @@ export function gridData(rows, columns, width, height) {
   }
   return data;
 }
+
+export const transpose = arr => _.zip(...arr);
+
+export function hide(hidePattern, rowName) {
+  if (hidePattern) {
+    hidePattern.forEach((p) => {
+      if (p === rowName) {
+        return 'none';
+      }
+      return 'inline';
+    });
+  }
+}
+
+export function hideRows(hidePattern, allRows) {
+  if (hidePattern) {
+    allRows.forEach((row) => {
+      hidePattern.forEach((p) => {
+        if (p === row) {
+          d3.select(`.${row}-row`)
+            .style('display', 'none');
+          d3.select(`.${row}-yCol`)
+            .style('display', 'none');
+        }
+        return null;
+      });
+    });
+  }
+}
+
+/* function checkEmpty(dps) {
+  const emptyRows = [];
+  const e = [];
+  let k = null;
+  let c = null;
+  // console.log('dps:', dps);
+  dps.forEach((d) => {
+    Object.keys(d).forEach((key) => {
+      // console.log(`Going inside ${key}...`);
+      const strKey = String(key);
+      const column = Object.values(dps).map(v => v[strKey]);
+      // console.log(`${key}-column:`, column);
+      k = key;
+      c = column;
+    //  if (column.every(c => c === 0)) {
+    //    emptyRows.push(key);
+    //  }
+    });
+    e.push({ [k]: c });
+  });
+  console.log('e:', e);
+  return _.uniq(emptyRows).filter(r => r !== 'time');
+} */
+
+/* export function filteredDPS(dps) {
+  // const sentenced = checkEmpty(dps);
+  // const filtered = [];
+  // dps.forEach(d => filtered.push(_.omit(d, sentenced)));
+  return dps.map(d => _.omit(d, checkEmpty(dps)));
+} */
+
+export const filteredDPS = (dps, omited) => dps.map(d => _.omit(d, omited));
 
 export function dataTransform(dataInput) {
   const dataLocation = [];
@@ -65,7 +130,7 @@ export function dataTransform(dataInput) {
       }
     }
   */
-  Object.entries(dataInput.json).forEach((e, i) => {
+  Object.entries(dataInput).forEach((e, i) => {
     const valuesRow = [];
     let row = {};
     let time = 0;
@@ -86,7 +151,7 @@ export function dataTransform(dataInput) {
         column: i,
         time: time[1],
         [a[0]]: a[1], // bucket-name: value
-        key: a[0], // key: bucket-name
+        bucket: a[0], // bucket: bucket-name
       };
 
       dataLocation.push(row);
@@ -113,9 +178,9 @@ export function dataTransform(dataInput) {
     .range(colorRange);
 
   const dataGrid = dataLocation.map((u) => {
-    const { key } = u;
+    const { bucket } = u;
     // Adding the color field to the exisiting object.
-    return Object.assign(u, { color: colorScale(u[key]) });
+    return Object.assign(u, { color: colorScale(u[bucket]) });
   });
   const times = timeArray;
   const names = _.uniq(allNames);
@@ -139,6 +204,24 @@ export function getAttr(id, arr, name) {
     }
   });
   return attrValue;
+}
+
+export function trackSnapshots(nowRow, recent) {
+  const pattern = _.omit(nowRow, 'time');
+  const thatTime = nowRow.time;
+  const recentCopy = recent;
+  Object.entries(pattern).forEach((el) => {
+    if (el[1] === recent[el[0]]) {
+      recentCopy[el[0]] = recent[el[0]];
+    } else if (el[1] !== 0) {
+      recentCopy[el[0]] = thatTime;
+    }
+  });
+  return _.mapValues(recentCopy, r => r !== undefined && r);
+}
+
+export function goneRows(snapshot, time) {
+  return Object.entries(snapshot).filter(s => s[1] < time).map(k => k[0]);
 }
 
 export function label(direction, id) {
@@ -287,7 +370,10 @@ export function getData(id, data, d) {
   const dataRow = parseInt(dID[0], 10); // is representing the bucket
   const dataCol = parseInt(dID[1], 10); // is representing the time moment
   const row = data[dataRow];
-  return row[dataCol][d];
+  if (row) {
+    return row[dataCol][d];
+  }
+  return null;
 }
 
 function getCoordsFromAttr() {
@@ -306,7 +392,11 @@ export function passCursorCoords(e) {
     .attr('coords', `${e.pageX},${e.pageY}`);
   /*
     We have to pass it that way - every d3.attr ends as string
-    so we'll be getting the numbers in getCoordsFromAttr()
+    so we'll be getting the numbers in getCoordsFromAttr();
+    we are passing it to the ever-present tooltip attr because
+    it cannot be easily stored in the state as the passCursorCoords()
+    will inherit the context from the trackCursor() which evalutes
+    to the 'document' (thus the this.setState() is hard to invoke).
   */
 }
 
@@ -320,7 +410,7 @@ export function trackCursor(func) {
 function collectData(el) {
   return [
     el.getAttribute('time'),
-    el.getAttribute('key'),
+    el.getAttribute('bucket'),
     el.getAttribute('value'),
   ];
 }
@@ -366,6 +456,24 @@ function renderTooltip(tooltipSelection, coords, data) {
                 </tr>
               <tbody/>
             </table>`); */
+}
+
+export function prepareTooltip() {
+  if (!document.getElementById('tip')) {
+    d3.select('#root').append('div')
+      .attr('id', 'tip')
+      .attr('coords', '')
+      .style('position', 'absolute')
+      .style('padding', '2px')
+      .style('font', '0.75em sans-serif')
+      .style('background', '#f5f5f5')
+      .style('border', '20px')
+      .style('border-radius', '2px')
+      .style('pointer-events', 'none')
+      .style('visibility', 'visible')
+      .style('opacity', 0.9)
+      .style('z-index', 99);
+  }
 }
 
 export function initTooltip(rect, tooltip) {
@@ -430,3 +538,10 @@ export function calcFont(axis) {
 
   return `${fontSize}em sans-serif`;
 }
+
+const getWrapperWidth = (id) => {
+  const element = document.getElementById(`graphWrapper-${id}`);
+  return element ? element.clientWidth : 0;
+};
+
+export const updateSize = (func, id) => func(getWrapperWidth(id));
