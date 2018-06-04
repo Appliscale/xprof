@@ -71,7 +71,8 @@ export const getFunctionsData = () => async (dispatch, getState) => {
   const monitoredCollection = getAllMonitored(state);
   const data = getData(state);
   const running = state.status.status === 'running';
-  const nextData = running && await determineNextData(monitoredCollection, data);
+  const nextData = running &&
+  await determineNextData(monitoredCollection, data);
 
   if (!isEmpty(nextData)) {
     dispatch(updateData({ ...data, ...nextData }));
