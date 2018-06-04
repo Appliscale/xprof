@@ -1,2 +1,5 @@
-export const GRID = 'grid';
-export const LINE = 'line';
+/* eslint-disable */
+export const GRAPH_TYPE = {
+  GRID: 'grid',
+  LINE: 'line',
+};
