@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import GridGraph from '../GridGraph';
 import LineGraph from '../LineGraph';
-import * as graph from '../../../constants/GraphTypes';
+import { GRID, LINE } from '../../../constants/GraphTypes';
 
 const propTypes = {
   dps: PropTypes.arrayOf(PropTypes.object).isRequired,
@@ -20,7 +20,7 @@ const Graph = ({
   size,
 }) => {
   switch (type) {
-    case graph.GRID:
+    case GRID:
       return (
         <GridGraph
           dps={dps}
@@ -28,7 +28,7 @@ const Graph = ({
           setSize={setSize}
           size={size}
         />);
-    case graph.LINE:
+    case LINE:
       return <LineGraph dps={dps} />;
     default:
       return null;
