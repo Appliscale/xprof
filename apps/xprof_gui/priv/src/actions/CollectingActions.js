@@ -84,8 +84,7 @@ export const getFunctionsCalls = () => async (dispatch, getState) => {
   const monitoredCollection = getAllMonitored(state);
   const calls = getCalls(state);
   const running = state.status.status === 'running';
-  const nextCalls = running
-  && await determineNextCalls(
+  const nextCalls = running && await determineNextCalls(
     dispatch,
     state,
     monitoredCollection,
