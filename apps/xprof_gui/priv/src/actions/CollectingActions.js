@@ -70,7 +70,8 @@ export const getFunctionsData = () => async (dispatch, getState) => {
   const state = getState();
   const monitoredCollection = getAllMonitored(state);
   const data = getData(state);
-  const nextData = await determineNextData(monitoredCollection, data);
+  const running = state.status.status === 'running';
+  const nextData = running && await determineNextData(monitoredCollection, data);
 
   if (!isEmpty(nextData)) {
     dispatch(updateData({ ...data, ...nextData }));
@@ -81,7 +82,9 @@ export const getFunctionsCalls = () => async (dispatch, getState) => {
   const state = getState();
   const monitoredCollection = getAllMonitored(state);
   const calls = getCalls(state);
-  const nextCalls = await determineNextCalls(
+  const running = state.status.status === 'running';
+  const nextCalls = running
+  && await determineNextCalls(
     dispatch,
     state,
     monitoredCollection,

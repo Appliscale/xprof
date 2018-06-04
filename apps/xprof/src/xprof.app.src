@@ -1,6 +1,6 @@
 {application, xprof,
  [{description, "Visual profiler for BEAM languages"}
- ,{vsn, "2.0.0-rc.0"}
+ ,{vsn, "2.0.0-rc.1"}
  ,{registered, []}
  ,{applications,
    [xprof_core,

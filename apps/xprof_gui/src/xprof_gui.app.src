@@ -1,6 +1,6 @@
 {application, xprof_gui,
  [{description, "Visual BEAM profiler GUI"}
- ,{vsn, "2.0.0-rc.0"}
+ ,{vsn, "2.0.0-rc.1"}
  ,{registered, []}
  ,{mod, {'xprof_gui_app', []}}
  ,{applications,

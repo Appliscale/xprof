@@ -17,34 +17,6 @@ export const commonArrayPrefix = (sortedArray) => {
   return commonPrefix(string1, string2);
 };
 
-export const parseToMfa = fullName => [
-  fullName.split(':')[0],
-  fullName.split('/')[0].split(':')[1],
-  +fullName.split('/')[1],
-  fullName,
-];
-
-export const getLanguageGuides = (mode) => {
-  if (!mode) {
-    return {
-      language: null,
-      type: null,
-      example: null,
-    };
-  } else if (mode === 'elixir') {
-    return {
-      language: 'Elixir',
-      type: 'query',
-      example: 'Enum.member?(_, :test)',
-    };
-  }
-  return {
-    language: 'Erlang',
-    type: 'trace pattern',
-    example: 'ets:lookup(data, _)',
-  };
-};
-
 export const callsDecision = (json, lastCalls) => {
   const lastCaptureId = lastCalls ? lastCalls.capture_id : undefined;
   let decision;
