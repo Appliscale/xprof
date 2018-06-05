@@ -1,6 +1,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { prepareTooltip, compose, updateSize, update } from '../../../utils';
+import {
+  prepareTooltip,
+  compose,
+  updateSize,
+  update,
+  executeIfExists,
+} from '../../../utils';
 
 class Grid extends React.Component {
   constructor(props) {
@@ -19,7 +25,12 @@ class Grid extends React.Component {
   }
 
   componentWillUpdate() {
-    update(this.props);
+    const { graphID } = this.props;
+    executeIfExists(
+      document.getElementById(`grid-${graphID}`),
+      update,
+      this.props,
+    );
   }
 
   componentWillUnmount() {

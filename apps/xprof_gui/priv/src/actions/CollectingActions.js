@@ -6,6 +6,7 @@ import {
   getData,
   getCalls,
   getIDs,
+  getStatus,
 } from '../selectors';
 import { setCallsControl, getCalleesForFunctions } from './';
 import { determineNextData, determineNextCalls, roll } from '../utils';
@@ -70,7 +71,7 @@ export const getFunctionsData = () => async (dispatch, getState) => {
   const state = getState();
   const monitoredCollection = getAllMonitored(state);
   const data = getData(state);
-  const running = state.status.status === 'running';
+  const running = getStatus(state) === 'running';
   const nextData = running &&
   await determineNextData(monitoredCollection, data);
 
@@ -83,7 +84,7 @@ export const getFunctionsCalls = () => async (dispatch, getState) => {
   const state = getState();
   const monitoredCollection = getAllMonitored(state);
   const calls = getCalls(state);
-  const running = state.status.status === 'running';
+  const running = getStatus(state) === 'running';
   const nextCalls = running && await determineNextCalls(
     dispatch,
     state,

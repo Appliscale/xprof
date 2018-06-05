@@ -15,6 +15,7 @@ import {
   trackCursor,
   initTooltip,
   composeID,
+  renderTooltipFromRect,
 } from './gridUtils';
 
 export function compose(props) {
@@ -51,13 +52,13 @@ export function compose(props) {
     */
     .on('mouseout', () => tooltip.style('visibility', 'hidden'));
 
-    // creating the abstract one row representation
+  // creating the abstract one row representation
   const row = grid.selectAll('.row')
     .data(gData)
     .enter().append('g')
     .attr('class', (_, i) => `col-${i}-${graphID}`);
 
-    // filling it with color-rectangles
+  // filling it with color-rectangles
   row.selectAll('.rectangle')
     .data(d => d)
     .enter().append('rect')
@@ -73,9 +74,9 @@ export function compose(props) {
       getAttr(d.id, dataGrid, 'bucket'),
     ))
     .attr('bucket', d => getAttr(d.id, dataGrid, 'bucket'))
-  // eslint-disable-next-line
-        .style('fill', d => getAttr(d.id, dataGrid, 'color') || '#f5f5f5')
-    .on('mouseover', () => tooltip.style('visibility', 'visible'));
+    // eslint-disable-next-line
+    .style('fill', d => getAttr(d.id, dataGrid, 'color') || 'white') // '#f5f5f5'
+    .on('mouseover', d => renderTooltipFromRect(tooltip, d.id, graphID));
 
   // Append x axis
   // creating the xAxis abstract container
@@ -85,13 +86,14 @@ export function compose(props) {
     .attr('width', size.width + 20)
     .attr('height', size.marginBottom);
 
-    /*
-      The axis won't be a common d3 axis as the heatmap looks better
-      with so-called bar-axis. Every color-rectangle will have
-      corresponding axis-rectangle below and on the left side of the grid.
-      That's why we are not calling the d3 axis method but instead we
-      create a single, special grid-row and grid-column.
-    */
+  /*
+    The axis won't be a common d3 axis as the heatmap looks better
+    with so-called bar-axis. Every color-rectangle will have
+    corresponding axis-rectangle below and on the left side of the grid.
+    That's why we are not calling the d3 axis method but instead we
+    create a single, special grid-row and grid-column.
+  */
+
   const xData = gridData(1, c, w, size.marginBottom);
 
   const xRow = xAxis.selectAll('.xRow')
@@ -101,11 +103,12 @@ export function compose(props) {
     .attr('class', 'xRow')
     .attr('width', size.marginBottom);
 
-    /*
-      In d3 it is impossible to have a <text> nested inside the <rect>.
-      That is why we are creating the abstract <g> group SVG container
-      with two children - each of them have to be positioned separately.
-    */
+  /*
+    In d3 it is impossible to have a <text> nested inside the <rect>.
+    That is why we are creating the abstract <g> group SVG container
+    with two children - each of them have to be positioned separately.
+  */
+
   const xRowG = xRow.selectAll('.xLabelSquare')
     .data(d => d, d => `xRowG-${d.id}`)
     .enter().append('g')

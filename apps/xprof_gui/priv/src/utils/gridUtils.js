@@ -351,9 +351,11 @@ export function getPositionY(d, i, time) {
   */
   const position = d.y + (d.height / 3);
   if (i === time.length - 1) {
-    const l = Array.from(document.getElementsByClassName('xLabel'))[0];
-    const h = parseFloat(getComputedStyle(l).fontSize);
-    return position + h;
+    if (document.getElementsByClassName('xLabel')) {
+      const l = Array.from(document.getElementsByClassName('xLabel'))[0];
+      const h = parseFloat(getComputedStyle(l).fontSize);
+      return position + h;
+    }
   }
   return position;
 }
@@ -415,22 +417,19 @@ function collectData(el) {
   ];
 }
 
-function renderTooltip(tooltipSelection, coords, data) {
+function tooltipElements(data) {
   const baseStyle = 'border: 1px solid darkgrey; padding: 4px';
   const labelStyle = `style="${baseStyle}"`;
   const dataStyle = `style="${baseStyle}; text-align: center"`;
-  /*
-    When the browser window is very small and we are near the window contour,
-    we have to flip the tooltip, otherwise it will flow outside the window
-  */
-  const flipSide = coords[0] > 0.7 * window.innerWidth ? -100 : 10;
-  tooltipSelection
-    .style('top', `${coords[1] + 10}px`)
-    .style('left', `${coords[0] + flipSide}px`)
-    .style('visibility', 'visible')
+  console.log('TD:', data);
+  const nullData = data.every(d => d === null);
+  if (!nullData) {
     // eslint-disable-next-line
-    .html(`<table><tbody><tr><td ${labelStyle}><strong>Time</strong></td><td ${dataStyle}>${d3.timeFormat('%H:%M:%S')(data[0])}</td></tr><tr><td ${labelStyle}><strong>${data[1]}</strong></td><td ${dataStyle}>${data[2]}</td></tr><tbody/></table>`);
-  /*
+    return `<table><tbody><tr><td ${labelStyle}><strong>Time</strong></td><td ${dataStyle}>${d3.timeFormat('%H:%M:%S')(data[0])}</td></tr><tr><td ${labelStyle}><strong>${data[1]}</strong></td><td ${dataStyle}>${data[2]}</td></tr></tbody></table>`;
+  }
+  // eslint-disable-next-line
+  return `<table><tbody><tr><td ${labelStyle}><strong>No data</strong></td></tr></tbody></table>`;
+/*
   It expands into this:
   .html(`<table>
               <tbody>
@@ -455,7 +454,51 @@ function renderTooltip(tooltipSelection, coords, data) {
                   </td>
                 </tr>
               <tbody/>
-            </table>`); */
+            </table>`);
+
+  And this:
+            <table>
+              <tbody>
+                <tr>
+                  <td ${labelStyle}>
+                    <strong>No data</strong>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            */
+}
+
+const flip = (x) => {
+  /*
+    When the browser window is very small and we are near the window contour,
+    we have to flip the tooltip, otherwise it will flow outside the window
+  */
+  if (x > 0.7 * window.innerWidth) {
+    return -100;
+  }
+  return 10;
+};
+
+export function renderTooltipFromRect(tooltip, id, graphID) {
+  const element = document.querySelector(`[id='${id}-${graphID}']`);
+  const data = element && collectData(element);
+  const flipSide = flip(d3.event.pageX);
+  return tooltip
+    .style('visibility', 'visible')
+    .style('top', `${d3.event.pageY + 10}px`)
+    .style('left', `${d3.event.pageX + flipSide}px`)
+    .html(tooltipElements(data));
+}
+
+function renderTooltip(tooltipSelection, coords, data) {
+  const flipSide = flip(coords[0]);
+  tooltipSelection
+    .style('top', `${coords[1] + 10}px`)
+    .style('left', `${coords[0] + flipSide}px`)
+    .style('visibility', 'visible')
+    // eslint-disable-next-line
+    .html(tooltipElements(data));
 }
 
 export function prepareTooltip() {
@@ -545,3 +588,5 @@ const getWrapperWidth = (id) => {
 };
 
 export const updateSize = (func, id) => func(getWrapperWidth(id));
+
+export const executeIfExists = (element, func, args) => element && func(args);

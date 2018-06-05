@@ -62,7 +62,7 @@ export const sortItems = (items, column, order) =>
     : sortBy(items, column).reverse());
 
 export function roll(func) {
-  const r = Math.trunc(Math.random() * 100);
+  const r = Math.floor(Math.random() * 10);
   if (document.getElementById(`grid-${r}`) || r === 0) {
     func();
   }

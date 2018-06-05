@@ -109,7 +109,7 @@ export const determineNextControl = (json, lastcalls) => {
 export const determineIncomingDps = (dps, ts) => {
   let missingDps;
   let mergedDps = [];
-  const zeros = {
+  /* const zeros = {
     min: 0,
     mean: 0,
     median: 0,
@@ -123,7 +123,8 @@ export const determineIncomingDps = (dps, ts) => {
     p9999999: 0,
     memsize: 0,
     count: 0,
-  };
+  }; */
+  const zeros = {};
 
   switch (dpsDecision(dps, ts)) {
     case DPS_ACTION.FIRST_DPS:
