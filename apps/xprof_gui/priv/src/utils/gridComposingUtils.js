@@ -43,12 +43,12 @@ export function compose(props) {
     .attr('width', size.width)
     .attr('height', size.height)
     /*
-          The following line prevents the tooltip from being displayed
-          on user very rapidly moving the cursor outside the grid
-          - although the moving cursor outside the color-rectangle event
-          should do the trick, it sometimes does not.
-          We are double securing ourselves.
-        */
+      The following line prevents the tooltip from being displayed
+      on user very rapidly moving the cursor outside the grid
+      - although the moving cursor outside the color-rectangle event
+      should do the trick, it sometimes does not.
+      We are double securing ourselves.
+    */
     .on('mouseout', () => tooltip.style('visibility', 'hidden'));
 
     // creating the abstract one row representation
@@ -111,7 +111,7 @@ export function compose(props) {
     .enter().append('g')
     .attr('id', d => `x${d.id}`);
 
-    // Appending the rectangles and the labels separately.
+  // Appending the rectangles and the labels separately.
   xRowG.append('rect')
     .attr('class', 'xLabelSquare')
     .attr('id', d => `x${d.id}`)
@@ -135,7 +135,6 @@ export function compose(props) {
     .text((d, i) => renderTimeLabels(d, i, times));
 
   // Append y axis
-
   const yAxis = d3.select(`#y-${graphID}`)
     .append('svg')
     .attr('id', `yAxis-${graphID}`)
@@ -185,7 +184,7 @@ export function update(props) {
     dataGrid,
   } = dataTransform(data);
 
-    // Creating the new grid - we will be moving and resizing the rectangles
+  // Creating the new grid - we will be moving and resizing the rectangles
   const newR = names.length;
   const newC = times.length;
   const newW = size.width / newC;
@@ -246,7 +245,6 @@ export function update(props) {
   });
 
   // Append y axis
-
   d3.select(`#yAxis-${graphID}`)
     .attr('width', size.marginLeft)
     .attr('height', size.height);
@@ -264,21 +262,21 @@ export function update(props) {
 
   d3.selectAll('.yLabel')
     .attr('x', d => getData(d.id, updateY, 'x') + 4)
-  // eslint-disable-next-line
-        .attr('y', d => getData(d.id, updateY, 'y') + (0.7 * getData(d.id, updateY, 'height')))
+    // eslint-disable-next-line
+    .attr('y', d => getData(d.id, updateY, 'y') + (0.7 * getData(d.id, updateY, 'height')))
     .style('font', () => calcFont('y'))
     .text(d => names[label('y', d.id)]);
 
   /*
-      We have to constantly track cursor because the graph is moving;
-      if we would have a still cursor over place
-      where the rectangles are passing, the 'mouseover' would be fired according
-      to the mouse (and tooltip would flash only once, as there is
-      no mouse event for a still cursor);
-      in the end we have the mouse coordinates stored and check
-      for hovered rect (which stores the information about its data) -
-      those are the two pieces of information we need to construct the tooltip.
-    */
+    We have to constantly track cursor because the graph is moving;
+    if we would have a still cursor over place
+    where the rectangles are passing, the 'mouseover' would be fired according
+    to the mouse (and tooltip would flash only once, as there is
+    no mouse event for a still cursor);
+    in the end we have the mouse coordinates stored and check
+    for hovered rect (which stores the information about its data) -
+    those are the two pieces of information we need to construct the tooltip.
+  */
 
   const hoveredRect = document.querySelector('.r:hover');
   trackCursor(passCursorCoords);
