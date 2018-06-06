@@ -2,14 +2,15 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { GraphPanel } from '../';
 import { DATA_INTERVAL } from '../../../constants';
-import { getAssociatedID } from '../../../utils';
+// import { getAssociatedID } from '../../../utils';
+import { safecomposeID } from '../../../utils';
 
 const defaultProps = {
   panelVisibility: true,
   data: [],
   callees: [],
   calleesVisibility: false,
-  IDs: {},
+  // IDs: {},
   size: {
     width: 0,
     height: 0,
@@ -27,7 +28,7 @@ const propTypes = {
     query: PropTypes.string,
   }).isRequired,
   getFunctionsData: PropTypes.func.isRequired,
-  setIDs: PropTypes.func.isRequired,
+  // setIDs: PropTypes.func.isRequired,
   data: PropTypes.arrayOf(PropTypes.object),
   stopMonitoringFunction: PropTypes.func.isRequired,
   callees: PropTypes.arrayOf(PropTypes.string),
@@ -38,16 +39,16 @@ const propTypes = {
   expandGraphPanel: PropTypes.func.isRequired,
   shrinkGraphPanel: PropTypes.func.isRequired,
   calleeClick: PropTypes.func.isRequired,
-  IDs: PropTypes.shape(PropTypes.shape(PropTypes.any)),
+  // IDs: PropTypes.shape(PropTypes.shape(PropTypes.any)),
   setSize: PropTypes.func.isRequired,
   size: PropTypes.shape(PropTypes.any),
 };
 
 class Monitoring extends React.Component {
   componentWillMount() {
-    const { getFunctionsData, setIDs } = this.props;
+    const { getFunctionsData /* , setIDs */ } = this.props;
     getFunctionsData();
-    setIDs();
+    // setIDs();
     this.dataInterval = setInterval(getFunctionsData, DATA_INTERVAL);
   }
 
@@ -69,32 +70,37 @@ class Monitoring extends React.Component {
       expandGraphPanel,
       shrinkGraphPanel,
       calleeClick,
-      IDs,
+      // IDs,
       setSize,
       size,
     } = this.props;
-    const associatedID = getAssociatedID(IDs, monitored.query);
-    return (
-      <div>
-        <GraphPanel
-          key={monitored.query}
-          monitored={monitored}
-          dps={data}
-          stopMonitoringFunction={stopMonitoringFunction}
-          callees={callees}
-          calleesVisibility={calleesVisibility}
-          showCallees={showCallees}
-          hideCallees={hideCallees}
-          panelVisibility={panelVisibility}
-          expand={expandGraphPanel}
-          shrink={shrinkGraphPanel}
-          calleeClick={calleeClick}
-          associatedID={associatedID}
-          setSize={setSize}
-          size={size}
-        />
-      </div>
-    );
+    // const associatedID = getAssociatedID(IDs, monitored.query);
+    const monitoredID = safecomposeID(monitored.query);
+    console.log(monitoredID, monitored.query);
+    if (monitoredID) {
+      return (
+        <div>
+          <GraphPanel
+            key={monitored.query}
+            monitored={monitored}
+            dps={data}
+            stopMonitoringFunction={stopMonitoringFunction}
+            callees={callees}
+            calleesVisibility={calleesVisibility}
+            showCallees={showCallees}
+            hideCallees={hideCallees}
+            panelVisibility={panelVisibility}
+            expand={expandGraphPanel}
+            shrink={shrinkGraphPanel}
+            calleeClick={calleeClick}
+            monitoredID={monitoredID}
+            setSize={setSize}
+            size={size}
+          />
+        </div>
+      );
+    }
+    return null;
   }
 }
 

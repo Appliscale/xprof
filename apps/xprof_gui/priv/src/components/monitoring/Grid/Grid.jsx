@@ -77,7 +77,7 @@ class Grid extends React.Component {
 
 Grid.propTypes = {
   size: PropTypes.shape(PropTypes.any).isRequired,
-  graphID: PropTypes.number.isRequired,
+  graphID: PropTypes.string.isRequired,
   setSize: PropTypes.func.isRequired,
 };
 

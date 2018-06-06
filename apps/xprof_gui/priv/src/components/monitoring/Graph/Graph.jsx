@@ -7,7 +7,7 @@ import { GRAPH_TYPE } from '../../../constants/GraphTypes';
 const propTypes = {
   dps: PropTypes.arrayOf(PropTypes.object).isRequired,
   type: PropTypes.string.isRequired,
-  associatedID: PropTypes.number.isRequired,
+  monitoredID: PropTypes.string.isRequired,
   setSize: PropTypes.func.isRequired,
   size: PropTypes.shape(PropTypes.any).isRequired,
 };
@@ -15,7 +15,7 @@ const propTypes = {
 const Graph = ({
   dps,
   type,
-  associatedID,
+  monitoredID,
   setSize,
   size,
 }) => {
@@ -24,7 +24,7 @@ const Graph = ({
       return (
         <GridGraph
           dps={dps}
-          associatedID={associatedID}
+          monitoredID={monitoredID}
           setSize={setSize}
           size={size}
         />);

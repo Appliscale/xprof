@@ -5,18 +5,18 @@ import Grid from '../Grid';
 
 const propTypes = {
   dps: PropTypes.arrayOf(PropTypes.object).isRequired,
-  associatedID: PropTypes.number.isRequired,
+  monitoredID: PropTypes.string.isRequired,
   setSize: PropTypes.func.isRequired,
   size: PropTypes.shape(PropTypes.any).isRequired,
 };
 
 const GridGraph = ({
   dps,
-  associatedID,
+  monitoredID,
   setSize,
   size,
 }) => {
-  const wrapperID = `graphWrapper-${associatedID}`;
+  const wrapperID = `graphWrapper-${monitoredID}`;
   const wrapper = document.getElementById(wrapperID);
   return (
     <div
@@ -26,11 +26,11 @@ const GridGraph = ({
         justifyContent: 'center',
       }}
     >
-      {wrapper && associatedID && <Grid
+      {wrapper && monitoredID && <Grid
         data={dps}
         setSize={setSize}
         size={size}
-        graphID={associatedID}
+        graphID={monitoredID}
       />}
     </div>
   );

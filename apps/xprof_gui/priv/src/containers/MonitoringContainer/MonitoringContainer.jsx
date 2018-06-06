@@ -10,7 +10,7 @@ import {
   expandGraphPanel,
   shrinkGraphPanel,
   calleeClick,
-  setIDs,
+  // setIDs,
   setSize,
 } from '../../actions';
 import {
@@ -18,7 +18,7 @@ import {
   getFunctionCallees,
   getFunctionCalleesVisibility,
   getFunctionGraphVisibility,
-  getIDs,
+  // getIDs,
   getSize,
 } from '../../selectors';
 
@@ -33,7 +33,7 @@ const mapStateToProps = (state, ownProps) => ({
     ownProps.monitored.query,
   ),
   panelVisibility: getFunctionGraphVisibility(state, ownProps.monitored.query),
-  IDs: getIDs(state),
+  // IDs: getIDs(state),
   size: getSize(state),
 });
 
@@ -46,7 +46,7 @@ const mapDispatchToProps = {
   expandGraphPanel,
   shrinkGraphPanel,
   calleeClick,
-  setIDs,
+  // setIDs,
   setSize,
 };
 
