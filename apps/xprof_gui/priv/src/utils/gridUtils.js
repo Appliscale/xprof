@@ -351,11 +351,19 @@ export function getPositionY(d, i, time) {
   */
   const position = d.y + (d.height / 3);
   if (i === time.length - 1) {
-    if (document.getElementsByClassName('xLabel')) {
-      const l = Array.from(document.getElementsByClassName('xLabel'))[0];
+    /*
+      The following commented out part was generating crashes
+      as the wanted label to check size was sometimes not yet rendered.
+      Now the value is hard-read from the Inspector and inserted.
+    */
+
+    /* if (document.getElementsByClassName(`xLabel-${graphID}`)) {
+      const l = Array
+        .from(document.getElementsByClassName(`xLabel-${graphID}`))[0];
       const h = parseFloat(getComputedStyle(l).fontSize);
       return position + h;
-    }
+    } */
+    return position + 9;
   }
   return position;
 }
@@ -421,7 +429,6 @@ function tooltipElements(data) {
   const baseStyle = 'border: 1px solid darkgrey; padding: 4px';
   const labelStyle = `style="${baseStyle}"`;
   const dataStyle = `style="${baseStyle}; text-align: center"`;
-  console.log('TD:', data);
   const nullData = data.every(d => d === null);
   if (!nullData) {
     // eslint-disable-next-line

@@ -56,7 +56,7 @@ export function compose(props) {
   const row = grid.selectAll('.row')
     .data(gData)
     .enter().append('g')
-    .attr('class', (_, i) => `col-${i}-${graphID}`);
+    .attr('class', (_, i) => `row-${i}-${graphID}`);
 
   // filling it with color-rectangles
   row.selectAll('.rectangle')
@@ -96,11 +96,11 @@ export function compose(props) {
 
   const xData = gridData(1, c, w, size.marginBottom);
 
-  const xRow = xAxis.selectAll('.xRow')
+  const xRow = xAxis.selectAll(`.xRow-${graphID}`)
     .data(xData, (_, i) => `xRow-${i}`)
     .enter()
     .append('g')
-    .attr('class', 'xRow')
+    .attr('class', `.xRow-${graphID}`)
     .attr('width', size.marginBottom);
 
   /*
@@ -109,14 +109,14 @@ export function compose(props) {
     with two children - each of them have to be positioned separately.
   */
 
-  const xRowG = xRow.selectAll('.xLabelSquare')
+  const xRowG = xRow.selectAll(`.xLabelSquare-${graphID}`)
     .data(d => d, d => `xRowG-${d.id}`)
     .enter().append('g')
     .attr('id', d => `x${d.id}`);
 
   // Appending the rectangles and the labels separately.
   xRowG.append('rect')
-    .attr('class', 'xLabelSquare')
+    .attr('class', `xLabelSquare-${graphID}`)
     .attr('id', d => `x${d.id}`)
     .attr('x', d => d.x)
     .attr('y', d => d.y)
@@ -125,7 +125,7 @@ export function compose(props) {
     .style('fill', d => colorTick(spaceLabels(d.id, times.length, 10, 5)))
     .style('stroke', 'white');
   xRowG.append('text')
-    .attr('class', 'xLabel')
+    .attr('class', `xLabel-${graphID}`)
     .attr('id', (d, i) => `xl${i}-${graphID}`)
     .attr('x', (d, i) => getPositionX(d, i, times))
     .attr(
@@ -146,20 +146,21 @@ export function compose(props) {
 
   const yData = gridData(r, 1, size.marginLeft, h);
 
-  const yCol = yAxis.selectAll('.yCol')
+  const yCol = yAxis.selectAll(`.yCol-${graphID}`)
     .data(yData, (_, i) => `yCol-${i}`)
     .enter()
     .append('g')
-    .attr('class', (_, i) => `${gData[i][0].rowName}-yCol`)
+    .attr('class', `yCol-${graphID}`)
+    .attr('id', (_, i) => `${gData[i][0].rowName}-yCol`)
     .attr('width', size.marginLeft);
 
-  const yColG = yCol.selectAll('.yLabelSquare')
+  const yColG = yCol.selectAll(`.yLabelSquare-${graphID}`)
     .data(d => d, d => `yColG-${d.id}`)
     .enter().append('g')
     .attr('id', d => `y${d.id}`);
 
   yColG.append('rect')
-    .attr('class', 'yLabelSquare')
+    .attr('class', `yLabelSquare-${graphID}`)
     .attr('id', d => `y${d.id}`)
     .attr('x', d => d.x)
     .attr('y', d => d.y)
@@ -168,7 +169,7 @@ export function compose(props) {
     .style('fill', '#f5f5f5')
     .style('stroke', 'white');
   yColG.append('text')
-    .attr('class', 'yLabel')
+    .attr('class', `yLabel-${graphID}`)
     .attr('x', d => d.x + 4)
     .attr('y', d => d.y + (0.7 * d.height))
     .style('fill', 'black')
@@ -230,10 +231,10 @@ export function update(props) {
 
   const updateX = gridData(1, newC, newW, size.marginBottom);
 
-  d3.selectAll('.xRow')
+  d3.selectAll(`.xRow-${graphID}`)
     .attr('width', size.marginBottom);
 
-  d3.selectAll('.xLabelSquare')
+  d3.selectAll(`.xLabelSquare-${graphID}`)
     .attr('x', d => getData(d.id, updateX, 'x'))
     .attr('y', d => getData(d.id, updateX, 'y'))
     .attr('height', d => getData(d.id, updateX, 'height') / 8)
@@ -254,16 +255,16 @@ export function update(props) {
 
   const updateY = gridData(newR, 1, size.marginLeft, newH);
 
-  d3.selectAll('.yCol')
+  d3.selectAll(`.yCol-${graphID}`)
     .attr('width', size.marginLeft);
 
-  d3.selectAll('.yLabelSquare')
+  d3.selectAll(`.yLabelSquare-${graphID}`)
     .attr('x', d => getData(d.id, updateY, 'x'))
     .attr('y', d => getData(d.id, updateY, 'y'))
     .attr('height', d => getData(d.id, updateY, 'height'))
     .attr('width', d => getData(d.id, updateY, 'width'));
 
-  d3.selectAll('.yLabel')
+  d3.selectAll(`.yLabel-${graphID}`)
     .attr('x', d => getData(d.id, updateY, 'x') + 4)
     // eslint-disable-next-line
     .attr('y', d => getData(d.id, updateY, 'y') + (0.7 * getData(d.id, updateY, 'height')))

@@ -115,11 +115,12 @@ export const setIDs = () => async (dispatch, getState) => {
   const state = getState();
   const ids = getIDs(state);
   const identifiedFunctions = Object.keys(ids);
+  const rolledValues = Object.values(ids);
   const monitoredCollection = getAllMonitored(state);
 
   monitoredCollection.forEach((monitored) => {
     if (!identifiedFunctions.includes(monitored.query)) {
-      const randomID = roll(roll);
+      const randomID = roll(roll, rolledValues);
       ids[monitored.query] = randomID;
     }
   });
