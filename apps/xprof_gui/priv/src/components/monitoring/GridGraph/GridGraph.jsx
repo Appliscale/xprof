@@ -18,6 +18,8 @@ const GridGraph = ({
 }) => {
   const wrapperID = `graphWrapper-${associatedID}`;
   const wrapper = document.getElementById(wrapperID);
+  const dataPresent = !!dps.length;
+  const condition = !!(wrapper && associatedID && dataPresent);
   return (
     <div
       id={wrapperID}
@@ -26,7 +28,7 @@ const GridGraph = ({
         justifyContent: 'center',
       }}
     >
-      {wrapper && associatedID && <Grid
+      {condition && <Grid
         data={dps}
         setSize={setSize}
         size={size}
