@@ -506,8 +506,19 @@ function renderTooltip(tooltipSelection, coords, data) {
     .style('top', `${coords[1] + 10}px`)
     .style('left', `${coords[0] + flipSide}px`)
     .style('visibility', 'visible')
-    // eslint-disable-next-line
     .html(tooltipElements(data));
+}
+
+export function renderLabelTooltip(tooltip, data, namespace) {
+  const baseStyle = 'border: 1px solid darkgrey; padding: 4px';
+  const labelStyle = `style="${baseStyle}"`;
+  const text = namespace[label('y', data.id)];
+  return tooltip
+    .style('visibility', 'visible')
+    .style('top', `${d3.event.pageY + 10}px`)
+    .style('left', `${d3.event.pageX + 10}px`)
+    // eslint-disable-next-line
+    .html(`<table><tbody><tr><td ${labelStyle}><strong>${text}</strong></td></tr></tbody></table>`);
 }
 
 export function prepareTooltip() {

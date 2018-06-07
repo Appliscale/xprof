@@ -33,7 +33,6 @@ const mapStateToProps = (state, ownProps) => ({
     ownProps.monitored.query,
   ),
   panelVisibility: getFunctionGraphVisibility(state, ownProps.monitored.query),
-  // IDs: getIDs(state),
   size: getSize(state),
 });
 
@@ -46,7 +45,6 @@ const mapDispatchToProps = {
   expandGraphPanel,
   shrinkGraphPanel,
   calleeClick,
-  // setIDs,
   setSize,
 };
 

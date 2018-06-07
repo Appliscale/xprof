@@ -3,13 +3,18 @@ import React from 'react';
 import GridGraph from '../GridGraph';
 import LineGraph from '../LineGraph';
 import { GRAPH_TYPE } from '../../../constants/GraphTypes';
+import { GRAPH_INITIAL_SIZE } from '../../../constants';
+
+const defaultProps = {
+  size: GRAPH_INITIAL_SIZE,
+};
 
 const propTypes = {
   dps: PropTypes.arrayOf(PropTypes.object).isRequired,
   type: PropTypes.string.isRequired,
   monitoredID: PropTypes.string.isRequired,
   setSize: PropTypes.func.isRequired,
-  size: PropTypes.shape(PropTypes.any).isRequired,
+  size: PropTypes.shape(PropTypes.any),
 };
 
 const Graph = ({
@@ -36,5 +41,6 @@ const Graph = ({
 };
 
 Graph.propTypes = propTypes;
+Graph.defaultProps = defaultProps;
 
 export default Graph;
