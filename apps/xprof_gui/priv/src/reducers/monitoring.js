@@ -5,7 +5,6 @@ const initialState = {
   data: {},
   panel: {},
   callees: {},
-  // ids: {},
   size: {
     width: 0,
     height: 0,
@@ -30,11 +29,6 @@ const monitoring = (state = initialState, action) => {
         ...state,
         data: action.data,
       };
-    /* case types.ASSIGN_GRAPH_ID:
-      return {
-        ...state,
-        ids: action.ids,
-      }; */
     case types.CHANGE_SIZE:
       return {
         ...state,

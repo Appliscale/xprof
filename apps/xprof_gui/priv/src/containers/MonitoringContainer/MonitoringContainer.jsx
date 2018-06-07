@@ -10,7 +10,6 @@ import {
   expandGraphPanel,
   shrinkGraphPanel,
   calleeClick,
-  // setIDs,
   setSize,
 } from '../../actions';
 import {
@@ -18,7 +17,6 @@ import {
   getFunctionCallees,
   getFunctionCalleesVisibility,
   getFunctionGraphVisibility,
-  // getIDs,
   getSize,
 } from '../../selectors';
 
