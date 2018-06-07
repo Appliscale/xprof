@@ -77,6 +77,7 @@ export function compose(props) {
     .attr('bucket', d => getAttr(d.id, dataGrid, 'bucket'))
     // eslint-disable-next-line
     .style('fill', d => getAttr(d.id, dataGrid, 'color') || 'white') // '#f5f5f5'
+    .style('cursor', 'crosshair')
     .on('mouseover', d => renderTooltipFromRect(tooltip, d.id, graphID));
 
   // Append x axis
@@ -153,7 +154,8 @@ export function compose(props) {
     .append('g')
     .attr('class', `yCol-${graphID}`)
     .attr('id', (_, i) => `${gData[i][0].rowName}-yCol`)
-    .attr('width', size.marginLeft);
+    .attr('width', size.marginLeft)
+    .on('mouseout', () => tooltip.style('visibility', 'hidden'));
 
   const yColG = yCol.selectAll(`.yLabelSquare-${graphID}`)
     .data(d => d, d => `yColG-${d.id}`)
@@ -168,15 +170,16 @@ export function compose(props) {
     .attr('height', d => d.height)
     .attr('width', d => d.width)
     .style('fill', '#f5f5f5')
-    .style('stroke', 'white')
-    .on('mouseover', d => renderLabelTooltip(tooltip, d, names));
+    .style('stroke', 'white');
   yColG.append('text')
     .attr('class', `yLabel-${graphID}`)
     .attr('x', d => d.x + 4)
     .attr('y', d => d.y + (0.7 * d.height))
     .style('fill', 'black')
     .style('font', () => calcFont('y'))
-    .text(d => names[label('y', d.id)]);
+    .style('cursor', 'default')
+    .text(d => names[label('y', d.id)])
+    .on('mouseover', d => renderLabelTooltip(tooltip, d, names));
 }
 
 export function update(props) {
