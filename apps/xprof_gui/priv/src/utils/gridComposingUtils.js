@@ -291,3 +291,24 @@ export function update(props) {
   trackCursor(passCursorCoords);
   initTooltip(hoveredRect, tooltip);
 }
+
+export function expandGrid(props, nextProps) {
+  const { graphID, data } = props;
+  const currentData = data;
+  const incomingData = nextProps.data;
+  const currentLastMomentum = currentData[currentData.length - 1];
+  const incomingLastMomentum = incomingData[incomingData.length - 1];
+  const lengthOfCurrent = Object.keys(currentLastMomentum).length;
+  const lengthOfIncoming = Object.keys(incomingLastMomentum).length;
+  if (lengthOfIncoming > lengthOfCurrent) {
+    const selected = [
+      d3.select(`#gridTable-${graphID}`),
+      d3.select(`#xAxis-${graphID}`),
+      d3.select(`#yAxis-${graphID}`),
+    ];
+    selected.forEach(s => s.remove());
+    if (selected.every(s => s === null)) {
+      compose(nextProps);
+    }
+  }
+}

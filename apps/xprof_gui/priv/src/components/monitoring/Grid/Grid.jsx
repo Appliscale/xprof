@@ -6,6 +6,7 @@ import {
   updateSize,
   update,
   executeIfExists,
+  expandGrid,
 } from '../../../utils';
 
 class Grid extends React.Component {
@@ -22,6 +23,10 @@ class Grid extends React.Component {
 
   componentDidMount() {
     compose(this.props);
+  }
+
+  componentWillReceiveProps(nextProps) {
+    expandGrid(this.props, nextProps);
   }
 
   componentWillUpdate() {
@@ -76,6 +81,7 @@ class Grid extends React.Component {
 }
 
 Grid.propTypes = {
+  // data: PropTypes.arrayOf(PropTypes.shape(PropTypes.any)).isRequired,
   size: PropTypes.shape(PropTypes.any).isRequired,
   graphID: PropTypes.string.isRequired,
   setSize: PropTypes.func.isRequired,
