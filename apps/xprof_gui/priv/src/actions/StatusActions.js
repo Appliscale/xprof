@@ -1,7 +1,13 @@
 import * as types from '../constants/ActionTypes';
 import * as XProf from '../api';
-import { getStatus } from '../selectors';
-import { STATUS, SPEC } from '../constants';
+import { getStatus, isConnection } from '../selectors';
+import { STATUS, SPEC, NOTIFICATIONS } from '../constants';
+import {
+  addNotification,
+  lostConnection,
+  aliveConnection,
+  hideConnectionNotification,
+} from './';
 
 const setTraceStatus = status => ({
   type: types.SET_TRACE_STATUS,
@@ -26,10 +32,23 @@ const setTraceStatusSuccess = status => ({
 export const getTraceStatus = () => async (dispatch, getState) => {
   const state = getState();
   const status = getStatus(state);
+  const isConn = isConnection(state);
 
   const { json, error } = await XProf.getTracingStatus();
-  if (error) console.log('ERROR: ', error);
-  else if (json.status !== status) dispatch(setTraceStatus(json.status));
+  if (error) {
+    if (isConn) {
+      dispatch(lostConnection());
+    }
+  } else {
+    if (!isConn) {
+      dispatch(aliveConnection());
+      setTimeout(
+        () => dispatch(hideConnectionNotification()),
+        NOTIFICATIONS.TIMEOUT,
+      );
+    }
+    if (json.status !== status) dispatch(setTraceStatus(json.status));
+  }
 };
 
 export const toggleTraceStatus = () => async (dispatch, getState) => {
@@ -42,6 +61,13 @@ export const toggleTraceStatus = () => async (dispatch, getState) => {
   dispatch(setTraceStatusRequest(toggledStatus));
 
   const { error } = await XProf.setTracingStatus(spec);
-  if (error) dispatch(setTraceStatusError(status));
-  else dispatch(setTraceStatusSuccess(toggledStatus));
+  if (error) {
+    dispatch(setTraceStatusError(status));
+    dispatch(addNotification(
+      NOTIFICATIONS.CHANGE_TRACING_STATUS.SEVERITY,
+      NOTIFICATIONS.CHANGE_TRACING_STATUS.MESSAGE(spec),
+    ));
+  } else {
+    dispatch(setTraceStatusSuccess(toggledStatus));
+  }
 };

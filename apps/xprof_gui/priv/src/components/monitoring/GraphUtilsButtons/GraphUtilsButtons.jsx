@@ -13,6 +13,7 @@ const propTypes = {
   panelVisibility: PropTypes.bool,
   expand: PropTypes.func.isRequired,
   shrink: PropTypes.func.isRequired,
+  isConnection: PropTypes.bool.isRequired,
 };
 
 const GraphUtilsButtons = ({
@@ -22,6 +23,7 @@ const GraphUtilsButtons = ({
   panelVisibility,
   expand,
   shrink,
+  isConnection,
 }) => (
   <span>
     <button
@@ -30,6 +32,7 @@ const GraphUtilsButtons = ({
       className="graph-util-button graph-utils-close close"
       data-dismiss="modal"
       aria-label="Close"
+      disabled={!isConnection}
     >
       <span aria-hidden="true">&times;</span>
     </button>
@@ -55,6 +58,7 @@ const GraphUtilsButtons = ({
         className="graph-util-button graph-utils-callee close"
         data-dismiss="modal"
         aria-label="Close"
+        disabled={!isConnection}
       >
         <span className="glyphicon glyphicon-thick glyphicon-search" />
       </button>

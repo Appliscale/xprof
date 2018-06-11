@@ -336,7 +336,8 @@ describe('Action utils', () => {
         [name1]: [{ time: 10000 }, { time: 11000 }, { time: 12000 }],
       };
       // when
-      const result = await ActionUtils.determineNextData(mfasSingle, data);
+      const result =
+        await ActionUtils.determineNextData(null, mfasSingle, data);
       // then
       expect(result[name1].length).toBe(4);
     });
@@ -345,7 +346,7 @@ describe('Action utils', () => {
       // given
       XProf.getFunctionsSamples.mockReturnValue({ json: [{ time: 13 }] });
       // when
-      const result = await ActionUtils.determineNextData(mfasSingle, {});
+      const result = await ActionUtils.determineNextData(null, mfasSingle, {});
       // then
       expect(result[name1].length).toBe(DPS_LIMIT);
     });
@@ -354,7 +355,7 @@ describe('Action utils', () => {
       // given
       XProf.getFunctionsSamples.mockReturnValue({ json: [{ time: 13 }] });
       // when
-      await ActionUtils.determineNextData(mfasTwo, {});
+      await ActionUtils.determineNextData(null, mfasTwo, {});
       // then
       expect(XProf.getFunctionsSamples).toHaveBeenCalledTimes(2);
     });
@@ -375,7 +376,7 @@ describe('Action utils', () => {
     it('should stop capturing functions calls', async () => {
       // when
       const result = await ActionUtils
-        .determineNextControlSwitch({ collecting: true }, mfa);
+        .determineNextControlSwitch(null, { collecting: true }, mfa);
       // then
       expect(XProf.stopCapturingFunctionsCalls).toHaveBeenCalledTimes(1);
       expect(result.collecting).toBe(false);
@@ -384,7 +385,7 @@ describe('Action utils', () => {
     it('should start capturing functions calls', async () => {
       // when
       const result = await ActionUtils
-        .determineNextControlSwitch({ collecting: false }, mfa);
+        .determineNextControlSwitch(null, { collecting: false }, mfa);
       // then
       expect(XProf.startCapturingFunctionsCalls).toHaveBeenCalledTimes(1);
       expect(result.collecting).toBe(true);

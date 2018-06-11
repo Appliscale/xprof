@@ -16,6 +16,7 @@ const propTypes = {
   functionClick: PropTypes.func.isRequired,
   position: PropTypes.number,
   setPositionOnFunction: PropTypes.func.isRequired,
+  isConnection: PropTypes.bool.isRequired,
 };
 
 const FunctionBrowser = ({
@@ -27,6 +28,7 @@ const FunctionBrowser = ({
   functionClick,
   position,
   setPositionOnFunction,
+  isConnection,
 }) => (
   <form className="navbar-form">
     <div className="form-group" style={{ display: 'inline' }}>
@@ -39,6 +41,7 @@ const FunctionBrowser = ({
           queryInputChange={queryInputChange}
           query={query}
           placeholder={placeholder}
+          isConnection={isConnection}
         />
         <ACModal
           functions={functions}

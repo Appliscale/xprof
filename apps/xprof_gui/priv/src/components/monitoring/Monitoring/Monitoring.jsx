@@ -23,6 +23,7 @@ const propTypes = {
   expandGraphPanel: PropTypes.func.isRequired,
   shrinkGraphPanel: PropTypes.func.isRequired,
   calleeClick: PropTypes.func.isRequired,
+  isConnection: PropTypes.bool.isRequired,
 };
 
 class Monitoring extends React.Component {
@@ -50,6 +51,7 @@ class Monitoring extends React.Component {
       expandGraphPanel,
       shrinkGraphPanel,
       calleeClick,
+      isConnection,
     } = this.props;
     return (
       <div>
@@ -66,6 +68,7 @@ class Monitoring extends React.Component {
           expand={expandGraphPanel}
           shrink={shrinkGraphPanel}
           calleeClick={calleeClick}
+          isConnection={isConnection}
         />
       </div>
     );

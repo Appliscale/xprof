@@ -16,6 +16,7 @@ import {
   getFunctionCallees,
   getFunctionCalleesVisibility,
   getFunctionGraphVisibility,
+  isConnection,
 } from '../../selectors';
 
 const MonitoringContainer = props => <Monitoring {...props} />;
@@ -26,6 +27,7 @@ const mapStateToProps = (state, ownProps) => ({
   callees: getFunctionCallees(state, ownProps.mfa[3]),
   calleesVisibility: getFunctionCalleesVisibility(state, ownProps.mfa[3]),
   panelVisibility: getFunctionGraphVisibility(state, ownProps.mfa[3]),
+  isConnection: isConnection(state),
 });
 
 const mapDispatchToProps = {

@@ -19,6 +19,7 @@ const propTypes = {
   panelVisibility: PropTypes.bool,
   expand: PropTypes.func.isRequired,
   shrink: PropTypes.func.isRequired,
+  isConnection: PropTypes.bool.isRequired,
 };
 
 const CallsPanel = ({
@@ -33,6 +34,7 @@ const CallsPanel = ({
   panelVisibility,
   expand,
   shrink,
+  isConnection,
 }) => (
   <div className="panel panel-default">
     <div className="panel-heading">
@@ -56,6 +58,7 @@ const CallsPanel = ({
           limit={control.limit}
           handleLimitChange={handleLimitChange}
           toggleCallsTracing={toggleCallsTracing}
+          isConnection={isConnection}
         />
       </div>
     ) : null}

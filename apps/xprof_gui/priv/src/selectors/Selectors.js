@@ -38,3 +38,13 @@ export const getFunctionGraphVisibility = (state, fun) =>
   state.layout.graphVisibility[fun];
 export const getFunctionTracingVisibility = (state, fun) =>
   state.layout.tracingVisibility[fun];
+
+// notification
+export const getNotifications = state => state.notification.notifications;
+export const getNotificationsLastId = state =>
+  (state.notification.notifications.length
+    ? last(state.notification.notifications).id
+    : 0);
+export const isConnection = state => state.notification.connection;
+export const getConnectionsNotificationVisibility = state =>
+  state.notification.showConnectionNotification;

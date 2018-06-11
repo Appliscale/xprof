@@ -42,7 +42,7 @@ export const toggleCallsTracing = mfa => async (dispatch, getState) => {
   const state = getState();
   const functionName = mfa[3];
   const control = getFunctionControl(state, functionName);
-  const nextControl = await determineNextControlSwitch(control, mfa);
+  const nextControl = await determineNextControlSwitch(dispatch, control, mfa);
   dispatch(setCallsControl({ [functionName]: nextControl }));
 };
 

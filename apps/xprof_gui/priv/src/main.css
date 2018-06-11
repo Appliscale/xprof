@@ -178,3 +178,17 @@ input#searchBox {
   margin-bottom: 30px;
   border-top: 2px solid #fe6b2740;
 }
+
+.notification-enter {
+  opacity: 0.01 !important;
+}
+
+.notification-enter-active {
+  opacity: 0.7 !important;
+  transition: all 400ms ease-out !important;
+}
+
+.notification-exit-active {
+  opacity: 0.01 !important;
+  transition: all 200ms ease-out !important;
+}

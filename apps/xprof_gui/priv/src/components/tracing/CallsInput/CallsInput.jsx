@@ -18,6 +18,7 @@ const propTypes = {
   handleLimitChange: PropTypes.func.isRequired,
   toggleCallsTracing: PropTypes.func.isRequired,
   collecting: PropTypes.bool,
+  isConnection: PropTypes.bool.isRequired,
 };
 
 const CallsInput = ({
@@ -28,6 +29,7 @@ const CallsInput = ({
   handleLimitChange,
   toggleCallsTracing,
   collecting,
+  isConnection,
 }) => {
   let thresholdClass;
   let limitClass;
@@ -85,7 +87,7 @@ const CallsInput = ({
         {error}
         <CallsSwitch
           mfa={mfa}
-          disabled={error}
+          disabled={error || !isConnection}
           collecting={collecting}
           toggleCallsTracing={toggleCallsTracing}
         />

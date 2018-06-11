@@ -21,6 +21,7 @@ const propTypes = {
   expand: PropTypes.func.isRequired,
   shrink: PropTypes.func.isRequired,
   calleeClick: PropTypes.func.isRequired,
+  isConnection: PropTypes.bool.isRequired,
 };
 
 const GraphPanel = ({
@@ -35,6 +36,7 @@ const GraphPanel = ({
   expand,
   shrink,
   calleeClick,
+  isConnection,
 }) => (
   <div className="panel panel-default">
     <GraphPanelHeading
@@ -48,6 +50,7 @@ const GraphPanel = ({
       expand={() => expand(mfa[3])}
       shrink={() => shrink(mfa[3])}
       calleeClick={calleeClick}
+      isConnection={isConnection}
     />
     {panelVisibility ? (
       <div className="panel-body">

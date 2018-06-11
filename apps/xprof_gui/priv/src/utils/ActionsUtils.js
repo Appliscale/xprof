@@ -7,8 +7,9 @@ import {
   DPS_ACTION,
   CALLS_COLUMNS,
   SORT,
+  NOTIFICATIONS,
 } from '../constants';
-import { setCallsControl } from '../actions';
+import { setCallsControl, addNotification } from '../actions';
 import * as XProf from '../api';
 
 export const determineNextCallsForFun = (json, lastCalls, calls, name) => {
@@ -152,7 +153,7 @@ export const determineIncomingDps = (dps, ts) => {
   }));
 };
 
-export const determineNextData = async (mfas, data) => {
+export const determineNextData = async (dispatch, mfas, data) => {
   const nextData = {};
 
   await Promise.all(mfas.map(async (mfa) => {
@@ -169,7 +170,10 @@ export const determineNextData = async (mfas, data) => {
     );
 
     if (error) {
-      console.log('ERROR: ', error);
+      dispatch(addNotification(
+        NOTIFICATIONS.SAMPLES.SEVERITY,
+        NOTIFICATIONS.SAMPLES.MESSAGE(mfa[3]),
+      ));
     } else if (json.length) {
       const incomingDpsSorted = sortBy(json, 'time');
       const incomingDps = determineIncomingDps(incomingDpsSorted, lastTs);
@@ -201,7 +205,10 @@ export const determineNextCalls = async (dispatch, state, mfas, calls) => {
     );
 
     if (error) {
-      console.log('ERROR: ', error);
+      dispatch(addNotification(
+        NOTIFICATIONS.CALLS.SEVERITY,
+        NOTIFICATIONS.CALLS.MESSAGE(mfa[3]),
+      ));
     } else {
       const nextControlForFun = determineNextControl(json, lastCalls);
       if (!isEmpty(nextControlForFun)) {
@@ -223,7 +230,7 @@ export const determineNextCalls = async (dispatch, state, mfas, calls) => {
   return nextCalls;
 };
 
-export const determineNextControlSwitch = async (control, mfa) => {
+export const determineNextControlSwitch = async (dispatch, control, mfa) => {
   const { threshold, limit, collecting } = control;
   const nextControl = { ...control };
 
@@ -234,7 +241,12 @@ export const determineNextControlSwitch = async (control, mfa) => {
       mfa[2],
     );
 
-    if (error) console.log('ERROR: ', error);
+    if (error) {
+      dispatch(addNotification(
+        NOTIFICATIONS.STOP_CAPTURING_CALLS.SEVERITY,
+        NOTIFICATIONS.START_CAPTURING_CALLS.MESSAGE(mfa[3]),
+      ));
+    }
     nextControl.collecting = false;
   } else {
     const { error } = await XProf.startCapturingFunctionsCalls(
@@ -245,7 +257,12 @@ export const determineNextControlSwitch = async (control, mfa) => {
       limit,
     );
 
-    if (error) console.log('ERROR: ', error);
+    if (error) {
+      dispatch(addNotification(
+        NOTIFICATIONS.START_CAPTURING_CALLS.SEVERITY,
+        NOTIFICATIONS.START_CAPTURING_CALLS.MESSAGE(mfa[3]),
+      ));
+    }
     nextControl.collecting = true;
   }
 

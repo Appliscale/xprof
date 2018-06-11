@@ -11,6 +11,7 @@ const propTypes = {
   queryInputChange: PropTypes.func.isRequired,
   query: PropTypes.string.isRequired,
   placeholder: PropTypes.string,
+  isConnection: PropTypes.bool.isRequired,
 };
 
 class QueryInput extends React.Component {
@@ -34,7 +35,7 @@ class QueryInput extends React.Component {
   }
 
   render() {
-    const { query, placeholder } = this.props;
+    const { query, placeholder, isConnection } = this.props;
     return (
       <div>
         <input
@@ -47,6 +48,7 @@ class QueryInput extends React.Component {
           value={query}
           onKeyDown={this.onKeyDown}
           onChange={this.onChange}
+          disabled={!isConnection}
         />
       </div>
     );

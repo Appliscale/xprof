@@ -12,6 +12,7 @@ describe('QueryInput component', () => {
       queryKeyDown: jest.fn(),
       queryInputChange: jest.fn(),
       query: '',
+      isConnection: true,
     };
     wrapper = shallow(<QueryInput {...props} />);
   });

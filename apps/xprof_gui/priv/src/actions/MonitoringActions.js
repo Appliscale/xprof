@@ -1,6 +1,8 @@
 import { getMfas } from '../selectors';
 import * as types from '../constants/ActionTypes';
 import * as XProf from '../api';
+import { addNotification } from './';
+import { NOTIFICATIONS } from '../constants';
 
 const stopMonitoringFunctionRequest = mfas => ({
   type: types.STOP_MONITORING_FUNCTION,
@@ -21,21 +23,30 @@ export const stopMonitoringFunction = mfa => async (dispatch, getState) => {
 
   const { error } = await XProf.stopMonitoringFunction(mfa[0], mfa[1], mfa[2]);
   if (error) {
-    console.log('ERROR: ', error);
+    dispatch(addNotification(
+      NOTIFICATIONS.MONITORING.SEVERITY,
+      NOTIFICATIONS.MONITORING.MESSAGE(mfa[3]),
+    ));
     dispatch(stopMonitoringFunctionError(mfas));
   }
 };
 
-export const startMonitoringFunction = functionName => async (
-  dispatch,
-  getState,
-) => {
+export const startMonitoringFunction = (
+  functionName,
+  onSuccess,
+  onError,
+) => async (dispatch, getState) => {
   const state = getState();
   const mfas = getMfas(state);
   const isMonitored = mfas.filter(mfa => mfa[3] === functionName).length;
 
+  let error;
   if (!isMonitored) {
-    const { error } = await XProf.startMonitoringFunction(functionName);
-    if (error) console.log('ERROR: ', error);
+    ({ error } = await XProf.startMonitoringFunction(functionName));
+  }
+  if (error && onError) {
+    onError();
+  } else if (onSuccess) {
+    onSuccess();
   }
 };

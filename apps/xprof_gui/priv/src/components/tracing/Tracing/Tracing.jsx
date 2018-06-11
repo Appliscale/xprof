@@ -22,6 +22,7 @@ const propTypes = {
   panelVisibility: PropTypes.bool,
   expandTracingPanel: PropTypes.func.isRequired,
   shrinkTracingPanel: PropTypes.func.isRequired,
+  isConnection: PropTypes.bool.isRequired,
 };
 
 class Tracing extends React.Component {
@@ -48,6 +49,7 @@ class Tracing extends React.Component {
       panelVisibility,
       expandTracingPanel,
       shrinkTracingPanel,
+      isConnection,
     } = this.props;
     return (
       <div>
@@ -64,6 +66,7 @@ class Tracing extends React.Component {
           panelVisibility={panelVisibility}
           expand={expandTracingPanel}
           shrink={shrinkTracingPanel}
+          isConnection={isConnection}
         />
       </div>
     );
