@@ -2,8 +2,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import GridGraph from '../GridGraph';
 import LineGraph from '../LineGraph';
-import { GRAPH_TYPE } from '../../../constants/GraphTypes';
-import { GRAPH_INITIAL_SIZE } from '../../../constants';
+import { GRAPH_INITIAL_SIZE, GRAPH_TYPE } from '../../../constants';
 
 const defaultProps = {
   size: GRAPH_INITIAL_SIZE,

@@ -9,7 +9,12 @@ import {
   getStatus,
 } from '../selectors';
 import { setCallsControl, getCalleesForFunctions } from './';
-import { determineNextData, determineNextCalls, roll } from '../utils';
+import {
+  determineNextData,
+  determineNextCalls,
+  roll,
+  safecomposeID,
+} from '../utils';
 
 export const updateListMonitoringFunctions = monitoredCollection => ({
   type: types.UPDATE_MONITORED_FUNCTIONS,
@@ -39,7 +44,16 @@ const updateSize = (property, value) => ({
 
 export const getMonitoredFunctions = () => async (dispatch, getState) => {
   const state = getState();
+  const ids = getIDs(state);
+  const identifiedFunctions = Object.keys(ids);
   const monitoredCollection = getAllMonitored(state);
+
+  monitoredCollection.forEach((monitored) => {
+    if (!identifiedFunctions.includes(monitored.query)) {
+      const id = safecomposeID(monitored.query);
+      ids[monitored.query] = id;
+    }
+  });
 
   const { json, error } = await XProf.getAllMonitoredFunctions();
   if (error) {
@@ -61,6 +75,7 @@ export const getMonitoredFunctions = () => async (dispatch, getState) => {
       {},
     );
 
+    dispatch(updateIDs(ids));
     dispatch(getCalleesForFunctions(newMonitoredCollection));
     dispatch(setCallsControl(newControls));
     dispatch(updateListMonitoringFunctions(json));

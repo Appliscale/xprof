@@ -18,6 +18,7 @@ import {
   getFunctionCalleesVisibility,
   getFunctionGraphVisibility,
   getSize,
+  getIDs,
 } from '../../selectors';
 
 const MonitoringContainer = props => <Monitoring {...props} />;
@@ -32,6 +33,7 @@ const mapStateToProps = (state, ownProps) => ({
   ),
   panelVisibility: getFunctionGraphVisibility(state, ownProps.monitored.query),
   size: getSize(state),
+  ids: getIDs(state),
 });
 
 const mapDispatchToProps = {

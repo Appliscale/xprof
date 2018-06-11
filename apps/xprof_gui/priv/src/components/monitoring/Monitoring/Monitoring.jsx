@@ -30,6 +30,7 @@ const propTypes = {
   calleeClick: PropTypes.func.isRequired,
   setSize: PropTypes.func.isRequired,
   size: PropTypes.shape(PropTypes.any),
+  ids: PropTypes.shape(PropTypes.any).isRequired,
 };
 
 class Monitoring extends React.Component {
@@ -59,6 +60,7 @@ class Monitoring extends React.Component {
       calleeClick,
       setSize,
       size,
+      ids,
     } = this.props;
     return (
       <div>
@@ -77,6 +79,7 @@ class Monitoring extends React.Component {
           calleeClick={calleeClick}
           setSize={setSize}
           size={size}
+          ids={ids}
         />
       </div>
     );

@@ -2,7 +2,6 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { Graph, GraphPanelHeading } from '../';
 import { GRAPH_INITIAL_SIZE } from '../../../constants';
-import { safecomposeID } from '../../../utils';
 
 const defaultProps = {
   dps: [],
@@ -30,6 +29,7 @@ const propTypes = {
   calleeClick: PropTypes.func.isRequired,
   setSize: PropTypes.func.isRequired,
   size: PropTypes.shape(PropTypes.any),
+  ids: PropTypes.shape(PropTypes.any).isRequired,
 };
 
 const GraphPanel = ({
@@ -46,8 +46,9 @@ const GraphPanel = ({
   calleeClick,
   setSize,
   size,
+  ids,
 }) => {
-  const monitoredID = safecomposeID(monitored.query);
+  const monitoredID = ids[monitored.query];
   return (
     <div className="panel panel-default">
       <GraphPanelHeading
