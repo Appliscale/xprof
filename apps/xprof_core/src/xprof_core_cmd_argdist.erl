@@ -54,7 +54,7 @@ get_cmd_id(Params) ->
 %% tracer
 
 -record(state, {freq_count = dict:new(),
-                total_freq_count = dict:new(),
+                all_keys = [],
                 max_enum}).
 
 init(Options, _MFASpec) ->
@@ -63,26 +63,37 @@ init(Options, _MFASpec) ->
 
 handle_event({trace_ts, _Pid, call, _MFA, Args, _StartSDL_CreateWindowTime}, _,
              State = #state{freq_count = FreqCount,
-                            total_freq_count = TotalFreqCount,
+                            all_keys = AllKeys,
                             max_enum = MaxEnum}) ->
-    Key =
-        case dict:size(TotalFreqCount) < MaxEnum orelse
-             dict:is_key(Args, TotalFreqCount) of
-            true -> Args;
-            _ -> 'other'
+    {Key, NewAllKeys} =
+        case lists:member(Args, AllKeys) of
+            true ->
+                {Args, AllKeys};
+            _ ->
+                case AllKeys of
+                    ['other'|_] ->
+                        {'other', AllKeys};
+                    _ ->
+                        case length(AllKeys) < MaxEnum of
+                            true ->
+                                {Args, [Args|AllKeys]};
+                            _ ->
+                                {'other', ['other'|AllKeys]}
+                        end
+                end
         end,
     {ok, State#state{
            freq_count = dict:update_counter(Key, 1, FreqCount),
-           total_freq_count = dict:update_counter(Key, 1, TotalFreqCount)}};
+           all_keys = NewAllKeys}};
 handle_event(_, _, _) ->
     ok.
 
+
 take_snapshot(State = #state{freq_count = FreqCount,
-                             total_freq_count = TotalFreqCount}) ->
-    TotalList = lists:keysort(2, dict:to_list(TotalFreqCount)),
+                             all_keys = AllKeys}) ->
     IntervalList = [case dict:find(Key, FreqCount) of
                         {ok, Count} -> {Key, Count};
                         error -> {Key, 0}
                     end
-                    || {Key, _TotalCount} <- TotalList],
+                    || Key <- lists:reverse(AllKeys)],
     {IntervalList, State#state{freq_count = dict:new()}}.
