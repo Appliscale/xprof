@@ -35,6 +35,7 @@ cover/
 _build/
 
 apps/xprof_gui/priv/build/*.js.map
+apps/xprof_gui/priv/build-dev/
 apps/xprof_gui/priv/bower_components/
 apps/xprof_gui/priv/node_modules/
 
