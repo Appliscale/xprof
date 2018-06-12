@@ -9,7 +9,11 @@ const defaultProps = {
 };
 
 const propTypes = {
-  mfa: PropTypes.arrayOf(PropTypes.any).isRequired,
+  monitored: PropTypes.shape({
+    graph_type: PropTypes.string,
+    mfa: PropTypes.arrayOf(PropTypes.any),
+    query: PropTypes.string,
+  }).isRequired,
   stopMonitoringFunction: PropTypes.func.isRequired,
   callees: PropTypes.arrayOf(PropTypes.string),
   calleesVisibility: PropTypes.bool,
@@ -22,7 +26,7 @@ const propTypes = {
 };
 
 const GraphPanelHeading = ({
-  mfa,
+  monitored,
   stopMonitoringFunction,
   callees,
   calleesVisibility,
@@ -35,7 +39,7 @@ const GraphPanelHeading = ({
 }) => (
   <div className="panel-heading">
     <GraphUtilsButtons
-      mfa={mfa}
+      monitored={monitored}
       stopMonitoringFunction={stopMonitoringFunction}
       showCallees={showCallees}
       hasCallees={!!callees.length}
@@ -44,7 +48,7 @@ const GraphPanelHeading = ({
       shrink={shrink}
     />
     <h3 className="panel-title">
-      {mfa[3]}
+      {monitored.query}
       <span className="panel-subtitle"> - Monitoring</span>
     </h3>
     {calleesVisibility ? (

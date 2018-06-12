@@ -22,13 +22,13 @@ export const calleeClick = callee => (dispatch) => {
   dispatch(startMonitoringFunction(callee));
 };
 
-export const getCallees = mfa => async (dispatch) => {
-  const name = mfa[3];
+export const getCallees = monitored => async (dispatch) => {
+  const name = monitored.query;
 
   const { json, error } = await XProf.getFunctionsCallees(
-    mfa[0],
-    mfa[1],
-    mfa[2],
+    monitored.mfa[0],
+    monitored.mfa[1],
+    monitored.mfa[2],
   );
 
   if (error) console.log('ERROR');
@@ -36,16 +36,17 @@ export const getCallees = mfa => async (dispatch) => {
   else console.log('NO CALLES FOUND!');
 };
 
-export const getCalleesForFunctions = mfas => async (dispatch) => {
+export const getCalleesForFunctions = monitoredCollection => async (dispatch,
+) => {
   const callees = {};
 
-  await Promise.all(mfas.map(async (mfa) => {
-    const fun = mfa[3];
+  await Promise.all(monitoredCollection.map(async (monitored) => {
+    const fun = monitored.query;
 
     const { json, error } = await XProf.getFunctionsCallees(
-      mfa[0],
-      mfa[1],
-      mfa[2],
+      monitored.mfa[0],
+      monitored.mfa[1],
+      monitored.mfa[2],
     );
 
     if (error) console.log('ERROR');

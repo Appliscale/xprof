@@ -1,10 +1,19 @@
 import * as types from '../constants/ActionTypes';
 
 const initialState = {
-  mfas: [],
+  monitoredCollection: [],
   data: {},
   panel: {},
   callees: {},
+  ids: {},
+  size: {
+    width: 0,
+    height: 0,
+    marginTop: 20,
+    marginRight: 0,
+    marginBottom: 70,
+    marginLeft: 0,
+  },
 };
 
 const monitoring = (state = initialState, action) => {
@@ -14,12 +23,25 @@ const monitoring = (state = initialState, action) => {
     case types.UPDATE_MONITORED_FUNCTIONS:
       return {
         ...state,
-        mfas: action.mfas,
+        monitoredCollection: action.monitoredCollection,
       };
     case types.UPDATE_DATA:
       return {
         ...state,
         data: action.data,
+      };
+    case types.CHANGE_SIZE:
+      return {
+        ...state,
+        size: {
+          ...state.size,
+          [action.property]: action.value,
+        },
+      };
+    case types.ASSIGN_GRAPH_ID:
+      return {
+        ...state,
+        ids: action.ids,
       };
     default:
       return state;

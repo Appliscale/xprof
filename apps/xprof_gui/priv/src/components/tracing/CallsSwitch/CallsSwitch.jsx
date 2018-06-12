@@ -7,21 +7,25 @@ const defaultProps = {
 };
 
 const propTypes = {
-  mfa: PropTypes.arrayOf(PropTypes.any).isRequired,
+  monitored: PropTypes.shape({
+    graph_type: PropTypes.string,
+    mfa: PropTypes.arrayOf(PropTypes.any),
+    query: PropTypes.string,
+  }).isRequired,
   disabled: PropTypes.bool,
   collecting: PropTypes.bool,
   toggleCallsTracing: PropTypes.func.isRequired,
 };
 
 const CallsSwitch = ({
-  mfa, disabled, collecting, toggleCallsTracing,
+  monitored, disabled, collecting, toggleCallsTracing,
 }) => (
   <span>
     <button
       type="submit"
       onClick={(e) => {
         e.preventDefault();
-        toggleCallsTracing(mfa);
+        toggleCallsTracing(monitored);
       }}
       className={collecting ? 'btn btn-danger' : 'btn btn-success'}
       disabled={disabled}

@@ -7,14 +7,18 @@ const defaultProps = {
   sort: { items: [] },
 };
 const propTypes = {
-  mfa: PropTypes.arrayOf(PropTypes.any).isRequired,
+  monitored: PropTypes.shape({
+    graph_type: PropTypes.string,
+    mfa: PropTypes.arrayOf(PropTypes.any),
+    query: PropTypes.string,
+  }).isRequired,
   sort: PropTypes.objectOf(PropTypes.any),
   sortCallsBy: PropTypes.func.isRequired,
   toggleExpandItem: PropTypes.func.isRequired,
 };
 
 const CallsTable = ({
-  mfa, sort, sortCallsBy, toggleExpandItem,
+  monitored, sort, sortCallsBy, toggleExpandItem,
 }) => {
   const sortIcon = (column) => {
     const isActive = sort.column === column;
@@ -29,23 +33,23 @@ const CallsTable = ({
       <thead>
         <tr>
           <th />
-          <th onClick={() => sortCallsBy(mfa, CALLS_COLUMNS.ID)}>
+          <th onClick={() => sortCallsBy(monitored, CALLS_COLUMNS.ID)}>
             <span className="clickable">No. {sortIcon(CALLS_COLUMNS.ID)}</span>
           </th>
-          <th onClick={() => sortCallsBy(mfa, CALLS_COLUMNS.CALL_TIME)}>
+          <th onClick={() => sortCallsBy(monitored, CALLS_COLUMNS.CALL_TIME)}>
             <span className="clickable">
               Call time {sortIcon(CALLS_COLUMNS.CALL_TIME)}
             </span>
           </th>
-          <th onClick={() => sortCallsBy(mfa, CALLS_COLUMNS.PID)}>
+          <th onClick={() => sortCallsBy(monitored, CALLS_COLUMNS.PID)}>
             <span className="clickable">Pid {sortIcon(CALLS_COLUMNS.PID)}</span>
           </th>
-          <th onClick={() => sortCallsBy(mfa, CALLS_COLUMNS.ARGS)}>
+          <th onClick={() => sortCallsBy(monitored, CALLS_COLUMNS.ARGS)}>
             <span className="clickable">
               Function arguments {sortIcon(CALLS_COLUMNS.ARGS)}
             </span>
           </th>
-          <th onClick={() => sortCallsBy(mfa, CALLS_COLUMNS.RES)}>
+          <th onClick={() => sortCallsBy(monitored, CALLS_COLUMNS.RES)}>
             <span className="clickable">
               Return value {sortIcon(CALLS_COLUMNS.RES)}
             </span>
@@ -56,7 +60,7 @@ const CallsTable = ({
         {sort.items.map(item => (
           <CallsRow
             key={item.id}
-            mfa={mfa}
+            monitored={monitored}
             item={item}
             toggleExpandItem={toggleExpandItem}
           />
