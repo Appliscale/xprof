@@ -1,4 +1,5 @@
-import { getNotificationsLastId } from '../selectors';
+import { take } from 'lodash';
+import { getNotificationsLastId, getNotifications } from '../selectors';
 import { NOTIFICATIONS } from '../constants';
 import * as types from '../constants/ActionTypes';
 
@@ -30,6 +31,15 @@ export const addNotification = (
   timeout = NOTIFICATIONS.TIMEOUT,
 ) => async (dispatch, getState) => {
   const state = getState();
+
+  const notifications = getNotifications(state);
+  if (notifications.length > 9) {
+    const toRemove = notifications.length - 9;
+    const notificatinosToRemove = take(notifications, toRemove);
+    notificatinosToRemove.forEach(n => dispatch(removeNotification(n.id)));
+  }
+
+  debugger;
   const lastId = getNotificationsLastId(state);
   const notification = {
     id: lastId + 1,
