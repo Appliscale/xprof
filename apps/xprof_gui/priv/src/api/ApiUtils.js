@@ -5,7 +5,7 @@ const handleError = error =>
     ? {
       error: {
         status: error.response.status,
-        message: error.response.data,
+        date: error.response.data,
       },
     }
     : { error });

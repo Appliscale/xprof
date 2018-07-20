@@ -80,3 +80,23 @@ export const getAlertClass = (severity) => {
       return '';
   }
 };
+
+export function roll(func, rolled) {
+  const r = Math.floor(Math.random() * 10);
+  if (rolled.includes(r)) {
+    func();
+  }
+  return r;
+}
+
+export const getAssociatedID = (arr, query) => {
+  let r = null;
+  Object.entries(arr).forEach((a) => {
+    const [q, v] = a;
+    if (q === query) {
+      r = v;
+    }
+    return r;
+  });
+  return r;
+};

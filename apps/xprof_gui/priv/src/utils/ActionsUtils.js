@@ -110,7 +110,7 @@ export const determineNextControl = (json, lastcalls) => {
 export const determineIncomingDps = (dps, ts) => {
   let missingDps;
   let mergedDps = [];
-  const zeros = {
+  /* const zeros = {
     min: 0,
     mean: 0,
     median: 0,
@@ -124,7 +124,8 @@ export const determineIncomingDps = (dps, ts) => {
     p9999999: 0,
     memsize: 0,
     count: 0,
-  };
+  }; */
+  const zeros = {};
 
   switch (dpsDecision(dps, ts)) {
     case DPS_ACTION.FIRST_DPS:
@@ -153,26 +154,30 @@ export const determineIncomingDps = (dps, ts) => {
   }));
 };
 
-export const determineNextData = async (dispatch, mfas, data) => {
+export const determineNextData = async (
+  dispatch,
+  monitoredCollection,
+  data,
+) => {
   const nextData = {};
 
-  await Promise.all(mfas.map(async (mfa) => {
-    const completeFunName = mfa[3];
+  await Promise.all(monitoredCollection.map(async (monitored) => {
+    const completeFunName = monitored.query;
     const currentDps = data[completeFunName];
     const lastTs =
         currentDps && currentDps.length ? last(currentDps).time / 1000 : 0;
 
     const { json, error } = await XProf.getFunctionsSamples(
-      mfa[0],
-      mfa[1],
-      mfa[2],
+      monitored.mfa[0],
+      monitored.mfa[1],
+      monitored.mfa[2],
       lastTs,
     );
 
     if (error) {
       dispatch(addNotification(
         NOTIFICATIONS.SAMPLES.SEVERITY,
-        NOTIFICATIONS.SAMPLES.MESSAGE(mfa[3]),
+        NOTIFICATIONS.SAMPLES.MESSAGE(monitored.query),
       ));
     } else if (json.length) {
       const incomingDpsSorted = sortBy(json, 'time');
@@ -188,26 +193,31 @@ export const determineNextData = async (dispatch, mfas, data) => {
   return nextData;
 };
 
-export const determineNextCalls = async (dispatch, state, mfas, calls) => {
+export const determineNextCalls = async (
+  dispatch,
+  state,
+  monitoredCollection,
+  calls,
+) => {
   const nextCalls = {};
 
-  await Promise.all(mfas.map(async (mfa) => {
-    const completeFunName = mfa[3];
+  await Promise.all(monitoredCollection.map(async (monitored) => {
+    const completeFunName = monitored.query;
     const lastCalls = getLastCallsForFunction(state, completeFunName);
     const offset =
         lastCalls && lastCalls.items.length ? last(lastCalls.items).id : 0;
 
     const { json, error } = await XProf.getFunctionsCalls(
-      mfa[0],
-      mfa[1],
-      mfa[2],
+      monitored.mfa[0],
+      monitored.mfa[1],
+      monitored.mfa[2],
       offset,
     );
 
     if (error) {
       dispatch(addNotification(
         NOTIFICATIONS.CALLS.SEVERITY,
-        NOTIFICATIONS.CALLS.MESSAGE(mfa[3]),
+        NOTIFICATIONS.CALLS.MESSAGE(monitored.query),
       ));
     } else {
       const nextControlForFun = determineNextControl(json, lastCalls);
@@ -229,30 +239,33 @@ export const determineNextCalls = async (dispatch, state, mfas, calls) => {
 
   return nextCalls;
 };
-
-export const determineNextControlSwitch = async (dispatch, control, mfa) => {
+export const determineNextControlSwitch = async (
+  dispatch,
+  control,
+  monitored,
+) => {
   const { threshold, limit, collecting } = control;
   const nextControl = { ...control };
 
   if (collecting) {
     const { error } = await XProf.stopCapturingFunctionsCalls(
-      mfa[0],
-      mfa[1],
-      mfa[2],
+      monitored.mfa[0],
+      monitored.mfa[1],
+      monitored.mfa[2],
     );
 
     if (error) {
       dispatch(addNotification(
         NOTIFICATIONS.STOP_CAPTURING_CALLS.SEVERITY,
-        NOTIFICATIONS.START_CAPTURING_CALLS.MESSAGE(mfa[3]),
+        NOTIFICATIONS.START_CAPTURING_CALLS.MESSAGE(monitored.query),
       ));
     }
     nextControl.collecting = false;
   } else {
     const { error } = await XProf.startCapturingFunctionsCalls(
-      mfa[0],
-      mfa[1],
-      mfa[2],
+      monitored.mfa[0],
+      monitored.mfa[1],
+      monitored.mfa[2],
       threshold,
       limit,
     );
@@ -260,7 +273,7 @@ export const determineNextControlSwitch = async (dispatch, control, mfa) => {
     if (error) {
       dispatch(addNotification(
         NOTIFICATIONS.START_CAPTURING_CALLS.SEVERITY,
-        NOTIFICATIONS.START_CAPTURING_CALLS.MESSAGE(mfa[3]),
+        NOTIFICATIONS.START_CAPTURING_CALLS.MESSAGE(monitored.query),
       ));
     }
     nextControl.collecting = true;

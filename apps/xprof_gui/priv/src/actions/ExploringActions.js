@@ -23,29 +23,29 @@ export const calleeClick = callee => (dispatch) => {
   dispatch(startMonitoringFunction(callee));
 };
 
-export const getCalleesForFunctions = mfas => async (dispatch) => {
+export const getCalleesForFunctions = collection => async (dispatch) => {
   const callees = {};
 
-  await Promise.all(mfas.map(async (mfa) => {
-    const fun = mfa[3];
+  await Promise.all(collection.map(async (monitored) => {
+    const fun = monitored.query;
 
     const { json, error } = await XProf.getFunctionsCallees(
-      mfa[0],
-      mfa[1],
-      mfa[2],
+      monitored.mfa[0],
+      monitored.mfa[1],
+      monitored.mfa[2],
     );
 
     if (error) {
       dispatch(addNotification(
         NOTIFICATIONS.CALLEES.SEVERITY,
-        NOTIFICATIONS.CALLEES.MESSAGE(mfa[3]),
+        NOTIFICATIONS.CALLEES.MESSAGE(monitored.mfa.query),
       ));
     } else if (json.length) {
       callees[fun] = json;
     } else {
       dispatch(addNotification(
         NOTIFICATIONS.NO_CALLEES.SEVERITY,
-        NOTIFICATIONS.NO_CALLEES.MESSAGE(mfa[3]),
+        NOTIFICATIONS.NO_CALLEES.MESSAGE(monitored.query),
       ));
     }
   }));

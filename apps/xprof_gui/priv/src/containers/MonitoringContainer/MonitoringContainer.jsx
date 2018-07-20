@@ -10,6 +10,7 @@ import {
   expandGraphPanel,
   shrinkGraphPanel,
   calleeClick,
+  setSize,
 } from '../../actions';
 import {
   getFunctionData,
@@ -17,16 +18,23 @@ import {
   getFunctionCalleesVisibility,
   getFunctionGraphVisibility,
   isConnection,
+  getSize,
+  getIDs,
 } from '../../selectors';
 
 const MonitoringContainer = props => <Monitoring {...props} />;
 
 const mapStateToProps = (state, ownProps) => ({
-  mfa: ownProps.mfa,
-  data: getFunctionData(state, ownProps.mfa[3]),
-  callees: getFunctionCallees(state, ownProps.mfa[3]),
-  calleesVisibility: getFunctionCalleesVisibility(state, ownProps.mfa[3]),
-  panelVisibility: getFunctionGraphVisibility(state, ownProps.mfa[3]),
+  monitored: ownProps.monitored,
+  data: getFunctionData(state, ownProps.monitored.query),
+  callees: getFunctionCallees(state, ownProps.monitored.query),
+  calleesVisibility: getFunctionCalleesVisibility(
+    state,
+    ownProps.monitored.query,
+  ),
+  panelVisibility: getFunctionGraphVisibility(state, ownProps.monitored.query),
+  size: getSize(state),
+  ids: getIDs(state),
   isConnection: isConnection(state),
 });
 
@@ -39,6 +47,7 @@ const mapDispatchToProps = {
   expandGraphPanel,
   shrinkGraphPanel,
   calleeClick,
+  setSize,
 };
 
 const con = connect(mapStateToProps, mapDispatchToProps)(MonitoringContainer);
