@@ -12,13 +12,25 @@ describe('Action utils', () => {
     const name = 'ets:lookup/2';
     const items = [
       {
-        id: 1, pid: '<0.380.0>', call_time: 8, args: 'arg', res: '2',
+        id: 1,
+        pid: '<0.380.0>',
+        call_time: 8,
+        args: 'arg',
+        res: '2',
       },
       {
-        id: 2, pid: '<0.379.0>', call_time: 4, args: 'arg', res: '2',
+        id: 2,
+        pid: '<0.379.0>',
+        call_time: 4,
+        args: 'arg',
+        res: '2',
       },
       {
-        id: 3, pid: '<0.380.0>', call_time: 14, args: 'arg', res: '2',
+        id: 3,
+        pid: '<0.380.0>',
+        call_time: 14,
+        args: 'arg',
+        res: '2',
       },
     ];
     let calls;
@@ -44,8 +56,12 @@ describe('Action utils', () => {
       // given
       const json = { capture_id: 1, has_more: false, items };
       // when
-      const result =
-        ActionUtils.determineNextCallsForFun(json, undefined, undefined, name);
+      const result = ActionUtils.determineNextCallsForFun(
+        json,
+        undefined,
+        undefined,
+        name,
+      );
       // then
       expect(result.length).toBe(1);
       expect(result[0].capture_id).toBe(json.capture_id);
@@ -58,8 +74,12 @@ describe('Action utils', () => {
       // given
       const json = { capture_id: 2, has_more: true, items };
       // when
-      const result =
-        ActionUtils.determineNextCallsForFun(json, undefined, undefined, name);
+      const result = ActionUtils.determineNextCallsForFun(
+        json,
+        undefined,
+        undefined,
+        name,
+      );
       // then
       expect(result.length).toBe(1);
       expect(result[0].capture_id).toBe(json.capture_id);
@@ -72,8 +92,12 @@ describe('Action utils', () => {
       // given
       const json = { capture_id: 2, has_more: true, items };
       // when
-      const result =
-        ActionUtils.determineNextCallsForFun(json, calls[name][0], calls, name);
+      const result = ActionUtils.determineNextCallsForFun(
+        json,
+        calls[name][0],
+        calls,
+        name,
+      );
       // then
       expect(result.length).toBe(2);
       expect(result[1].capture_id).toBe(json.capture_id);
@@ -86,12 +110,16 @@ describe('Action utils', () => {
       // given
       const json = { capture_id: 1, has_more: true, items };
       // when
-      const result =
-        ActionUtils.determineNextCallsForFun(json, calls[name][0], calls, name);
+      const result = ActionUtils.determineNextCallsForFun(
+        json,
+        calls[name][0],
+        calls,
+        name,
+      );
       // then
       expect(result.length).toBe(1);
-      expect(result[0].items.length)
-        .toBe(json.items.length + calls[name][0].items.length);
+      const expected = json.items.length + calls[name][0].items.length;
+      expect(result[0].items.length).toBe(expected);
       expect(result[0].has_more).toBe(json.has_more);
       expect(result[0].items).toEqual([...calls[name][0].items, ...json.items]);
       expect(result[0].sort.items[0].expanded).toBe(false);
@@ -103,17 +131,23 @@ describe('Action utils', () => {
       calls[name][0].sort.column = CALLS_COLUMNS.CALL_TIME;
       calls[name][0].sort.order = SORT.DESCENDING;
       // when
-      const result =
-        ActionUtils.determineNextCallsForFun(json, calls[name][0], calls, name);
+      const result = ActionUtils.determineNextCallsForFun(
+        json,
+        calls[name][0],
+        calls,
+        name,
+      );
       // then
       expect(result.length).toBe(1);
-      expect(result[0].items.length)
-        .toBe(json.items.length + calls[name][0].items.length);
+      const expected = json.items.length + calls[name][0].items.length;
+      expect(result[0].items.length).toBe(expected);
       expect(result[0].has_more).toBe(json.has_more);
       expect(result[0].items).toEqual([...calls[name][0].items, ...json.items]);
       expect(result[0].sort.items.length).toBe(result[0].items.length);
-      expect(result[0].sort.items)
-        .not.toEqual([...calls[name][0].items, ...json.items]);
+      expect(result[0].sort.items).not.toEqual([
+        ...calls[name][0].items,
+        ...json.items,
+      ]);
       expect(result[0].sort.items[0].expanded).toBe(false);
     });
 
@@ -123,8 +157,12 @@ describe('Action utils', () => {
       calls[name].push({});
       calls[name].push({});
       // when
-      const result =
-        ActionUtils.determineNextCallsForFun(json, calls[name][0], calls, name);
+      const result = ActionUtils.determineNextCallsForFun(
+        json,
+        calls[name][0],
+        calls,
+        name,
+      );
       // then
       expect(result.length).toBe(3);
     });
@@ -133,13 +171,25 @@ describe('Action utils', () => {
   describe('determineNextControl', () => {
     const items = [
       {
-        id: 1, pid: '<0.380.0>', call_time: 8, args: 'arg', res: '2',
+        id: 1,
+        pid: '<0.380.0>',
+        call_time: 8,
+        args: 'arg',
+        res: '2',
       },
       {
-        id: 2, pid: '<0.379.0>', call_time: 4, args: 'arg', res: '2',
+        id: 2,
+        pid: '<0.379.0>',
+        call_time: 4,
+        args: 'arg',
+        res: '2',
       },
       {
-        id: 3, pid: '<0.380.0>', call_time: 14, args: 'arg', res: '2',
+        id: 3,
+        pid: '<0.380.0>',
+        call_time: 14,
+        args: 'arg',
+        res: '2',
       },
     ];
     const lastCalls = {
@@ -178,7 +228,11 @@ describe('Action utils', () => {
     it('should set calls control during capturing', () => {
       // given
       const json = {
-        capture_id: 1, has_more: true, items, threshold: '10', limit: '20',
+        capture_id: 1,
+        has_more: true,
+        items,
+        threshold: '10',
+        limit: '20',
       };
       // when
       const result = ActionUtils.determineNextControl(json, undefined);
@@ -191,7 +245,11 @@ describe('Action utils', () => {
     it('should set calls control during capturing of next calls', () => {
       // given
       const json = {
-        capture_id: 2, has_more: true, items, threshold: '10', limit: '20',
+        capture_id: 2,
+        has_more: true,
+        items,
+        threshold: '10',
+        limit: '20',
       };
       // when
       const result = ActionUtils.determineNextControl(json, lastCalls);
@@ -212,8 +270,8 @@ describe('Action utils', () => {
       // then
       expect(result.length).toBe(DPS_LIMIT + dps.length);
       expect(result[0].time).toBe((dps[0].time - DPS_LIMIT) * 1000);
-      expect(result[result.length - 1].time)
-        .toBe(dps[dps.length - 1].time * 1000);
+      const expected = dps[dps.length - 1].time * 1000;
+      expect(result[result.length - 1].time).toBe(expected);
     });
 
     it('should fill gap with zeros', () => {
@@ -225,8 +283,8 @@ describe('Action utils', () => {
       // then
       expect(result.length).toBe(dps[dps.length - 1].time - timestamp);
       expect(result[0].time).toBe((timestamp + 1) * 1000);
-      expect(result[result.length - 1].time)
-        .toBe(dps[dps.length - 1].time * 1000);
+      const expected = dps[dps.length - 1].time * 1000;
+      expect(result[result.length - 1].time).toBe(expected);
     });
 
     it('should return new dps', () => {
@@ -254,7 +312,6 @@ describe('Action utils', () => {
     });
   });
 
-
   describe('determineNextCalls', () => {
     const mockMonitoredCollection = [
       {
@@ -279,8 +336,12 @@ describe('Action utils', () => {
       const state = { tracing: { calls: {} } };
       const { calls } = state.tracing;
       // when
-      await ActionUtils
-        .determineNextCalls(dispatch, state, mockMonitoredCollection, calls);
+      await ActionUtils.determineNextCalls(
+        dispatch,
+        state,
+        mockMonitoredCollection,
+        calls,
+      );
       // then
       expect(XProf.getFunctionsCalls).toHaveBeenCalledTimes(2);
     });
@@ -297,8 +358,12 @@ describe('Action utils', () => {
         },
       });
       // when
-      await ActionUtils
-        .determineNextCalls(dispatch, state, mockMonitoredCollection, calls);
+      await ActionUtils.determineNextCalls(
+        dispatch,
+        state,
+        mockMonitoredCollection,
+        calls,
+      );
       // then
       expect(dispatch).toHaveBeenCalledTimes(2);
     });
@@ -315,8 +380,12 @@ describe('Action utils', () => {
         },
       });
       // when
-      const result = await ActionUtils
-        .determineNextCalls(dispatch, state, mockMonitoredCollection, calls);
+      const result = await ActionUtils.determineNextCalls(
+        dispatch,
+        state,
+        mockMonitoredCollection,
+        calls,
+      );
       // then
       expect(result[mockMonitoredCollection[0].query]).toBeDefined();
       expect(result[mockMonitoredCollection[1].query]).toBeDefined();
@@ -353,8 +422,11 @@ describe('Action utils', () => {
         [name2]: [{ time: 10000 }, { time: 11000 }, { time: 12000 }],
       };
       // when
-      const result = await ActionUtils
-        .determineNextData(mockMonitoredCollection, data);
+      const result = await ActionUtils.determineNextData(
+        null,
+        mockMonitoredCollection,
+        data,
+      );
       // then
       expect(result[name1].length).toBe(4);
     });
@@ -363,8 +435,11 @@ describe('Action utils', () => {
       // given
       XProf.getFunctionsSamples.mockReturnValue({ json: [{ time: 13 }] });
       // when
-      const result = await ActionUtils
-        .determineNextData(mockMonitoredCollection, {});
+      const result = await ActionUtils.determineNextData(
+        null,
+        mockMonitoredCollection,
+        {},
+      );
       // then
       expect(result[name1].length).toBe(DPS_LIMIT);
     });
@@ -373,7 +448,7 @@ describe('Action utils', () => {
       // given
       XProf.getFunctionsSamples.mockReturnValue({ json: [{ time: 13 }] });
       // when
-      await ActionUtils.determineNextData(mockMonitoredCollection, {});
+      await ActionUtils.determineNextData(null, mockMonitoredCollection, {});
       // then
       expect(XProf.getFunctionsSamples).toHaveBeenCalledTimes(2);
     });
@@ -397,8 +472,11 @@ describe('Action utils', () => {
 
     it('should stop capturing functions calls', async () => {
       // when
-      const result = await ActionUtils
-        .determineNextControlSwitch({ collecting: true }, mockMonitored);
+      const result = await ActionUtils.determineNextControlSwitch(
+        null,
+        { collecting: true },
+        mockMonitored,
+      );
       // then
       expect(XProf.stopCapturingFunctionsCalls).toHaveBeenCalledTimes(1);
       expect(result.collecting).toBe(false);
@@ -406,8 +484,12 @@ describe('Action utils', () => {
 
     it('should start capturing functions calls', async () => {
       // when
-      const result = await ActionUtils
-        .determineNextControlSwitch({ collecting: false }, mockMonitored);
+      const result = await ActionUtils.determineNextControlSwitch(
+        null,
+        { collecting: false },
+        mockMonitored,
+      );
+
       // then
       expect(XProf.startCapturingFunctionsCalls).toHaveBeenCalledTimes(1);
       expect(result.collecting).toBe(true);

@@ -5,6 +5,7 @@ import status from './status';
 import tracing from './tracing';
 import explore from './explore';
 import layout from './layout';
+import notification from './notification';
 
 const rootReducer = combineReducers({
   monitoring,
@@ -13,6 +14,7 @@ const rootReducer = combineReducers({
   tracing,
   explore,
   layout,
+  notification,
 });
 
 export default rootReducer;

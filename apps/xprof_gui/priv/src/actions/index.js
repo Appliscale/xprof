@@ -31,7 +31,6 @@ export {
   hideCallees,
   showCallees,
   calleeClick,
-  getCallees,
   getCalleesForFunctions,
 } from './ExploringActions';
 export {
@@ -40,3 +39,10 @@ export {
   expandTracingPanel,
   shrinkTracingPanel,
 } from './LayoutActions';
+export {
+  removeNotification,
+  addNotification,
+  lostConnection,
+  aliveConnection,
+  hideConnectionNotification,
+} from './NotificationActions';

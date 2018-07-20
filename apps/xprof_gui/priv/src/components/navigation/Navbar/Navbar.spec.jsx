@@ -12,6 +12,7 @@ describe('Navbar component', () => {
     functions: [''],
     functionClick: jest.fn(),
     setPositionOnFunction: jest.fn(),
+    isConnection: true,
   };
   it('renders', () => {
     const wrapper = shallow(<Navbar {...props} />);

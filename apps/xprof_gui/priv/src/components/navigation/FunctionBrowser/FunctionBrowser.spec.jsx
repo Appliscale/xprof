@@ -10,6 +10,7 @@ describe('FunctionBrowser component', () => {
     functions: [''],
     functionClick: jest.fn(),
     setPositionOnFunction: jest.fn(),
+    isConnection: true,
   };
   it('renders', () => {
     const wrapper = shallow(<FunctionBrowser {...props} />);

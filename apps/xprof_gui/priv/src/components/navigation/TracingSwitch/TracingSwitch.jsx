@@ -5,9 +5,10 @@ import { STATUS } from '../../../constants';
 const propTypes = {
   status: PropTypes.string.isRequired,
   toggleTraceStatus: PropTypes.func.isRequired,
+  isConnection: PropTypes.bool.isRequired,
 };
 
-const TracingSwitch = ({ status, toggleTraceStatus }) => {
+const TracingSwitch = ({ status, toggleTraceStatus, isConnection }) => {
   let text = '';
   let symbol = 'glyphicon glyphicon-';
   let btnclass = 'btn btn-';
@@ -28,7 +29,12 @@ const TracingSwitch = ({ status, toggleTraceStatus }) => {
 
   return (
     <form className="navbar-form navbar-left" role="search">
-      <button type="button" onClick={toggleTraceStatus} className={btnclass}>
+      <button
+        type="button"
+        onClick={toggleTraceStatus}
+        className={btnclass}
+        disabled={!isConnection}
+      >
         <span className={symbol} aria-hidden="true" /> {text}
       </button>
     </form>

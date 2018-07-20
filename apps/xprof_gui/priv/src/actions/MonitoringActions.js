@@ -1,6 +1,8 @@
 import { getAllMonitored } from '../selectors';
 import * as types from '../constants/ActionTypes';
 import * as XProf from '../api';
+import { addNotification } from './';
+import { NOTIFICATIONS } from '../constants';
 
 const stopMonitoringFunctionRequest = monitoredCollection => ({
   type: types.STOP_MONITORING_FUNCTION,
@@ -13,14 +15,14 @@ const stopMonitoringFunctionError = monitoredCollection => ({
 });
 
 export const stopMonitoringFunction = monitored => async (
-  dispatch, getState,
+  dispatch,
+  getState,
 ) => {
   const state = getState();
   const monitoredCollection = getAllMonitored(state);
-  const monitoredCollectionReduced = monitoredCollection
-    .filter(f => f.query !== monitored.query);
+  const reduced = monitoredCollection.filter(f => f.query !== monitored.query);
 
-  dispatch(stopMonitoringFunctionRequest(monitoredCollectionReduced));
+  dispatch(stopMonitoringFunctionRequest(reduced));
 
   const { error } = await XProf.stopMonitoringFunction(
     monitored.mfa[0],
@@ -28,22 +30,31 @@ export const stopMonitoringFunction = monitored => async (
     monitored.mfa[2],
   );
   if (error) {
-    console.log('ERROR: ', error);
+    dispatch(addNotification(
+      NOTIFICATIONS.MONITORING.SEVERITY,
+      NOTIFICATIONS.MONITORING.MESSAGE(monitored.query),
+    ));
     dispatch(stopMonitoringFunctionError(monitoredCollection));
   }
 };
 
-export const startMonitoringFunction = functionName => async (
-  dispatch,
-  getState,
-) => {
+export const startMonitoringFunction = (
+  functionName,
+  onSuccess,
+  onError,
+) => async (dispatch, getState) => {
   const state = getState();
   const monitoredCollection = getAllMonitored(state);
-  const isMonitored = monitoredCollection
-    .filter(monitored => monitored.query === functionName).length;
+  const isMonitored = monitoredCollection.filter(f => f.query === functionName)
+    .length;
 
+  let error;
   if (!isMonitored) {
-    const { error } = await XProf.startMonitoringFunction(functionName);
-    if (error) console.log('ERROR: ', error);
+    ({ error } = await XProf.startMonitoringFunction(functionName));
+  }
+  if (error && onError) {
+    onError();
+  } else if (onSuccess) {
+    onSuccess();
   }
 };

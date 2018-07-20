@@ -1,5 +1,10 @@
 import { sortBy } from 'lodash';
-import { CAPTURE_CALLS_ACTION, DPS_ACTION, SORT } from '../constants';
+import {
+  CAPTURE_CALLS_ACTION,
+  DPS_ACTION,
+  SORT,
+  NOTIFICATIONS_SEVERITY,
+} from '../constants';
 
 const commonPrefix = (string1, string2) => {
   const len = string1.length;
@@ -60,6 +65,21 @@ export const sortItems = (items, column, order) =>
   (order === SORT.ASCENDING
     ? sortBy(items, column)
     : sortBy(items, column).reverse());
+
+export const getAlertClass = (severity) => {
+  switch (severity) {
+    case NOTIFICATIONS_SEVERITY.INFO:
+      return 'alert-info';
+    case NOTIFICATIONS_SEVERITY.SUCCESS:
+      return 'alert-success';
+    case NOTIFICATIONS_SEVERITY.ERROR:
+      return 'alert-danger';
+    case NOTIFICATIONS_SEVERITY.WARNING:
+      return 'alert-warning';
+    default:
+      return '';
+  }
+};
 
 export function roll(func, rolled) {
   const r = Math.floor(Math.random() * 10);

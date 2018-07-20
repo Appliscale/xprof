@@ -23,6 +23,7 @@ const propTypes = {
   expand: PropTypes.func.isRequired,
   shrink: PropTypes.func.isRequired,
   calleeClick: PropTypes.func.isRequired,
+  isConnection: PropTypes.bool.isRequired,
 };
 
 const GraphPanelHeading = ({
@@ -36,6 +37,7 @@ const GraphPanelHeading = ({
   expand,
   shrink,
   calleeClick,
+  isConnection,
 }) => (
   <div className="panel-heading">
     <GraphUtilsButtons
@@ -46,6 +48,7 @@ const GraphPanelHeading = ({
       panelVisibility={panelVisibility}
       expand={expand}
       shrink={shrink}
+      isConnection={isConnection}
     />
     <h3 className="panel-title">
       {monitored.query}

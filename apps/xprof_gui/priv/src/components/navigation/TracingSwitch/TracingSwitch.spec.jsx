@@ -9,6 +9,7 @@ describe('SwitchTrace component', () => {
     const props = {
       toggleTraceStatus,
       status: 'running',
+      isConnection: true,
     };
     const wrapper = shallow(<TracingSwitch {...props} />);
 
@@ -34,6 +35,7 @@ describe('SwitchTrace component', () => {
     const props = {
       toggleTraceStatus,
       status: 'paused',
+      isConnection: true,
     };
     const wrapper = shallow(<TracingSwitch {...props} />);
 
@@ -53,6 +55,7 @@ describe('SwitchTrace component', () => {
     const props = {
       toggleTraceStatus,
       status: 'overflow',
+      isConnection: true,
     };
     const wrapper = shallow(<TracingSwitch {...props} />);
 

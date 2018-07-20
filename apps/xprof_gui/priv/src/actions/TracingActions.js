@@ -42,22 +42,28 @@ export const toggleCallsTracing = monitored => async (dispatch, getState) => {
   const state = getState();
   const functionName = monitored.query;
   const control = getFunctionControl(state, functionName);
-  const nextControl = await determineNextControlSwitch(control, monitored);
+  const nextControl = await determineNextControlSwitch(
+    dispatch,
+    control,
+    monitored,
+  );
   dispatch(setCallsControl({ [functionName]: nextControl }));
 };
 
-export const handleThresholdChange = (monitored, value) =>
-  (dispatch, getState) => {
-    const state = getState();
-    const functionName = monitored.query;
-    const { limit, collecting } = getFunctionControl(state, functionName);
-    const nextControl = {
-      threshold: value,
-      limit,
-      collecting,
-    };
-    dispatch(setCallsControl({ [functionName]: nextControl }));
+export const handleThresholdChange = (monitored, value) => (
+  dispatch,
+  getState,
+) => {
+  const state = getState();
+  const functionName = monitored.query;
+  const { limit, collecting } = getFunctionControl(state, functionName);
+  const nextControl = {
+    threshold: value,
+    limit,
+    collecting,
   };
+  dispatch(setCallsControl({ [functionName]: nextControl }));
+};
 
 export const handleLimitChange = (monitored, value) => (dispatch, getState) => {
   const state = getState();

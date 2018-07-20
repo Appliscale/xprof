@@ -28,6 +28,7 @@ const propTypes = {
   expandGraphPanel: PropTypes.func.isRequired,
   shrinkGraphPanel: PropTypes.func.isRequired,
   calleeClick: PropTypes.func.isRequired,
+  isConnection: PropTypes.bool.isRequired,
   setSize: PropTypes.func.isRequired,
   size: PropTypes.shape(PropTypes.any),
   ids: PropTypes.shape(PropTypes.any).isRequired,
@@ -58,6 +59,7 @@ class Monitoring extends React.Component {
       expandGraphPanel,
       shrinkGraphPanel,
       calleeClick,
+      isConnection,
       setSize,
       size,
       ids,
@@ -77,6 +79,7 @@ class Monitoring extends React.Component {
           expand={expandGraphPanel}
           shrink={shrinkGraphPanel}
           calleeClick={calleeClick}
+          isConnection={isConnection}
           setSize={setSize}
           size={size}
           ids={ids}

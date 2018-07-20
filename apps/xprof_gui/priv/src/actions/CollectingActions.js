@@ -7,14 +7,16 @@ import {
   getCalls,
   getIDs,
   getStatus,
+  isConnection,
 } from '../selectors';
-import { setCallsControl, getCalleesForFunctions } from './';
+import { setCallsControl, getCalleesForFunctions, addNotification } from './';
 import {
   determineNextData,
   determineNextCalls,
   roll,
   safecomposeID,
 } from '../utils';
+import { STATUS, NOTIFICATIONS } from '../constants';
 
 export const updateListMonitoringFunctions = monitoredCollection => ({
   type: types.UPDATE_MONITORED_FUNCTIONS,
@@ -47,6 +49,7 @@ export const getMonitoredFunctions = () => async (dispatch, getState) => {
   const ids = getIDs(state);
   const identifiedFunctions = Object.keys(ids);
   const monitoredCollection = getAllMonitored(state);
+  const isConn = isConnection(state);
 
   monitoredCollection.forEach((monitored) => {
     if (!identifiedFunctions.includes(monitored.query)) {
@@ -55,30 +58,33 @@ export const getMonitoredFunctions = () => async (dispatch, getState) => {
     }
   });
 
-  const { json, error } = await XProf.getAllMonitoredFunctions();
-  if (error) {
-    console.log('ERROR: ', error);
-  } else if (!isEqual(monitoredCollection, json)) {
-    const queries = monitoredCollection.map(monitored => monitored.query);
-    const newMonitoredCollection = json
-      .filter(monitored => !queries
-        .includes(monitored.query));
-    const newControls = newMonitoredCollection.reduce(
-      (control, monitored) => ({
-        ...control,
-        [monitored.query]: {
-          threshold: undefined,
-          limit: undefined,
-          collecting: false,
-        },
-      }),
-      {},
-    );
+  if (isConn) {
+    const { json, error } = await XProf.getAllMonitoredFunctions();
+    if (error) {
+      dispatch(addNotification(
+        NOTIFICATIONS.MONITORED_FUNCTIONS.SEVERITY,
+        NOTIFICATIONS.MONITORED_FUNCTIONS.MESSAGE,
+      ));
+    } else if (!isEqual(monitoredCollection, json)) {
+      const queries = monitoredCollection.map(monitored => monitored.query);
+      const newColl = json.filter(m => !queries.includes(m.query));
+      const newControls = newColl.reduce(
+        (control, monitored) => ({
+          ...control,
+          [monitored.query]: {
+            threshold: undefined,
+            limit: undefined,
+            collecting: false,
+          },
+        }),
+        {},
+      );
 
-    dispatch(updateIDs(ids));
-    dispatch(getCalleesForFunctions(newMonitoredCollection));
-    dispatch(setCallsControl(newControls));
-    dispatch(updateListMonitoringFunctions(json));
+      dispatch(updateIDs(ids));
+      dispatch(getCalleesForFunctions(newColl));
+      dispatch(setCallsControl(newControls));
+      dispatch(updateListMonitoringFunctions(json));
+    }
   }
 };
 
@@ -86,9 +92,12 @@ export const getFunctionsData = () => async (dispatch, getState) => {
   const state = getState();
   const monitoredCollection = getAllMonitored(state);
   const data = getData(state);
-  const running = getStatus(state) === 'running';
-  const nextData = running &&
-  await determineNextData(monitoredCollection, data);
+  const isConn = isConnection(state);
+  const running = getStatus(state) === STATUS.RUNNING;
+  const nextData =
+    isConn &&
+    running &&
+    (await determineNextData(dispatch, monitoredCollection, data));
 
   if (!isEmpty(nextData)) {
     dispatch(updateData({ ...data, ...nextData }));
@@ -99,13 +108,12 @@ export const getFunctionsCalls = () => async (dispatch, getState) => {
   const state = getState();
   const monitoredCollection = getAllMonitored(state);
   const calls = getCalls(state);
-  const running = getStatus(state) === 'running';
-  const nextCalls = running && await determineNextCalls(
-    dispatch,
-    state,
-    monitoredCollection,
-    calls,
-  );
+  const isConn = isConnection(state);
+  const running = getStatus(state) === STATUS.RUNNING;
+  const nextCalls =
+    isConn &&
+    running &&
+    (await determineNextCalls(dispatch, state, monitoredCollection, calls));
 
   if (!isEmpty(nextCalls)) {
     dispatch(updateCalls({ ...calls, ...nextCalls }));
@@ -155,12 +163,12 @@ export const setSize = reference => async (dispatch) => {
   let screenFactor = 0;
 
   switch (true) {
-    case (window.innerWidth < 460):
+    case window.innerWidth < 460:
       leftFactor = 0.12;
       screenFactor = 0.87;
       heightFactor = 0.27;
       break;
-    case (window.innerWidth < 1030):
+    case window.innerWidth < 1030:
       leftFactor = 0.1;
       screenFactor = 0.87;
       heightFactor = 0.4;

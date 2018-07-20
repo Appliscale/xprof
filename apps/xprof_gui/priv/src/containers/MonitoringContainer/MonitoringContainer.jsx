@@ -17,6 +17,7 @@ import {
   getFunctionCallees,
   getFunctionCalleesVisibility,
   getFunctionGraphVisibility,
+  isConnection,
   getSize,
   getIDs,
 } from '../../selectors';
@@ -34,6 +35,7 @@ const mapStateToProps = (state, ownProps) => ({
   panelVisibility: getFunctionGraphVisibility(state, ownProps.monitored.query),
   size: getSize(state),
   ids: getIDs(state),
+  isConnection: isConnection(state),
 });
 
 const mapDispatchToProps = {

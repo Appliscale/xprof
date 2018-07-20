@@ -27,6 +27,7 @@ const propTypes = {
   expand: PropTypes.func.isRequired,
   shrink: PropTypes.func.isRequired,
   calleeClick: PropTypes.func.isRequired,
+  isConnection: PropTypes.bool.isRequired,
   setSize: PropTypes.func.isRequired,
   size: PropTypes.shape(PropTypes.any),
   ids: PropTypes.shape(PropTypes.any).isRequired,
@@ -44,6 +45,7 @@ const GraphPanel = ({
   expand,
   shrink,
   calleeClick,
+  isConnection,
   setSize,
   size,
   ids,
@@ -62,6 +64,7 @@ const GraphPanel = ({
         expand={() => expand(monitored.query)}
         shrink={() => shrink(monitored.query)}
         calleeClick={calleeClick}
+        isConnection={isConnection}
       />
       {panelVisibility && monitoredID ? (
         <div className="panel-body">

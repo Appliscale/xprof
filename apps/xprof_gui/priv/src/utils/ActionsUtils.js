@@ -7,8 +7,9 @@ import {
   DPS_ACTION,
   CALLS_COLUMNS,
   SORT,
+  NOTIFICATIONS,
 } from '../constants';
-import { setCallsControl } from '../actions';
+import { setCallsControl, addNotification } from '../actions';
 import * as XProf from '../api';
 
 export const determineNextCallsForFun = (json, lastCalls, calls, name) => {
@@ -153,7 +154,11 @@ export const determineIncomingDps = (dps, ts) => {
   }));
 };
 
-export const determineNextData = async (monitoredCollection, data) => {
+export const determineNextData = async (
+  dispatch,
+  monitoredCollection,
+  data,
+) => {
   const nextData = {};
 
   await Promise.all(monitoredCollection.map(async (monitored) => {
@@ -170,7 +175,10 @@ export const determineNextData = async (monitoredCollection, data) => {
     );
 
     if (error) {
-      console.log('ERROR: ', error);
+      dispatch(addNotification(
+        NOTIFICATIONS.SAMPLES.SEVERITY,
+        NOTIFICATIONS.SAMPLES.MESSAGE(monitored.query),
+      ));
     } else if (json.length) {
       const incomingDpsSorted = sortBy(json, 'time');
       const incomingDps = determineIncomingDps(incomingDpsSorted, lastTs);
@@ -186,7 +194,10 @@ export const determineNextData = async (monitoredCollection, data) => {
 };
 
 export const determineNextCalls = async (
-  dispatch, state, monitoredCollection, calls,
+  dispatch,
+  state,
+  monitoredCollection,
+  calls,
 ) => {
   const nextCalls = {};
 
@@ -204,7 +215,10 @@ export const determineNextCalls = async (
     );
 
     if (error) {
-      console.log('ERROR: ', error);
+      dispatch(addNotification(
+        NOTIFICATIONS.CALLS.SEVERITY,
+        NOTIFICATIONS.CALLS.MESSAGE(monitored.query),
+      ));
     } else {
       const nextControlForFun = determineNextControl(json, lastCalls);
       if (!isEmpty(nextControlForFun)) {
@@ -225,8 +239,11 @@ export const determineNextCalls = async (
 
   return nextCalls;
 };
-
-export const determineNextControlSwitch = async (control, monitored) => {
+export const determineNextControlSwitch = async (
+  dispatch,
+  control,
+  monitored,
+) => {
   const { threshold, limit, collecting } = control;
   const nextControl = { ...control };
 
@@ -237,7 +254,12 @@ export const determineNextControlSwitch = async (control, monitored) => {
       monitored.mfa[2],
     );
 
-    if (error) console.log('ERROR: ', error);
+    if (error) {
+      dispatch(addNotification(
+        NOTIFICATIONS.STOP_CAPTURING_CALLS.SEVERITY,
+        NOTIFICATIONS.START_CAPTURING_CALLS.MESSAGE(monitored.query),
+      ));
+    }
     nextControl.collecting = false;
   } else {
     const { error } = await XProf.startCapturingFunctionsCalls(
@@ -248,7 +270,12 @@ export const determineNextControlSwitch = async (control, monitored) => {
       limit,
     );
 
-    if (error) console.log('ERROR: ', error);
+    if (error) {
+      dispatch(addNotification(
+        NOTIFICATIONS.START_CAPTURING_CALLS.SEVERITY,
+        NOTIFICATIONS.START_CAPTURING_CALLS.MESSAGE(monitored.query),
+      ));
+    }
     nextControl.collecting = true;
   }
 
