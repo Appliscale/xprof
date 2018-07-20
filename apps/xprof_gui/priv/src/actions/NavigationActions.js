@@ -2,9 +2,11 @@ import * as types from '../constants/ActionTypes';
 import * as XProf from '../api';
 import {
   getACfunctions,
-  getACposition,
+  getPromptPosition,
   getQuery,
   getHighlightedFunction,
+  getRecentQueries,
+  getDirtyInput,
 } from '../selectors';
 import { HANDLED_KEYS, NOTIFICATIONS } from '../constants';
 import { commonArrayPrefix } from '../utils';
@@ -44,6 +46,16 @@ const setExample = example => ({
   example,
 });
 
+const addRecentQuery = query => ({
+  type: types.ADD_RECENT_QUERY,
+  query,
+});
+
+const saveDirtyInput = query => ({
+  type: types.SAVE_DIRTY_INPUT,
+  query,
+});
+
 export const queryInputChange = query => async (dispatch) => {
   dispatch(setQueryInput(query));
   if (query) {
@@ -60,7 +72,10 @@ export const functionClick = selected => async (dispatch, getState) => {
   const state = getState();
   const query = getQuery(state);
   if (selected.startsWith(query)) {
-    const onSuccess = () => dispatch(clearFunctionBrowser());
+    const onSuccess = () => {
+      dispatch(addRecentQuery(selected));
+      dispatch(clearFunctionBrowser());
+    };
     dispatch(startMonitoringFunction(selected, onSuccess));
   } else {
     dispatch(queryInputChange(selected));
@@ -69,18 +84,36 @@ export const functionClick = selected => async (dispatch, getState) => {
 
 export const queryKeyDown = key => async (dispatch, getState) => {
   const state = getState();
-  const position = getACposition(state);
+  const position = getPromptPosition(state);
   const functions = getACfunctions(state);
   const query = getQuery(state);
+  const dirtyInput = getDirtyInput(state);
+  const recent = getRecentQueries(state);
   const highlightedFunction = getHighlightedFunction(state);
   let chosenQuery;
 
   switch (key) {
     case HANDLED_KEYS.ARROW_DOWN:
-      if (position < functions.length - 1) dispatch(setPosition(position + 1));
+      if (position < functions.length - 1) {
+        dispatch(setPosition(position + 1));
+        if (position < -2) {
+          dispatch(setQueryInput(recent[recent.length + position + 2]));
+        } else if (position === -2) {
+          dispatch(queryInputChange(dirtyInput));
+        }
+      }
       break;
     case HANDLED_KEYS.ARROW_UP:
-      if (position > 0) dispatch(setPosition(position - 1));
+      if (position >= -recent.length) {
+        dispatch(setPosition(position - 1));
+        if (position <= -1) {
+          dispatch(setQueryInput(recent[recent.length + position]));
+          if (position === -1) {
+            dispatch(saveDirtyInput(query));
+            dispatch(setACfunctions([]));
+          }
+        }
+      }
       break;
     case HANDLED_KEYS.TAB:
       // Don't modify search box content if it is not a prefix of the
@@ -98,6 +131,7 @@ export const queryKeyDown = key => async (dispatch, getState) => {
       break;
     case HANDLED_KEYS.ESC:
       dispatch(clearFunctionBrowser());
+      dispatch(setPosition(-1));
       break;
     case HANDLED_KEYS.RETURN:
       if (highlightedFunction && highlightedFunction.startsWith(query)) {
@@ -108,7 +142,10 @@ export const queryKeyDown = key => async (dispatch, getState) => {
 
       dispatch(startMonitoringFunction(
         chosenQuery,
-        () => dispatch(clearFunctionBrowser()),
+        () => {
+          dispatch(addRecentQuery(chosenQuery));
+          dispatch(clearFunctionBrowser());
+        },
         () =>
           dispatch(addNotification(
             NOTIFICATIONS.FUNCTION_DOESNOT_EXIST.SEVERITY,

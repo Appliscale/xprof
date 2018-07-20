@@ -2,11 +2,13 @@ import * as types from '../constants/ActionTypes';
 
 const initialState = {
   query: '',
+  dirtyInput: '',
   functions: [],
   position: -1,
   language: null,
   inputType: null,
   example: null,
+  history: [],
 };
 
 const navigation = (state = initialState, action) => {
@@ -46,6 +48,16 @@ const navigation = (state = initialState, action) => {
       return {
         ...state,
         example: action.example,
+      };
+    case types.ADD_RECENT_QUERY:
+      return {
+        ...state,
+        history: [...state.history, action.query],
+      };
+    case types.SAVE_DIRTY_INPUT:
+      return {
+        ...state,
+        dirtyInput: action.query,
       };
     default:
       return state;
