@@ -28,6 +28,7 @@ export const removeNotification = id => ({
 export const addNotification = (
   severity,
   message,
+  error,
   timeout = NOTIFICATIONS.TIMEOUT,
 ) => async (dispatch, getState) => {
   const state = getState();
@@ -43,8 +44,10 @@ export const addNotification = (
   const lastId = getNotificationsLastId(state);
   const notification = {
     id: lastId + 1,
-    severity,
-    message,
+    severity: (error && error.data && error.data.severity)
+      ? error.data.severity : severity,
+    message: (error && error.data && error.data.message)
+      ? error.data.message : message,
   };
 
   dispatch(appendNotification(notification));

@@ -146,10 +146,11 @@ export const queryKeyDown = key => async (dispatch, getState) => {
           dispatch(addRecentQuery(chosenQuery));
           dispatch(clearFunctionBrowser());
         },
-        () =>
+        error =>
           dispatch(addNotification(
             NOTIFICATIONS.FUNCTION_DOESNOT_EXIST.SEVERITY,
             NOTIFICATIONS.FUNCTION_DOESNOT_EXIST.MESSAGE(chosenQuery),
+            error,
           )),
       ));
       break;

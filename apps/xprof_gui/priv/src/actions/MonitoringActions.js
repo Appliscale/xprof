@@ -53,7 +53,7 @@ export const startMonitoringFunction = (
     ({ error } = await XProf.startMonitoringFunction(functionName));
   }
   if (error && onError) {
-    onError();
+    onError(error);
   } else if (onSuccess) {
     onSuccess();
   }
