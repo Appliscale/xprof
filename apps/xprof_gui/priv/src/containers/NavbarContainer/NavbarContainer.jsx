@@ -16,6 +16,7 @@ import {
   getLanguage,
   getInputType,
   getExample,
+  isConnection,
 } from '../../selectors';
 
 const NavContainer = props => <Navbar {...props} />;
@@ -28,6 +29,7 @@ const mapStateToProps = state => ({
   language: getLanguage(state),
   inputType: getInputType(state),
   example: getExample(state),
+  isConnection: isConnection(state),
 });
 
 const mapDispatchToProps = {

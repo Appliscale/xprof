@@ -1,41 +1,60 @@
-import { getMfas } from '../selectors';
+import { getAllMonitored } from '../selectors';
 import * as types from '../constants/ActionTypes';
 import * as XProf from '../api';
+import { addNotification } from './';
+import { NOTIFICATIONS } from '../constants';
 
-const stopMonitoringFunctionRequest = mfas => ({
+const stopMonitoringFunctionRequest = monitoredCollection => ({
   type: types.STOP_MONITORING_FUNCTION,
-  mfas,
+  monitoredCollection,
 });
 
-const stopMonitoringFunctionError = mfas => ({
+const stopMonitoringFunctionError = monitoredCollection => ({
   type: types.STOP_MONITORING_FUNCTION_ERROR,
-  mfas,
+  monitoredCollection,
 });
 
-export const stopMonitoringFunction = mfa => async (dispatch, getState) => {
-  const state = getState();
-  const mfas = getMfas(state);
-  const mfasReduced = mfas.filter(m => m[3] !== mfa[3]);
-
-  dispatch(stopMonitoringFunctionRequest(mfasReduced));
-
-  const { error } = await XProf.stopMonitoringFunction(mfa[0], mfa[1], mfa[2]);
-  if (error) {
-    console.log('ERROR: ', error);
-    dispatch(stopMonitoringFunctionError(mfas));
-  }
-};
-
-export const startMonitoringFunction = functionName => async (
+export const stopMonitoringFunction = monitored => async (
   dispatch,
   getState,
 ) => {
   const state = getState();
-  const mfas = getMfas(state);
-  const isMonitored = mfas.filter(mfa => mfa[3] === functionName).length;
+  const monitoredCollection = getAllMonitored(state);
+  const reduced = monitoredCollection.filter(f => f.query !== monitored.query);
 
+  dispatch(stopMonitoringFunctionRequest(reduced));
+
+  const { error } = await XProf.stopMonitoringFunction(
+    monitored.mfa[0],
+    monitored.mfa[1],
+    monitored.mfa[2],
+  );
+  if (error) {
+    dispatch(addNotification(
+      NOTIFICATIONS.MONITORING.SEVERITY,
+      NOTIFICATIONS.MONITORING.MESSAGE(monitored.query),
+    ));
+    dispatch(stopMonitoringFunctionError(monitoredCollection));
+  }
+};
+
+export const startMonitoringFunction = (
+  functionName,
+  onSuccess,
+  onError,
+) => async (dispatch, getState) => {
+  const state = getState();
+  const monitoredCollection = getAllMonitored(state);
+  const isMonitored = monitoredCollection.filter(f => f.query === functionName)
+    .length;
+
+  let error;
   if (!isMonitored) {
-    const { error } = await XProf.startMonitoringFunction(functionName);
-    if (error) console.log('ERROR: ', error);
+    ({ error } = await XProf.startMonitoringFunction(functionName));
+  }
+  if (error && onError) {
+    onError();
+  } else if (onSuccess) {
+    onSuccess();
   }
 };

@@ -1,7 +1,8 @@
 import { isEmpty } from 'lodash';
 import * as types from '../constants/ActionTypes';
 import * as XProf from '../api';
-import { startMonitoringFunction } from './';
+import { startMonitoringFunction, addNotification } from './';
+import { NOTIFICATIONS } from '../constants';
 
 const addCallees = callees => ({
   type: types.ADD_CALLEES,
@@ -22,34 +23,31 @@ export const calleeClick = callee => (dispatch) => {
   dispatch(startMonitoringFunction(callee));
 };
 
-export const getCallees = mfa => async (dispatch) => {
-  const name = mfa[3];
-
-  const { json, error } = await XProf.getFunctionsCallees(
-    mfa[0],
-    mfa[1],
-    mfa[2],
-  );
-
-  if (error) console.log('ERROR');
-  else if (json.length) dispatch(addCallees({ [name]: json }));
-  else console.log('NO CALLES FOUND!');
-};
-
-export const getCalleesForFunctions = mfas => async (dispatch) => {
+export const getCalleesForFunctions = collection => async (dispatch) => {
   const callees = {};
 
-  await Promise.all(mfas.map(async (mfa) => {
-    const fun = mfa[3];
+  await Promise.all(collection.map(async (monitored) => {
+    const fun = monitored.query;
 
     const { json, error } = await XProf.getFunctionsCallees(
-      mfa[0],
-      mfa[1],
-      mfa[2],
+      monitored.mfa[0],
+      monitored.mfa[1],
+      monitored.mfa[2],
     );
 
-    if (error) console.log('ERROR');
-    else if (json.length) callees[fun] = json;
+    if (error) {
+      dispatch(addNotification(
+        NOTIFICATIONS.CALLEES.SEVERITY,
+        NOTIFICATIONS.CALLEES.MESSAGE(monitored.mfa.query),
+      ));
+    } else if (json.length) {
+      callees[fun] = json;
+    } else {
+      dispatch(addNotification(
+        NOTIFICATIONS.NO_CALLEES.SEVERITY,
+        NOTIFICATIONS.NO_CALLEES.MESSAGE(monitored.query),
+      ));
+    }
   }));
 
   if (!isEmpty(callees)) dispatch(addCallees(callees));

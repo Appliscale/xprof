@@ -1,6 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { NavbarContainer, FunctionsContainer } from '../../containers';
+import {
+  NavbarContainer,
+  FunctionsContainer,
+  NotificationContainer,
+} from '../../containers';
 import { Footer } from '../navigation';
 import { STATUS_INTERVAL } from '../../constants';
 
@@ -19,6 +23,7 @@ class Root extends React.Component {
   render() {
     return (
       <div>
+        <NotificationContainer />
         <NavbarContainer />
         <FunctionsContainer />
         <Footer />

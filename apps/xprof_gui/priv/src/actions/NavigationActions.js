@@ -8,9 +8,9 @@ import {
   getRecentQueries,
   getDirtyInput,
 } from '../selectors';
-import { HANDLED_KEYS } from '../constants';
+import { HANDLED_KEYS, NOTIFICATIONS } from '../constants';
 import { commonArrayPrefix } from '../utils';
-import { startMonitoringFunction } from './';
+import { startMonitoringFunction, addNotification } from './';
 
 const setACfunctions = functions => ({
   type: types.FILL_AUTOCOMPLETER_FUNCTIONS,
@@ -72,10 +72,11 @@ export const functionClick = selected => async (dispatch, getState) => {
   const state = getState();
   const query = getQuery(state);
   if (selected.startsWith(query)) {
-    dispatch(startMonitoringFunction(selected));
-    dispatch(addRecentQuery(selected));
-    dispatch(clearFunctionBrowser());
-    dispatch(setPosition(-1));
+    const onSuccess = () => {
+      dispatch(addRecentQuery(selected));
+      dispatch(clearFunctionBrowser());
+    };
+    dispatch(startMonitoringFunction(selected, onSuccess));
   } else {
     dispatch(queryInputChange(selected));
   }
@@ -98,7 +99,7 @@ export const queryKeyDown = key => async (dispatch, getState) => {
         if (position < -2) {
           dispatch(setQueryInput(recent[recent.length + position + 2]));
         } else if (position === -2) {
-          dispatch(setQueryInput(dirtyInput));
+          dispatch(queryInputChange(dirtyInput));
         }
       }
       break;
@@ -139,10 +140,18 @@ export const queryKeyDown = key => async (dispatch, getState) => {
         chosenQuery = query;
       }
 
-      dispatch(startMonitoringFunction(chosenQuery));
-      dispatch(addRecentQuery(chosenQuery));
-      dispatch(clearFunctionBrowser());
-      dispatch(setPosition(-1));
+      dispatch(startMonitoringFunction(
+        chosenQuery,
+        () => {
+          dispatch(addRecentQuery(chosenQuery));
+          dispatch(clearFunctionBrowser());
+        },
+        () =>
+          dispatch(addNotification(
+            NOTIFICATIONS.FUNCTION_DOESNOT_EXIST.SEVERITY,
+            NOTIFICATIONS.FUNCTION_DOESNOT_EXIST.MESSAGE(chosenQuery),
+          )),
+      ));
       break;
     default:
       break;
@@ -160,7 +169,8 @@ export const getMode = () => async (dispatch) => {
   const { json, error } = await XProf.getMode();
 
   if (error) {
-    console.log('ERROR: ', error);
+    const { serverity, message } = NOTIFICATIONS.MODE;
+    dispatch(addNotification(serverity, message));
   } else if (json.mode === 'elixir') {
     dispatch(setLanguage('Elixir'));
     dispatch(setType('query'));

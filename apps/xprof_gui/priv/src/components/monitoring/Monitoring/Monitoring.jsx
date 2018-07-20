@@ -1,17 +1,22 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { GraphPanel } from '../';
-import { DATA_INTERVAL } from '../../../constants';
+import { DATA_INTERVAL, GRAPH_INITIAL_SIZE } from '../../../constants';
 
 const defaultProps = {
   panelVisibility: true,
   data: [],
   callees: [],
   calleesVisibility: false,
+  size: GRAPH_INITIAL_SIZE,
 };
 
 const propTypes = {
-  mfa: PropTypes.arrayOf(PropTypes.any).isRequired,
+  monitored: PropTypes.shape({
+    graph_type: PropTypes.string,
+    mfa: PropTypes.arrayOf(PropTypes.any),
+    query: PropTypes.string,
+  }).isRequired,
   getFunctionsData: PropTypes.func.isRequired,
   data: PropTypes.arrayOf(PropTypes.object),
   stopMonitoringFunction: PropTypes.func.isRequired,
@@ -23,6 +28,10 @@ const propTypes = {
   expandGraphPanel: PropTypes.func.isRequired,
   shrinkGraphPanel: PropTypes.func.isRequired,
   calleeClick: PropTypes.func.isRequired,
+  isConnection: PropTypes.bool.isRequired,
+  setSize: PropTypes.func.isRequired,
+  size: PropTypes.shape(PropTypes.any),
+  ids: PropTypes.shape(PropTypes.any).isRequired,
 };
 
 class Monitoring extends React.Component {
@@ -39,7 +48,7 @@ class Monitoring extends React.Component {
 
   render() {
     const {
-      mfa,
+      monitored,
       data,
       stopMonitoringFunction,
       callees,
@@ -50,12 +59,16 @@ class Monitoring extends React.Component {
       expandGraphPanel,
       shrinkGraphPanel,
       calleeClick,
+      isConnection,
+      setSize,
+      size,
+      ids,
     } = this.props;
     return (
       <div>
         <GraphPanel
-          key={mfa[3]}
-          mfa={mfa}
+          key={monitored.query}
+          monitored={monitored}
           dps={data}
           stopMonitoringFunction={stopMonitoringFunction}
           callees={callees}
@@ -66,6 +79,10 @@ class Monitoring extends React.Component {
           expand={expandGraphPanel}
           shrink={shrinkGraphPanel}
           calleeClick={calleeClick}
+          isConnection={isConnection}
+          setSize={setSize}
+          size={size}
+          ids={ids}
         />
       </div>
     );

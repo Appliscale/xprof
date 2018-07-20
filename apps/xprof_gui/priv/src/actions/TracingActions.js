@@ -20,9 +20,9 @@ const updateLastCallsForFunction = (functionName, sortedCalls) => ({
   sortedCalls,
 });
 
-export const toggleExpandItem = (mfa, item) => (dispatch, getState) => {
+export const toggleExpandItem = (monitored, item) => (dispatch, getState) => {
   const state = getState();
-  const functionName = mfa[3];
+  const functionName = monitored.query;
   const lastCallsForFunction = getLastCallsForFunction(state, functionName);
 
   const updatedItems = lastCallsForFunction.sort.items.map((call) => {
@@ -38,17 +38,24 @@ export const toggleExpandItem = (mfa, item) => (dispatch, getState) => {
   dispatch(toggleExpand(functionName, updatedItems));
 };
 
-export const toggleCallsTracing = mfa => async (dispatch, getState) => {
+export const toggleCallsTracing = monitored => async (dispatch, getState) => {
   const state = getState();
-  const functionName = mfa[3];
+  const functionName = monitored.query;
   const control = getFunctionControl(state, functionName);
-  const nextControl = await determineNextControlSwitch(control, mfa);
+  const nextControl = await determineNextControlSwitch(
+    dispatch,
+    control,
+    monitored,
+  );
   dispatch(setCallsControl({ [functionName]: nextControl }));
 };
 
-export const handleThresholdChange = (mfa, value) => (dispatch, getState) => {
+export const handleThresholdChange = (monitored, value) => (
+  dispatch,
+  getState,
+) => {
   const state = getState();
-  const functionName = mfa[3];
+  const functionName = monitored.query;
   const { limit, collecting } = getFunctionControl(state, functionName);
   const nextControl = {
     threshold: value,
@@ -58,9 +65,9 @@ export const handleThresholdChange = (mfa, value) => (dispatch, getState) => {
   dispatch(setCallsControl({ [functionName]: nextControl }));
 };
 
-export const handleLimitChange = (mfa, value) => (dispatch, getState) => {
+export const handleLimitChange = (monitored, value) => (dispatch, getState) => {
   const state = getState();
-  const functionName = mfa[3];
+  const functionName = monitored.query;
   const { threshold, collecting } = getFunctionControl(state, functionName);
   const nextControl = {
     threshold,
@@ -70,9 +77,9 @@ export const handleLimitChange = (mfa, value) => (dispatch, getState) => {
   dispatch(setCallsControl({ [functionName]: nextControl }));
 };
 
-export const sortCallsBy = (mfa, column) => (dispatch, getState) => {
+export const sortCallsBy = (monitored, column) => (dispatch, getState) => {
   const state = getState();
-  const functionName = mfa[3];
+  const functionName = monitored.query;
   const lastCallsForFunction = getLastCallsForFunction(state, functionName);
   const order =
     lastCallsForFunction.sort.column === column &&

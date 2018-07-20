@@ -15,15 +15,20 @@ import {
   getFunctionCalls,
   getFunctionControl,
   getFunctionTracingVisibility,
+  isConnection,
 } from '../../selectors';
 
 const TracingContainer = props => <Tracing {...props} />;
 
 const mapStateToProps = (state, ownProps) => ({
-  mfa: ownProps.mfa,
-  calls: getFunctionCalls(state, ownProps.mfa[3]),
-  controls: getFunctionControl(state, ownProps.mfa[3]),
-  panelVisibility: getFunctionTracingVisibility(state, ownProps.mfa[3]),
+  monitored: ownProps.monitored,
+  calls: getFunctionCalls(state, ownProps.monitored.query),
+  controls: getFunctionControl(state, ownProps.monitored.query),
+  panelVisibility: getFunctionTracingVisibility(
+    state,
+    ownProps.monitored.query,
+  ),
+  isConnection: isConnection(state),
 });
 
 const mapDispatchToProps = {

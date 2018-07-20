@@ -9,3 +9,6 @@ export {
 export {
   default as FunctionsContainer,
 } from './FunctionsContainer/FunctionsContainer';
+export {
+  default as NotificationContainer,
+} from './NotificationContainer/NotificationContainer';

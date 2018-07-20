@@ -11,9 +11,11 @@ export const getLastCallsForFunction = (state, fun) =>
   (state.tracing.calls[fun] ? last(state.tracing.calls[fun]) : undefined);
 
 // monitoring
-export const getMfas = state => state.monitoring.mfas;
+export const getAllMonitored = state => state.monitoring.monitoredCollection;
 export const getData = state => state.monitoring.data;
 export const getFunctionData = (state, fun) => state.monitoring.data[fun];
+export const getIDs = state => state.monitoring.ids;
+export const getSize = state => state.monitoring.size;
 
 // navigation
 export const getQuery = state => state.navigation.query;
@@ -40,3 +42,13 @@ export const getFunctionGraphVisibility = (state, fun) =>
   state.layout.graphVisibility[fun];
 export const getFunctionTracingVisibility = (state, fun) =>
   state.layout.tracingVisibility[fun];
+
+// notification
+export const getNotifications = state => state.notification.notifications;
+export const getNotificationsLastId = state =>
+  (state.notification.notifications.length
+    ? last(state.notification.notifications).id
+    : 0);
+export const isConnection = state => state.notification.connection;
+export const getConnectionsNotificationVisibility = state =>
+  state.notification.showConnectionNotification;

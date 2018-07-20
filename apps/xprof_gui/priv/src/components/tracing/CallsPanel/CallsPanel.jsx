@@ -12,13 +12,18 @@ const propTypes = {
   handleThresholdChange: PropTypes.func.isRequired,
   handleLimitChange: PropTypes.func.isRequired,
   toggleCallsTracing: PropTypes.func.isRequired,
-  mfa: PropTypes.arrayOf(PropTypes.any).isRequired,
+  monitored: PropTypes.shape({
+    graph_type: PropTypes.string,
+    mfa: PropTypes.arrayOf(PropTypes.any),
+    query: PropTypes.string,
+  }).isRequired,
   sortCallsBy: PropTypes.func.isRequired,
   toggleExpandItem: PropTypes.func.isRequired,
   control: PropTypes.objectOf(PropTypes.any).isRequired,
   panelVisibility: PropTypes.bool,
   expand: PropTypes.func.isRequired,
   shrink: PropTypes.func.isRequired,
+  isConnection: PropTypes.bool.isRequired,
 };
 
 const CallsPanel = ({
@@ -26,42 +31,44 @@ const CallsPanel = ({
   handleThresholdChange,
   handleLimitChange,
   toggleCallsTracing,
-  mfa,
+  monitored,
   sortCallsBy,
   toggleExpandItem,
   control,
   panelVisibility,
   expand,
   shrink,
+  isConnection,
 }) => (
   <div className="panel panel-default">
     <div className="panel-heading">
       <CallsUtilsButtons
         panelVisibility={panelVisibility}
-        expand={() => expand(mfa[3])}
-        shrink={() => shrink(mfa[3])}
+        expand={() => expand(monitored.query)}
+        shrink={() => shrink(monitored.query)}
       />
       <h3 className="panel-title">
-        {mfa[3]}
+        {monitored.query}
         <span className="panel-subtitle"> - Slow calls tracing</span>
       </h3>
     </div>
     {panelVisibility ? (
       <div className="panel-body">
         <CallsInput
-          mfa={mfa}
+          monitored={monitored}
           collecting={control.collecting}
           threshold={control.threshold}
           handleThresholdChange={handleThresholdChange}
           limit={control.limit}
           handleLimitChange={handleLimitChange}
           toggleCallsTracing={toggleCallsTracing}
+          isConnection={isConnection}
         />
       </div>
     ) : null}
     {panelVisibility ? (
       <CallsTable
-        mfa={mfa}
+        monitored={monitored}
         sort={lastCalls.sort}
         sortCallsBy={sortCallsBy}
         toggleExpandItem={toggleExpandItem}

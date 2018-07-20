@@ -67,12 +67,14 @@
 %%%
 %%% Returns:
 %%% <ul>
-%%%   <li> 200: [["mod", "fun", "arity", "query"]] </li>
+%%%   <li> 200: [{"mfa": ["mod", "fun", "arity"],
+%%%               "query": "queryvalue",
+%%%               "graph_type": "percentiles"/"grid"]] </li>
 %%% </ul>
 %%%
 %%% Return list of monitored functions.
 %%% (The values of "mod", "fun" and "arity" can be used as params to calls to eg
-%%% "/api/mon_stop" while "query" can be used to display the original query
+%%% "/api/mon_stop" while "queryvalue" can be used to display the original query
 %%% string).
 %%%
 %%% === /api/data ===
@@ -87,7 +89,7 @@
 %%%
 %%% Returns:
 %%% <ul>
-%%%   <li> 200: [{"time": timestamp, "hitkey": number}] (where "histkey" is one of:
+%%%   <li> 200: [{"time": timestamp, "histkey": number}] (where "histkey" is one of:
 %%%        min, mean, median, max, stddev,
 %%%        p25, p50, p75, p90, p99, p9999999, memsize, count) </li>
 %%%   <li> 404: "" (the requested MFA is not monitored) </li>
@@ -264,7 +266,13 @@ handle_req(<<"mon_stop">>, Params) ->
 
 handle_req(<<"mon_get_all">>, _Params) ->
     Funs = xprof_core:get_all_monitored(),
-    FunsArr = [[Mod, Fun, Arity, Query]
+    FunsArr = [{[{<<"mfa">>, [Mod, Fun, Arity]},
+                 {<<"query">>, Query},
+                 {<<"graph_type">>, case Mod of
+                                        ets -> <<"grid">>;
+                                        _ -> <<"percentiles">>
+                                    end}
+                ]}
                || {{Mod, Fun, Arity}, Query} <- Funs],
     Json = jsone:encode(FunsArr),
     {200, Json};
@@ -379,4 +387,3 @@ get_int(Key, Params, Default) ->
         _ ->
             Default
     end.
-

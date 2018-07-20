@@ -2,6 +2,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { FunctionBrowser, TracingSwitch } from '../';
 import logo from './logo.png';
+import { MODE_DETECTED, MODE_UNKNOWN } from '../../../constants';
 
 const defaultProps = {
   position: -1,
@@ -23,6 +24,7 @@ const propTypes = {
   language: PropTypes.string,
   inputType: PropTypes.string,
   example: PropTypes.string,
+  isConnection: PropTypes.bool.isRequired,
 };
 
 const Navbar = ({
@@ -38,6 +40,7 @@ const Navbar = ({
   language,
   inputType,
   example,
+  isConnection,
 }) => (
   <nav className="navbar navbar-default navbar-fixed-top">
     <div className="navbar-header">
@@ -46,20 +49,25 @@ const Navbar = ({
       </a>
     </div>
     <div className="navbar-collapse collapse" id="navbar-collapsible">
-      <TracingSwitch status={status} toggleTraceStatus={toggleTraceStatus} />
+      <TracingSwitch
+        status={status}
+        toggleTraceStatus={toggleTraceStatus}
+        isConnection={isConnection}
+      />
       <FunctionBrowser
         queryKeyDown={queryKeyDown}
         queryInputChange={queryInputChange}
         query={query}
-        placeholder={(language && inputType && example)
-          ? 'Hello BEAMer! I have detected that you are using an ' +
-          `${language} project, please specify your ${inputType} ` +
-          `here e.g. ${example}`
-          : 'Hello BEAMer! Please specify your trace pattern here.'}
+        placeholder={
+          language && inputType && example
+            ? MODE_DETECTED(language, inputType, example)
+            : MODE_UNKNOWN
+        }
         functions={functions}
         functionClick={functionClick}
         position={position}
         setPositionOnFunction={setPositionOnFunction}
+        isConnection={isConnection}
       />
     </div>
   </nav>

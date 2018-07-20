@@ -170,19 +170,28 @@ try_to_start_monitoring_invalid_query(_Config) ->
 monitor_valid_query(_Config) ->
     {204, _} = make_get_request("api/mon_start", [{"query", "dict:new/0"}]),
     {200, Monitored}  = make_get_request("api/mon_get_all"),
-    ?assertEqual([[<<"dict">>, <<"new">>, 0, <<"dict:new/0">>]], Monitored),
+    ?assertEqual([[{<<"mfa">>, [<<"dict">>, <<"new">>, 0]},
+                   {<<"query">>, <<"dict:new/0">>},
+                   {<<"graph_type">>, <<"percentiles">>}]],
+                 Monitored),
     ok.
 
 monitor_valid_query_twice(_Config) ->
     {204, _} = make_get_request("api/mon_start", [{"query", "dict:new/0"}]),
     {204, _} = make_get_request("api/mon_start", [{"query", "dict:new/0"}]),
     {200, Monitored}  = make_get_request("api/mon_get_all"),
-    ?assertEqual([[<<"dict">>, <<"new">>, 0, <<"dict:new/0">>]], Monitored),
+    ?assertEqual([[{<<"mfa">>, [<<"dict">>, <<"new">>, 0]},
+                   {<<"query">>, <<"dict:new/0">>},
+                   {<<"graph_type">>, <<"percentiles">>}]],
+                 Monitored),
     ok.
 
 stop_monitoring(_Config) ->
     given_traced("dict:new/0"),
-    {200, [[<<"dict">>, <<"new">>, 0, <<"dict:new/0">>]]} =
+    {200, [[{<<"mfa">>, [<<"dict">>, <<"new">>, 0]},
+            {<<"query">>, <<"dict:new/0">>},
+            {<<"graph_type">>, <<"percentiles">>}]
+          ]} =
         make_get_request("api/mon_get_all"),
     {204, _} = make_get_request("api/mon_stop", [
                                                  {"mod", "dict"},
@@ -196,7 +205,10 @@ monitor_query_with_matchspec(_Config) ->
     Q = "lists:delete(_, [E]) -> true",
     ?assertMatch({204, _}, make_get_request("api/mon_start", [{"query", Q}])),
     {200, Monitored}  = make_get_request("api/mon_get_all"),
-    ?assertEqual([[<<"lists">>, <<"delete">>, 2, list_to_binary(Q)]],
+    ?assertEqual([[{<<"mfa">>, [<<"lists">>, <<"delete">>, 2]},
+                   {<<"query">>, list_to_binary(Q)},
+                   {<<"graph_type">>, <<"percentiles">>}]
+                 ],
                  Monitored),
     ok.
 
@@ -408,4 +420,3 @@ proplist_to_query_string([{K, V}]) ->
     K ++ "=" ++ http_uri:encode(V);
 proplist_to_query_string([{K, V} | Rest]) ->
     K ++ "=" ++ http_uri:encode(V) ++ "&" ++ proplist_to_query_string(Rest).
-

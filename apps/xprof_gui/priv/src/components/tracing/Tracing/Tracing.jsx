@@ -10,7 +10,11 @@ const defaultProps = {
 };
 
 const propTypes = {
-  mfa: PropTypes.arrayOf(PropTypes.any).isRequired,
+  monitored: PropTypes.shape({
+    graph_type: PropTypes.string,
+    mfa: PropTypes.arrayOf(PropTypes.any),
+    query: PropTypes.string,
+  }).isRequired,
   getFunctionsCalls: PropTypes.func.isRequired,
   calls: PropTypes.arrayOf(PropTypes.object),
   toggleCallsTracing: PropTypes.func.isRequired,
@@ -22,6 +26,7 @@ const propTypes = {
   panelVisibility: PropTypes.bool,
   expandTracingPanel: PropTypes.func.isRequired,
   shrinkTracingPanel: PropTypes.func.isRequired,
+  isConnection: PropTypes.bool.isRequired,
 };
 
 class Tracing extends React.Component {
@@ -37,7 +42,7 @@ class Tracing extends React.Component {
 
   render() {
     const {
-      mfa,
+      monitored,
       calls,
       toggleCallsTracing,
       toggleExpandItem,
@@ -48,12 +53,13 @@ class Tracing extends React.Component {
       panelVisibility,
       expandTracingPanel,
       shrinkTracingPanel,
+      isConnection,
     } = this.props;
     return (
       <div>
         <CallsPanel
-          key={mfa[3]}
-          mfa={mfa}
+          key={monitored.query}
+          monitored={monitored}
           lastCalls={last(calls)}
           control={controls}
           handleThresholdChange={handleThresholdChange}
@@ -64,6 +70,7 @@ class Tracing extends React.Component {
           panelVisibility={panelVisibility}
           expand={expandTracingPanel}
           shrink={shrinkTracingPanel}
+          isConnection={isConnection}
         />
       </div>
     );

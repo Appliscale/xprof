@@ -109,3 +109,12 @@ export const AXIS = {
   },
 };
 export const TRANSITION = { duration: 0 };
+
+export const GRAPH_INITIAL_SIZE = {
+  width: 0,
+  height: 0,
+  marginTop: 20,
+  marginRight: 0,
+  marginBottom: 70,
+  marginLeft: 0,
+};

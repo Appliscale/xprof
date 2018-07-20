@@ -9,6 +9,7 @@ import { RootContainer } from './containers';
 import configureStore from './store/configureStore';
 
 import 'bootswatch/flatly/bootstrap.css';
+import 'tachyons/css/tachyons.css';
 import './main.css';
 
 const render = Component => {
