@@ -41,8 +41,9 @@
 %%%
 %%% Returns:
 %%% <ul>
-%%%   <li> 204: "" (the requested MFA is already monitored) </li>
-%%%   <li> 400: {"message": "string"} </li>
+%%%   <li> 204 "" </li>
+%%%   <li> 400: {"message": "string"} (there was some error processing the query string) </li>
+%%%   <li> 409: {"message": "string"} (the requested MFA is already monitored) </li>
 %%% </ul>
 %%%
 %%% Start monitoring based on the specified query string.
@@ -251,7 +252,8 @@ handle_req(<<"mon_start">>, Params) ->
         ok ->
             204;
         {error, already_traced} ->
-            204;
+            Json = jsone:encode({[{message, <<"The requested function is already monitored">>}]}),
+            {409, Json};
         {error, Msg} ->
             Json = jsone:encode({[{message, unicode:characters_to_binary(Msg)}]}),
             {400, Json}
