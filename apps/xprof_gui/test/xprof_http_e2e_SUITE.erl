@@ -178,7 +178,7 @@ monitor_valid_query(_Config) ->
 
 monitor_valid_query_twice(_Config) ->
     {204, _} = make_get_request("api/mon_start", [{"query", "dict:new/0"}]),
-    {204, _} = make_get_request("api/mon_start", [{"query", "dict:new/0"}]),
+    {409, _} = make_get_request("api/mon_start", [{"query", "dict:new/0"}]),
     {200, Monitored}  = make_get_request("api/mon_get_all"),
     ?assertEqual([[{<<"mfa">>, [<<"dict">>, <<"new">>, 0]},
                    {<<"query">>, <<"dict:new/0">>},

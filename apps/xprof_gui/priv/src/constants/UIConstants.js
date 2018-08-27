@@ -30,7 +30,7 @@ export const NOTIFICATIONS = {
   },
   MONITORING: {
     SEVERITY: NOTIFICATIONS_SEVERITY.ERROR,
-    MESSAGE: fun => `Couldn't stop monitoring "${fun}" function.`,
+    MESSAGE: fun => `Couldn't stop monitoring function "${fun}".`,
   },
   MODE: {
     SEVERITY: NOTIFICATIONS_SEVERITY.WARNING,
@@ -38,27 +38,27 @@ export const NOTIFICATIONS = {
   },
   FUNCTION_DOESNOT_EXIST: {
     SEVERITY: NOTIFICATIONS_SEVERITY.WARNING,
-    MESSAGE: fun => `Function "${fun}" doesn't exists.`,
+    MESSAGE: fun => `Function "${fun}" doesn't exist.`,
   },
   CALLEES: {
     SEVERITY: NOTIFICATIONS_SEVERITY.WARNING,
-    MESSAGE: fun => `Couldn't get function's "${fun}" callees.`,
+    MESSAGE: fun => `Couldn't get callees of function "${fun}".`,
   },
   SAMPLES: {
     SEVERITY: NOTIFICATIONS_SEVERITY.WARNING,
-    MESSAGE: fun => `Couldn't get samples of "${fun}" function.`,
+    MESSAGE: fun => `Couldn't get samples of function "${fun}".`,
   },
   CALLS: {
     SEVERITY: NOTIFICATIONS_SEVERITY.WARNING,
-    MESSAGE: fun => `Couldn't get calls of "${fun}" function.`,
+    MESSAGE: fun => `Couldn't get calls of function "${fun}".`,
   },
   STOP_CAPTURING_CALLS: {
     SEVERITY: NOTIFICATIONS_SEVERITY.WARNING,
-    MESSAGE: fun => `Couldn't stop call's capturing of "${fun}" function.`,
+    MESSAGE: fun => `Couldn't stop call capturing of function "${fun}".`,
   },
   START_CAPTURING_CALLS: {
     SEVERITY: NOTIFICATIONS_SEVERITY.WARNING,
-    MESSAGE: fun => `Couldn't start call's capturing of "${fun}" function.`,
+    MESSAGE: fun => `Couldn't start call capturing of function "${fun}".`,
   },
   CHANGE_TRACING_STATUS: {
     SEVERITY: NOTIFICATIONS_SEVERITY.WARNING,
@@ -69,10 +69,10 @@ export const NOTIFICATIONS = {
   },
   NO_CALLEES: {
     SEVERITY: NOTIFICATIONS_SEVERITY.INFO,
-    MESSAGE: fun => `Function "${fun}" don't call any functions.`,
+    MESSAGE: fun => `Function "${fun}" doesn't call any functions.`,
   },
-  LOST_CONNECTION: 'Lost connection with XProf!',
-  ALIVE_CONNECTION: 'Connection with XProf is back!',
+  LOST_CONNECTION: 'Lost connection to XProf!',
+  ALIVE_CONNECTION: 'Connection to XProf is back!',
 };
 export const MODE_DETECTED = (language, inputType, example) =>
   'Hello BEAMer! I have detected that you are using an ' +
