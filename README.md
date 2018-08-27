@@ -1,7 +1,7 @@
 XProf [![Build Status](https://travis-ci.org/Appliscale/xprof.svg?branch=master)](https://travis-ci.org/Appliscale/xprof) [![Coverage Status](https://coveralls.io/repos/github/Appliscale/xprof/badge.svg?branch=master)](https://coveralls.io/github/Appliscale/xprof?branch=master) [![Hex.pm](https://img.shields.io/hexpm/v/xprof.svg?style=flat-square)](https://hex.pm/packages/xprof) [![Hex.pm](https://img.shields.io/hexpm/dt/xprof.svg?style=flat-square)](https://hex.pm/packages/xprof) [![Gitter](https://badges.gitter.im/Appliscale/xprof.svg)](https://gitter.im/Appliscale/xprof?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 =====
 
-*XProf* is a profiler that allows you to track execution time of Elixir / Erlang
+*XProf* is a visual tracer and profiler that allows you to track execution time of Elixir / Erlang
 functions. It's also able to capture arguments and results (return value or
 exception) of function calls that lasted longer than given number of
 milliseconds.
@@ -25,6 +25,12 @@ you would guess from the name, it takes a bit of sleep). In the video we:
 
 [![XProf Demo](xprof_demo_1.2.1_screenshot.png)](https://youtu.be/CRPC6zloDS0 "XProf Demo")
 
+## Versions
+
+The latest stable version of XProf is 1.3.0. The upcoming 2.0.0 version is in continuous development on the `release_2.0` branch, everyone is encouraged to test the latest release condidate from hex.pm.
+
+XProf currently supports Erlang/OTP R16B - 20 (both 1.x and 2.x versions). Newer OTP versions might work but are not tested.
+
 ## How to use it
 
 1. Add `xprof` to your build tool config file (and optionally also to the
@@ -37,7 +43,7 @@ you would guess from the name, it takes a bit of sleep). In the video we:
 5. Type in function that you would like to start tracing.
 6. Start tracing clicking green button.
 
-The preferred way is to add the `xprof` *Hex* package as a dependency to you rebar3 config or Mix project file:
+The preferred way is to add the `xprof` *Hex* package as a dependency to your rebar3 config or Mix project file:
 
 ```erlang
 %% rebar.config (at least version `3.3.3` is required):
