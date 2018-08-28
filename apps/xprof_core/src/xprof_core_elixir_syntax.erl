@@ -111,7 +111,7 @@ fn_to_clauses(QuotedFn) ->
                 true ->
                     xprof_core_ms:err('Elixir.Exception':message(Exception));
                 false ->
-                    erlang:raise(C, Exception, erlang:get_stacktrace())
+                    erlang:C(Exception)
                     %%xprof_core_ms:err("cannot convert quoted expression to Erlang AST")
             end
     end.
