@@ -39,12 +39,26 @@ start_cowboy() ->
     ?HANDLER_MOD:start_listener(?LISTENER, Port, Dispatch).
 
 cowboy_dispatch(Mod) ->
+    StaticDir = get_static_dir(),
+    Index = filename:join(StaticDir, "index.html"),
     Routes =
         [{'_', [{"/api/:what", Mod, []},
-                {"/", cowboy_static, {priv_file, ?APP, "build/index.html"}},
-                {"/[...]", cowboy_static, {priv_dir, ?APP, "build"}}
+                {"/", cowboy_static, {priv_file, ?APP, Index}},
+                {"/[...]", cowboy_static, {priv_dir, ?APP, StaticDir}}
                ]}],
     cowboy_router:compile(Routes).
+
+%% Only for development
+%% If `build-dev' directory exists serve static assets from there.
+%% It should not be present when XProf is used as a lib within another
+%% application.
+get_static_dir() ->
+    case filelib:is_dir(filename:join(code:priv_dir(?APP), "build-dev")) of
+        true ->
+            "build-dev";
+        false ->
+            "build"
+    end.
 
 stop_cowboy() ->
     cowboy:stop_listener(?LISTENER).
