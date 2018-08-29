@@ -74,8 +74,9 @@ You can also fetch from the github repository (not recommended, only for develop
 
 ## Keyboard shortcuts
 
-- **UP**/**DOWN** arrows: select previous/next item in the dropdown suggestion
-  list
+- **UP**/**DOWN** arrows (cursor in query box): scroll through recent queries
+- **UP**/**DOWN** arrows (cursor in suggestion list below query box): scroll
+  through auto-completion suggestions
 - **TAB**: if no suggetion is selected yet auto-complete to longest common
   prefix of dropdown list items. Otherwise copy the selected item to the search
   box and refresh the dropdown list.
