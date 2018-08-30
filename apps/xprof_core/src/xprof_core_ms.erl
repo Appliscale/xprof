@@ -2,6 +2,7 @@
 
 -export([fun2ms/1,
          default_ms/0,
+         format_error/1,
          err/1, err/2, err/3
         ]).
 
@@ -33,15 +34,18 @@ default_ms() ->
 %%  already expanded records before it passes the fun clauses as input)
 ms(Clauses, RecDefs) ->
     IsEmptyArgs = (get_arity(Clauses) =:= 0),
-    ERR_HEAD = 3,
+    ERR_DBG_HEAD = 3,
+    ERR_HEADMATCH = 4,
     case ms_transform:parse_transform(
            wrap_forms(wrap_args(Clauses), RecDefs), _Options = []) of
-        {error,[{_, [{_, ms_transform, ERR_HEAD}|_]}|_], _} when IsEmptyArgs ->
+        {error,[{_, [{_, ms_transform, ERR_DBG_HEAD}|_]}|_], _} when IsEmptyArgs ->
             %% A bug in ms_trasform that was only fixed in OTP 19.2 prevents
             %% empty list as head in "dbg:fun2ms(fun([]) -> ..."
             %% (see https://github.com/erlang/otp/commit/8db6c68b)
             workaround_empty_args_ms(
               ms(workaround_empty_args_cl(Clauses), RecDefs));
+        {error,[{_, [{Loc ,ms_transform, ERR_HEADMATCH}]}], _} ->
+            err(Loc, ?MODULE, ms_transform_headmatch);
         {error,[{_,[{Loc,Mod,Code}|_]}|_],_} ->
             err(Loc, Mod, Code);
         Forms ->
@@ -142,6 +146,14 @@ traverse_ms_c([], _) ->
 traverse_ms_c(Other, _) ->
     Other.
 
+format_error(ms_transform_headmatch) ->
+    %% In a regular match-spec-fun it is only possible to match the list of args
+    %% ie. the top level.  However in the xprof flavor the args are not wrapped
+    %% in a list so even that isn't possible. So let's rewrite the error message
+    %% a little from "in fun head, only matching (=) on toplevel can be
+    %% translated into match_spec"
+    %% (example "fun(T = {tag, _})")
+    "matching (=) in fun head cannot be translated into a match-spec".
 
 -spec err(string()) -> no_return().
 err(Fmt) ->
