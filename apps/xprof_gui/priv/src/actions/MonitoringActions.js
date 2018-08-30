@@ -1,7 +1,7 @@
 import { getAllMonitored } from '../selectors';
 import * as types from '../constants/ActionTypes';
 import * as XProf from '../api';
-import { addNotification } from './';
+import { addNotification, addRecentQuery, clearFunctionBrowser } from './';
 import { NOTIFICATIONS } from '../constants';
 
 const stopMonitoringFunctionRequest = monitoredCollection => ({
@@ -38,15 +38,16 @@ export const stopMonitoringFunction = monitored => async (
   }
 };
 
-export const startMonitoringFunction = (
-  functionName,
-  onSuccess,
-  onError,
-) => async () => {
-  const { error } = await XProf.startMonitoringFunction(functionName);
-  if (error && onError) {
-    onError(error);
-  } else if (onSuccess) {
-    onSuccess();
+export const startMonitoringFunction = query => async (dispatch) => {
+  const { error } = await XProf.startMonitoringFunction(query);
+  if (error) {
+    dispatch(addNotification(
+      NOTIFICATIONS.START_MONITORING.SEVERITY,
+      NOTIFICATIONS.START_MONITORING.MESSAGE(query),
+      error,
+    ));
+  } else {
+    dispatch(addRecentQuery(query));
+    dispatch(clearFunctionBrowser());
   }
 };

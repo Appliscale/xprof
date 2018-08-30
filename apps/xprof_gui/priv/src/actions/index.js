@@ -16,6 +16,8 @@ export {
   queryKeyDown,
   setPositionOnFunction,
   getMode,
+  addRecentQuery,
+  clearFunctionBrowser,
 } from './NavigationActions';
 export {
   addCallsControls,

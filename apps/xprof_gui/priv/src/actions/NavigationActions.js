@@ -22,8 +22,9 @@ const setPosition = position => ({
   position,
 });
 
-const clearFunctionBrowser = () => ({
+export const clearFunctionBrowser = () => ({
   type: types.CLEAR_FUNCTION_BROWSER,
+  position: -1,
 });
 
 const setQueryInput = query => ({
@@ -46,7 +47,7 @@ const setExample = example => ({
   example,
 });
 
-const addRecentQuery = query => ({
+export const addRecentQuery = query => ({
   type: types.ADD_RECENT_QUERY,
   query,
 });
@@ -72,11 +73,7 @@ export const functionClick = selected => async (dispatch, getState) => {
   const state = getState();
   const query = getQuery(state);
   if (selected.startsWith(query)) {
-    const onSuccess = () => {
-      dispatch(addRecentQuery(selected));
-      dispatch(clearFunctionBrowser());
-    };
-    dispatch(startMonitoringFunction(selected, onSuccess));
+    dispatch(startMonitoringFunction(selected));
   } else {
     dispatch(queryInputChange(selected));
   }
@@ -131,7 +128,6 @@ export const queryKeyDown = key => async (dispatch, getState) => {
       break;
     case HANDLED_KEYS.ESC:
       dispatch(clearFunctionBrowser());
-      dispatch(setPosition(-1));
       break;
     case HANDLED_KEYS.RETURN:
       if (highlightedFunction && highlightedFunction.startsWith(query)) {
@@ -140,19 +136,7 @@ export const queryKeyDown = key => async (dispatch, getState) => {
         chosenQuery = query;
       }
 
-      dispatch(startMonitoringFunction(
-        chosenQuery,
-        () => {
-          dispatch(addRecentQuery(chosenQuery));
-          dispatch(clearFunctionBrowser());
-        },
-        error =>
-          dispatch(addNotification(
-            NOTIFICATIONS.FUNCTION_DOESNOT_EXIST.SEVERITY,
-            NOTIFICATIONS.FUNCTION_DOESNOT_EXIST.MESSAGE(chosenQuery),
-            error,
-          )),
-      ));
+      dispatch(startMonitoringFunction(chosenQuery));
       break;
     default:
       break;
