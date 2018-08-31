@@ -42,16 +42,8 @@ export const startMonitoringFunction = (
   functionName,
   onSuccess,
   onError,
-) => async (dispatch, getState) => {
-  const state = getState();
-  const monitoredCollection = getAllMonitored(state);
-  const isMonitored = monitoredCollection.filter(f => f.query === functionName)
-    .length;
-
-  let error;
-  if (!isMonitored) {
-    ({ error } = await XProf.startMonitoringFunction(functionName));
-  }
+) => async () => {
+  const { error } = await XProf.startMonitoringFunction(functionName);
   if (error && onError) {
     onError(error);
   } else if (onSuccess) {
