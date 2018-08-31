@@ -36,8 +36,7 @@ ms(Clauses, RecDefs) ->
     IsEmptyArgs = (get_arity(Clauses) =:= 0),
     ERR_DBG_HEAD = 3,
     ERR_HEADMATCH = 4,
-    case ms_transform:parse_transform(
-           wrap_forms(wrap_args(Clauses), RecDefs), _Options = []) of
+    case ms_transform(Clauses, RecDefs) of
         {error,[{_, [{_, ms_transform, ERR_DBG_HEAD}|_]}|_], _} when IsEmptyArgs ->
             %% A bug in ms_trasform that was only fixed in OTP 19.2 prevents
             %% empty list as head in "dbg:fun2ms(fun([]) -> ..."
@@ -48,12 +47,31 @@ ms(Clauses, RecDefs) ->
             err(Loc, ?MODULE, ms_transform_headmatch);
         {error,[{_,[{Loc,Mod,Code}|_]}|_],_} ->
             err(Loc, Mod, Code);
-        Forms ->
-            unwrap_forms(Forms)
+        MS ->
+            MS
     end.
 
 get_arity([{clause, _, Args, _, _}|_]) ->
     length(Args).
+
+%% The type-spec of ms_transform:parse_transform is incomplete so if it is
+%% called directly, dialyzer complains that patterns `{error, _, _}' can never
+%% match.
+%% Use the slimmest form of the compiler instead.
+-spec ms_transform(Clauses, [tuple()]) -> xprof_core:ms() | Error when
+      Clauses :: [erl_parse:abstract_clause()],
+      Error :: {error, ErrInfo :: [tuple()], WarnInfo :: []}.
+ms_transform(Clauses, RecDefs) ->
+    Result = compile:forms(
+               wrap_forms(wrap_args(Clauses), RecDefs),
+               [{parse_transform, ms_transform},
+                export_all, binary, 'P', return_errors]),
+    case Result of
+        {ok, [], Forms} ->
+            unwrap_forms(Forms);
+        Error ->
+            Error
+    end.
 
 wrap_args(Clauses) ->
     [{clause, Loc, [build_list(Args)], Guards, Body}
@@ -79,6 +97,8 @@ workaround_empty_args_ms(Ms) ->
 %% The body of the function (ie the call dbg:fun2ms) is converted
 %% to a match spec by the parse transform.
 wrap_forms(Clauses, RecDefs) ->
+    [{attribute,{1,1},module,m}]
+        ++
     RecDefs
         ++
     [{function,{1,1},f,0,
