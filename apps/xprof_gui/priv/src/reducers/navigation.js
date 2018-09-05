@@ -1,3 +1,4 @@
+import { without } from 'lodash';
 import * as types from '../constants/ActionTypes';
 
 const initialState = {
@@ -52,7 +53,7 @@ const navigation = (state = initialState, action) => {
     case types.ADD_RECENT_QUERY:
       return {
         ...state,
-        history: [...state.history, action.query],
+        history: [...without(state.history, action.query), action.query],
       };
     case types.SAVE_DIRTY_INPUT:
       return {
