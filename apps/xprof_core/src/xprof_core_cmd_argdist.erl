@@ -6,6 +6,7 @@
          optional_params/0,
          param_from_ast/2,
          param_to_internal/2,
+         format_error/1,
 
          get_cmd_id/1,
 
@@ -46,8 +47,12 @@ param_to_internal(enum, MaxEnum) ->
 param_to_internal(_, _) ->
    {error, unknown_param}.
 
-get_cmd_id(Params) ->
-    MFASpec = proplists:get_value(mfa, Params),
+format_error(Str) when is_list(Str) ->
+    %% already formatted error from `fun2ms'
+    Str.
+
+get_cmd_id(Options) ->
+    MFASpec = proplists:get_value(mfa, Options),
     MFAId = xprof_core_lib:mfaspec2id(MFASpec),
     MFAId.
 
@@ -61,7 +66,7 @@ init(Options, _MFASpec) ->
     MaxEnum = proplists:get_value(enum, Options, 10),
     {ok, #state{max_enum = MaxEnum}}.
 
-handle_event({trace_ts, _Pid, call, _MFA, Args, _StartSDL_CreateWindowTime}, _,
+handle_event({trace_ts, _Pid, call, _MFA, Args, _StartTime}, _,
              State = #state{freq_count = FreqCount,
                             all_keys = AllKeys,
                             max_enum = MaxEnum}) ->

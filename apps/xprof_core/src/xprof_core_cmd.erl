@@ -64,10 +64,10 @@ process_query(Query, AdditionalParams) ->
                 {ok, Options} = params_to_internal(Cmd, Params, CmdCB, []),
 
                 {start_cmd, Cmd, Options, CmdCB, Query}
-            catch throw:{error, _} = Error ->
-                    Error;
-                  error:{badmatch, {error, _} = Error} ->
-                    Error
+            catch throw:{error, Reason} ->
+                    format_error(Reason);
+                  error:{badmatch, {error, Reason}} ->
+                    format_error(Reason)
             end
     end.
 
@@ -103,7 +103,7 @@ get_cmd_callback(funlatency) ->
 get_cmd_callback(argdist) ->
     xprof_core_cmd_argdist;
 get_cmd_callback(Cmd) ->
-    {error, {unknown_command, Cmd}}.
+    throw({error, {unknown_command, Cmd}}).
 
 params_from_ast(Cmd, [{Key, Ast}|ParamsAst], CmdCB, Acc) ->
     case CmdCB:param_from_ast(Key, Ast) of
@@ -138,6 +138,29 @@ check_mandatory_params(Params, MandatoryParams) ->
      end
      || Key <- MandatoryParams],
     ok.
+
+-spec format_error(any()) -> {error, string()}.
+format_error({unknown_command, Cmd}) ->
+    xprof_core_lib:fmt_err("Unknown command ~p", [Cmd]);
+format_error({Where, Cmd, Key, unknown_param})
+  when Where =:= param_from_ast;
+       Where =:= param_to_internal ->
+    xprof_core_lib:fmt_err("~p is not a valid parameter of command ~p",
+                           [Key, Cmd]);
+format_error({Where, _Cmd, Key, wrong_value})
+  when Where =:= param_from_ast;
+       Where =:= param_to_internal ->
+    xprof_core_lib:fmt_err("Paremeter ~p has wrong value type", [Key]);
+format_error({param_to_internal, Cmd, Key, Reason}) ->
+    CmdCB = get_cmd_callback(Cmd),
+    xprof_core_lib:fmt_err("Error converting parameter ~p to internal format: ~s",
+                           [Key, CmdCB:format_error(Reason)]);
+format_error({params_from_ast, Cmd, Key, Reason}) ->
+    CmdCB = get_cmd_callback(Cmd),
+    xprof_core_lib:fmt_err("Error converting parameter ~p to internal format: ~s",
+                           [Key, CmdCB:format_error(Reason)]);
+format_error(Reason) ->
+    xprof_core_lib:fmt_err("Unexpected error handling query: ~p", [Reason]).
 
 %% @doc Get expansion suggestions for the given possibly incomplete query.
 -spec expand_query(binary()) -> {CommonPrefix :: binary(), [Match]}
