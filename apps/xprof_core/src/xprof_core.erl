@@ -113,7 +113,8 @@ monitor_pp(Query) ->
 %% @doc Start monitoring based on the specified query string with additional
 %% parameters. Additional parameters have precedence overthe same keys in the
 %% query.
--spec monitor_pp(binary(), [{binary(), binary()}]) -> ok | {error, Reason :: term()}.
+-spec monitor_pp(binary(), [{binary(), binary()}])
+                -> ok | {error, Reason :: already_traced | string()}.
 monitor_pp(Query, AdditionalParams) ->
     xprof_core_tracer:monitor_query(Query, AdditionalParams).
 

@@ -21,7 +21,8 @@
 -define(is_upcase(S), (S >= $A andalso S =< $Z)).
 
 %% Elixir quoted expressions
--type ex_quoted() :: tuple().
+-type ex_quoted() :: tuple() | ex_literal().
+-type ex_literal() :: atom() | number() | binary() | fun((...) -> any()) | {any(), any()} | [any()].
 %% Erlang abstract syntax tree
 -type erl_ast() :: tuple().
 
@@ -37,14 +38,15 @@ parse_query(Query) ->
   | {incomplete_cmd, CmdPrefix}
   | {incomplete_key, KeyPrefix, Cmd, ParamsSoFar}
   | {incomplete_value, Key, ValuePrefix, Cmd, ParamsSoFar}
+  | {error, Reason :: any()}
   when
       Cmd :: xprof_core:cmd(),
-      CmdPrefix :: atom(), %% binary()/string() ???
+      CmdPrefix :: string(),
       Params :: xprof_core:params(),
       ParamsSoFar :: xprof_core:params(),
       Key :: atom(),
-      KeyPrefix :: atom(), %% binary()/string() ???
-      ValuePrefix :: string(). %% binary() ???
+      KeyPrefix :: string(),
+      ValuePrefix :: string().
 %% throw:{error, Reason :: term()}
 parse_incomplete_query(_Query) ->
     %%{ok, Tokens, Rest} = tokens_query(Query, incomplete),
@@ -52,7 +54,7 @@ parse_incomplete_query(_Query) ->
     %%    _ ->
     %%        []
     %%end.
-    [].
+    {incomplete_cmd, ""}.
 
 %% @doc Parse a query string that represents either a module-funtion-arity
 %% or an xprof-flavoured match-spec fun in Elixir syntax.

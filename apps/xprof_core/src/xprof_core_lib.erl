@@ -91,11 +91,11 @@ err(Loc, Mod, Err) ->
     throw(fmt_err(Loc, Mod, Err)).
 
 %% @doc Return an error in a common format
--spec fmt_err(string()) -> no_return().
+-spec fmt_err(string()) -> {error, string()}.
 fmt_err(Fmt) ->
     {error, fmt(Fmt, [])}.
 
--spec fmt_err(string(), list()) -> no_return().
+-spec fmt_err(string(), list()) -> {error, string()}.
 fmt_err(Fmt, Args) ->
     {error, fmt(Fmt, Args)}.
 
