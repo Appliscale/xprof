@@ -17,7 +17,7 @@ const propTypes = {
   queryKeyDown: PropTypes.func.isRequired,
   queryInputChange: PropTypes.func.isRequired,
   query: PropTypes.string.isRequired,
-  functions: PropTypes.arrayOf(PropTypes.string).isRequired,
+  functions: PropTypes.arrayOf(PropTypes.object).isRequired,
   functionClick: PropTypes.func.isRequired,
   position: PropTypes.number,
   setPositionOnFunction: PropTypes.func.isRequired,

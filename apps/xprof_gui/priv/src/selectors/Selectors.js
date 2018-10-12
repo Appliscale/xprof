@@ -19,6 +19,7 @@ export const getSize = state => state.monitoring.size;
 
 // navigation
 export const getQuery = state => state.navigation.query;
+export const getCommonExpansion = state => state.navigation.expansion;
 export const getACfunctions = state => state.navigation.functions;
 export const getPromptPosition = state => state.navigation.position;
 export const getHighlightedFunction = state =>

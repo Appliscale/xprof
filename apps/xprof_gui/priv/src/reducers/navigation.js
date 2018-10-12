@@ -3,6 +3,7 @@ import * as types from '../constants/ActionTypes';
 const initialState = {
   query: '',
   dirtyInput: '',
+  expansion: '',
   functions: [],
   position: -1,
   language: null,
@@ -22,6 +23,7 @@ const navigation = (state = initialState, action) => {
       return {
         ...state,
         query: '',
+        expansion: '',
         functions: [],
       };
     case types.SET_POSITION:
@@ -29,9 +31,10 @@ const navigation = (state = initialState, action) => {
         ...state,
         position: action.position,
       };
-    case types.FILL_AUTOCOMPLETER_FUNCTIONS:
+    case types.FILL_AUTOCOMPLETER_MATCHES:
       return {
         ...state,
+        expansion: action.expansion,
         functions: action.functions,
       };
     case types.SET_LANGUAGE:

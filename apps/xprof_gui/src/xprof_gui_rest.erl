@@ -6,11 +6,18 @@
 %%%
 %%% Returns:
 %%% <ul>
-%%%   <li> 200: ["MFA"] </li>
+%%%   <li> 200: {"expansion": "commonPrefix",
+%%%              "matches": [{"expansion": "prefix",
+%%%                           "label": "suggestionLabel"},
+%%%                          {...},...]}
+%%%   </li>
 %%% </ul>
 %%%
-%%% Get loaded modules and functions (MFAs) that match the query string.
+%%% Get expansion suggestions for the given possibly incomplete query.
 %%% Used for autocomplete suggestions on the GUI.
+%%% "commonPrefix" can be used to append to the query if no suggestion is
+%%% selected.
+%%% "prefix" can be appended to the query if the given suggestion is selected.
 %%%
 %%% === /api/get_callees ===
 %%%
@@ -230,8 +237,11 @@
 handle_req(<<"funs">>, Params) ->
     Query = get_query(Params),
 
-    Funs = xprof_core:get_matching_mfas_pp(Query),
-    Json = jsone:encode(Funs),
+    {CommonPrefix, Funs} = xprof_core:expand_query(Query),
+    Data = {[{expansion, CommonPrefix},
+             {matches, [{[{expansion, Exp},{label, Label}]}||{Exp, Label} <- Funs]}
+            ]},
+    Json = jsone:encode(Data),
 
     lager:debug("Returning ~b functions matching phrase \"~s\"", [length(Funs), Query]),
 
