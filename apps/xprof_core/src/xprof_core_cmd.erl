@@ -224,15 +224,7 @@ expand_extended_query(Query) ->
                     case Key of
                         mfa ->
                             %% special case `mfa'
-
-                            ValueBin = case ValuePrefix of
-                                           {TokensSoFar, _RestStr} ->
-                                               StartCol = column(hd(TokensSoFar)) - 1,
-                                               ValueLen = byte_size(Query) - StartCol + 1,
-                                               binary:part(Query, StartCol - 1, ValueLen);
-                                           _ when is_list(ValuePrefix) ->
-                                               unicode:characters_to_binary(ValuePrefix)
-                                       end,
+                            ValueBin = unicode:characters_to_binary(ValuePrefix),
                             expand_match_spec(ValueBin);
                         _ ->
                             [{<<>>, atom_to_binary(Key, unicode)}]
@@ -255,32 +247,13 @@ expand_extended_query(Query) ->
                     end
 
             end;
-        {error, {unexpected, Token, _State}} ->
-            xprof_core_lib:err("unexpected '~s' at column ~p", [text(Token), column(Token)])
+        {error, Reason} ->
+            xprof_core_lib:err(Reason)
     end.
 
 expand_match_spec(Query) ->
     Funs = xprof_core_vm_info:get_available_funs(Query),
     _FilteredFuns = [{prefix_tail(Query, Fun), Fun} || Fun <- Funs].
-
-
-%% erl_anno module and erl_scan:text was introduced in OTP 18.0
-text(Token) ->
-    %% erl_scan:text(Token).
-    proplists:get_value(text, element(2, Token)).
-
-column(Token) ->
-    case element(2, Token) of
-        {_Line, Col} ->
-            Col;
-        Anno when is_list(Anno) ->
-            case {proplists:get_value(column, Anno),
-                  proplists:get_value(location, Anno)} of
-                {Col, undefined} when is_integer(Col) -> Col;
-                {undefined, {_Line, Col}} -> Col;
-                _ -> undefined
-            end
-    end.
 
 missing_params(CmdInfo, Params) ->
     CmdCb = CmdInfo#cmd.cb_mod,

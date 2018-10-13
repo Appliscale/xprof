@@ -78,9 +78,8 @@ parse_query("#" ++ Query) ->
                    {value, Key, _Value} ->
                        xprof_core_lib:fmt_err("Incomplete value for parameter ~w", [Key])
                end;
-           %% {unexpected, Token
-           Other ->
-               {error, Other}
+           {error, {unexpected, Token, _State}} ->
+               xprof_core_lib:fmt_err("unexpected '~s' at column ~p", [text(Token), column(Token)])
        end
     catch
         throw:Error ->
@@ -116,7 +115,8 @@ parse_incomplete_query(Query) ->
         {more, {eq, Key}, Cmd, Params} ->
             {incomplete_key, {Key, Rest}, Cmd, Params};
         {more, {value, Key, ValueTokens}, Cmd, Params} ->
-            {incomplete_value, Key, {ValueTokens, Rest}, Cmd, Params};
+            ValueRest = rest_from_tokens(ValueTokens, Query),
+            {incomplete_value, Key, ValueRest, Cmd, Params};
         {more, {value, Key}, Cmd, Params} ->
             {incomplete_value, Key, Rest, Cmd, Params};
         {unexpected, _Token, _State} = Un ->
@@ -224,16 +224,38 @@ tokens_to_comma(Tokens) ->
       fun(Token) -> element(1, Token) =/= ',' end,
       Tokens).
 
-mfa_to_str([{mfa, [FirstToken|_]}|Params], OrigQuery) ->
-    %% OrigQuery does not contain leading `#'
-    %% so it starts at column 2
-    StartColumn = element(2, get_loc(FirstToken)) - 1,
-    MFAQuery = lists:sublist(OrigQuery, StartColumn, length(OrigQuery)),
+mfa_to_str([{mfa, Tokens}|Params], OrigQuery) ->
+    MFAQuery = rest_from_tokens(Tokens, OrigQuery),
     [{mfa, MFAQuery}|Params];
 mfa_to_str([KeyValue|Params], OrigQuery) ->
     [KeyValue|mfa_to_str(Params, OrigQuery)];
 mfa_to_str([], _) ->
     [].
+
+rest_from_tokens([FirstToken|_], OrigQuery) ->
+    %% OrigQuery does not contain leading `#'
+    %% so it starts at column 2
+    StartColumn = column(FirstToken) - 1,
+    _RestStr = lists:sublist(OrigQuery, StartColumn, length(OrigQuery)).
+
+%% FIXME OTP 19+
+%% erl_anno module and erl_scan:text was introduced in OTP 18.0
+text(Token) ->
+    %% erl_scan:text(Token).
+    proplists:get_value(text, element(2, Token)).
+
+column(Token) ->
+    case element(2, Token) of
+        {_Line, Col} ->
+            Col;
+        Anno when is_list(Anno) ->
+            case {proplists:get_value(column, Anno),
+                  proplists:get_value(location, Anno)} of
+                {Col, undefined} when is_integer(Col) -> Col;
+                {undefined, {_Line, Col}} -> Col;
+                _ -> undefined
+            end
+    end.
 
 tokens_query(Str) ->
     case erl_scan:string(Str, {1,1}) of
