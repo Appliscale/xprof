@@ -6,18 +6,14 @@
 
 parse_query_test_() ->
     %% tokens_test_() ->
-     [?_assertEqual(
-         %%{error, incomplete_query},
-         {error, parsing_error},
-         ?M:parse_query("#cmd mfa =")),
-     ?_assertEqual(
+    [?_assertEqual(
         {error,"unterminated atom starting with 'true' at column 27"},
         ?M:parse_query("#cmd mfa = m:f(_) -> 'true")),
      ?_assertMatch(
         {ok, cmd, [{mfa, "a+b"}]},
         ?M:parse_query("#cmd mfa = a+b")),
 
-%% parse_test_() ->
+     %% parse_test_() ->
      ?_assertEqual(
         {ok, cmd, [{mfa, "m:f/1"}]},
         ?M:parse_query("#cmd mfa = m:f/1")),
@@ -49,8 +45,27 @@ parse_query_test_() ->
         ?M:parse_query("#argdist enum = 2, mfa = m:f(B) when is_boolean(B) -> message(B)")),
 
      ?_assertEqual(
+        {error, "Missing command name"},
+        ?M:parse_query("#")),
+     ?_assertEqual(
+        {error, "Expected parameter name missing at the end of the query"},
+        ?M:parse_query("#c")),
+     ?_assertEqual(
+        {error, "Missing = and value for parameter m"},
+        ?M:parse_query("#cmd m")),
+     ?_assertEqual(
+        {error, "Missing value for parameter mfa"},
+        ?M:parse_query("#cmd mfa =")),
+     ?_assertEqual(
+        {error, "Incomplete value for parameter k1"},
+        ?M:parse_query("#cmd k1 = {a")),
+     ?_assertEqual(
+        {error, "Expected parameter name missing at the end of the query"},
+        ?M:parse_query("#cmd k1 = a,")),
+
+     ?_assertEqual(
         %%{error, "missing comma at column 12"},
-        {error, parsing_error},
+        {error, "Incomplete value for parameter k1"},
         ?M:parse_query("#cmd k1 = 1 k2 = 2"))
 
     ].

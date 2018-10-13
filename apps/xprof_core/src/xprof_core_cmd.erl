@@ -134,7 +134,7 @@ merge_params(P1, P2) ->
 check_mandatory_params(Params, MandatoryParams) ->
     [case lists:keymember(Key, 1, Params) of
          true -> ok;
-         false -> xprof_core_lib:err("Mandatory param ~p missing", [Key])
+         false -> xprof_core_lib:err("Mandatory parameter ~p missing", [Key])
      end
      || Key <- MandatoryParams],
     ok.
@@ -160,7 +160,12 @@ format_error({params_from_ast, Cmd, Key, Reason}) ->
     xprof_core_lib:fmt_err("Error converting parameter ~p to internal format: ~s",
                            [Key, CmdCB:format_error(Reason)]);
 format_error(Reason) ->
-    xprof_core_lib:fmt_err("Unexpected error handling query: ~p", [Reason]).
+    case io_lib:deep_char_list(Reason) of
+        true ->
+            {error, Reason};
+        false ->
+            xprof_core_lib:fmt_err("Unexpected error handling query: ~p", [Reason])
+    end.
 
 %% @doc Get expansion suggestions for the given possibly incomplete query.
 -spec expand_query(binary()) -> {CommonPrefix :: binary(), [Match]}
@@ -222,7 +227,7 @@ expand_extended_query(Query) ->
 
                             ValueBin = case ValuePrefix of
                                            {TokensSoFar, _RestStr} ->
-                                               StartCol = column(hd(TokensSoFar)),
+                                               StartCol = column(hd(TokensSoFar)) - 1,
                                                ValueLen = byte_size(Query) - StartCol + 1,
                                                binary:part(Query, StartCol - 1, ValueLen);
                                            _ when is_list(ValuePrefix) ->

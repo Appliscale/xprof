@@ -58,10 +58,30 @@
                                 [{mfa, string()} |
                                  {atom(), erl_parse:abstract_expr()}]}
                                    | {error, Reason :: any()}.
-parse_query("#" ++ _ = Query) ->
+parse_query("#" ++ Query) ->
     %% extended query
     try
-        tokens_query(Query)
+       {ok, Tokens} = tokens_query(Query, error),
+       case parse_query_tokens(Tokens, cmd, undefined, [], _Rest = false) of
+           {ok, Cmd, Params} ->
+               {ok, Cmd, mfa_to_str(Params, Query)};
+           {more, What, _Cmd, _Params} ->
+               case What of
+                   cmd ->
+                       xprof_core_lib:fmt_err("Missing command name", []);
+                   key ->
+                       xprof_core_lib:fmt_err("Expected parameter name missing at the end of the query", []);
+                   {eq, Key} ->
+                       xprof_core_lib:fmt_err("Missing = and value for parameter ~w", [Key]);
+                   {value, Key} ->
+                       xprof_core_lib:fmt_err("Missing value for parameter ~w", [Key]);
+                   {value, Key, _Value} ->
+                       xprof_core_lib:fmt_err("Incomplete value for parameter ~w", [Key])
+               end;
+           %% {unexpected, Token
+           Other ->
+               {error, Other}
+       end
     catch
         throw:Error ->
             Error
@@ -104,14 +124,14 @@ parse_incomplete_query(Query) ->
     end.
 
 tokens_query(Str, error) ->
-    case erl_scan:string(Str, {1, 1}) of
+    case erl_scan:string(Str, {1, 2}) of
         {error, {_Loc, Mod, Err}, Loc} ->
             xprof_core_lib:err(Loc, Mod, Err);
         {ok, Tokens, _EndLoc} ->
             {ok, Tokens}
     end;
 tokens_query(Str, incomplete) ->
-    case erl_scan:tokens([], Str, {1, 1}, [text]) of
+    case erl_scan:tokens([], Str, {1, 2}, [text]) of
         {done, {ok, _Tokens, _EndLoc}, _Rest} ->
             %% unexpected - Str contains a dot in the middle
             %% FIXME extract location - {dot, Loc} = lists:last(Tokens)
@@ -164,8 +184,14 @@ parse_query_tokens([_|_] = T, {value, Key}, Cmd, Params, MoreStr) ->
             %% spec handling of `mfa' - store the tokens instead of the AST
             ValueToken = lists:sublist(T, 1, length(T) - length(TRest)),
             parse_query_tokens(TRest, comma, Cmd, [{Key, ValueToken}|Params], MoreStr);
-        {ok, ValueAst, TRest} ->
+        {ok, [ValueAst], TRest} ->
             parse_query_tokens(TRest, comma, Cmd, [{Key, ValueAst}|Params], MoreStr);
+        {ok, ValueListAst, TRest} ->
+            %% this should never happen
+            %% the value cannot be more than one expression
+            erlang:error({value_is_expr_list, ValueListAst, TRest});
+        _Error when Key =:= mfa, MoreStr =:= false ->
+            {ok, Cmd, lists:reverse(Params, [{mfa, T}])};
         _Error ->
             {more, {value, Key, T}, Cmd, Params}
     end;
@@ -198,6 +224,16 @@ tokens_to_comma(Tokens) ->
       fun(Token) -> element(1, Token) =/= ',' end,
       Tokens).
 
+mfa_to_str([{mfa, [FirstToken|_]}|Params], OrigQuery) ->
+    %% OrigQuery does not contain leading `#'
+    %% so it starts at column 2
+    StartColumn = element(2, get_loc(FirstToken)) - 1,
+    MFAQuery = lists:sublist(OrigQuery, StartColumn, length(OrigQuery)),
+    [{mfa, MFAQuery}|Params];
+mfa_to_str([KeyValue|Params], OrigQuery) ->
+    [KeyValue|mfa_to_str(Params, OrigQuery)];
+mfa_to_str([], _) ->
+    [].
 
 tokens_query(Str) ->
     case erl_scan:string(Str, {1,1}) of
