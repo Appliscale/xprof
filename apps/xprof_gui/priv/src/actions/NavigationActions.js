@@ -24,7 +24,6 @@ const setPosition = position => ({
 
 export const clearFunctionBrowser = () => ({
   type: types.CLEAR_FUNCTION_BROWSER,
-  position: -1,
 });
 
 const setQueryInput = query => ({

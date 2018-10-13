@@ -24,6 +24,7 @@ const navigation = (state = initialState, action) => {
         ...state,
         query: '',
         functions: [],
+        position: -1,
       };
     case types.SET_POSITION:
       return {
