@@ -40,7 +40,6 @@ export const addNotification = (
     notificatinosToRemove.forEach(n => dispatch(removeNotification(n.id)));
   }
 
-  debugger;
   const lastId = getNotificationsLastId(state);
   const notification = {
     id: lastId + 1,

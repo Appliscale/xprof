@@ -9,7 +9,12 @@ import {
   getStatus,
   isConnection,
 } from '../selectors';
-import { setCallsControl, getCalleesForFunctions, addNotification } from './';
+import {
+  setCallsControl,
+  getCalleesForFunctions,
+  addNotification,
+  setPaginations,
+} from './';
 import {
   determineNextData,
   determineNextCalls,
@@ -79,10 +84,21 @@ export const getMonitoredFunctions = () => async (dispatch, getState) => {
         }),
         {},
       );
+      const newPaginations = newColl.reduce(
+        (paginations, monitored) => ({
+          ...paginations,
+          [monitored.query]: {
+            current: 0,
+            start: 0,
+          },
+        }),
+        {},
+      );
 
       dispatch(updateIDs(ids));
       dispatch(getCalleesForFunctions(newColl));
       dispatch(setCallsControl(newControls));
+      dispatch(setPaginations(newPaginations));
       dispatch(updateListMonitoringFunctions(json));
     }
   }

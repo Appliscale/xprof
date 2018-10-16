@@ -4,9 +4,20 @@ import { last } from 'lodash';
 export const getStatus = state => state.status.status;
 
 // tracing
+export const getCountCallsPages = (state, fun) =>
+  (state.tracing.calls[fun] ? state.tracing.calls[fun].length : 0);
+export const getCurrentCallsPage = (state, fun) =>
+  state.tracing.paginations[fun].current;
+export const getStartCallsPage = (state, fun) =>
+  state.tracing.paginations[fun].start;
 export const getFunctionControl = (state, fun) => state.tracing.controls[fun];
 export const getCalls = state => state.tracing.calls;
-export const getFunctionCalls = (state, fun) => state.tracing.calls[fun];
+export const getCurrentCallsForFunction = (state, fun) =>
+  (state.tracing.calls[fun]
+    ? state.tracing.calls[fun][getCurrentCallsPage(state, fun)]
+    : undefined);
+export const getCallsForFunction = (state, fun) =>
+  (state.tracing.calls[fun] ? state.tracing.calls[fun] : undefined);
 export const getLastCallsForFunction = (state, fun) =>
   (state.tracing.calls[fun] ? last(state.tracing.calls[fun]) : undefined);
 

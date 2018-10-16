@@ -1,6 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { CallsSwitch } from '../';
+import { Pagination } from '../../shared';
 import { isIntegerInRange } from '../../../utils/CommonUtils';
 import { THRESHOLD_LIMIT, CALLS_LIMIT } from '../../../constants';
 
@@ -8,6 +9,7 @@ const defaultProps = {
   threshold: '',
   limit: '',
   collecting: false,
+  currentCallsPage: 1,
 };
 
 const propTypes = {
@@ -23,6 +25,12 @@ const propTypes = {
   toggleCallsTracing: PropTypes.func.isRequired,
   collecting: PropTypes.bool,
   isConnection: PropTypes.bool.isRequired,
+  currentCallsPage: PropTypes.number,
+  countCallsPages: PropTypes.number.isRequired,
+  startCallsPage: PropTypes.number.isRequired,
+  nextCallsPagination: PropTypes.func.isRequired,
+  previousCallsPagination: PropTypes.func.isRequired,
+  setCallsPage: PropTypes.func.isRequired,
 };
 
 const CallsInput = ({
@@ -34,6 +42,12 @@ const CallsInput = ({
   toggleCallsTracing,
   collecting,
   isConnection,
+  currentCallsPage,
+  countCallsPages,
+  startCallsPage,
+  nextCallsPagination,
+  previousCallsPagination,
+  setCallsPage,
 }) => {
   let thresholdClass;
   let limitClass;
@@ -96,39 +110,16 @@ const CallsInput = ({
           toggleCallsTracing={toggleCallsTracing}
         />
       </span>
-      {/* <div className="form-group calles-nav">
-        <div className="input-group">
-          <nav aria-label="Page navigation">
-            <ul className="pagination pagination-no-margin">
-              <li>
-                <a href="/" aria-label="Previous">
-                  <span aria-hidden="true">&laquo;</span>
-                </a>
-              </li>
-              <li>
-                <a href="/">1</a>
-              </li>
-              <li>
-                <a href="/">2</a>
-              </li>
-              <li>
-                <a href="/">3</a>
-              </li>
-              <li>
-                <a href="/">4</a>
-              </li>
-              <li>
-                <a href="/">5</a>
-              </li>
-              <li>
-                <a href="/" aria-label="Next">
-                  <span aria-hidden="true">&raquo;</span>
-                </a>
-              </li>
-            </ul>
-          </nav>
-        </div>
-      </div> */}
+      {countCallsPages > 1 && (
+        <Pagination
+          current={currentCallsPage}
+          count={countCallsPages}
+          start={startCallsPage}
+          onClickNext={() => nextCallsPagination(monitored.query)}
+          onClickPrevious={() => previousCallsPagination(monitored.query)}
+          onChange={nr => setCallsPage(monitored.query, nr)}
+        />
+      )}
     </form>
   );
 };

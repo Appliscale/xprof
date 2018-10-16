@@ -1,12 +1,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { last } from 'lodash';
 import { CallsPanel } from '../';
 import { CALLS_INTERVAL } from '../../../constants';
 
 const defaultProps = {
   panelVisibility: false,
-  calls: [],
+  currentCalls: {},
+  currentCallsPage: 0,
 };
 
 const propTypes = {
@@ -16,7 +16,7 @@ const propTypes = {
     query: PropTypes.string,
   }).isRequired,
   getFunctionsCalls: PropTypes.func.isRequired,
-  calls: PropTypes.arrayOf(PropTypes.object),
+  currentCalls: PropTypes.arrayOf(PropTypes.object),
   toggleCallsTracing: PropTypes.func.isRequired,
   toggleExpandItem: PropTypes.func.isRequired,
   handleThresholdChange: PropTypes.func.isRequired,
@@ -27,6 +27,12 @@ const propTypes = {
   expandTracingPanel: PropTypes.func.isRequired,
   shrinkTracingPanel: PropTypes.func.isRequired,
   isConnection: PropTypes.bool.isRequired,
+  currentCallsPage: PropTypes.number,
+  countCallsPages: PropTypes.number.isRequired,
+  startCallsPage: PropTypes.number.isRequired,
+  nextCallsPagination: PropTypes.func.isRequired,
+  previousCallsPagination: PropTypes.func.isRequired,
+  setCallsPage: PropTypes.func.isRequired,
 };
 
 class Tracing extends React.Component {
@@ -43,7 +49,7 @@ class Tracing extends React.Component {
   render() {
     const {
       monitored,
-      calls,
+      currentCalls,
       toggleCallsTracing,
       toggleExpandItem,
       handleThresholdChange,
@@ -54,13 +60,19 @@ class Tracing extends React.Component {
       expandTracingPanel,
       shrinkTracingPanel,
       isConnection,
+      currentCallsPage,
+      countCallsPages,
+      startCallsPage,
+      nextCallsPagination,
+      previousCallsPagination,
+      setCallsPage,
     } = this.props;
     return (
       <div>
         <CallsPanel
           key={monitored.query}
           monitored={monitored}
-          lastCalls={last(calls)}
+          currentCalls={currentCalls}
           control={controls}
           handleThresholdChange={handleThresholdChange}
           handleLimitChange={handleLimitChange}
@@ -71,6 +83,12 @@ class Tracing extends React.Component {
           expand={expandTracingPanel}
           shrink={shrinkTracingPanel}
           isConnection={isConnection}
+          currentCallsPage={currentCallsPage}
+          countCallsPages={countCallsPages}
+          startCallsPage={startCallsPage}
+          nextCallsPagination={nextCallsPagination}
+          previousCallsPagination={previousCallsPagination}
+          setCallsPage={setCallsPage}
         />
       </div>
     );

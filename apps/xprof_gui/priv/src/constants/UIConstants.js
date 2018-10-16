@@ -80,3 +80,4 @@ export const MODE_DETECTED = (language, inputType, example) =>
   `here e.g. ${example}`;
 export const MODE_UNKNOWN =
   'Hello BEAMer! Please specify your trace pattern here.';
+export const VISIBLE_PAGES_NUMBER_LIMIT = 5;

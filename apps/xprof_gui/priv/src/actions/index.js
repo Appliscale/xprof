@@ -18,13 +18,17 @@ export {
   getMode,
 } from './NavigationActions';
 export {
-  addCallsControls,
   setCallsControl,
+  setPaginations,
   toggleExpandItem,
   toggleCallsTracing,
   handleThresholdChange,
   handleLimitChange,
   sortCallsBy,
+  setCallsPage,
+  setLastAsCurrentPage,
+  nextCallsPagination,
+  previousCallsPagination,
 } from './TracingActions';
 export { getTraceStatus, toggleTraceStatus } from './StatusActions';
 export {
