@@ -3,6 +3,7 @@ import * as types from '../constants/ActionTypes';
 const initialState = {
   graphVisibility: {},
   tracingVisibility: {},
+  grid: 1,
 };
 
 const layout = (state = initialState, action) => {
@@ -38,6 +39,11 @@ const layout = (state = initialState, action) => {
           ...state.tracingVisibility,
           [action.functionName]: false,
         },
+      };
+    case types.SET_GRID:
+      return {
+        ...state,
+        grid: action.grid,
       };
     default:
       return state;

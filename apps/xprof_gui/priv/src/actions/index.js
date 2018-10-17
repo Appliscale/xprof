@@ -38,6 +38,7 @@ export {
   shrinkGraphPanel,
   expandTracingPanel,
   shrinkTracingPanel,
+  switchGrid,
 } from './LayoutActions';
 export {
   removeNotification,
