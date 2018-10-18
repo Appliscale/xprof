@@ -36,9 +36,9 @@ export const NOTIFICATIONS = {
     SEVERITY: NOTIFICATIONS_SEVERITY.WARNING,
     MESSAGE: "Couldn't detect language mode.",
   },
-  FUNCTION_DOESNOT_EXIST: {
-    SEVERITY: NOTIFICATIONS_SEVERITY.WARNING,
-    MESSAGE: fun => `Function "${fun}" doesn't exist.`,
+  START_MONITORING: {
+    SEVERITY: NOTIFICATIONS_SEVERITY.ERROR,
+    MESSAGE: fun => `Couldn't start monitoring function "${fun}".`,
   },
   CALLEES: {
     SEVERITY: NOTIFICATIONS_SEVERITY.WARNING,
