@@ -23,6 +23,13 @@
          get_captured_data_pp/2,
          get_captured_data/2,
 
+         %% Records
+
+         rr/1,
+         rf/0,
+         rf/1,
+         rl/0,
+
          %% Syntax mode
          set_mode/1,
          get_mode/0
@@ -219,6 +226,35 @@ format_result({exception_from, {Class, Reason}}, ModeCb) ->
                 Result :: term()}.
 get_captured_data(MFA, Offset) ->
     xprof_core_trace_handler:get_captured_data(MFA, Offset).
+
+%%
+%% Records
+%%
+
+%% @doc Load record definitions from module.
+%% (similar to shell command `rr/1')
+-spec rr(module()) -> [RecName :: atom()].
+rr(Mod) ->
+    xprof_core_records:load_records(Mod).
+
+%% @doc Remove all record definitions.
+%% (similar to shell command ```rf('_')''')
+-spec rf() -> ok.
+rf() ->
+    xprof_core_records:forget_records().
+
+%% @doc Remove selected record definitions. RecNames is a record name or a
+%% list of record names. To remove all record definitions, use '_'.
+%% (similar to shell command `rf/1')
+-spec rf(atom() | [atom()]) -> ok.
+rf(RecNameOrNames) ->
+    xprof_core_records:forget_records(RecNameOrNames).
+
+%% @doc Return all stored record definitions.
+%% (Similar to shell command `rl()')
+-spec rl() -> [tuple()].
+rl() ->
+    xprof_core_records:get_record_defs().
 
 %%
 %% Syntax mode
