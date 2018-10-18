@@ -65,7 +65,7 @@ ms_transform(Clauses, RecDefs) ->
     Result = compile:forms(
                wrap_forms(wrap_args(Clauses), RecDefs),
                [{parse_transform, ms_transform},
-                export_all, binary, 'P', return_errors]),
+                export_all, binary, dpp, return_errors]),
     case Result of
         {ok, [], Forms} ->
             unwrap_forms(Forms);
