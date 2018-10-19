@@ -73,6 +73,13 @@ export const NOTIFICATIONS = {
   },
   LOST_CONNECTION: 'Lost connection to XProf!',
   ALIVE_CONNECTION: 'Connection to XProf is back!',
+  SWITCH_GRID: {
+    SEVERITY: NOTIFICATIONS_SEVERITY.INFO,
+    MESSAGE: columns =>
+      (columns === 1
+        ? 'The grid has been changed to 1 graph per row'
+        : `The grid has been changed to ${columns} graphs per row`),
+  },
 };
 export const MODE_DETECTED = (language, inputType, example) =>
   'Hello BEAMer! I have detected that you are using an ' +
@@ -80,3 +87,6 @@ export const MODE_DETECTED = (language, inputType, example) =>
   `here e.g. ${example}`;
 export const MODE_UNKNOWN =
   'Hello BEAMer! Please specify your trace pattern here.';
+export const MAX_GRID = 3;
+export const MAX_GRID_SMALLER = 2;
+export const GRID_WIDTH_BREAKPOINT = 1280;

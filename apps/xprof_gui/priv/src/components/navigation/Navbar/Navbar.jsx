@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import { FunctionBrowser, TracingSwitch } from '../';
+import { FunctionBrowser, TracingSwitch, GridSwitch } from '../';
 import logo from './logo.png';
 import { MODE_DETECTED, MODE_UNKNOWN } from '../../../constants';
 
@@ -9,6 +9,7 @@ const defaultProps = {
   language: null,
   inputType: null,
   example: null,
+  numberOfMonitoredFunctions: 0,
 };
 
 const propTypes = {
@@ -25,6 +26,8 @@ const propTypes = {
   inputType: PropTypes.string,
   example: PropTypes.string,
   isConnection: PropTypes.bool.isRequired,
+  switchGrid: PropTypes.func.isRequired,
+  numberOfMonitoredFunctions: PropTypes.number,
 };
 
 const Navbar = ({
@@ -41,6 +44,8 @@ const Navbar = ({
   inputType,
   example,
   isConnection,
+  switchGrid,
+  numberOfMonitoredFunctions,
 }) => (
   <nav className="navbar navbar-default navbar-fixed-top">
     <div className="navbar-header">
@@ -53,6 +58,10 @@ const Navbar = ({
         status={status}
         toggleTraceStatus={toggleTraceStatus}
         isConnection={isConnection}
+      />
+      <GridSwitch
+        onChange={switchGrid}
+        disabled={numberOfMonitoredFunctions < 2}
       />
       <FunctionBrowser
         queryKeyDown={queryKeyDown}

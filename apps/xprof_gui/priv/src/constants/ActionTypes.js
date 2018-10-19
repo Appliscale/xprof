@@ -33,6 +33,7 @@ export const SORT_CALLS = 'SORT_CALLS';
 export const TOGGLE_EXPAND_ITEM = 'TOGGLE_EXPAND_ITEM';
 export const EXPAND_TRACING_PANEL = 'EXPAND_TRACING_PANEL';
 export const SHRINK_TRACING_PANEL = 'SHRINK_TRACING_PANEL';
+export const SET_GRID = 'SET_GRID';
 
 // explore
 export const ADD_CALLEES = 'ADD_CALLEES';
