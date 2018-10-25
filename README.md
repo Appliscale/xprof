@@ -110,6 +110,7 @@ Key                    | Default        | Description
 `max_duration`         | 30000          | The largest duration value in ms. In case a call takes even longer, this maximum value is stored instead.
 `ignore_recursion`     | true           | Whether to only measure the outermost call to a recursive function or not (ie. measure all calls).
 `mode`                 | <autodetected> | Syntax mode (`erlang` or `elixir`)
+`load_records`         | []             | List of modules from which to load record definitions at startup.
 
 ## XProf flavoured match-spec funs
 
@@ -194,6 +195,17 @@ multiple clauses. (Notice there is no closing `end` keyword)
 ```elixir
 Registry.dispatch(MyApp.Registry, "topic1", _) -> nil; (MyApp.Registry, "topic2", _) -> nil
 ```
+
+## Erlang records
+
+Elrang record syntax is supported in the queries and works similar to the Erlang
+shell. XProf keeps a single global list of loaded record definitions. Record
+definitions can be loaded at startup time from modules listed in app env
+`load_records` or at runtime calling `xprof_core:rr(Module)` (see documentation
+of `xprof_core` for more details). The record definitions are extracted from
+debug_info of the beam files belonging to the loaded modules. As the list is
+global there can be only one record with the same name loaded at a time and
+records loaded later might override previously loaded ones.
 
 ## Contributing
 

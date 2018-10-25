@@ -5,3 +5,4 @@ export { default as FunctionBrowser } from './FunctionBrowser';
 export { default as Navbar } from './Navbar';
 export { default as QueryInput } from './QueryInput';
 export { default as TracingSwitch } from './TracingSwitch';
+export { default as GridSwitch } from './GridSwitch';

@@ -1,6 +1,7 @@
 -module(xprof_core).
 
 -export([%% Autocomplete
+         expand_query/1,
          get_matching_mfas_pp/1,
 
          %% Monitoring functions
@@ -21,6 +22,13 @@
          capture_stop/1,
          get_captured_data_pp/2,
          get_captured_data/2,
+
+         %% Records
+
+         rr/1,
+         rf/0,
+         rf/1,
+         rl/0,
 
          %% Syntax mode
          set_mode/1,
@@ -55,6 +63,25 @@
 %%
 %% Autocomplete
 %%
+
+%% @doc Get expansion suggestions for the given possibly incomplete query.
+-spec expand_query(binary())
+                  -> {CommonPrefix :: binary(), [Match]}
+                         when Match :: {Prefix :: binary(), Label :: binary()}.
+expand_query(Query) ->
+    case xprof_core_cmd:expand_query(Query) of
+        {error, Reason} ->
+            {<<"">>, [{<<"">>, unicode:characters_to_binary(Reason)}]};
+        {Prefix, Choices} ->
+            {Prefix,
+             [case Choice of
+                  {Expand, Label, Hint} ->
+                      {Expand, unicode:characters_to_binary([Label, " - ", Hint])};
+                  {_Expand, _Label} ->
+                      Choice
+              end
+              || Choice <- Choices]}
+    end.
 
 %% @doc Get loaded modules and functions (MFAs) that match the query string.
 %% Used for autocomplete suggestions on the GUI.
@@ -199,6 +226,35 @@ format_result({exception_from, {Class, Reason}}, ModeCb) ->
                 Result :: term()}.
 get_captured_data(MFA, Offset) ->
     xprof_core_trace_handler:get_captured_data(MFA, Offset).
+
+%%
+%% Records
+%%
+
+%% @doc Load record definitions from module.
+%% (similar to shell command `rr/1')
+-spec rr(module()) -> [RecName :: atom()].
+rr(Mod) ->
+    xprof_core_records:load_records(Mod).
+
+%% @doc Remove all record definitions.
+%% (similar to shell command ```rf('_')''')
+-spec rf() -> ok.
+rf() ->
+    xprof_core_records:forget_records().
+
+%% @doc Remove selected record definitions. RecNames is a record name or a
+%% list of record names. To remove all record definitions, use '_'.
+%% (similar to shell command `rf/1')
+-spec rf(atom() | [atom()]) -> ok.
+rf(RecNameOrNames) ->
+    xprof_core_records:forget_records(RecNameOrNames).
+
+%% @doc Return all stored record definitions.
+%% (Similar to shell command `rl()')
+-spec rl() -> [tuple()].
+rl() ->
+    xprof_core_records:get_record_defs().
 
 %%
 %% Syntax mode

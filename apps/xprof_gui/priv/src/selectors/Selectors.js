@@ -23,6 +23,8 @@ export const getLastCallsForFunction = (state, fun) =>
 
 // monitoring
 export const getAllMonitored = state => state.monitoring.monitoredCollection;
+export const getNumberOfMonitoredFunctions = state =>
+  state.monitoring.monitoredCollection.length;
 export const getData = state => state.monitoring.data;
 export const getFunctionData = (state, fun) => state.monitoring.data[fun];
 export const getIDs = state => state.monitoring.ids;
@@ -30,6 +32,7 @@ export const getSize = state => state.monitoring.size;
 
 // navigation
 export const getQuery = state => state.navigation.query;
+export const getCommonExpansion = state => state.navigation.expansion;
 export const getACfunctions = state => state.navigation.functions;
 export const getPromptPosition = state => state.navigation.position;
 export const getHighlightedFunction = state =>
@@ -53,6 +56,7 @@ export const getFunctionGraphVisibility = (state, fun) =>
   state.layout.graphVisibility[fun];
 export const getFunctionTracingVisibility = (state, fun) =>
   state.layout.tracingVisibility[fun];
+export const getGrid = state => state.layout.grid;
 
 // notification
 export const getNotifications = state => state.notification.notifications;

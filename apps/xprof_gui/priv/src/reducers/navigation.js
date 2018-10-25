@@ -1,8 +1,10 @@
+import { without } from 'lodash';
 import * as types from '../constants/ActionTypes';
 
 const initialState = {
   query: '',
   dirtyInput: '',
+  expansion: '',
   functions: [],
   position: -1,
   language: null,
@@ -22,16 +24,19 @@ const navigation = (state = initialState, action) => {
       return {
         ...state,
         query: '',
+        expansion: '',
         functions: [],
+        position: -1,
       };
     case types.SET_POSITION:
       return {
         ...state,
         position: action.position,
       };
-    case types.FILL_AUTOCOMPLETER_FUNCTIONS:
+    case types.FILL_AUTOCOMPLETER_MATCHES:
       return {
         ...state,
+        expansion: action.expansion,
         functions: action.functions,
       };
     case types.SET_LANGUAGE:
@@ -52,7 +57,7 @@ const navigation = (state = initialState, action) => {
     case types.ADD_RECENT_QUERY:
       return {
         ...state,
-        history: [...state.history, action.query],
+        history: [...without(state.history, action.query), action.query],
       };
     case types.SAVE_DIRTY_INPUT:
       return {

@@ -16,6 +16,8 @@ export {
   queryKeyDown,
   setPositionOnFunction,
   getMode,
+  addRecentQuery,
+  clearFunctionBrowser,
 } from './NavigationActions';
 export {
   setCallsControl,
@@ -42,6 +44,7 @@ export {
   shrinkGraphPanel,
   expandTracingPanel,
   shrinkTracingPanel,
+  switchGrid,
 } from './LayoutActions';
 export {
   removeNotification,

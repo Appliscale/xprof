@@ -4,16 +4,17 @@ import {
   getACfunctions,
   getPromptPosition,
   getQuery,
+  getCommonExpansion,
   getHighlightedFunction,
   getRecentQueries,
   getDirtyInput,
 } from '../selectors';
 import { HANDLED_KEYS, NOTIFICATIONS } from '../constants';
-import { commonArrayPrefix } from '../utils';
 import { startMonitoringFunction, addNotification } from './';
 
-const setACfunctions = functions => ({
-  type: types.FILL_AUTOCOMPLETER_FUNCTIONS,
+const setACfunctions = (expansion, functions) => ({
+  type: types.FILL_AUTOCOMPLETER_MATCHES,
+  expansion,
   functions,
 });
 
@@ -22,7 +23,7 @@ const setPosition = position => ({
   position,
 });
 
-const clearFunctionBrowser = () => ({
+export const clearFunctionBrowser = () => ({
   type: types.CLEAR_FUNCTION_BROWSER,
 });
 
@@ -46,7 +47,7 @@ const setExample = example => ({
   example,
 });
 
-const addRecentQuery = query => ({
+export const addRecentQuery = query => ({
   type: types.ADD_RECENT_QUERY,
   query,
 });
@@ -60,11 +61,11 @@ export const queryInputChange = query => async (dispatch) => {
   dispatch(setQueryInput(query));
   if (query) {
     const { json } = await XProf.getFunctionAutoexpansion(query);
-    dispatch(setACfunctions(json));
-    if (json.length === 1) dispatch(setPosition(0));
+    dispatch(setACfunctions(json.expansion, json.matches));
+    if (json.matches.length === 1) dispatch(setPosition(0));
     else dispatch(setPosition(-1));
   } else {
-    dispatch(setACfunctions([]));
+    dispatch(setACfunctions('', []));
   }
 };
 
@@ -72,11 +73,7 @@ export const functionClick = selected => async (dispatch, getState) => {
   const state = getState();
   const query = getQuery(state);
   if (selected.startsWith(query)) {
-    const onSuccess = () => {
-      dispatch(addRecentQuery(selected));
-      dispatch(clearFunctionBrowser());
-    };
-    dispatch(startMonitoringFunction(selected, onSuccess));
+    dispatch(startMonitoringFunction(selected));
   } else {
     dispatch(queryInputChange(selected));
   }
@@ -89,6 +86,7 @@ export const queryKeyDown = key => async (dispatch, getState) => {
   const query = getQuery(state);
   const dirtyInput = getDirtyInput(state);
   const recent = getRecentQueries(state);
+  const commonExpansion = getCommonExpansion(state);
   const highlightedFunction = getHighlightedFunction(state);
   let chosenQuery;
 
@@ -116,43 +114,24 @@ export const queryKeyDown = key => async (dispatch, getState) => {
       }
       break;
     case HANDLED_KEYS.TAB:
-      // Don't modify search box content if it is not a prefix of the
-      // new value, don't want to overwrite a match-spec fun
-      // (for which there are still suggestions) that is being edited
-      // with some arity.
-      if (highlightedFunction && highlightedFunction.startsWith(query)) {
-        dispatch(queryInputChange(highlightedFunction));
-      } else if (
-        functions.length &&
-        commonArrayPrefix(functions).startsWith(query)
-      ) {
-        dispatch(queryInputChange(commonArrayPrefix(functions)));
+      if (highlightedFunction) {
+        dispatch(queryInputChange(query + highlightedFunction.expansion));
+      } else {
+        dispatch(queryInputChange(query + commonExpansion));
       }
       break;
     case HANDLED_KEYS.ESC:
       dispatch(clearFunctionBrowser());
-      dispatch(setPosition(-1));
       break;
     case HANDLED_KEYS.RETURN:
-      if (highlightedFunction && highlightedFunction.startsWith(query)) {
-        chosenQuery = highlightedFunction;
+      if (highlightedFunction) {
+        chosenQuery = query + highlightedFunction.expansion;
+        // dispatch(queryInputChange(chosenQuery));
       } else if (query) {
         chosenQuery = query;
       }
 
-      dispatch(startMonitoringFunction(
-        chosenQuery,
-        () => {
-          dispatch(addRecentQuery(chosenQuery));
-          dispatch(clearFunctionBrowser());
-        },
-        error =>
-          dispatch(addNotification(
-            NOTIFICATIONS.FUNCTION_DOESNOT_EXIST.SEVERITY,
-            NOTIFICATIONS.FUNCTION_DOESNOT_EXIST.MESSAGE(chosenQuery),
-            error,
-          )),
-      ));
+      dispatch(startMonitoringFunction(chosenQuery));
       break;
     default:
       break;

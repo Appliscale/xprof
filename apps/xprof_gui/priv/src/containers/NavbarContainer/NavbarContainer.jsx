@@ -7,6 +7,7 @@ import {
   queryInputChange,
   toggleTraceStatus,
   setPositionOnFunction,
+  switchGrid,
 } from '../../actions';
 import {
   getStatus,
@@ -17,6 +18,7 @@ import {
   getInputType,
   getExample,
   isConnection,
+  getNumberOfMonitoredFunctions,
 } from '../../selectors';
 
 const NavContainer = props => <Navbar {...props} />;
@@ -30,6 +32,7 @@ const mapStateToProps = state => ({
   inputType: getInputType(state),
   example: getExample(state),
   isConnection: isConnection(state),
+  numberOfMonitoredFunctions: getNumberOfMonitoredFunctions(state),
 });
 
 const mapDispatchToProps = {
@@ -38,6 +41,7 @@ const mapDispatchToProps = {
   queryKeyDown,
   queryInputChange,
   setPositionOnFunction,
+  switchGrid,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(NavContainer);

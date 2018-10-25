@@ -10,6 +10,14 @@
 -export([init/1]).
 
 -define(SERVER, ?MODULE).
+-define(CHILD(Mod, Type),
+        {Mod,
+         {Mod, start_link, []},
+         permanent,
+         5000,
+         Type,
+         [Mod]
+        }).
 
 %% API functions
 
@@ -19,20 +27,7 @@ start_link() ->
 %% Supervisor callbacks
 
 init([]) ->
-    TraceHandlerSup =
-        {xprof_core_trace_handler_sup,
-            {xprof_core_trace_handler_sup, start_link, []},
-            permanent,
-            5000,
-            supervisor,
-            [xprof_core_trace_handler_sup]
-        },
-    Tracer =
-        {xprof_core_tracer,
-            {xprof_core_tracer, start_link, []},
-            permanent,
-            5000,
-            worker,
-            [xprof_core_tracer]
-        },
-    {ok, { {rest_for_one, 0, 1}, [TraceHandlerSup, Tracer]} }.
+    RecordStore = ?CHILD(xprof_core_records, worker),
+    TraceHandlerSup = ?CHILD(xprof_core_trace_handler_sup, supervisor),
+    Tracer = ?CHILD(xprof_core_tracer, worker),
+    {ok, { {rest_for_one, 0, 1}, [RecordStore, TraceHandlerSup, Tracer]} }.
