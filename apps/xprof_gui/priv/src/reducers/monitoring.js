@@ -3,6 +3,7 @@ import * as types from '../constants/ActionTypes';
 const initialState = {
   monitoredCollection: [],
   data: {},
+  y: {},
   panel: {},
   callees: {},
   ids: {},
@@ -42,6 +43,14 @@ const monitoring = (state = initialState, action) => {
       return {
         ...state,
         ids: action.ids,
+      };
+    case types.ADD_Y:
+      return {
+        ...state,
+        y: {
+          ...state.y,
+          ...action.y,
+        },
       };
     default:
       return state;

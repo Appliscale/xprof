@@ -6,12 +6,13 @@ import { AXIS, DATA, GRID, POINT, TRANSITION } from '../../../constants';
 
 const propTypes = {
   dps: PropTypes.arrayOf(PropTypes.object).isRequired,
+  y: PropTypes.arrayOf(PropTypes.string).isRequired,
 };
 
-const LineGraph = ({ dps }) => (
+const LineGraph = ({ dps, y }) => (
   <div>
     <C3Chart
-      data={{ ...DATA, json: dps }}
+      data={{ ...DATA, json: dps, keys: { ...DATA.keys, value: y } }}
       point={POINT}
       grid={GRID}
       axis={AXIS}

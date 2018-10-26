@@ -28,6 +28,11 @@ const updateData = data => ({
   data,
 });
 
+export const addY = y => ({
+  type: types.ADD_Y,
+  y,
+});
+
 const updateCalls = calls => ({
   type: types.UPDATE_CALLS,
   calls,
