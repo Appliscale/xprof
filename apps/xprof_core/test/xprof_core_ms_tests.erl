@@ -10,7 +10,8 @@
                      [{'_', [], [{exception_trace}, {message, '$_'}]}]}).
 
 %% for testing record syntax in match spec funs
--record(rec, {f1, f2}).
+-type t() :: integer().
+-record(rec, {f1 :: t(), f2 :: xprof_core:mode()}).
 
 tokens_test_() ->
     [?_assertEqual(
