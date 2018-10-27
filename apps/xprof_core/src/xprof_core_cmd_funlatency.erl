@@ -73,17 +73,24 @@ get_cmd_id(Options) ->
 -record(state, {hdr_ref,
                 max_duration,
                 ignore_recursion,
-                retmatch}).
+                retmatch,
+                nomatch_count :: non_neg_integer() | undefined
+               }).
 
 init(Options, _MFASpec) ->
     MaxDuration = application:get_env(xprof_core, max_duration, ?MAX_DURATION) * 1000,
     IgnoreRecursion = application:get_env(xprof_core, ignore_recursion, true),
     RetMatchFun = proplists:get_value(retmatch, Options),
+    NoMatch = case RetMatchFun of
+                  undefined -> undefined;
+                  _ -> 0
+              end,
     {ok, HDR} = hdr_histogram:open(MaxDuration, 3),
     {ok, #state{hdr_ref = HDR,
                 max_duration = MaxDuration,
                 ignore_recursion = IgnoreRecursion,
-                retmatch = RetMatchFun}}.
+                retmatch = RetMatchFun,
+                nomatch_count = NoMatch}}.
 
 handle_event({trace_ts, Pid, call, _MFA, Args, StartTime}, _, State) ->
     put_ts_args(Pid, StartTime, Args, State#state.ignore_recursion),
@@ -101,7 +108,7 @@ handle_event({trace_ts, Pid, Tag, MFA, RetOrExc, EndTime},
         {StartTime, Args} ->
             case matching_parsing(State#state.retmatch, Tag, RetOrExc) of
                 false ->
-                    ok;
+                    {ok, State#state{nomatch_count = State#state.nomatch_count + 1}};
                 {true, NewRet} ->
                     CallTime = timer:now_diff(EndTime, StartTime),
                     if CallTime > MaxDuration ->
@@ -118,10 +125,15 @@ handle_event({trace_ts, Pid, Tag, MFA, RetOrExc, EndTime},
             end
     end.
 
-take_snapshot(#state{hdr_ref = Ref}) ->
-    Snapshot = get_current_hist_stats(Ref),
+take_snapshot(State = #state{hdr_ref = Ref, nomatch_count = NoMatch}) ->
+    Snapshot = get_current_hist_stats(Ref, NoMatch),
     hdr_histogram:reset(Ref),
-    Snapshot.
+    maybe_reset_nomatch_count(Snapshot, State, NoMatch).
+
+maybe_reset_nomatch_count(Snapshot, _State, _NoMatch = undefined) ->
+    Snapshot;
+maybe_reset_nomatch_count(Snapshot, State, _) ->
+    {Snapshot, State#state{nomatch_count = 0}}.
 
 
 %% helpers for tracer callbacks
@@ -197,17 +209,33 @@ maybe_capture({_Pid, CallTime, Args, _Res} = Item, Threshold, _State) ->
             ok
     end.
 
-get_current_hist_stats(HistRef) ->
-    [{min,      hdr_histogram:min(HistRef)},
-     {mean,     hdr_histogram:mean(HistRef)},
-     %%{median,   hdr_histogram:median(HistRef)},
-     {max,      hdr_histogram:max(HistRef)},
-     %%{stddev,   hdr_histogram:stddev(HistRef)},
-     %%{p25,      hdr_histogram:percentile(HistRef,25.0)},
-     {p50,      hdr_histogram:percentile(HistRef,50.0)},
-     {p75,      hdr_histogram:percentile(HistRef,75.0)},
-     {p90,      hdr_histogram:percentile(HistRef,90.0)},
-     {p99,      hdr_histogram:percentile(HistRef,99.0)},
-     %%{p9999999, hdr_histogram:percentile(HistRef,99.9999)},
-     %%{memsize,  hdr_histogram:get_memory_size(HistRef)},
-     {count,    hdr_histogram:get_total_count(HistRef)}].
+get_current_hist_stats(HistRef, NoMatch) ->
+    Count = hdr_histogram:get_total_count(HistRef),
+    TotalCountAndRate =
+        case NoMatch of
+            undefined ->
+                [];
+            _ ->
+                TotalCount = Count + NoMatch,
+                [{total_count, TotalCount},
+                 {match_rate, percent(Count, TotalCount)}]
+        end,
+    [{min,         hdr_histogram:min(HistRef)},
+     {mean,        hdr_histogram:mean(HistRef)},
+     %%{median,      hdr_histogram:median(HistRef)},
+     {max,         hdr_histogram:max(HistRef)},
+     %%{stddev,      hdr_histogram:stddev(HistRef)},
+     %%{p25,         hdr_histogram:percentile(HistRef,25.0)},
+     {p50,         hdr_histogram:percentile(HistRef,50.0)},
+     {p75,         hdr_histogram:percentile(HistRef,75.0)},
+     {p90,         hdr_histogram:percentile(HistRef,90.0)},
+     {p99,         hdr_histogram:percentile(HistRef,99.0)},
+     %%{p9999999,    hdr_histogram:percentile(HistRef,99.9999)},
+     %%{memsize,     hdr_histogram:get_memory_size(HistRef)},
+     {count,       Count}
+     |TotalCountAndRate].
+
+percent(_, 0) ->
+    0;
+percent(Count, TotalCount) ->
+    100 * Count / TotalCount.
