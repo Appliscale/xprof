@@ -224,16 +224,16 @@ get_current_hist_stats(HistRef, Time) ->
     [{time, Time},
      {min,      hdr_histogram:min(HistRef)},
      {mean,     hdr_histogram:mean(HistRef)},
-     {median,   hdr_histogram:median(HistRef)},
+     %%{median,   hdr_histogram:median(HistRef)},
      {max,      hdr_histogram:max(HistRef)},
-     {stddev,   hdr_histogram:stddev(HistRef)},
-     {p25,      hdr_histogram:percentile(HistRef,25.0)},
+     %%{stddev,   hdr_histogram:stddev(HistRef)},
+     %%{p25,      hdr_histogram:percentile(HistRef,25.0)},
      {p50,      hdr_histogram:percentile(HistRef,50.0)},
      {p75,      hdr_histogram:percentile(HistRef,75.0)},
      {p90,      hdr_histogram:percentile(HistRef,90.0)},
      {p99,      hdr_histogram:percentile(HistRef,99.0)},
-     {p9999999, hdr_histogram:percentile(HistRef,99.9999)},
-     {memsize,  hdr_histogram:get_memory_size(HistRef)},
+     %%{p9999999, hdr_histogram:percentile(HistRef,99.9999)},
+     %%{memsize,  hdr_histogram:get_memory_size(HistRef)},
      {count,    hdr_histogram:get_total_count(HistRef)}].
 
 remove_outdated_snapshots(Name, TS) ->

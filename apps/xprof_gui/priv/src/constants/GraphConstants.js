@@ -3,6 +3,8 @@ import { format } from 'd3';
 export const COLUMNS = {
   time: 'time',
   count: 'count',
+  total_count: 'total_count',
+  match_rate: 'match_rate',
   max: 'max',
   p99: 'p99',
   p90: 'p90',
@@ -34,10 +36,12 @@ export const DATA = {
     //   COLUMNS.count,
     // ],
   },
-  hide: [COLUMNS.max, COLUMNS.p90, COLUMNS.p75, COLUMNS.p50],
+  hide: [COLUMNS.max, COLUMNS.p90, COLUMNS.p75, COLUMNS.p50,
+    COLUMNS.total_count, COLUMNS.match_rate],
   axes: {
     count: 'y2',
-    memsize: 'y2',
+    total_count: 'y2',
+    match_rate: 'y2',
   },
   names: {
     count: 'count',
@@ -49,12 +53,10 @@ export const DATA = {
     p25: '25th perc',
     mean: 'mean',
     min: 'min',
-    median: 'median',
-    memsize: 'memsize',
-    stddev: 'stddev',
   },
   colors: {
     count: '#98FB98',
+    total_count: '44AA44',
     max: '#8C2A04',
     p99: '#E24806',
     p90: '#E24806',
@@ -103,7 +105,7 @@ export const AXIS = {
     show: true,
     min: 0,
     padding: { bottom: 2 },
-    label: { position: 'outer-middle' },
+    label: { text: 'Call count / Match rate %', position: 'outer-middle' },
     tick: {
       outer: false,
     },
