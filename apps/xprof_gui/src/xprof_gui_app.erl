@@ -20,6 +20,7 @@
 %% Application callbacks
 
 start(_StartType, _StartArgs) ->
+    maybe_start_favourites(),
     case start_cowboy() of
         {ok, _} ->
             {ok, self()};
@@ -62,3 +63,12 @@ get_static_dir() ->
 
 stop_cowboy() ->
     cowboy:stop_listener(?LISTENER).
+
+maybe_start_favourites() ->
+    case xprof_gui_favourites_config:is_enabled() of
+        false ->
+            %% do nothing
+            ok;
+        true ->
+            {ok, _} = xprof_gui_favourites_sup:start_link()
+    end.
