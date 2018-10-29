@@ -15,6 +15,17 @@
          fmt_exception/2,
          fmt_term/1]).
 
+%% in OTP 21 `format_exception/7' was moved from `lib' module to `erl_error'
+-ifdef(OTP_RELEASE).
+-if(?OTP_RELEASE >= 21).
+%% in OTP 21 or hifher
+-define(ERL_ERROR_MOD, erl_error).
+-endif.
+-else.
+%% in OTP 20 or lower
+-define(ERL_ERROR_MOD, lib).
+-endif.
+
 %% @doc Parse a query string that represents either a module-function-arity
 %% or an xprof-flavoured match-spec fun in Erlang syntax.
 %% In the later case the last element of the tuple is the abstract syntax tree
@@ -113,8 +124,8 @@ fmt_exception(Class, Reason) ->
     PrettyFun = fun(Term, _Indent) -> io_lib:format("~tp", [Term]) end,
     Encoding = unicode,
     unicode:characters_to_binary(
-      ["** "|lib:format_exception(1, Class, Reason, Stacktrace,
-                                  SkipFun, PrettyFun, Encoding)]).
+      ["** "|?ERL_ERROR_MOD:format_exception(1, Class, Reason, Stacktrace,
+                                             SkipFun, PrettyFun, Encoding)]).
 
 fmt_term(Term) ->
     fmt("~tp", [Term]).
