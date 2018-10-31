@@ -22,10 +22,10 @@ export const getSize = state => state.monitoring.size;
 // navigation
 export const getQuery = state => state.navigation.query;
 export const getCommonExpansion = state => state.navigation.expansion;
-export const getACfunctions = state => state.navigation.functions;
+export const getACfunctions = state => state.navigation.functions || [];
 export const getPromptPosition = state => state.navigation.position;
 export const getHighlightedFunction = state =>
-  (getPromptPosition(state) !== -1
+  (getPromptPosition(state) > -1
     ? state.navigation.functions[getPromptPosition(state)]
     : undefined);
 export const getLanguage = state => state.navigation.language;
@@ -33,6 +33,9 @@ export const getInputType = state => state.navigation.inputType;
 export const getExample = state => state.navigation.example;
 export const getRecentQueries = state => state.navigation.history;
 export const getDirtyInput = state => state.navigation.dirtyInput;
+export const getSelectedInputType = state => state.navigation.selectedInputType;
+export const getFavourites = state => state.navigation.favourites;
+export const isFavourite = (state, fun) => getFavourites(state).includes(fun);
 
 // explore
 export const getCallees = state => state.explore.callees;

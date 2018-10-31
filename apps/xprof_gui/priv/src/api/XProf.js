@@ -56,3 +56,11 @@ export const stopCapturingFunctionsCalls = (mod, fun, arity) =>
 export const getFunctionsCallees = (mod, fun, arity) =>
   request.get(URL.GET_FUNCTIONS_CALLEES, { mod, fun, arity });
 export const getMode = async () => request.get(URL.GET_MODE);
+export const addToFavourites = query =>
+  request.get(URL.ADD_FAVOURITE_FUNCTION, { query });
+export const removeFromFavourites = query =>
+  request.get(URL.REMOVE_FAVOURITE_FUNCTION, { query });
+export const getFavouritesFunctions = () =>
+  request.get(URL.ALL_FAVOURITE_FUNCTIONS);
+export const getFavouritesFeatureStatus = () =>
+  request.get(URL.FAVOURITES_ENABLED);

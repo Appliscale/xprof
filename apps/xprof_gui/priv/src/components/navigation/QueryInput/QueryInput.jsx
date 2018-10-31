@@ -19,6 +19,10 @@ class QueryInput extends React.Component {
     super(props);
     this.onKeyDown = this.onKeyDown.bind(this);
     this.onChange = this.onChange.bind(this);
+    this.searchBox = null;
+    this.setSearchBoxRef = (element) => {
+      this.searchBox = element;
+    };
   }
 
   onKeyDown(e) {
@@ -46,9 +50,13 @@ class QueryInput extends React.Component {
           aria-describedby="sizing-addon3"
           autoComplete="off"
           value={query}
+          onClick={
+            document.activeElement !== this.searchBox ? this.onChange : null
+          }
           onKeyDown={this.onKeyDown}
           onChange={this.onChange}
           disabled={!isConnection}
+          ref={this.setSearchBoxRef}
         />
       </div>
     );

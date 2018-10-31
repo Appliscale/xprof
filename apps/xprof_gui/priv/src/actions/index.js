@@ -18,6 +18,7 @@ export {
   getMode,
   addRecentQuery,
   clearFunctionBrowser,
+  switchInputType,
 } from './NavigationActions';
 export {
   addCallsControls,
@@ -49,3 +50,4 @@ export {
   aliveConnection,
   hideConnectionNotification,
 } from './NotificationActions';
+export { toggleFavourite, getFavourites } from './FavouriteActions';

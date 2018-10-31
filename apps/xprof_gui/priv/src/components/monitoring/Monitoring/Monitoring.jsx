@@ -9,6 +9,7 @@ const defaultProps = {
   callees: [],
   calleesVisibility: false,
   size: GRAPH_INITIAL_SIZE,
+  isFavourite: false,
 };
 
 const propTypes = {
@@ -32,6 +33,8 @@ const propTypes = {
   setSize: PropTypes.func.isRequired,
   size: PropTypes.shape(PropTypes.any),
   ids: PropTypes.shape(PropTypes.any).isRequired,
+  toggleFavourite: PropTypes.func.isRequired,
+  isFavourite: PropTypes.bool,
 };
 
 class Monitoring extends React.Component {
@@ -63,6 +66,8 @@ class Monitoring extends React.Component {
       setSize,
       size,
       ids,
+      toggleFavourite,
+      isFavourite,
     } = this.props;
     return (
       <div>
@@ -83,6 +88,8 @@ class Monitoring extends React.Component {
           setSize={setSize}
           size={size}
           ids={ids}
+          toggleFavourite={toggleFavourite}
+          isFavourite={isFavourite}
         />
       </div>
     );

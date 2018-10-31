@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { FunctionBrowser, TracingSwitch, GridSwitch } from '../';
 import logo from './logo.png';
-import { MODE_DETECTED, MODE_UNKNOWN } from '../../../constants';
+import { PLACEHOLDER, INPUT_TYPE } from '../../../constants';
 
 const defaultProps = {
   position: -1,
@@ -10,6 +10,8 @@ const defaultProps = {
   inputType: null,
   example: null,
   numberOfMonitoredFunctions: 0,
+  selectedInputType: INPUT_TYPE.SEARCH,
+  favourites: [],
 };
 
 const propTypes = {
@@ -28,6 +30,30 @@ const propTypes = {
   isConnection: PropTypes.bool.isRequired,
   switchGrid: PropTypes.func.isRequired,
   numberOfMonitoredFunctions: PropTypes.number,
+  selectedInputType: PropTypes.string,
+  switchInputType: PropTypes.func.isRequired,
+  favourites: PropTypes.arrayOf(PropTypes.string),
+};
+
+const determinePlaceholder = (
+  language,
+  inputType,
+  example,
+  selectedInputType,
+  favourites,
+) => {
+  if (selectedInputType === INPUT_TYPE.SEARCH) {
+    if (language && inputType && example) {
+      return PLACEHOLDER.MODE_DETECTED(language, inputType, example);
+    }
+    return PLACEHOLDER.MODE_UNKNOWN;
+  } else if (selectedInputType === INPUT_TYPE.FAVOURITES) {
+    if (favourites.length) {
+      return PLACEHOLDER.HAVE_FAVOURITES;
+    }
+    return PLACEHOLDER.DONT_HAVE_FAVOURITES;
+  }
+  return '';
 };
 
 const Navbar = ({
@@ -46,6 +72,9 @@ const Navbar = ({
   isConnection,
   switchGrid,
   numberOfMonitoredFunctions,
+  selectedInputType,
+  switchInputType,
+  favourites,
 }) => (
   <nav className="navbar navbar-default navbar-fixed-top">
     <div className="navbar-header">
@@ -67,16 +96,20 @@ const Navbar = ({
         queryKeyDown={queryKeyDown}
         queryInputChange={queryInputChange}
         query={query}
-        placeholder={
-          language && inputType && example
-            ? MODE_DETECTED(language, inputType, example)
-            : MODE_UNKNOWN
-        }
+        placeholder={determinePlaceholder(
+          language,
+          inputType,
+          example,
+          selectedInputType,
+          favourites,
+        )}
         functions={functions}
         functionClick={functionClick}
         position={position}
         setPositionOnFunction={setPositionOnFunction}
         isConnection={isConnection}
+        selectedInputType={selectedInputType}
+        switchInputType={switchInputType}
       />
     </div>
   </nav>

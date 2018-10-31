@@ -6,18 +6,22 @@ import {
   NotificationContainer,
 } from '../../containers';
 import { Footer } from '../navigation';
-import { STATUS_INTERVAL } from '../../constants';
+import { STATUS_INTERVAL, FAVOURITES_INTERVAL } from '../../constants';
 
 const propTypes = {
   getTraceStatus: PropTypes.func.isRequired,
   getMode: PropTypes.func.isRequired,
+  getFavourites: PropTypes.func.isRequired,
 };
+
 class Root extends React.Component {
   componentWillMount() {
-    const { getTraceStatus, getMode } = this.props;
+    const { getTraceStatus, getMode, getFavourites } = this.props;
     getMode();
     getTraceStatus();
+    getFavourites();
     setInterval(getTraceStatus, STATUS_INTERVAL);
+    setInterval(getFavourites, FAVOURITES_INTERVAL);
   }
 
   render() {

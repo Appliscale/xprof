@@ -6,6 +6,7 @@ const defaultProps = {
   callees: [],
   calleesVisibility: false,
   panelVisibility: true,
+  isFavourite: false,
 };
 
 const propTypes = {
@@ -24,6 +25,8 @@ const propTypes = {
   shrink: PropTypes.func.isRequired,
   calleeClick: PropTypes.func.isRequired,
   isConnection: PropTypes.bool.isRequired,
+  toggleFavourite: PropTypes.func.isRequired,
+  isFavourite: PropTypes.bool,
 };
 
 const GraphPanelHeading = ({
@@ -38,6 +41,8 @@ const GraphPanelHeading = ({
   shrink,
   calleeClick,
   isConnection,
+  toggleFavourite,
+  isFavourite,
 }) => (
   <div className="panel-heading">
     <GraphUtilsButtons
@@ -49,6 +54,8 @@ const GraphPanelHeading = ({
       expand={expand}
       shrink={shrink}
       isConnection={isConnection}
+      toggleFavourite={toggleFavourite}
+      isFavourite={isFavourite}
     />
     <h3 className="panel-title">
       {monitored.query}

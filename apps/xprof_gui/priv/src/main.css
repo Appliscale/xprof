@@ -132,6 +132,7 @@ input#searchBox {
 }
 
 .graph-utils-callee {
+  margin-left: 8px;
   margin-right: 2px;
   margin-top: 2px;
   font-size: 13px;
@@ -146,6 +147,12 @@ input#searchBox {
 .graph-utils-close {
   margin-top: -5px;
   font-size: 26px;
+}
+
+.graph-utils-fav {
+  margin-top: 2px;
+  font-size: 15px;
+  -webkit-text-stroke: 1.5px;
 }
 
 .glyphicon-thick::before {
@@ -210,4 +217,31 @@ input#searchBox {
 
 .navbar-right-more-margin {
   margin-right: -5px;
+}
+
+.btn-input-switch:hover {
+  border-color: #95a5a6;
+}
+
+.btn-active-disabled {
+  color: #ffffff;
+  background-color: #798d8f;
+  border-color: #74898a;
+}
+
+.btn-active-disabled:disabled {
+  cursor: inherit;
+  opacity: 1;
+  outline: 0;
+  background-image: none;
+  -webkit-box-shadow: inset -2px 1px 8px rgba(0, 0, 0, 0.125);
+  box-shadow: inset -2px 1px 8px rgba(0, 0, 0, 0.125);
+}
+
+.btn-active-disabled:disabled:hover {
+  opacity: 1;
+  color: #ffffff;
+  background-color: #798d8f;
+  border-color: #74898a;
+  z-index: 0;
 }

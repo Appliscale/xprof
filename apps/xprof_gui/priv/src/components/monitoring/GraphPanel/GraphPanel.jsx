@@ -9,6 +9,7 @@ const defaultProps = {
   calleesVisibility: false,
   panelVisibility: true,
   size: GRAPH_INITIAL_SIZE,
+  isFavourite: false,
 };
 
 const propTypes = {
@@ -31,6 +32,8 @@ const propTypes = {
   setSize: PropTypes.func.isRequired,
   size: PropTypes.shape(PropTypes.any),
   ids: PropTypes.shape(PropTypes.any).isRequired,
+  toggleFavourite: PropTypes.func.isRequired,
+  isFavourite: PropTypes.bool,
 };
 
 const GraphPanel = ({
@@ -49,6 +52,8 @@ const GraphPanel = ({
   setSize,
   size,
   ids,
+  toggleFavourite,
+  isFavourite,
 }) => {
   const monitoredID = ids[monitored.query];
   return (
@@ -65,6 +70,9 @@ const GraphPanel = ({
         shrink={() => shrink(monitored.query)}
         calleeClick={calleeClick}
         isConnection={isConnection}
+        toggleFavourite={shouldAdd =>
+          toggleFavourite(monitored.query, shouldAdd)}
+        isFavourite={isFavourite}
       />
       {panelVisibility && monitoredID ? (
         <div className="panel-body">
