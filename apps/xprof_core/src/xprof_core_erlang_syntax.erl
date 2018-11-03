@@ -130,9 +130,46 @@ fmt_exception(Class, Reason) ->
 fmt_term(Term) ->
     unicode:characters_to_binary(do_fmt_term(Term)).
 
+%% @doc Format a term with record pretty printing and line-wrapping hints
+
+%% Use line-length=1, so that the term will be broken in new lines in every
+%% place the formatter thinks it can be. (The formatter will add new-line plus
+%% indentation spaces.) This would look ugly in a terminal but browsers usually
+%% collapse all whitespaces into a single space. The `replace_whitespace/1'
+%% wrapper does part of the browser's job, in order to not break the term where
+%% is shouldn't be.
 do_fmt_term(Term) ->
-    io_lib_pretty:print(
-      Term, [{record_print_fun, xprof_core_records:record_print_fun()}]).
+    replace_whitespace(
+      io_lib_pretty:print(
+        Term, [{record_print_fun, xprof_core_records:record_print_fun()},
+               {line_length, 1}])).
 
 fmt(Fmt, Args) ->
     unicode:characters_to_binary(io_lib:format(Fmt, Args)).
+
+%% @doc Replace whitespace with browser friendly variants
+
+%% Replace a new line and indentation with a single space, and spaces (not after
+%% new line) with a non-breaking space. This way the browser can display as much
+%% of the formatted term in one line as much fits and break the line at any
+%% point where the erlang formatter would also break. (The only places where a
+%% non-breaking space is inserted is after record and map keys.)
+replace_whitespace(IoList) ->
+    replace_ws(lists:flatten(IoList)).
+
+replace_ws([$\n, $\s|T]) ->
+    replace_ws([$\n|T]);
+replace_ws([$\n|T]) ->
+    [$\s|replace_ws(T)];
+replace_ws([$\s|[Next|_] = T]) when Next =:= $\s; Next =:= $\n ->
+    %% Remove duplicate spaces or space before new-line.
+    %% This can only happen in old erlang versions where there was always a
+    %% space after = in a record, even if it was followed by a new line. This
+    %% was fixed in OTP 19.3
+    replace_ws(T);
+replace_ws([$\s|T]) ->
+    [160|replace_ws(T)];
+replace_ws([H|T]) ->
+    [H|replace_ws(T)];
+replace_ws([]) ->
+    [].
