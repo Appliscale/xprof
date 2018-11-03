@@ -121,14 +121,18 @@ fmt_fun_and_arity(Fun, Arity) ->
 fmt_exception(Class, Reason) ->
     Stacktrace = [],
     SkipFun = fun(_M, _F, _A) -> false end,
-    PrettyFun = fun(Term, _Indent) -> io_lib:format("~tp", [Term]) end,
+    PrettyFun = fun(Term, _Indent) -> do_fmt_term(Term) end,
     Encoding = unicode,
     unicode:characters_to_binary(
       ["** "|?ERL_ERROR_MOD:format_exception(1, Class, Reason, Stacktrace,
                                              SkipFun, PrettyFun, Encoding)]).
 
 fmt_term(Term) ->
-    fmt("~tp", [Term]).
+    unicode:characters_to_binary(do_fmt_term(Term)).
+
+do_fmt_term(Term) ->
+    io_lib_pretty:print(
+      Term, [{record_print_fun, xprof_core_records:record_print_fun()}]).
 
 fmt(Fmt, Args) ->
     unicode:characters_to_binary(io_lib:format(Fmt, Args)).

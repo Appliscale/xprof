@@ -5,7 +5,8 @@
          load_records/1,
          forget_records/0,
          forget_records/1,
-         get_record_defs/0
+         get_record_defs/0,
+         record_print_fun/0
         ]).
 
 %% gen_server callbacks
@@ -61,6 +62,11 @@ get_record_defs() ->
             []
     end.
 
+%% @doc Return callback fun for `io_lib_pretty:print/2'
+-spec record_print_fun() -> fun().
+record_print_fun() ->
+    fun record_print_fun/2.
+
 %% gen_server callbacks
 
 init([]) ->
@@ -115,3 +121,22 @@ get_record_defs(Mod) ->
         error ->
             []
     end.
+
+%% Taken from `shell:record_print_fun/1'
+record_print_fun(RecName, NumFields) ->
+    case ets:lookup(?TABLE, RecName) of
+        [{_, {attribute, _Anno, record, {RecName, Fields}}}]
+          when length(Fields) =:= NumFields ->
+            record_fields(Fields);
+        _ ->
+            no
+    end.
+
+record_fields([{record_field,_,{atom,_,Field}} | Fs]) ->
+    [Field | record_fields(Fs)];
+record_fields([{record_field,_,{atom,_,Field},_} | Fs]) ->
+    [Field | record_fields(Fs)];
+record_fields([{typed_record_field,Field,_Type} | Fs]) ->
+    record_fields([Field | Fs]);
+record_fields([]) ->
+    [].
