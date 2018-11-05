@@ -5,6 +5,7 @@ import { GRAPH_INITIAL_SIZE } from '../../../constants';
 
 const defaultProps = {
   dps: [],
+  y: [],
   callees: [],
   calleesVisibility: false,
   panelVisibility: true,
@@ -18,6 +19,7 @@ const propTypes = {
     query: PropTypes.string,
   }).isRequired,
   dps: PropTypes.arrayOf(PropTypes.object),
+  y: PropTypes.arrayOf(PropTypes.string),
   stopMonitoringFunction: PropTypes.func.isRequired,
   callees: PropTypes.arrayOf(PropTypes.string),
   calleesVisibility: PropTypes.bool,
@@ -36,6 +38,7 @@ const propTypes = {
 const GraphPanel = ({
   monitored,
   dps,
+  y,
   stopMonitoringFunction,
   callees,
   calleesVisibility,
@@ -70,6 +73,7 @@ const GraphPanel = ({
         <div className="panel-body">
           <Graph
             dps={dps}
+            y={y}
             type={monitored.graph_type}
             query={monitored.query}
             monitoredID={monitoredID}
