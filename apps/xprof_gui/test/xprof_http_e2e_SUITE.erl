@@ -3,6 +3,8 @@
 -include_lib("common_test/include/ct.hrl").
 -include_lib("eunit/include/eunit.hrl").
 
+-define(TEST_PORT, 7891).
+
 %% CT callbacks
 -export([all/0,
          groups/0,
@@ -118,6 +120,8 @@ init_per_testcase(TestCase, Config) ->
         _ ->
             given_overload_queue_limit(1000)
     end,
+    %% use a different port for tests than the default one
+    application:set_env(xprof_gui, port, ?TEST_PORT),
     {ok, StartedApps} = xprof:start(),
     [{started_apps, StartedApps}|Config].
 
@@ -410,7 +414,9 @@ make_get_request(Path) ->
 
 make_get_request(Path, Params) ->
     EncodedParams = proplist_to_query_string(Params),
-    URL = "http://127.0.0.1:7890/" ++ Path ++ "?" ++  EncodedParams,
+    URL =
+        "http://127.0.0.1:" ++ integer_to_list(?TEST_PORT) ++
+        "/" ++ Path ++ "?" ++  EncodedParams,
     {ok, {{_Ver, HTTPCode, _Reason}, _Headers, Body}} = httpc:request(URL),
     {HTTPCode, decode_json(Body)}.
 
