@@ -44,7 +44,7 @@ The preferred way is to add the `xprof` *Hex* package as a dependency to you reb
 
 {deps, [
        ...
-       {xprof, "2.0.0-rc.2"}
+       {xprof, "2.0.0-rc.3"}
 ]}.
 ```
 
@@ -54,7 +54,7 @@ The preferred way is to add the `xprof` *Hex* package as a dependency to you reb
 defp deps do
     [
       ...
-      {:xprof, "~> 2.0.0-rc.2"}
+      {:xprof, "~> 2.0.0-rc.3"}
     ]
   end
 ```
@@ -65,7 +65,7 @@ You can also fetch from the github repository (not recommended, only for develop
 ```erlang
 {deps, [
        ...
-       {xprof_umbrella, {raw, {git, "https://github.com/appliscale/xprof.git", {tag, "2.0.0-rc.2"}}}},
+       {xprof_umbrella, {raw, {git, "https://github.com/appliscale/xprof.git", {tag, "2.0.0-rc.3"}}}},
        {xprof_core, {rsync, "_build/default/lib/xprof_umbrella/apps/xprof_core"}},
        {xprof_gui, {rsync, "_build/default/lib/xprof_umbrella/apps/xprof_gui"}},
        {xprof, {rsync, "_build/default/lib/xprof_umbrella/apps/xprof"}},
