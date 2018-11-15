@@ -28,6 +28,7 @@
          long_call/1,
          return_matching/1,
          return_matching_query/1,
+         return_matching_exception/1,
          spawner_tracing/1,
          all_tracing/1,
          pid_tracing/1,
@@ -52,6 +53,7 @@ all() ->
      long_call,
      return_matching,
      return_matching_query,
+     return_matching_exception,
      {group, simulate_tracing}].
 
 groups() ->
@@ -456,18 +458,32 @@ long_call(_Config) ->
     ok.
 
 return_matching(_Config) ->
-    xprof_core:monitor(funlatency, [{mfa, MFA = {?MODULE, test_fun, 1}},
-                                    {retmatch, fun({res, Res}) -> Res =:= 20 end}]),
+    xprof_core:monitor(funlatency,
+                       [{mfa, MFA = {?MODULE, test_fun, 1}},
+                        {retmatch, fun({res, 10}) -> {true, ten};
+                                      ({res, 20}) -> true;
+                                      ({res, 30}) -> false;
+                                      ({res, 40}) -> bad_return
+                                   end}]),
     ok = xprof_core:trace(self()),
 
     Last = get_print_current_time(),
 
+    %% matches and changes return value
     test_fun(10),
+    %% matches
     test_fun(20),
+    %% does not match
+    test_fun(30),
+    %% bad return - no match
+    test_fun(40),
+    %% not handled - no match
+    test_fun(50),
     ct:sleep(1000),
 
     [Items1|_] = xprof_core:get_data(MFA, Last),
-    ?assertEqual(1, proplists:get_value(count, Items1)),
+    ?assertEqual(2, proplists:get_value(count, Items1)),
+    ?assertEqual(5, proplists:get_value(total_count, Items1)),
 
     %% the duration of the only captured call is at least 20 ms
     %%?assertMatch({20 < (proplists:get_value(min, Items1) div 1000)),
@@ -499,6 +515,41 @@ return_matching_query(_Config) ->
     xprof_core:demonitor(MFA),
     ok.
 
+return_matching_exception(_Config) ->
+    xprof_core:monitor(funlatency,
+                       [{mfa, MFA = {?MODULE, maybe_crash_test_fun, 1}},
+                        {retmatch, fun(throw, test_crash) -> true;
+                                      (throw, {test_crash, no_match}) -> false;
+                                      (throw, {test_crash, change_ret}) -> {true, err2};
+                                      (throw, _) -> bad_return
+                                   end}]),
+    ok = xprof_core:trace(self()),
+
+    Last = get_print_current_time(),
+
+    %% no match if no exception
+    maybe_crash_test_fun(false),
+    %% throw:test_crash matches
+    catch maybe_crash_test_fun(true),
+    %% throw:{test_crash, no_match} does not match
+    catch maybe_crash_test_fun(no_match),
+    %% throw:{test_crash, change_ret} matches and changes return value
+    catch maybe_crash_test_fun(change_ret),
+    %% throw:{test_crash, bad_ret} does not match
+    catch maybe_crash_test_fun(bad_ret),
+    %% error:function_clause does not match
+    catch maybe_crash_test_fun(42),
+
+    ct:sleep(1000),
+
+    [Items1|_] = xprof_core:get_data(MFA, Last),
+    ?assertEqual(2, proplists:get_value(count, Items1)),
+    ?assertEqual(6, proplists:get_value(total_count, Items1)),
+
+    xprof_core:trace(pause),
+    xprof_core:demonitor(MFA),
+    ok.
+
 %% Helpers
 
 test_fun() ->
@@ -522,7 +573,9 @@ maybe_crash_test_fun(false) ->
     ok;
 maybe_crash_test_fun(true) ->
     timer:sleep(10),
-    throw(test_crash).
+    throw(test_crash);
+maybe_crash_test_fun(Reason) when is_atom(Reason) ->
+    throw({test_crash, Reason}).
 
 get_print_current_time() ->
     {MS,S,_} = os:timestamp(),

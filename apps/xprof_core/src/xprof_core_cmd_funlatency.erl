@@ -20,10 +20,11 @@ mandatory_params() ->
 optional_params() ->
     [retmatch].
 
-param_from_ast(mfa, MfaStr) when is_list(MfaStr) ->
+param_from_ast(mfa, MfaStr) ->
+    %% MfaStr is always a string as it is parsed from a query string
+    %% just assert it as an internal consistency check
+    [_|_] = MfaStr,
     {ok, MfaStr};
-param_from_ast(mfa, _WrongValue) ->
-    {error, wrong_value};
 param_from_ast(retmatch, RetMatchAst) ->
     case RetMatchAst of
         {'fun', _Loc, _Clauses} ->

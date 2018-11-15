@@ -72,31 +72,37 @@ process_query(Query, AdditionalParams) ->
     end.
 
 process_cmd(Cmd, Params) ->
-    %% * lookup cmd callback
-    CmdCB = get_cmd_callback(Cmd),
+    try
+        %% * lookup cmd callback
+        CmdCB = get_cmd_callback(Cmd),
 
-    %% * FIXME figure out some string represention to fake querystring
-    %% (probably move to xprof_core_query:fmt_query(Cmd, Params)
-    Query =
-        case proplists:get_value(mfa, Params) of
-            undefined ->
-                <<"">>;
-            MFAStr when is_list(MFAStr) ->
-                list_to_binary(MFAStr);
-            {Mod, Fun, Arity} ->
-                ModeCb = xprof_core_lib:get_mode_cb(),
-                _FormattedMFA = ModeCb:fmt_mfa(Mod, Fun, Arity)
-        end,
+        %% * FIXME figure out some string represention to fake querystring
+        %% (probably move to xprof_core_query:fmt_query(Cmd, Params)
+        Query =
+            case proplists:get_value(mfa, Params) of
+                undefined ->
+                    <<"">>;
+                MFAStr when is_list(MFAStr) ->
+                    list_to_binary(MFAStr);
+                {Mod, Fun, Arity} ->
+                    ModeCb = xprof_core_lib:get_mode_cb(),
+                    _FormattedMFA = ModeCb:fmt_mfa(Mod, Fun, Arity)
+            end,
 
-    %% * check all mandatory params are present
-    MandatoryParams = CmdCB:mandatory_params(),
-    ok = check_mandatory_params(Params, MandatoryParams),
+        %% * check all mandatory params are present
+        MandatoryParams = CmdCB:mandatory_params(),
+        ok = check_mandatory_params(Params, MandatoryParams),
 
-    %% * check param value types as much as possible
-    %%   and maybe convert to internal format (eg mfaspec)
-    {ok, Options} = params_to_internal(Cmd, Params, CmdCB, []),
+        %% * check param value types as much as possible
+        %%   and maybe convert to internal format (eg mfaspec)
+        {ok, Options} = params_to_internal(Cmd, Params, CmdCB, []),
 
-    {start_cmd, Cmd, Options, CmdCB, Query}.
+        {start_cmd, Cmd, Options, CmdCB, Query}
+    catch throw:{error, Reason} ->
+            format_error(Reason);
+          error:{badmatch, {error, Reason}} ->
+            format_error(Reason)
+    end.
 
 get_cmd_callback(funlatency) ->
     xprof_core_cmd_funlatency;
@@ -155,7 +161,7 @@ format_error({param_to_internal, Cmd, Key, Reason}) ->
     CmdCB = get_cmd_callback(Cmd),
     xprof_core_lib:fmt_err("Error converting parameter ~p to internal format: ~s",
                            [Key, CmdCB:format_error(Reason)]);
-format_error({params_from_ast, Cmd, Key, Reason}) ->
+format_error({param_from_ast, Cmd, Key, Reason}) ->
     CmdCB = get_cmd_callback(Cmd),
     xprof_core_lib:fmt_err("Error converting parameter ~p to internal format: ~s",
                            [Key, CmdCB:format_error(Reason)]);
