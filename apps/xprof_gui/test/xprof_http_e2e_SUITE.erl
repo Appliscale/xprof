@@ -41,7 +41,8 @@
          but_it_should_return_elixir_if_it_is_forced_as_setting/1,
          explore_callees_of_standard_function/1,
          explore_callees_on_not_existing_function/1,
-         explore_callees_in_elixir_mode/1
+         explore_callees_in_elixir_mode/1,
+         core_not_running/1
         ]).
 
 %% CT funs
@@ -80,7 +81,8 @@ groups() ->
        in_this_project_we_should_detect_erlang,
        but_it_should_return_elixir_if_it_is_forced_as_setting,
        explore_callees_of_standard_function,
-       explore_callees_on_not_existing_function
+       explore_callees_on_not_existing_function,
+       core_not_running
       ]},
      {elixir,
       [],
@@ -365,6 +367,12 @@ explore_callees_in_elixir_mode(_Config) ->
             io:format("Elixir not found, skipping test."),
             ok
     end.
+
+core_not_running(_Config) ->
+    ok = application:stop(xprof_core),
+    ?assertEqual({500, []}, make_get_request("api/trace_status")),
+    ?assertEqual({500, []}, make_get_request("api/all_monitored")),
+    ok.
 
 %%
 %% Givens
