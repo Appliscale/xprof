@@ -213,14 +213,18 @@ expand_extended_query(Query) ->
                     %% FIXME this is erlang specific - move it from here
                     case RestStr of
                         "" ->
-                            [{<<"= ">>, atom_to_binary(Key, unicode)}];
+                            [{<<"= ">>, ModeCb:fmt_param(Key)}];
                         "=" ->
-                            [{<<" ">>, atom_to_binary(Key, unicode)}];
+                            [{<<" ">>, ModeCb:fmt_param(Key)}];
+                        ":" ->
+                            [{<<" ">>, ModeCb:fmt_param(Key)}];
                         _ ->
-                            xprof_core_lib:err("'=' expected after param name: ~p", [Key])
+                            xprof_core_lib:err("'=' expected after param name: ~s",
+                                               [ModeCb:fmt_param(Key)])
                     end;
                 false ->
-                    xprof_core_lib:err("unknown or duplicated param name: ~p", [Key])
+                    xprof_core_lib:err("unknown or duplicated param name: ~s",
+                                       [ModeCb:fmt_param(Key)])
             end;
         {incomplete_value, Key, ValuePrefix, Cmd, Params} ->
             CmdInfo = get_cmd_info_or_fail(Cmd),
@@ -233,11 +237,16 @@ expand_extended_query(Query) ->
                             ValueBin = unicode:characters_to_binary(ValuePrefix),
                             expand_match_spec(ValueBin);
                         _ ->
-                            [{<<>>, atom_to_binary(Key, unicode)}]
+                            [{<<>>, ModeCb:fmt_param(Key)}]
                     end;
                 false ->
-                    xprof_core_lib:err("unknown or duplicated param name: ~p", [Key])
+                    xprof_core_lib:err("unknown or duplicated param name: ~p",
+                                       [ModeCb:fmt_param(Key)])
             end;
+        {ok, Cmd, _Params = []} ->
+            CmdInfo = get_cmd_info_or_fail(Cmd),
+            MissingParams = missing_params(CmdInfo, []),
+            _FilteredParams = filter_params(<<>>, MissingParams, ModeCb);
         {ok, Cmd, Params} ->
             CmdInfo = get_cmd_info_or_fail(Cmd),
             case lists:last(Params) of
@@ -271,17 +280,16 @@ filter_cmds(Prefix, ModeCb) ->
     [{<<Rest/binary, " ">>, CmdBin, Cmd#cmd.desc}
      || Cmd <- cmds(),
         begin
-            CmdBin = ModeCb:fmt_mod(Cmd#cmd.name),
+            CmdBin = ModeCb:fmt_cmd(Cmd#cmd.name),
             Rest = xprof_core_lib:prefix_rest(Prefix, CmdBin),
             Rest =/= false
         end].
 
 filter_params(KeyPrefix, MissingParams, ModeCb) ->
-    %% FIXME '=' delimiter is erlang specific
-    [{<<Rest/binary, " = ">>, PBin}
+    [{Rest, ModeCb:fmt_param(P)}
      || P <- MissingParams,
         begin
-            PBin = ModeCb:fmt_mod(P),
+            PBin = ModeCb:fmt_param_and_delim(P),
             Rest = xprof_core_lib:prefix_rest(KeyPrefix, PBin),
             Rest =/= false
         end].
@@ -315,6 +323,8 @@ prefix_tail(Prefix, Bin) ->
             Res
     end.
 
+maybe_add_common_prefix(AlreadyAdded = {_CommonPrefix, _Matches}) ->
+    AlreadyAdded;
 maybe_add_common_prefix(Matches) when is_list(Matches) ->
     CommonPrefix = common_match_prefix(Matches),
     {CommonPrefix, Matches}.

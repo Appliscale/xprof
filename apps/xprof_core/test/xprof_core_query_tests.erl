@@ -6,7 +6,13 @@
 
 parse_query_test_() ->
     %% tokens_test_() ->
-    [?_assertEqual(
+    [?_assertMatch(
+        {ok, cmd, []},
+        ?M:parse_query("#cmd")),
+     ?_assertMatch(
+        {error, "unexpected token \";\" at column 6"},
+        ?M:parse_query("#cmd ;")),
+     ?_assertEqual(
         {error,"unterminated atom starting with 'true' at column 27"},
         ?M:parse_query("#cmd mfa = m:f(_) -> 'true")),
      ?_assertMatch(
@@ -43,12 +49,20 @@ parse_query_test_() ->
      ?_assertMatch(
         {ok, argdist, [{enum, {integer,_,2}}, {mfa, "m:f(B) when is_boolean(B) -> message(B)"}]},
         ?M:parse_query("#argdist enum = 2, mfa = m:f(B) when is_boolean(B) -> message(B)")),
+     ?_assertMatch(
+        {ok, funlatency, [{caller, {op, _, '/',
+                                    {remote, _, {atom, _, string},
+                                     {atom, _ , split}},
+                                    {integer, _, 3}}
+                          },
+                          {mfa, "proplists:get_value/3"}]},
+        ?M:parse_query("#funlatency caller = string:split/3, mfa = proplists:get_value/3")),
 
      ?_assertEqual(
         {error, "Missing command name"},
         ?M:parse_query("#")),
      ?_assertEqual(
-        {error, "Expected parameter name missing at the end of the query"},
+        {ok, c, []},
         ?M:parse_query("#c")),
      ?_assertEqual(
         {error, "Missing = and value for parameter m"},

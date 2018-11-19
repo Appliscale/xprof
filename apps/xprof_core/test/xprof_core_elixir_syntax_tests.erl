@@ -115,6 +115,74 @@ parse_match_spec_test_() ->
         ],
     xprof_core_test_lib:run_elixir_unit_tests(Tests).
 
+parse_query_test_() ->
+    Tests =
+        [?_assertEqual({ok, cm, []},
+                       ?M:parse_query("%cm")),
+         ?_assertEqual({error, "unexpected token ';' at column 6"},
+                       ?M:parse_query("%cmd ;")),
+         ?_assertEqual({error, "Missing : and value for parameter :ke"},
+                       ?M:parse_query("%cmd ke")),
+         ?_assertEqual({error, "Missing value for parameter key:"},
+                       ?M:parse_query("%cmd key:")),
+         ?_assertEqual({error, "Missing value for parameter key:"},
+                       ?M:parse_query("%cmd key: ")),
+         ?_assertEqual(%%{error,"Incomplete value for parameter :key"},
+                       {error, "missing terminator: ] (for \"[\" starting at line 1) at column 16"},
+                       ?M:parse_query("%cmd key: [1, 2,")),
+         ?_assertMatch({error, "Expected parameter name missing at the end of the query"},
+                       ?M:parse_query("%cmd k1: 1,")),
+         ?_assertMatch({error, "Expected parameter name missing at the end of the query"},
+                       ?M:parse_query("%cmd k1: 1, ")),
+         ?_assertMatch({error, "Missing : and value for parameter :k"},
+                       ?M:parse_query("%cmd k1: 1, k")),
+         ?_assertMatch({ok, cmd, [{k1, {integer, _, 1}}, {k2, {integer, _, 2}}]},
+                       ?M:parse_query("%cmd k1: 1, k2: 2")),
+         ?_assertMatch(%%{error, "missing comma at column 12"},
+                       {error, "Incomplete value for parameter k1:"},
+                       ?M:parse_query("%cmd k1: 1 k2: 2")),
+
+         %% real-world examples
+         ?_assertMatch(
+            {ok, argdist, [{enum, {integer, _, 2}}, {mfa, "M.f(b) when is_boolean(b) -> message(b)"}]},
+            ?M:parse_query("%Argdist enum: 2, mfa: M.f(b) when is_boolean(b) -> message(b)")),
+         ?_assertMatch(
+            {ok, funlatency, [{caller, {op, _, '/',
+                                        {call, _,
+                                         {remote, _,
+                                          {atom, _, 'Elixir.String'},
+                                          {atom, _ , split}},
+                                         []},
+                                        {integer, _, 3}}
+                              },
+                              {mfa, "Keyword.get/3"}]},
+            ?M:parse_query("%Funlatency caller: String.split/3, mfa: Keyword.get/3"))
+        ],
+    xprof_core_test_lib:run_elixir_unit_tests(Tests).
+
+parse_incomplete_query_test_() ->
+    Tests =
+        [?_assertEqual({incomplete_cmd, "cm"},
+                       ?M:parse_incomplete_query("cm")),
+         ?_assertEqual({incomplete_key, "ke", cmd, []},
+                       ?M:parse_incomplete_query("cmd ke")),
+         ?_assertEqual({incomplete_key, {key, ":"}, cmd, []},
+                       ?M:parse_incomplete_query("cmd key:")),
+         ?_assertEqual({incomplete_value, key, "", cmd, []},
+                       ?M:parse_incomplete_query("cmd key: ")),
+         ?_assertEqual({incomplete_value, key, "", cmd, []},
+                       ?M:parse_incomplete_query("cmd key: 12")),
+         ?_assertEqual({incomplete_value, key, "[1, 2", cmd, []},
+                       ?M:parse_incomplete_query("cmd key: [1, 2")),
+         ?_assertMatch({incomplete_key, "", cmd, [{k1, {integer, _, 1}}]},
+                       ?M:parse_incomplete_query("cmd k1: 1,")),
+         ?_assertMatch({incomplete_key, "", cmd, [{k1, {integer, _, 1}}]},
+                       ?M:parse_incomplete_query("cmd k1: 1, ")),
+         ?_assertMatch({incomplete_key, "k", cmd, [{k1, {integer, _, 1}}]},
+                       ?M:parse_incomplete_query("cmd k1: 1, k"))
+        ],
+    xprof_core_test_lib:run_elixir_unit_tests(Tests).
+
 fmt_test_() ->
     Tests =
         [?_assertEqual(<<"** (MatchError) no match of right hand side value: :dummy">>,

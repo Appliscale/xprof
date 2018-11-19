@@ -14,6 +14,9 @@
          fmt_mod/1,
          fmt_fun_and_arity/2,
          fmt_fun/1,
+         fmt_cmd/1,
+         fmt_param/1,
+         fmt_param_and_delim/1,
          fmt_exception/2,
          fmt_term/1]).
 
@@ -78,8 +81,8 @@ parse_query("#" ++ Query) ->
                    {value, Key, _Value} ->
                        xprof_core_lib:fmt_err("Incomplete value for parameter ~w", [Key])
                end;
-           {error, {unexpected, Token, _State}} ->
-               xprof_core_lib:fmt_err("unexpected '~s' at column ~p", [text(Token), column(Token)])
+           {unexpected, Token, _State} ->
+               xprof_core_lib:fmt_err("unexpected token \"~s\" at column ~p", [text(Token), column(Token)])
        end
     catch
         throw:Error ->
@@ -119,12 +122,13 @@ parse_incomplete_query(Query) ->
             {incomplete_value, Key, ValueRest, Cmd, Params};
         {more, {value, Key}, Cmd, Params} ->
             {incomplete_value, Key, Rest, Cmd, Params};
-        {unexpected, _Token, _State} = Un ->
-            {error, Un}
+        {unexpected, Token, _State} ->
+            xprof_core_lib:fmt_err("unexpected token \"~s\" at column ~p",
+                                   [text(Token), column(Token)])
     end.
 
 tokens_query(Str, error) ->
-    case erl_scan:string(Str, {1, 2}) of
+    case erl_scan:string(Str, {1, 2}, [text]) of
         {error, {_Loc, Mod, Err}, Loc} ->
             xprof_core_lib:err(Loc, Mod, Err);
         {ok, Tokens, _EndLoc} ->
@@ -199,6 +203,9 @@ parse_query_tokens([{',', _}|T], comma, Cmd, Params, MoreStr) ->
     parse_query_tokens(T, key, Cmd, Params, MoreStr);
 parse_query_tokens([], comma, Cmd, Params, _MoreStr = false) ->
     {ok, Cmd, lists:reverse(Params)};
+parse_query_tokens([], _State = key, Cmd, _Params = [], _MoreStr = false) ->
+    %% single command without parameters
+    {ok, Cmd, []};
 parse_query_tokens([], State, Cmd, Params, _MoreStr) ->
     {more, State, Cmd, Params};
 parse_query_tokens([H|_], State, _, _, _) ->
@@ -439,6 +446,15 @@ fmt_fun(Fun) ->
 
 fmt_fun_and_arity(Fun, Arity) ->
     fmt("~w/~b", [Fun, Arity]).
+
+fmt_cmd(Cmd) ->
+    fmt("~w", [Cmd]).
+
+fmt_param(Param) ->
+    fmt("~w", [Param]).
+
+fmt_param_and_delim(Param) ->
+    fmt("~w = ", [Param]).
 
 fmt_exception(Class, Reason) ->
     Stacktrace = [],

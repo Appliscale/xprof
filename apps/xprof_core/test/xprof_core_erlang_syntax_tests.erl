@@ -9,6 +9,25 @@
 %% for testing record syntax pretty-printing
 -record(rec, {f1, f2 :: xprof_core:mode()}).
 
+parse_incomplete_query_test_() ->
+    [?_assertEqual({incomplete_cmd, "cm"},
+                   ?M:parse_incomplete_query("cm")),
+     ?_assertEqual({incomplete_key, "ke", cmd, []},
+                   ?M:parse_incomplete_query("cmd ke")),
+     ?_assertEqual({incomplete_key, {key, "="}, cmd, []},
+                   ?M:parse_incomplete_query("cmd key =")),
+     ?_assertEqual({incomplete_value, key, "", cmd, []},
+                   ?M:parse_incomplete_query("cmd key = ")),
+     ?_assertEqual({incomplete_value, key, "va", cmd, []},
+                   ?M:parse_incomplete_query("cmd key = va")),
+     ?_assertMatch({incomplete_key, "", cmd, [{k1, {integer, _, 1}}]},
+                   ?M:parse_incomplete_query("cmd k1 = 1,")),
+     ?_assertMatch({incomplete_key, "", cmd, [{k1, {integer, _, 1}}]},
+                   ?M:parse_incomplete_query("cmd k1 = 1, ")),
+     ?_assertMatch({incomplete_key, "k", cmd, [{k1, {integer, _, 1}}]},
+                   ?M:parse_incomplete_query("cmd k1 = 1, k"))
+    ].
+
 fmt_test_() ->
     {setup,
      fun() ->
