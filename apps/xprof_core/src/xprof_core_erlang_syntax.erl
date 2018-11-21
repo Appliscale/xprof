@@ -20,6 +20,9 @@
          fmt_exception/2,
          fmt_term/1]).
 
+%% exported to fool dialyzer about breaking an opaque type
+-export([id/1]).
+
 %% in OTP 21 `format_exception/7' was moved from `lib' module to `erl_error'
 -ifdef(OTP_RELEASE).
 -if(?OTP_RELEASE >= 21).
@@ -135,7 +138,7 @@ tokens_query(Str, error) ->
             {ok, Tokens}
     end;
 tokens_query(Str, incomplete) ->
-    case erl_scan:tokens([], Str, {1, 2}, [text]) of
+    case tokens_incomplete(Str) of
         {done, {ok, _Tokens, _EndLoc}, _Rest} ->
             %% unexpected - Str contains a dot in the middle
             %% FIXME extract location - {dot, Loc} = lists:last(Tokens)
@@ -169,6 +172,17 @@ tokens_query(Str, incomplete) ->
                    end,
             {ok, lists:reverse(RevTokens), Rest}
     end.
+
+%% Continuation is an opaque type which should not be disassembled. In order to
+%% silence dialyzer we run the result through the exported id/1 function.
+-spec tokens_incomplete(string()) -> Return when
+      Return :: {'done', Result :: erl_scan:tokens_result(), Rest :: string()}
+              | {'more', Continuation :: tuple()}.
+tokens_incomplete(Str) ->
+    id(erl_scan:tokens([], Str, {1, 2}, [text])).
+
+-spec id(any()) -> any().
+id(Any) -> Any.
 
 parse_query_tokens([{atom, _, Cmd}|T], cmd, _C, _P, MoreStr) ->
     parse_query_tokens(T, key, Cmd, [], MoreStr);
