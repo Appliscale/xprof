@@ -426,14 +426,6 @@ long_call(_Config) ->
     %% both calls should be recorded
     ?assertEqual(2, proplists:get_value(count, StatsItems)),
 
-    %% minimum should be 20 ms with a bit of precision error
-    Min = proplists:get_value(min, StatsItems),
-    ?assertMatch({true, _}, {Min < 22*1000, Min}),
-
-    %% maximum should be 100 ms with a bit of precision error
-    Max = proplists:get_value(max, StatsItems),
-    ?assertMatch({true, _}, {Max > 98*1000, Max}),
-
     %% data capturing also works for too long calls
     {ok, {Id, 50, 1, false}, [CapturedData]} =
         xprof_core:get_captured_data(MFA, 0),
@@ -445,6 +437,18 @@ long_call(_Config) ->
     xprof_core:demonitor(MFA),
 
     application:unset_env(xprof, max_duration),
+
+    %% check times as a last thing because they fail sometimes with a big
+    %% precision error
+
+    %% minimum should be 20 ms with a bit of precision error
+    Min = proplists:get_value(min, StatsItems),
+    ?assertMatch({true, _}, {Min < 22*1000, Min}),
+
+    %% maximum should be 100 ms with a bit of precision error
+    Max = proplists:get_value(max, StatsItems),
+    ?assertMatch({true, _}, {Max > 98*1000, Max}),
+
     ok.
 
 %% Helpers
