@@ -84,6 +84,10 @@ ms_test_() ->
          "at column 7"},
         ?M:fun2ms("m:f(A = {B, _}) -> {A, B}")),
      ?_assertEqual(
+        {error,
+         "variable 'B' is unbound at column 17"},
+        ?M:fun2ms("m:f(A) when A > B")),
+     ?_assertEqual(
         {ok, {{m, f, 0},
               {[{[],[],[{exception_trace},{message,arity},true]}],
                [{[],[],[{exception_trace},{message,'$_'},true]}]}}},
