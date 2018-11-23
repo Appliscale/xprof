@@ -309,10 +309,7 @@ cmds() ->
           desc = <<"Measure latency of function calls">>},
      #cmd{name = argdist,
           cb_mod = xprof_core_cmd_argdist,
-          desc = <<"Distribution of argument values">>},
-     #cmd{name = funcount,
-          cb_mod = xprof_core_cmd_funlatency,
-          desc = <<"Test">>}
+          desc = <<"Distribution of argument values">>}
     ].
 
 prefix_tail(Prefix, Bin) ->
