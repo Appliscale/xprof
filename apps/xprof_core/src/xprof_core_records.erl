@@ -113,7 +113,8 @@ get_record_defs(Mod) ->
             case beam_lib:chunks(Bin, [abstract_code]) of
                 {ok, {_Mod, [{abstract_code, {raw_abstract_v1, Forms}}]}} ->
                     Defs =
-                        [{RecName, RecDef} || {attribute, _Anno, record, {RecName, _Fields}} = RecDef <- Forms],
+                        [{RecName, {attribute, Anno, record, {RecName, remove_types(Fields)}}}
+                         || {attribute, Anno, record, {RecName, Fields}} <- Forms],
                     Defs;
                 _Error ->
                     []
@@ -121,6 +122,13 @@ get_record_defs(Mod) ->
         error ->
             []
     end.
+
+remove_types([{typed_record_field, Field, _Type} | Fs]) ->
+    [Field | remove_types(Fs)];
+remove_types([Field | Fs]) ->
+    [Field | remove_types(Fs)];
+remove_types([]) ->
+    [].
 
 %% Taken from `shell:record_print_fun/1'
 record_print_fun(RecName, NumFields) ->
@@ -136,7 +144,5 @@ record_fields([{record_field,_,{atom,_,Field}} | Fs]) ->
     [Field | record_fields(Fs)];
 record_fields([{record_field,_,{atom,_,Field},_} | Fs]) ->
     [Field | record_fields(Fs)];
-record_fields([{typed_record_field,Field,_Type} | Fs]) ->
-    record_fields([Field | Fs]);
 record_fields([]) ->
     [].
