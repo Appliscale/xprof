@@ -116,8 +116,8 @@ get_captured_data(MFA, Offset) when Offset >= 0 ->
 %% gen_server callbacks
 
 init([MFASpec, Name]) ->
-    MaxDuration = application:get_env(xprof, max_duration, ?MAX_DURATION) * 1000,
-    IgnoreRecursion = application:get_env(xprof, ignore_recursion, true),
+    MaxDuration = application:get_env(xprof_core, max_duration, ?MAX_DURATION) * 1000,
+    IgnoreRecursion = application:get_env(xprof_core, ignore_recursion, true),
     {ok, HDR} = init_storage(Name, MaxDuration),
     %% add trace pattern with args capturing turned off
     capture_args_trace_off(MFASpec),

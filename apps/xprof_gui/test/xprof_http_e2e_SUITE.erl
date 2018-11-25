@@ -384,10 +384,10 @@ given_tracing_all() ->
     ok.
 
 given_overload_queue_limit(Limit) ->
-    application:set_env(xprof, max_tracer_queue_len, Limit).
+    application:set_env(xprof_core, max_tracer_queue_len, Limit).
 
 given_elixir_mode_is_set() ->
-    application:set_env(xprof, mode, elixir).
+    application:set_env(xprof_core, mode, elixir).
 
 given_traced(Fun) ->
     {204, _} = make_get_request("api/mon_start", [{"query", Fun}]),
@@ -406,7 +406,7 @@ given_capture_slow_calls_of(Mod, Fun, Arity, Threshold, Limit) ->
 %% Helpers
 %%
 restore_default_mode() ->
-    application:set_env(xprof, mode, erlang).
+    application:set_env(xprof_core, mode, erlang).
 
 long_function() ->
     timer:sleep(50),

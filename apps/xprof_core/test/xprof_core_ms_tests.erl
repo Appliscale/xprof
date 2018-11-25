@@ -99,12 +99,12 @@ records_test_() ->
               [{[{rec,1,'_'}], [], [{exception_trace},{message,'$_'},true]}]},
     {setup,
      fun() ->
-             ok = application:set_env(xprof, load_records, [?MODULE]),
+             ok = application:set_env(xprof_core, load_records, [?MODULE]),
              {ok, Pid} = xprof_core_records:start_link(),
              Pid
      end,
      fun(Pid) ->
-             application:unset_env(xprof, load_records),
+             application:unset_env(xprof_core, load_records),
              unlink(Pid),
              exit(Pid, kill)
      end,
@@ -158,7 +158,7 @@ fun2ms_elixir_test_() ->
     Tests =
         {setup,
          fun() -> xprof_core_lib:set_mode(elixir) end,
-         fun(_) -> application:unset_env(xprof, mode) end,
+         fun(_) -> application:unset_env(xprof_core, mode) end,
          [?_assertEqual(elixir, xprof_core_lib:get_mode()),
           ?_assertEqual({ok, {{'Elixir.Mod','fun',1}, ?DEFAULT_MS}},
                         ?M:fun2ms("Mod.fun/1")),

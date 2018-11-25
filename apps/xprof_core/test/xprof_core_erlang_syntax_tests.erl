@@ -12,12 +12,12 @@
 fmt_test_() ->
     {setup,
      fun() ->
-             ok = application:set_env(xprof, load_records, [?MODULE]),
+             ok = application:set_env(xprof_core, load_records, [?MODULE]),
              {ok, Pid} = xprof_core_records:start_link(),
              Pid
      end,
      fun(Pid) ->
-             application:unset_env(xprof, load_records),
+             application:unset_env(xprof_core, load_records),
              unlink(Pid),
              exit(Pid, kill)
      end,

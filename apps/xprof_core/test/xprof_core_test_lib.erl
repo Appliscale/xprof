@@ -70,7 +70,7 @@ setup_elixir(ElixirEbin) ->
                 true = code:add_patha(ElixirEbin),
                 ElixirEbin
         end,
-    application:unset_env(xprof, mode),
+    application:unset_env(xprof_core, mode),
     {ok, Apps} = application:ensure_all_started(elixir),
     {ElixirEbin1, Apps}.
 
@@ -87,7 +87,7 @@ get_elixir_ebin(Elixir) ->
     end.
 
 cleanup_elixir({ElixirEbin, Apps}) ->
-    application:unset_env(xprof, mode),
+    application:unset_env(xprof_core, mode),
     [ok = application:stop(App) || App <- Apps],
     del_elixir_from_path(ElixirEbin),
     ok.

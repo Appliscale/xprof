@@ -79,7 +79,7 @@ trace_status() ->
 
 init([]) ->
     init_tracer(),
-    MaxQueueLen = application:get_env(xprof, max_tracer_queue_len, 1000),
+    MaxQueueLen = application:get_env(xprof_core, max_tracer_queue_len, 1000),
     {ok, #state{max_queue_len = MaxQueueLen}}.
 
 handle_call({monitor, MFASpec, Query}, _From, State) ->
