@@ -48,7 +48,7 @@
 %% which may be parsable if it is in the module-function-arity form,
 %% but not in case of an xprof-flavoured match-spec fun
 %% - to address this it is mandatory to have the mfa key as the last one, if
-%% present (so that we can cut the rest of the query string from after `mfa =`
+%% present (so that we can cut the rest of the query string from after `mfa ='
 %% and process it separately)
 -spec parse_query(string()) -> {ok, xprof_core:cmd(),
                                 [{mfa, string()} |
@@ -171,6 +171,7 @@ tokens_query(Str, incomplete) ->
 tokens_incomplete(Str) ->
     id(erl_scan:tokens([], Str, {1, 2}, [text])).
 
+%% @hidden
 -spec id(any()) -> any().
 id(Any) -> Any.
 

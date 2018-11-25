@@ -1,12 +1,12 @@
 %%%
 %%% @doc Callback functions that need to be implemented
-%%% for a language-specific behvaiour
+%%% for a language-specific behaviour
 %%%
 -module(xprof_core_language).
 
 %% Function for start monitoring
 
-%% @doc Parse a query string that represents either an xprof-flavoured
+%% Parse a query string that represents either an xprof-flavoured
 %% match-spec fun or an extended xprof query.
 -callback parse_query(Query :: string()) ->
     Result :: {ok, xprof_core:cmd(), [{mfa, string()} |
