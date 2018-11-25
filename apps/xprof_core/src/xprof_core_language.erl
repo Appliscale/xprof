@@ -41,6 +41,15 @@
 -callback fmt_fun(Fun :: atom()) ->
     Formatted :: binary().
 
+-callback fmt_cmd(xprof_core:cmd()) ->
+    Formatted :: binary().
+
+-callback fmt_param(xprof_core:param_name()) ->
+    Formatted :: binary().
+
+-callback fmt_param_and_delim(xprof_core:param()) ->
+    Formatted :: binary().
+
 -callback fmt_exception(Class :: throw | error | exit, Reason :: term()) ->
     Formatted :: binary().
 

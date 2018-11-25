@@ -38,7 +38,7 @@
          get_mode/0
         ]).
 
--export_type([cmd/0, params/0,
+-export_type([cmd/0, param_name/0, params/0,
               mfa_spec/0, mfa_id/0, mfa_name/0,
               mode/0
              ]).
@@ -46,7 +46,10 @@
 -type cmd() :: atom().
 %% Command name.
 
--type params() :: [{atom(), term()}].
+-type param_name() :: atom().
+%% Parameter name passed to commands.
+
+-type params() :: [{param_name(), term()}].
 %% Parameters passed to commands.
 
 -type ms() :: [tuple()].
