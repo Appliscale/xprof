@@ -38,7 +38,7 @@
          get_mode/0
         ]).
 
--export_type([cmd/0, param_name/0, params/0,
+-export_type([cmd/0, param_name/0, params/0, options/0,
               mfa_spec/0, mfa_id/0, mfa_name/0,
               mode/0
              ]).
@@ -51,6 +51,9 @@
 
 -type params() :: [{param_name(), term()}].
 %% Parameters passed to commands.
+
+-type options() :: [{mfa, string()} | {atom(), erl_parse:abstract_expr()}].
+%% Internal representation of params
 
 -type ms() :: [tuple()].
 %% Match-specification.

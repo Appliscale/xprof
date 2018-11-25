@@ -35,9 +35,7 @@ param_to_fun({'fun', _Loc, _Clauses} = ValueAst) ->
             end
     end.
 
--spec parse_query(binary()) -> {ok, xprof_core:cmd(),
-                                [{mfa, string()} |
-                                 {atom(), erl_parse:abstract_expr()}]}
+-spec parse_query(binary()) -> {ok, xprof_core:cmd(), xprof_core:options()}
                              | {error, Reason :: any()}.
 parse_query(Query) ->
     ModeCb = xprof_core_lib:get_mode_cb(),
