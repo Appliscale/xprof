@@ -36,30 +36,20 @@
 
 %% @doc Parse a query string that represents either an xprof-flavoured
 %% match-spec fun or an extended xprof query in Erlang syntax.
-%% The `mfa' key has special handling.
 %%
-%% FIXME: the current logic is the following:
-%% - the query should be fully parsable except the value of mfa key
+%% The `mfa' key has special handling. All param values are returned as AST (to
+%% support non-term expressions like patterns), except mfa value, which is
+%% returned as string, so that the old parser (`parse_match_spec') can do its
+%% job on it.
+%%
+%% Notes:
+%% - the query should be fully tokenizable
+%% - all param values should be fully parsable except the value of mfa key
 %% which may be parsable if it is in the module-function-arity form,
 %% but not in case of an xprof-flavoured match-spec fun
-%% - to address this it is mandatory to have the mfa key as the last one,
-%% if present
-%% - if there is a parsing error, assume that it is because this last mfa value
-%% and try to remove the problematic part from the end until the query is
-%% parsable (it will be parsable when only mod:fun(args) is left
-%% without guards and body)
-%% - if this way the query is parsed we need to verify that the parsing error
-%% was because of the mfa key and not because of other parsing error
-%% - in either way we figure out where the mfa value as string starts in the
-%% original query and return the mfa value as string, so that the old parser
-%% (`parse_match_spec') can do its job on it.
-%%
-%% Current logic puts curly-brackets around the params and parses the whole
-%% query as a record.
-%% Alternatively it would be good to also be able to parse an incomplete
-%% query to support autocomplete (suggesting keys and value type hinst).
-%% For this it might be better to parse the params as a list of comma separated
-%% expression (matching '=' op) one by one.
+%% - to address this it is mandatory to have the mfa key as the last one, if
+%% present (so that we can cut the rest of the query string from after `mfa =`
+%% and process it separately)
 -spec parse_query(string()) -> {ok, xprof_core:cmd(),
                                 [{mfa, string()} |
                                  {atom(), erl_parse:abstract_expr()}]}
@@ -238,7 +228,6 @@ parse_value([_|_] = T, Head) ->
         {{ok, AST}, _} ->
             {ok, AST, TT}
     end.
-
 
 tokens_to_comma(Tokens) ->
     lists:splitwith(
