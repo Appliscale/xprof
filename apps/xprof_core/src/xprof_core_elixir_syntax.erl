@@ -6,7 +6,6 @@
 -behaviour(xprof_core_language).
 
 -export([parse_query/1,
-         pretty_err/1,
          parse_incomplete_query/1,
          parse_match_spec/1,
          hidden_function/1,
