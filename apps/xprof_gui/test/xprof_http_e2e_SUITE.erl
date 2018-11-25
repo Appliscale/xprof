@@ -122,6 +122,8 @@ init_per_testcase(TestCase, Config) ->
         _ ->
             given_overload_queue_limit(1000)
     end,
+    %% test configuring non-default address
+    application:set_env(xprof_gui, ip, {127, 0, 0, 1}),
     %% use a different port for tests than the default one
     application:set_env(xprof_gui, port, ?TEST_PORT),
     {ok, StartedApps} = xprof:start(),
