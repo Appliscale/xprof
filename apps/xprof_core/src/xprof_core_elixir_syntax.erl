@@ -85,14 +85,33 @@ parse_incomplete_query(Query) ->
             %% complete if it is followed by a whitespace.
             %%
             %% If the query does not end with a space we pretend that the
-            %% previous object (the command name or a parameter name) is still
-            %% incomplete.
-            case lists:last(Query) of
-                $\s -> OK;
-                _ when Params =:= [] -> {incomplete_cmd, Query};
-                _ ->
-                    {Key, _ValueAST} = lists:last(Params),
-                    {incomplete_value, Key, _ValuePrefix = "", Cmd, lists:droplast(Params)}
+            %% previous object (the command name or a parameter value) is still
+            %% incomplete. Except for the value of `mfa' which is always
+            %% incomplete, even if it ends with a space.
+            LastParam = (Params =/= [] andalso lists:last(Params)),
+            LastChar = lists:last(Query),
+            case LastParam of
+                {mfa, Loc} ->
+                    %% Special case for mfa - always incomplete
+                    %% value is start/end columns
+                    MFAQuery = rest_from_query(Loc, Query),
+                    {incomplete_value, mfa, MFAQuery, Cmd, lists:droplast(Params)};
+                _ when $\s =:= LastChar ->
+                    %% Query ends with space so previous object is complete
+                    OK;
+                {Key, _ValueAST} ->
+                    %% Value of last param is incomplete
+                    %%
+                    %% Value AST has no meta/column info (it's converted from
+                    %% Elixir quoted expression) so we cannot easily restore the
+                    %% string representation of it. But this is not a problem
+                    %% for now because the value-prefix is only used for
+                    %% autocomplete in case of mfa key.
+                    ValuePrefix = "",
+                    {incomplete_value, Key, ValuePrefix, Cmd, lists:droplast(Params)};
+                false ->
+                    %% No params yet
+                    {incomplete_cmd, Query}
             end;
         {more, cmd, _, _} ->
             {incomplete_cmd, Rest};
@@ -151,13 +170,16 @@ parse_query_tokens([_|_] = T, {value, Key}, Cmd, Params, MoreStr) ->
             %% Hence we need to assume that it still belongs to the current value
             {more, {value, Key, T}, Cmd, Params};
         {ok, _ValueAst, TRest} when Key =:= mfa ->
-            %% spec handling of `mfa' - store the tokens instead of the AST
-            ValueToken = lists:sublist(T, 1, length(T) - length(TRest)),
-            parse_query_tokens(TRest, comma, Cmd, [{Key, ValueToken}|Params], MoreStr);
+            %% spec handling of `mfa' - store start and end column
+            StartColumn = start_column(T),
+            EndColumn = start_column(TRest),
+            parse_query_tokens(TRest, comma, Cmd, [{Key, {StartColumn, EndColumn}}|Params], MoreStr);
         {ok, ValueAst, TRest} when is_tuple(ValueAst) ->
             parse_query_tokens(TRest, comma, Cmd, [{Key, ValueAst}|Params], MoreStr);
         _Error when Key =:= mfa, MoreStr =:= false ->
-            {ok, Cmd, lists:reverse(Params, [{mfa, T}])};
+            %% spec handling of `mfa' - store start and end column
+            Loc = {start_column(T), eof},
+            {ok, Cmd, lists:reverse(Params, [{mfa, Loc}])};
         _Error ->
             {more, {value, Key, T}, Cmd, Params}
     end;
@@ -191,19 +213,24 @@ tokens_to_comma(Tokens) ->
       fun(Token) -> element(1, Token) =/= ',' end,
       Tokens).
 
-mfa_to_str([{mfa, Tokens}|Params], OrigQuery) ->
-    MFAQuery = rest_from_tokens(Tokens, OrigQuery),
+mfa_to_str([{mfa, Loc}|Params], OrigQuery) ->
+    MFAQuery = rest_from_query(Loc, OrigQuery),
     [{mfa, MFAQuery}|Params];
 mfa_to_str([KeyValue|Params], OrigQuery) ->
     [KeyValue|mfa_to_str(Params, OrigQuery)];
 mfa_to_str([], _) ->
     [].
 
-rest_from_tokens([FirstToken|_], OrigQuery) ->
-    %% OrigQuery does not contain leading `#'
+rest_from_tokens(Tokens, OrigQuery) ->
+    rest_from_query({start_column(Tokens), eof}, OrigQuery).
+
+rest_from_query({StartColumn, eof}, OrigQuery) ->
+    rest_from_query({StartColumn, length(OrigQuery) + 2}, OrigQuery);
+rest_from_query({StartColumn, EndColumn}, OrigQuery) ->
+    %% OrigQuery does not contain leading `#'/`%'
     %% so it starts at column 2
-    StartColumn = column(FirstToken) - 1,
-    _RestStr = lists:sublist(OrigQuery, StartColumn, length(OrigQuery)).
+    Len = EndColumn - StartColumn,
+    _RestStr = lists:sublist(OrigQuery, StartColumn - 1, Len).
 
 fmt_unexp_token_err(Token) ->
     {Type, Value} = case Token of
@@ -212,6 +239,11 @@ fmt_unexp_token_err(Token) ->
                     end,
     xprof_core_lib:fmt_err("unexpected ~w ~p at column ~p",
                            [Type, Value, column(Token)]).
+
+start_column([]) ->
+    eof;
+start_column([FirstToken|_]) ->
+    column(FirstToken).
 
 column(Token) ->
     case element(2, Token) of
@@ -299,20 +331,14 @@ parse_quoted(_) ->
 %% @doc Convert a quoted anonymous function to the Erlang AST representation
 %% and return the list of clauses of the later
 fn_to_clauses(QuotedFn) ->
-    try quoted_to_ast(QuotedFn) of
-        {'fun', _Loc, {clauses, ClausesAST}} ->
+    case quoted_to_ast(QuotedFn) of
+        {ok, {'fun', _Loc, {clauses, ClausesAST}}} ->
             ClausesAST;
-        _ ->
+        {ok, _} ->
             xprof_core_lib:err("expression is not an xprof match-spec fun "
-                         "(Erlang AST does not represent an anonymous function)")
-    catch C:Exception ->
-            case 'Elixir.Exception':'exception?'(Exception) of
-                true ->
-                    xprof_core_lib:err('Elixir.Exception':message(Exception));
-                false ->
-                    erlang:C(Exception)
-                    %%xprof_core_lib:err("cannot convert quoted expression to Erlang AST")
-            end
+                               "(Erlang AST does not represent an anonymous function)");
+        {error, Reason} ->
+            xprof_core_lib:err("~ts", [Reason])
     end.
 
 %% @doc Unhide some location info that is dropped by string_to_quoted
@@ -356,6 +382,8 @@ parser_err(Tokens) ->
     case do_parse_tokens(Tokens) of
         {error, {Loc, Mod, Err}} ->
             xprof_core_lib:err(Loc, Mod, Err);
+        {error, Reason} ->
+            xprof_core_lib:err("~ts", [Reason]);
         {ok, AST} ->
             AST
     end.
@@ -371,7 +399,7 @@ do_parse_tokens(Tokens) ->
         {error, {_Loc, _Mod, _Err}} = Error ->
             Error;
         {ok, Quoted} ->
-            {ok, quoted_to_ast(Quoted)}
+            quoted_to_ast(Quoted)
     catch
         %% I couldn't find a case where an error is thrown instead of returned
         %% but elixir:string_to_quoted does catch too
@@ -398,15 +426,24 @@ mod_to_atom({__aliasis, _, _} = Quoted) ->
     'Elixir.Macro':expand(Quoted, elixir:env_for_eval([])).
 
 %% @doc Convert an Elixir quoted expression to an Erlang abstract syntax tree
--spec quoted_to_ast(ex_quoted()) -> erl_ast().
+-spec quoted_to_ast(ex_quoted()) -> {ok, erl_ast()} | {error, Reason :: binary()}.
 quoted_to_ast(Quoted) ->
     %% pretend that the quoted expression is within a function,
     %% this way local function calls are allowed
     %% (also expressions which look like local function calls
     %%  like 'return_trace()' required for fun2ms)
     Env = maps:put(function, {ms, 0}, elixir:env_for_eval([])),
-    {Ast, _NewEnv, _Scope} = elixir:quoted_to_erl(Quoted, Env),
-    Ast.
+    try elixir:quoted_to_erl(Quoted, Env) of
+        {Ast, _NewEnv, _Scope} -> {ok, Ast}
+    catch error:Exception when is_map(Exception) ->
+            case 'Elixir.Exception':'exception?'(Exception) of
+                true ->
+                    xprof_core_lib:fmt_err('Elixir.Exception':message(Exception));
+                false ->
+                    erlang:error(Exception)
+                    %%xprof_core_lib:err("cannot convert quoted expression to Erlang AST")
+            end
+    end.
 
 %% @doc Convert an Elixir-style camel-case alias to an Erlang-style snake-case
 %% atom.

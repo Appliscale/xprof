@@ -210,7 +210,7 @@ expand_extended_query(Query) ->
             MissingParams = missing_params(CmdInfo, Params),
             case lists:member(Key, MissingParams) of
                 true ->
-                    %% FIXME this is erlang specific - move it from here
+                    %% FIXME this is erlang/elixir specific - move it from here
                     case RestStr of
                         "" ->
                             [{<<"= ">>, ModeCb:fmt_param(Key)}];
@@ -219,7 +219,7 @@ expand_extended_query(Query) ->
                         ":" ->
                             [{<<" ">>, ModeCb:fmt_param(Key)}];
                         _ ->
-                            xprof_core_lib:err("'=' expected after param name: ~s",
+                            xprof_core_lib:err("'='/':' expected after param name: ~s",
                                                [ModeCb:fmt_param(Key)])
                     end;
                 false ->

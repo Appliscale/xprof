@@ -117,7 +117,9 @@ parse_match_spec_test_() ->
 
 parse_query_test_() ->
     Tests =
-        [?_assertEqual({ok, cm, []},
+        [?_assertEqual({error, "Missing command name"},
+                       ?M:parse_query("%")),
+         ?_assertEqual({ok, cm, []},
                        ?M:parse_query("%cm")),
          ?_assertEqual({error, "unexpected token ';' at column 6"},
                        ?M:parse_query("%cmd ;")),
@@ -162,8 +164,12 @@ parse_query_test_() ->
 
 parse_incomplete_query_test_() ->
     Tests =
-        [?_assertEqual({incomplete_cmd, "cm"},
+        [?_assertEqual({incomplete_cmd, ""},
+                       ?M:parse_incomplete_query("")),
+         ?_assertEqual({incomplete_cmd, "cm"},
                        ?M:parse_incomplete_query("cm")),
+         ?_assertEqual({ok, cmd, []},
+                       ?M:parse_incomplete_query("cmd ")),
          ?_assertEqual({incomplete_key, "ke", cmd, []},
                        ?M:parse_incomplete_query("cmd ke")),
          ?_assertEqual({incomplete_key, {key, ":"}, cmd, []},
@@ -174,12 +180,18 @@ parse_incomplete_query_test_() ->
                        ?M:parse_incomplete_query("cmd key: 12")),
          ?_assertEqual({incomplete_value, key, "[1, 2", cmd, []},
                        ?M:parse_incomplete_query("cmd key: [1, 2")),
+         ?_assertEqual({incomplete_value, key, "[1, 2] ++ [3, 4 ", cmd, []},
+                       ?M:parse_incomplete_query("cmd key: [1, 2] ++ [3, 4 ")),
          ?_assertMatch({incomplete_key, "", cmd, [{k1, {integer, _, 1}}]},
                        ?M:parse_incomplete_query("cmd k1: 1,")),
          ?_assertMatch({incomplete_key, "", cmd, [{k1, {integer, _, 1}}]},
                        ?M:parse_incomplete_query("cmd k1: 1, ")),
          ?_assertMatch({incomplete_key, "k", cmd, [{k1, {integer, _, 1}}]},
-                       ?M:parse_incomplete_query("cmd k1: 1, k"))
+                       ?M:parse_incomplete_query("cmd k1: 1, k")),
+         ?_assertMatch({incomplete_value, k2, "", cmd, [{k1, {integer, _, 1}}]},
+                       ?M:parse_incomplete_query("cmd k1: 1, k2: :v")),
+         ?_assertMatch({incomplete_value, mfa, "Mod.fun(_)", cmd, [{k1, {integer, _, 1}}]},
+                       ?M:parse_incomplete_query("cmd k1: 1, mfa: Mod.fun(_)"))
         ],
     xprof_core_test_lib:run_elixir_unit_tests(Tests).
 
