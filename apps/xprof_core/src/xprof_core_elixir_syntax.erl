@@ -337,7 +337,7 @@ fn_to_clauses(QuotedFn) ->
             xprof_core_lib:err("expression is not an xprof match-spec fun "
                                "(Erlang AST does not represent an anonymous function)");
         {error, Reason} ->
-            xprof_core_lib:err("~ts", [Reason])
+            xprof_core_lib:err(Reason)
     end.
 
 %% @doc Unhide some location info that is dropped by string_to_quoted
@@ -382,7 +382,7 @@ parser_err(Tokens) ->
         {error, {Loc, Mod, Err}} ->
             xprof_core_lib:err(Loc, Mod, Err);
         {error, Reason} ->
-            xprof_core_lib:err("~ts", [Reason]);
+            xprof_core_lib:err(Reason);
         {ok, AST} ->
             AST
     end.
@@ -425,7 +425,7 @@ mod_to_atom({__aliasis, _, _} = Quoted) ->
     'Elixir.Macro':expand(Quoted, elixir:env_for_eval([])).
 
 %% @doc Convert an Elixir quoted expression to an Erlang abstract syntax tree
--spec quoted_to_ast(ex_quoted()) -> {ok, erl_ast()} | {error, Reason :: binary()}.
+-spec quoted_to_ast(ex_quoted()) -> {ok, erl_ast()} | {error, Reason :: string()}.
 quoted_to_ast(Quoted) ->
     %% pretend that the quoted expression is within a function,
     %% this way local function calls are allowed
@@ -437,7 +437,8 @@ quoted_to_ast(Quoted) ->
     catch error:Exception when is_map(Exception) ->
             case 'Elixir.Exception':'exception?'(Exception) of
                 true ->
-                    xprof_core_lib:fmt_err('Elixir.Exception':message(Exception));
+                    xprof_core_lib:fmt_err(
+                      "~ts", ['Elixir.Exception':message(Exception)]);
                 false ->
                     erlang:error(Exception)
                     %%xprof_core_lib:err("cannot convert quoted expression to Erlang AST")
