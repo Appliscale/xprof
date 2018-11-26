@@ -434,7 +434,7 @@ quoted_to_ast(Quoted) ->
     Env = maps:put(function, {ms, 0}, elixir:env_for_eval([])),
     try elixir:quoted_to_erl(Quoted, Env) of
         {Ast, _NewEnv, _Scope} -> {ok, Ast}
-    catch error:Exception when is_map(Exception) ->
+    catch error:Exception ->
             case 'Elixir.Exception':'exception?'(Exception) of
                 true ->
                     xprof_core_lib:fmt_err(
