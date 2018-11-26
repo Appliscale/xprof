@@ -39,7 +39,7 @@
         ]).
 
 -export_type([cmd/0, param_name/0, params/0, options/0,
-              mfa_spec/0, mfa_id/0, mfa_name/0,
+              ms/0, mfa_spec/0, mfa_id/0, mfa_name/0,
               mode/0
              ]).
 
