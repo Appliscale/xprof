@@ -287,7 +287,10 @@ do_handle_req(<<"mon_get_all">>, _Params) ->
     Funs = xprof_core:get_all_monitored(),
     FunsArr = [{[{<<"mfa">>, [Mod, Fun, Arity]},
                  {<<"query">>, Query},
-                 {<<"graph_type">>, <<"percentiles">>}
+                 {<<"graph_type">>, case Query of
+                                        <<"#argdist ", _/binary>> -> <<"grid">>;
+                                        _ -> <<"percentiles">>
+                                    end}
                 ]}
                || {{Mod, Fun, Arity}, Query} <- Funs],
     Json = jsone:encode(FunsArr),
@@ -297,7 +300,7 @@ do_handle_req(<<"data">>, Params) ->
     MFA = get_mfa(Params),
     LastTS = get_int(<<"last_ts">>, Params, 0),
 
-    case xprof_core:get_data(MFA, LastTS) of
+    case xprof_core:get_data_pp(MFA, LastTS) of
         {error, not_found} ->
             404;
         Vals ->
