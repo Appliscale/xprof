@@ -236,7 +236,7 @@ monitor_recursive_fun(_Config) ->
     ok.
 
 monitor_keep_recursive_fun(_Config) ->
-    application:set_env(xprof, ignore_recursion, false),
+    application:set_env(xprof_core, ignore_recursion, false),
     xprof_core:monitor(MFA = {?MODULE, recursive_test_fun, 1}),
     ok = xprof_core:trace(self()),
 
@@ -254,7 +254,7 @@ monitor_keep_recursive_fun(_Config) ->
 
     xprof_core:trace(pause),
     xprof_core:demonitor(MFA),
-    application:unset_env(xprof, ignore_recursion),
+    application:unset_env(xprof_core, ignore_recursion),
     ok.
 
 monitor_ms(_Config) ->
@@ -410,7 +410,7 @@ capture_stop(_Config) ->
     ok.
 
 long_call(_Config) ->
-    application:set_env(xprof, max_duration, 100),
+    application:set_env(xprof_core, max_duration, 100),
 
     xprof_core:monitor(MFA = {?MODULE, test_fun, 1}),
     ok = xprof_core:trace(self()),
@@ -436,7 +436,7 @@ long_call(_Config) ->
     xprof_core:trace(pause),
     xprof_core:demonitor(MFA),
 
-    application:unset_env(xprof, max_duration),
+    application:unset_env(xprof_core, max_duration),
 
     %% check times as a last thing because they fail sometimes with a big
     %% precision error

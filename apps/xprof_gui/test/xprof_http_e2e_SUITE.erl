@@ -122,6 +122,8 @@ init_per_testcase(TestCase, Config) ->
         _ ->
             given_overload_queue_limit(1000)
     end,
+    %% test configuring non-default address
+    application:set_env(xprof_gui, ip, {127, 0, 0, 1}),
     %% use a different port for tests than the default one
     application:set_env(xprof_gui, port, ?TEST_PORT),
     {ok, StartedApps} = xprof:start(),
@@ -382,10 +384,10 @@ given_tracing_all() ->
     ok.
 
 given_overload_queue_limit(Limit) ->
-    application:set_env(xprof, max_tracer_queue_len, Limit).
+    application:set_env(xprof_core, max_tracer_queue_len, Limit).
 
 given_elixir_mode_is_set() ->
-    application:set_env(xprof, mode, elixir).
+    application:set_env(xprof_core, mode, elixir).
 
 given_traced(Fun) ->
     {204, _} = make_get_request("api/mon_start", [{"query", Fun}]),
@@ -404,7 +406,7 @@ given_capture_slow_calls_of(Mod, Fun, Arity, Threshold, Limit) ->
 %% Helpers
 %%
 restore_default_mode() ->
-    application:set_env(xprof, mode, erlang).
+    application:set_env(xprof_core, mode, erlang).
 
 long_function() ->
     timer:sleep(50),

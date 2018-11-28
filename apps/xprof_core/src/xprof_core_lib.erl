@@ -32,11 +32,11 @@ now2epoch({MS, S, _US}) ->
 
 -spec set_mode(xprof_core:mode()) -> ok.
 set_mode(Mode) when Mode =:= elixir; Mode =:= erlang ->
-    application:set_env(xprof, mode, Mode).
+    application:set_env(xprof_core, mode, Mode).
 
 -spec get_mode() -> xprof_core:mode().
 get_mode() ->
-    case application:get_env(xprof, mode) of
+    case application:get_env(xprof_core, mode) of
         undefined ->
             Mode = detect_mode(),
             set_mode(Mode),

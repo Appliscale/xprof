@@ -6,7 +6,7 @@
 -behavior(cowboy_handler).
 
 %% xprof_gui_app callback
--export([start_listener/3]).
+-export([start_listener/4]).
 
 %% Cowboy 2.x callback
 -export([init/2]).
@@ -21,8 +21,8 @@
 
 %% xprof_gui_app callback
 
-start_listener(Name, Port, Dispatch) ->
-    cowboy:start_clear(Name, [{port, Port}],
+start_listener(Name, IP, Port, Dispatch) ->
+    cowboy:start_clear(Name, [{ip, IP}, {port, Port}],
                        #{env => #{dispatch => Dispatch}}).
 
 %% Cowboy 2.x callback
