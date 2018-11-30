@@ -9,6 +9,7 @@
          stop/1]).
 
 -define(APP, xprof_gui).
+-define(DEF_WEB_IF_IP, any).
 -define(DEF_WEB_IF_PORT, 7890).
 -define(LISTENER, xprof_http_listener).
 -ifdef(COWBOY_VERSION_1).
@@ -35,9 +36,10 @@ stop(_State) ->
 %% Internal functions
 
 start_cowboy() ->
+    IP = application:get_env(?APP, ip, ?DEF_WEB_IF_IP),
     Port = application:get_env(?APP, port, ?DEF_WEB_IF_PORT),
     Dispatch = cowboy_dispatch(?HANDLER_MOD),
-    ?HANDLER_MOD:start_listener(?LISTENER, Port, Dispatch).
+    ?HANDLER_MOD:start_listener(?LISTENER, IP, Port, Dispatch).
 
 cowboy_dispatch(Mod) ->
     StaticDir = get_static_dir(),

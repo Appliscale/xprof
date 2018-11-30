@@ -232,9 +232,15 @@
   -> StatusCode | {StatusCode, Body}
          when StatusCode :: integer(),
               Body :: binary().
+handle_req(What, Params) ->
+    try do_handle_req(What, Params)
+    catch C:E ->
+            lager:error("Error handling REST API request \"~s\" ~p ~p:~p",
+                        [What, Params, C, E]),
+            500
+    end.
 
-%% @doc
-handle_req(<<"funs">>, Params) ->
+do_handle_req(<<"funs">>, Params) ->
     Query = get_query(Params),
 
     {CommonPrefix, Funs} = xprof_core:expand_query(Query),
@@ -247,13 +253,13 @@ handle_req(<<"funs">>, Params) ->
 
     {200, Json};
 
-handle_req(<<"get_callees">>, Req) ->
+do_handle_req(<<"get_callees">>, Req) ->
     MFA = get_mfa(Req),
     Callees = xprof_core:get_called_funs_pp(MFA),
     Json = jsone:encode(Callees),
     {200, Json};
 
-handle_req(<<"mon_start">>, Params) ->
+do_handle_req(<<"mon_start">>, Params) ->
     Query = get_query(Params),
 
     lager:info("Starting monitoring via web on '~s'~n", [Query]),
@@ -269,7 +275,7 @@ handle_req(<<"mon_start">>, Params) ->
             {400, Json}
     end;
 
-handle_req(<<"mon_stop">>, Params) ->
+do_handle_req(<<"mon_stop">>, Params) ->
     MFA = {M, F, A} = get_mfa(Params),
 
     lager:info("Stopping monitoring via web on ~w:~w/~w~n",[M, F, A]),
@@ -277,21 +283,24 @@ handle_req(<<"mon_stop">>, Params) ->
     xprof_core:demonitor(MFA),
     204;
 
-handle_req(<<"mon_get_all">>, _Params) ->
+do_handle_req(<<"mon_get_all">>, _Params) ->
     Funs = xprof_core:get_all_monitored(),
     FunsArr = [{[{<<"mfa">>, [Mod, Fun, Arity]},
                  {<<"query">>, Query},
-                 {<<"graph_type">>, <<"percentiles">>}
+                 {<<"graph_type">>, case Query of
+                                        <<"#argdist ", _/binary>> -> <<"grid">>;
+                                        _ -> <<"percentiles">>
+                                    end}
                 ]}
                || {{Mod, Fun, Arity}, Query} <- Funs],
     Json = jsone:encode(FunsArr),
     {200, Json};
 
-handle_req(<<"data">>, Params) ->
+do_handle_req(<<"data">>, Params) ->
     MFA = get_mfa(Params),
     LastTS = get_int(<<"last_ts">>, Params, 0),
 
-    case xprof_core:get_data(MFA, LastTS) of
+    case xprof_core:get_data_pp(MFA, LastTS) of
         {error, not_found} ->
             404;
         Vals ->
@@ -299,7 +308,7 @@ handle_req(<<"data">>, Params) ->
             {200, Json}
     end;
 
-handle_req(<<"trace_set">>, Params) ->
+do_handle_req(<<"trace_set">>, Params) ->
     case proplists:get_value(<<"spec">>, Params) of
         <<"all">> ->
             xprof_core:trace(all),
@@ -312,12 +321,12 @@ handle_req(<<"trace_set">>, Params) ->
             400
     end;
 
-handle_req(<<"trace_status">>, _Params) ->
+do_handle_req(<<"trace_status">>, _Params) ->
     {_, Status} = xprof_core:get_trace_status(),
     Json = jsone:encode({[{status, Status}]}),
     {200, Json};
 
-handle_req(<<"capture">>, Params) ->
+do_handle_req(<<"capture">>, Params) ->
     MFA = {M, F, A} = get_mfa(Params),
     Threshold = get_int(<<"threshold">>, Params),
     Limit = get_int(<<"limit">>, Params),
@@ -334,7 +343,7 @@ handle_req(<<"capture">>, Params) ->
             404
     end;
 
-handle_req(<<"capture_stop">>, Params) ->
+do_handle_req(<<"capture_stop">>, Params) ->
     MFA = get_mfa(Params),
 
     lager:info("Stopping slow calls capturing for ~p", [MFA]),
@@ -348,7 +357,7 @@ handle_req(<<"capture_stop">>, Params) ->
             404
     end;
 
-handle_req(<<"capture_data">>, Params) ->
+do_handle_req(<<"capture_data">>, Params) ->
     MFA  = get_mfa(Params),
     Offset = get_int(<<"offset">>, Params, 0),
 
@@ -364,7 +373,7 @@ handle_req(<<"capture_data">>, Params) ->
             {200, Json}
     end;
 
-handle_req(<<"mode">>, _Params) ->
+do_handle_req(<<"mode">>, _Params) ->
     Mode = xprof_core:get_mode(),
     Json = jsone:encode({[{mode, Mode}]}),
     {200, Json};

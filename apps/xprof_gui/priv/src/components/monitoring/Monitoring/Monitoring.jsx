@@ -6,6 +6,7 @@ import { DATA_INTERVAL, GRAPH_INITIAL_SIZE } from '../../../constants';
 const defaultProps = {
   panelVisibility: true,
   data: [],
+  y: [],
   callees: [],
   calleesVisibility: false,
   size: GRAPH_INITIAL_SIZE,
@@ -20,6 +21,7 @@ const propTypes = {
   }).isRequired,
   getFunctionsData: PropTypes.func.isRequired,
   data: PropTypes.arrayOf(PropTypes.object),
+  y: PropTypes.arrayOf(PropTypes.string),
   stopMonitoringFunction: PropTypes.func.isRequired,
   callees: PropTypes.arrayOf(PropTypes.string),
   calleesVisibility: PropTypes.bool,
@@ -53,6 +55,7 @@ class Monitoring extends React.Component {
     const {
       monitored,
       data,
+      y,
       stopMonitoringFunction,
       callees,
       calleesVisibility,
@@ -75,6 +78,7 @@ class Monitoring extends React.Component {
           key={monitored.query}
           monitored={monitored}
           dps={data}
+          y={y}
           stopMonitoringFunction={stopMonitoringFunction}
           callees={callees}
           calleesVisibility={calleesVisibility}

@@ -22,6 +22,7 @@ import {
   getSize,
   getIDs,
   isFavourite,
+  getFunctionY,
 } from '../../selectors';
 
 const MonitoringContainer = props => <Monitoring {...props} />;
@@ -29,6 +30,7 @@ const MonitoringContainer = props => <Monitoring {...props} />;
 const mapStateToProps = (state, ownProps) => ({
   monitored: ownProps.monitored,
   data: getFunctionData(state, ownProps.monitored.query),
+  y: getFunctionY(state, ownProps.monitored.query),
   callees: getFunctionCallees(state, ownProps.monitored.query),
   calleesVisibility: getFunctionCalleesVisibility(
     state,

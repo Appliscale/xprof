@@ -1,6 +1,6 @@
 {application, xprof_core,
- [{description, "Visual BEAM profiler tracer core"}
- ,{vsn, "2.0.0-rc.2"}
+ [{description, "Visual BEAM tracer/profiler tracer core"}
+ ,{vsn, "2.0.0-rc.4"}
  ,{registered, []}
  ,{mod, {'xprof_core_app', []}}
  ,{applications,
