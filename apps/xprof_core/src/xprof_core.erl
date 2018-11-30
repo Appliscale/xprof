@@ -6,10 +6,13 @@
 
          %% Monitoring functions
          monitor_pp/1,
+         monitor_pp/2,
          monitor/1,
+         monitor/2,
          demonitor/1,
          get_all_monitored/0,
          get_data/2,
+         get_data_pp/2,
          get_called_funs/1,
          get_called_funs_pp/1,
 
@@ -35,7 +38,22 @@
          get_mode/0
         ]).
 
--export_type([mfa_spec/0, mfa_id/0, mfa_name/0, mode/0]).
+-export_type([cmd/0, param_name/0, params/0, options/0,
+              ms/0, mfa_spec/0, mfa_id/0, mfa_name/0,
+              mode/0
+             ]).
+
+-type cmd() :: atom().
+%% Command name.
+
+-type param_name() :: atom().
+%% Parameter name passed to commands.
+
+-type params() :: [{param_name(), term()}].
+%% Parameters passed to commands.
+
+-type options() :: [{mfa, string()} | {atom(), erl_parse:abstract_expr()}].
+%% Internal representation of params
 
 -type ms() :: [tuple()].
 %% Match-specification.
@@ -96,12 +114,25 @@ get_matching_mfas_pp(Query) ->
 %% @doc Start monitoring based on the specified query string.
 -spec monitor_pp(binary()) -> ok | {error, Reason :: already_traced | string()}.
 monitor_pp(Query) ->
-    xprof_core_tracer:monitor(unicode:characters_to_list(Query)).
+    monitor_pp(Query, []).
+
+%% @doc Start monitoring based on the specified query string with additional
+%% parameters. Additional parameters have precedence overthe same keys in the
+%% query.
+-spec monitor_pp(binary(), [{binary(), binary()}])
+                -> ok | {error, Reason :: already_traced | string()}.
+monitor_pp(Query, AdditionalParams) ->
+    xprof_core_tracer:monitor_query(Query, AdditionalParams).
 
 %% @doc Start monitoring the specified function (MFA).
 -spec monitor(mfa()) -> ok | {error, Reason :: already_traced | string()}.
 monitor(MFA) ->
     xprof_core_tracer:monitor(MFA).
+
+%% @doc Start the specified command.
+-spec monitor(cmd(), params()) -> ok | {error, Reason :: term()}.
+monitor(Cmd, Params) ->
+    xprof_core_tracer:monitor_cmd(Cmd, Params).
 
 %% @doc Stop monitoring the specified function (MFA).
 -spec demonitor(xprof_core:mfa_id()) -> ok.
@@ -124,6 +155,22 @@ get_all_monitored() ->
                 | memsize | count.
 get_data(MFA, TimeStamp) ->
     xprof_core_trace_handler:data(MFA, TimeStamp).
+
+get_data_pp(MFA, TimeStamp) ->
+    case xprof_core_trace_handler:data(MFA, TimeStamp) of
+        {error, _} = Error ->
+            Error;
+        Items ->
+            ModeCB = xprof_core_lib:get_mode_cb(),
+            [[case is_atom(Key) of
+                  true ->
+                      {Key, Value};
+                  _ ->
+                      {ModeCB:fmt_term(Key), Value}
+              end
+              || {Key, Value} <- Item]
+             || Item <- Items]
+    end.
 
 %% @doc Return list of called functions for given mfa tuple.
 -spec get_called_funs(xprof_core:mfa_id()) -> [xprof_core:mfa_id()].

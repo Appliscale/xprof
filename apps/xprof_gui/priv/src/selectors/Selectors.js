@@ -18,6 +18,7 @@ export const getData = state => state.monitoring.data;
 export const getFunctionData = (state, fun) => state.monitoring.data[fun];
 export const getIDs = state => state.monitoring.ids;
 export const getSize = state => state.monitoring.size;
+export const getFunctionY = (state, fun) => state.monitoring.y[fun];
 
 // navigation
 export const getQuery = state => state.navigation.query;

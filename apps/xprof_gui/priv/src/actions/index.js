@@ -5,6 +5,7 @@ export {
   getFunctionsCalls,
   setIDs,
   setSize,
+  addY,
 } from './CollectingActions';
 export {
   stopMonitoringFunction,

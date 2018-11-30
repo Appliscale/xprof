@@ -3,6 +3,8 @@
 -include_lib("common_test/include/ct.hrl").
 -include_lib("eunit/include/eunit.hrl").
 
+-define(TEST_PORT, 7891).
+
 %% CT callbacks
 -export([all/0,
          groups/0,
@@ -39,7 +41,8 @@
          but_it_should_return_elixir_if_it_is_forced_as_setting/1,
          explore_callees_of_standard_function/1,
          explore_callees_on_not_existing_function/1,
-         explore_callees_in_elixir_mode/1
+         explore_callees_in_elixir_mode/1,
+         core_not_running/1
         ]).
 
 %% CT funs
@@ -78,7 +81,8 @@ groups() ->
        in_this_project_we_should_detect_erlang,
        but_it_should_return_elixir_if_it_is_forced_as_setting,
        explore_callees_of_standard_function,
-       explore_callees_on_not_existing_function
+       explore_callees_on_not_existing_function,
+       core_not_running
       ]},
      {elixir,
       [],
@@ -118,6 +122,10 @@ init_per_testcase(TestCase, Config) ->
         _ ->
             given_overload_queue_limit(1000)
     end,
+    %% test configuring non-default address
+    application:set_env(xprof_gui, ip, {127, 0, 0, 1}),
+    %% use a different port for tests than the default one
+    application:set_env(xprof_gui, port, ?TEST_PORT),
     {ok, StartedApps} = xprof:start(),
     [{started_apps, StartedApps}|Config].
 
@@ -362,6 +370,12 @@ explore_callees_in_elixir_mode(_Config) ->
             ok
     end.
 
+core_not_running(_Config) ->
+    ok = application:stop(xprof_core),
+    ?assertEqual({500, []}, make_get_request("api/trace_status")),
+    ?assertEqual({500, []}, make_get_request("api/all_monitored")),
+    ok.
+
 %%
 %% Givens
 %%
@@ -370,10 +384,10 @@ given_tracing_all() ->
     ok.
 
 given_overload_queue_limit(Limit) ->
-    application:set_env(xprof, max_tracer_queue_len, Limit).
+    application:set_env(xprof_core, max_tracer_queue_len, Limit).
 
 given_elixir_mode_is_set() ->
-    application:set_env(xprof, mode, elixir).
+    application:set_env(xprof_core, mode, elixir).
 
 given_traced(Fun) ->
     {204, _} = make_get_request("api/mon_start", [{"query", Fun}]),
@@ -392,7 +406,7 @@ given_capture_slow_calls_of(Mod, Fun, Arity, Threshold, Limit) ->
 %% Helpers
 %%
 restore_default_mode() ->
-    application:set_env(xprof, mode, erlang).
+    application:set_env(xprof_core, mode, erlang).
 
 long_function() ->
     timer:sleep(50),
@@ -410,7 +424,9 @@ make_get_request(Path) ->
 
 make_get_request(Path, Params) ->
     EncodedParams = proplist_to_query_string(Params),
-    URL = "http://127.0.0.1:7890/" ++ Path ++ "?" ++  EncodedParams,
+    URL =
+        "http://127.0.0.1:" ++ integer_to_list(?TEST_PORT) ++
+        "/" ++ Path ++ "?" ++  EncodedParams,
     {ok, {{_Ver, HTTPCode, _Reason}, _Headers, Body}} = httpc:request(URL),
     {HTTPCode, decode_json(Body)}.
 

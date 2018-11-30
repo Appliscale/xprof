@@ -8,8 +8,9 @@ import {
   CALLS_COLUMNS,
   SORT,
   NOTIFICATIONS,
+  COLUMNS,
 } from '../constants';
-import { setCallsControl, addNotification } from '../actions';
+import { setCallsControl, addNotification, addY } from '../actions';
 import * as XProf from '../api';
 
 export const determineNextCallsForFun = (json, lastCalls, calls, name) => {
@@ -154,6 +155,8 @@ export const determineIncomingDps = (dps, ts) => {
   }));
 };
 
+const isFirstDps = (dps, ts) => dpsDecision(dps, ts) === DPS_ACTION.FIRST_DPS;
+
 export const determineNextData = async (
   dispatch,
   monitoredCollection,
@@ -180,7 +183,15 @@ export const determineNextData = async (
         NOTIFICATIONS.SAMPLES.MESSAGE(monitored.query),
       ));
     } else if (json.length) {
-      const incomingDpsSorted = sortBy(json, 'time');
+      const incomingDpsSorted = sortBy(json, COLUMNS.time);
+
+      if (isFirstDps(incomingDpsSorted, lastTs)) {
+        // eslint-disable-next-line
+          const y = Object.keys(incomingDpsSorted[0]).filter(
+          f => f !== COLUMNS.time);
+        dispatch(addY({ [completeFunName]: y }));
+      }
+
       const incomingDps = determineIncomingDps(incomingDpsSorted, lastTs);
       const concatenatedDps = currentDps
         ? [...currentDps, ...incomingDps]
