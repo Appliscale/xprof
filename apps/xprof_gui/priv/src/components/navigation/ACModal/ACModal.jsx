@@ -9,7 +9,7 @@ const defaultProps = {
 };
 
 const propTypes = {
-  functions: PropTypes.arrayOf(PropTypes.string).isRequired,
+  functions: PropTypes.arrayOf(PropTypes.object).isRequired,
   functionClick: PropTypes.func.isRequired,
   position: PropTypes.number,
   setPositionOnFunction: PropTypes.func.isRequired,
@@ -30,9 +30,9 @@ const ACModal = ({
             <tbody>
               {funs.map((fun, index) => (
                 <ACModalRow
-                  key={fun}
+                  key={fun.label}
                   functionClick={functionClick}
-                  functionName={fun}
+                  functionName={fun.label}
                   isHighlighted={index === position}
                   setPositionOnFunction={setPositionOnFunction}
                 />

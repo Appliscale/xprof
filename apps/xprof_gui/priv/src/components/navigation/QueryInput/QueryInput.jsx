@@ -41,7 +41,7 @@ class QueryInput extends React.Component {
         <input
           id="searchBox"
           type="text"
-          className="form-control"
+          className="form-control navbar-search-border-right-input"
           placeholder={placeholder}
           aria-describedby="sizing-addon3"
           autoComplete="off"

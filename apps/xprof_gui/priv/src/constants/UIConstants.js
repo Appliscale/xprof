@@ -36,9 +36,9 @@ export const NOTIFICATIONS = {
     SEVERITY: NOTIFICATIONS_SEVERITY.WARNING,
     MESSAGE: "Couldn't detect language mode.",
   },
-  FUNCTION_DOESNOT_EXIST: {
-    SEVERITY: NOTIFICATIONS_SEVERITY.WARNING,
-    MESSAGE: fun => `Function "${fun}" doesn't exist.`,
+  START_MONITORING: {
+    SEVERITY: NOTIFICATIONS_SEVERITY.ERROR,
+    MESSAGE: fun => `Couldn't start monitoring function "${fun}".`,
   },
   CALLEES: {
     SEVERITY: NOTIFICATIONS_SEVERITY.WARNING,
@@ -73,6 +73,13 @@ export const NOTIFICATIONS = {
   },
   LOST_CONNECTION: 'Lost connection to XProf!',
   ALIVE_CONNECTION: 'Connection to XProf is back!',
+  SWITCH_GRID: {
+    SEVERITY: NOTIFICATIONS_SEVERITY.INFO,
+    MESSAGE: columns =>
+      (columns === 1
+        ? 'The grid has been changed to 1 graph per row'
+        : `The grid has been changed to ${columns} graphs per row`),
+  },
 };
 export const MODE_DETECTED = (language, inputType, example) =>
   'Hello BEAMer! I have detected that you are using an ' +
@@ -81,3 +88,6 @@ export const MODE_DETECTED = (language, inputType, example) =>
 export const MODE_UNKNOWN =
   'Hello BEAMer! Please specify your trace pattern here.';
 export const VISIBLE_PAGES_NUMBER_LIMIT = 5;
+export const MAX_GRID = 3;
+export const MAX_GRID_SMALLER = 2;
+export const GRID_WIDTH_BREAKPOINT = 1280;

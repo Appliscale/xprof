@@ -1,10 +1,16 @@
 -module(xprof_core_ms_tests).
 
+%% for testing record syntax in match spec funs
+-export([test_fun/1]).
+
 -include_lib("eunit/include/eunit.hrl").
 
 -define(M, xprof_core_ms).
 -define(DEFAULT_MS, {[{'_', [], [{exception_trace}, {message, arity}]}],
                      [{'_', [], [{exception_trace}, {message, '$_'}]}]}).
+
+%% for testing record syntax in match spec funs
+-record(rec, {f1, f2}).
 
 tokens_test_() ->
     [?_assertEqual(
@@ -72,9 +78,9 @@ ensure_body_test_() ->
 
 ms_test_() ->
     [?_assertEqual(
-       {error,
-        "in fun head, only matching (=) on toplevel can be translated "
-        "into match_spec at column 7"},
+        {error,
+         "matching (=) in fun head cannot be translated into a match-spec "
+         "at column 7"},
         ?M:fun2ms("m:f(A = {B, _}) -> {A, B}")),
      ?_assertEqual(
         {ok, {{m, f, 0},
@@ -82,6 +88,28 @@ ms_test_() ->
                [{[],[],[{exception_trace},{message,'$_'},true]}]}}},
         ?M:fun2ms("m:f() -> true"))
     ].
+
+records_test_() ->
+    RecMSs = {[{[{rec,1,'_'}], [], [{exception_trace},{message,arity},true]}],
+              [{[{rec,1,'_'}], [], [{exception_trace},{message,'$_'},true]}]},
+    {setup,
+     fun() ->
+             ok = application:set_env(xprof, load_records, [?MODULE]),
+             {ok, Pid} = xprof_core_records:start_link(),
+             Pid
+     end,
+     fun(Pid) ->
+             application:unset_env(xprof, load_records),
+             unlink(Pid),
+             exit(Pid, kill)
+     end,
+     [?_assertEqual(
+         {ok, {{?MODULE, test_fun, 1}, RecMSs}},
+         ?M:fun2ms("xprof_core_ms_tests:test_fun(#rec{f1 = 1}) -> true")),
+      ?_assertEqual(
+         {error,"fun guard contains unknown record type rec2 at column 14"},
+         ?M:fun2ms("m:f(R) when R#rec2.f1 =/= 1 -> true"))
+     ]}.
 
 traverse_ms_test_() ->
     [fun() ->
@@ -180,3 +208,6 @@ fun2ms_elixir_test_() ->
                         ?M:fun2ms("Mod.fun(:data, a) when a > 1 -> message(a)"))
          ]},
     xprof_core_test_lib:run_elixir_unit_tests(Tests).
+
+test_fun(#rec{}) ->
+    ok.

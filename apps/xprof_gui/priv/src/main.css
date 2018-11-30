@@ -67,6 +67,11 @@ a.navbar-brand {
   background-color: #ecf0f1;
 }
 
+.navbar-search-border-right-input {
+  border-bottom-right-radius: 4px !important;
+  border-top-right-radius: 4px !important;
+}
+
 /* C3 customizations. */
 
 #main-container .c3-grid line {
@@ -195,4 +200,18 @@ input#searchBox {
 
 .disabled-prev-next {
   background-color: #67d8b7 !important;
+}
+
+/* Grid switch icon */
+.btn-grid-switch {
+  padding: 2px 7px;
+}
+
+.glyphicon-grid-switch {
+  font-size: 32px;
+  left: 2px;
+}
+
+.navbar-right-more-margin {
+  margin-right: -5px;
 }
