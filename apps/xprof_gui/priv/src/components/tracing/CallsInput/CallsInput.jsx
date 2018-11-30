@@ -9,7 +9,7 @@ const defaultProps = {
   threshold: '',
   limit: '',
   collecting: false,
-  currentCallsPage: 1,
+  currentCallsPage: 0,
 };
 
 const propTypes = {
