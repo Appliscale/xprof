@@ -45,15 +45,26 @@ export const setStartCallsPage = (functionName, start) => ({
   start,
 });
 
-export const nextCallsPagination = functionName => ({
-  type: types.NEXT_CALLS_PAGE,
-  functionName,
-});
+export const previousCallsPagination = functionName => (dispatch, getState) => {
+  const state = getState();
+  const start = getStartCallsPage(state, functionName);
+  const jumpTo =
+    start - VISIBLE_PAGES_NUMBER_LIMIT < 0
+      ? 0
+      : start - VISIBLE_PAGES_NUMBER_LIMIT;
+  dispatch(setStartCallsPage(functionName, jumpTo));
+};
 
-export const previousCallsPagination = functionName => ({
-  type: types.PREVIOUS_CALLS_PAGE,
-  functionName,
-});
+export const nextCallsPagination = functionName => (dispatch, getState) => {
+  const state = getState();
+  const start = getStartCallsPage(state, functionName);
+  const count = getCountCallsPages(state, functionName);
+  const jumpTo =
+    start + VISIBLE_PAGES_NUMBER_LIMIT + VISIBLE_PAGES_NUMBER_LIMIT > count
+      ? count - VISIBLE_PAGES_NUMBER_LIMIT
+      : start + VISIBLE_PAGES_NUMBER_LIMIT;
+  dispatch(setStartCallsPage(functionName, jumpTo));
+};
 
 export const setLastAsCurrentPage = functionName => (dispatch, getState) => {
   const state = getState();

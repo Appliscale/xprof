@@ -50,7 +50,14 @@ const Pagination = ({
               onClick={() => !isStartVisible(start) && onClickPrevious()}
               className={isStartVisible(start) ? 'disabled' : ''}
             >
-              <a className="pointer" aria-label="Previous">
+              <a
+                className={
+                  isStartVisible(start)
+                    ? 'disabled-prev-next pointer'
+                    : 'pointer'
+                }
+                aria-label="Previous"
+              >
                 <span aria-hidden="true">&laquo;</span>
               </a>
             </li>
@@ -69,7 +76,14 @@ const Pagination = ({
               onClick={() => !isEndVisible(start, count) && onClickNext()}
               className={isEndVisible(start, count) ? 'disabled' : ''}
             >
-              <a className="pointer" aria-label="Next">
+              <a
+                className={
+                  isEndVisible(start, count)
+                    ? 'disabled-prev-next pointer'
+                    : 'pointer'
+                }
+                aria-label="Next"
+              >
                 <span aria-hidden="true">&raquo;</span>
               </a>
             </li>

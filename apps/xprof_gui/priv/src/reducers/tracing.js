@@ -82,30 +82,6 @@ const tracing = (state = initialState, action) => {
         },
       };
     }
-    case types.NEXT_CALLS_PAGE: {
-      return {
-        ...state,
-        paginations: {
-          ...state.paginations,
-          [action.functionName]: {
-            ...state.paginations[action.functionName],
-            start: state.paginations[action.functionName].start + 1,
-          },
-        },
-      };
-    }
-    case types.PREVIOUS_CALLS_PAGE: {
-      return {
-        ...state,
-        paginations: {
-          ...state.paginations,
-          [action.functionName]: {
-            ...state.paginations[action.functionName],
-            start: state.paginations[action.functionName].start - 1,
-          },
-        },
-      };
-    }
     default:
       return state;
   }

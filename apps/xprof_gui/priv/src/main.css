@@ -192,3 +192,7 @@ input#searchBox {
   opacity: 0.01 !important;
   transition: all 200ms ease-out !important;
 }
+
+.disabled-prev-next {
+  background-color: #67d8b7 !important;
+}
