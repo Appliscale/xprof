@@ -423,7 +423,7 @@ describe('Action utils', () => {
       };
       // when
       const result = await ActionUtils.determineNextData(
-        null,
+        dispatch,
         mockMonitoredCollection,
         data,
       );
@@ -436,7 +436,7 @@ describe('Action utils', () => {
       XProf.getFunctionsSamples.mockReturnValue({ json: [{ time: 13 }] });
       // when
       const result = await ActionUtils.determineNextData(
-        null,
+        dispatch,
         mockMonitoredCollection,
         {},
       );
@@ -448,7 +448,11 @@ describe('Action utils', () => {
       // given
       XProf.getFunctionsSamples.mockReturnValue({ json: [{ time: 13 }] });
       // when
-      await ActionUtils.determineNextData(null, mockMonitoredCollection, {});
+      await ActionUtils.determineNextData(
+        dispatch,
+        mockMonitoredCollection,
+        {},
+      );
       // then
       expect(XProf.getFunctionsSamples).toHaveBeenCalledTimes(2);
     });

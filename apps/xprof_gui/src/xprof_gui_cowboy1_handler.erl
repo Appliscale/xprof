@@ -6,7 +6,7 @@
 -behavior(cowboy_http_handler).
 
 %% xprof_gui_app callback
--export([start_listener/3]).
+-export([start_listener/4]).
 
 %% Cowboy 1.x callbacks
 -export([init/3,
@@ -26,8 +26,8 @@
 
 %% xprof_gui_app callback
 
-start_listener(Name, Port, Dispatch) ->
-    cowboy:start_http(Name, 100, [{port, Port}],
+start_listener(Name, IP, Port, Dispatch) ->
+    cowboy:start_http(Name, 100, [{ip, IP}, {port, Port}],
                       [{env, [{dispatch, Dispatch}]}]).
 
 %% Cowboy 1.x callbacks

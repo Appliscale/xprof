@@ -1,12 +1,20 @@
 %%%
 %%% @doc Callback functions that need to be implemented
-%%% for a language-specific behvaiour
+%%% for a language-specific behaviour
 %%%
 -module(xprof_core_language).
 
 %% Function for start monitoring
 
+%% Parse a query string that represents either an xprof-flavoured
+%% match-spec fun or an extended xprof query.
 -callback parse_query(Query :: string()) ->
+    Result :: {ok, xprof_core:cmd(), [{mfa, string()} |
+                                      {atom(), erl_parse:abstract_expr()}]}
+            | {error, Reason :: any()}.
+
+%% Parse a query string that represents an xprof-flavoured match-spec fun
+-callback parse_match_spec(Query :: string()) ->
     Result :: {mfa, xprof_core:mfa_id()}
             | {clauses, module(), atom(), [erl_parse:abstract_clause()]}.
 
@@ -31,6 +39,15 @@
     Formatted :: binary().
 
 -callback fmt_fun(Fun :: atom()) ->
+    Formatted :: binary().
+
+-callback fmt_cmd(xprof_core:cmd()) ->
+    Formatted :: binary().
+
+-callback fmt_param(xprof_core:param_name()) ->
+    Formatted :: binary().
+
+-callback fmt_param_and_delim(xprof_core:param()) ->
     Formatted :: binary().
 
 -callback fmt_exception(Class :: throw | error | exit, Reason :: term()) ->

@@ -7,7 +7,10 @@
 
 -export([start_link/0,
          trace/1,
-         monitor/1, demonitor/1,
+         monitor/1,
+         monitor_query/2,
+         monitor_cmd/2,
+         demonitor/1,
          all_monitored/0,
          trace_status/0]).
 
@@ -32,23 +35,30 @@ start_link() ->
     gen_server:start_link({local, ?MODULE}, ?MODULE, [], []).
 
 %% @doc Starts monitoring specified function calls.
--spec monitor(mfa() | string()) -> ok | {error, already_traced | string()}.
-monitor(Query) when is_list(Query) ->
-    case xprof_core_ms:fun2ms(Query) of
-        {ok, MFASpec} ->
-            lager:info("Starting monitoring ~s",[Query]),
-            gen_server:call(
-              ?MODULE, {monitor, MFASpec, unicode:characters_to_binary(Query)});
-        {error, Reason} = Error ->
-            lager:error(Reason),
-            Error
-    end;
-monitor({Mod, Fun, Arity} = MFA) ->
-    lager:info("Starting monitoring ~w:~w/~b",[Mod,Fun,Arity]),
-    MFASpec = {MFA, xprof_core_ms:default_ms()},
-    ModeCb = xprof_core_lib:get_mode_cb(),
-    FormattedMFA = ModeCb:fmt_mfa(Mod, Fun, Arity),
-    gen_server:call(?MODULE, {monitor, MFASpec, FormattedMFA}).
+-spec monitor(mfa()) -> ok | {error, already_traced | string()}.
+monitor(Mfa) ->
+    monitor_cmd(funlatency, [{mfa, Mfa}]).
+
+%% @doc Start monitoring based on the specified query string with additional
+%% parameters.
+-spec monitor_query(binary(), [{binary(), binary()}]) -> ok | {error, Reason :: already_traced | string()}.
+monitor_query(Query, AdditionalParams) ->
+    case xprof_core_cmd:process_query(Query, AdditionalParams) of
+        {error, _} = Error ->
+            Error;
+        StartCmd ->
+            gen_server:call(?MODULE, StartCmd)
+    end.
+
+%%% @doc Start monitoring based on the specified command and parameters.
+-spec monitor_cmd(xprof_core:cmd(), xprof_core:params()) -> ok | {error, Reason :: already_traced | string()}.
+monitor_cmd(Cmd, Params) ->
+    case xprof_core_cmd:process_cmd(Cmd, Params) of
+        {error, _} = Error ->
+            Error;
+        StartCmd ->
+            gen_server:call(?MODULE, StartCmd)
+    end.
 
 %% @doc Stops monitoring specified function calls.
 -spec demonitor(xprof_core:mfa_id()) -> ok.
@@ -79,20 +89,22 @@ trace_status() ->
 
 init([]) ->
     init_tracer(),
-    MaxQueueLen = application:get_env(xprof, max_tracer_queue_len, 1000),
+    MaxQueueLen = application:get_env(xprof_core, max_tracer_queue_len, 1000),
     {ok, #state{max_queue_len = MaxQueueLen}}.
 
-handle_call({monitor, MFASpec, Query}, _From, State) ->
-    MFAId = xprof_core_lib:mfaspec2id(MFASpec),
-    case get_pid(MFAId) of
+handle_call({start_cmd, Cmd, Options, CmdCB, Query}, _From, State) ->
+    CmdId = CmdCB:get_cmd_id(Options),
+    case get_pid(CmdId) of
         Pid when is_pid(Pid) ->
             {reply, {error, already_traced}, State};
         undefined ->
-            {ok, Pid} = supervisor:start_child(xprof_core_trace_handler_sup, [MFASpec]),
-            put_pid(MFAId, Pid),
+            MFASpec = proplists:get_value(mfa, Options),
+            {ok, Pid} = supervisor:start_child(xprof_core_trace_handler_sup,
+                                               [Cmd, Options, MFASpec, CmdCB]),
+            put_pid(CmdId, Pid),
             %% funs stored in reversed order of start monitoring
             NState = setup_trace_all_if_initialized(State),
-            {reply, ok, NState#state{funs = [{MFAId, Query}|State#state.funs]}}
+            {reply, ok, NState#state{funs = [{CmdId, Query}|State#state.funs]}}
     end;
 handle_call({demonitor, MFA}, _From, State) ->
     xprof_core_trace_handler:trace_mfa_off(MFA),

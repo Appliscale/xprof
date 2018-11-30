@@ -5,7 +5,8 @@
          load_records/1,
          forget_records/0,
          forget_records/1,
-         get_record_defs/0
+         get_record_defs/0,
+         record_print_fun/0
         ]).
 
 %% gen_server callbacks
@@ -61,11 +62,16 @@ get_record_defs() ->
             []
     end.
 
+%% @doc Return callback fun for `io_lib_pretty:print/2'
+-spec record_print_fun() -> fun().
+record_print_fun() ->
+    fun record_print_fun/2.
+
 %% gen_server callbacks
 
 init([]) ->
     ets:new(?TABLE, [set, protected, named_table, {read_concurrency, true}]),
-    Mods = application:get_env(xprof, load_records, []),
+    Mods = application:get_env(xprof_core, load_records, []),
     RecNames = lists:flatmap(fun get_and_store_record_defs/1, Mods),
     lager:info("Loaded records: ~p", [RecNames]),
     {ok, #state{}}.
@@ -107,7 +113,8 @@ get_record_defs(Mod) ->
             case beam_lib:chunks(Bin, [abstract_code]) of
                 {ok, {_Mod, [{abstract_code, {raw_abstract_v1, Forms}}]}} ->
                     Defs =
-                        [{RecName, RecDef} || {attribute, _Anno, record, {RecName, _Fields}} = RecDef <- Forms],
+                        [{RecName, {attribute, Anno, record, {RecName, remove_types(Fields)}}}
+                         || {attribute, Anno, record, {RecName, Fields}} <- Forms],
                     Defs;
                 _Error ->
                     []
@@ -115,3 +122,27 @@ get_record_defs(Mod) ->
         error ->
             []
     end.
+
+remove_types([{typed_record_field, Field, _Type} | Fs]) ->
+    [Field | remove_types(Fs)];
+remove_types([Field | Fs]) ->
+    [Field | remove_types(Fs)];
+remove_types([]) ->
+    [].
+
+%% Taken from `shell:record_print_fun/1'
+record_print_fun(RecName, NumFields) ->
+    case ets:lookup(?TABLE, RecName) of
+        [{_, {attribute, _Anno, record, {RecName, Fields}}}]
+          when length(Fields) =:= NumFields ->
+            record_fields(Fields);
+        _ ->
+            no
+    end.
+
+record_fields([{record_field,_,{atom,_,Field}} | Fs]) ->
+    [Field | record_fields(Fs)];
+record_fields([{record_field,_,{atom,_,Field},_} | Fs]) ->
+    [Field | record_fields(Fs)];
+record_fields([]) ->
+    [].

@@ -10,6 +10,7 @@ const defaultProps = {
 
 const propTypes = {
   dps: PropTypes.arrayOf(PropTypes.object).isRequired,
+  y: PropTypes.arrayOf(PropTypes.string).isRequired,
   type: PropTypes.string.isRequired,
   monitoredID: PropTypes.string.isRequired,
   setSize: PropTypes.func.isRequired,
@@ -17,11 +18,7 @@ const propTypes = {
 };
 
 const Graph = ({
-  dps,
-  type,
-  monitoredID,
-  setSize,
-  size,
+  dps, y, type, monitoredID, setSize, size,
 }) => {
   switch (type) {
     case GRAPH_TYPE.GRID:
@@ -31,9 +28,10 @@ const Graph = ({
           monitoredID={monitoredID}
           setSize={setSize}
           size={size}
-        />);
+        />
+      );
     case GRAPH_TYPE.LINE:
-      return <LineGraph dps={dps} />;
+      return <LineGraph dps={dps} y={y} />;
     default:
       return null;
   }
