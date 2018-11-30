@@ -19,6 +19,7 @@ export {
   addRecentQuery,
   clearFunctionBrowser,
   switchInputType,
+  toggleInputType,
 } from './NavigationActions';
 export {
   addCallsControls,

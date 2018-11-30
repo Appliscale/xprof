@@ -1,6 +1,12 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import { HANDLED_KEY_CODES } from '../../../constants';
+import Mousetrap from 'mousetrap';
+import {
+  HANDLED_KEY_CODES,
+  SWITCH_INPUT_TYPE_HOTKEY,
+} from '../../../constants';
+
+Mousetrap.prototype.stopCallback = () => false;
 
 const defaultProps = {
   placeholder: 'Hello BEAMer! Please specify your trace pattern here.',
@@ -12,6 +18,7 @@ const propTypes = {
   query: PropTypes.string.isRequired,
   placeholder: PropTypes.string,
   isConnection: PropTypes.bool.isRequired,
+  toggleInputType: PropTypes.func.isRequired,
 };
 
 class QueryInput extends React.Component {
@@ -23,6 +30,14 @@ class QueryInput extends React.Component {
     this.setSearchBoxRef = (element) => {
       this.searchBox = element;
     };
+  }
+
+  componentDidMount() {
+    Mousetrap.bind(SWITCH_INPUT_TYPE_HOTKEY, this.props.toggleInputType);
+  }
+
+  componentWillUnmount() {
+    Mousetrap.unbind(SWITCH_INPUT_TYPE_HOTKEY);
   }
 
   onKeyDown(e) {

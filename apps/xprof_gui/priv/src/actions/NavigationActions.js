@@ -109,6 +109,14 @@ export const switchInputType = inputType => async (dispatch) => {
   document.getElementById('searchBox').focus();
 };
 
+export const toggleInputType = () => async (dispatch, getState) => {
+  const state = getState();
+  const inputType = getSelectedInputType(state);
+  dispatch(switchInputType(inputType === INPUT_TYPE.FAVOURITES
+    ? INPUT_TYPE.SEARCH
+    : INPUT_TYPE.FAVOURITES));
+};
+
 export const functionClick = selected => async (dispatch, getState) => {
   const state = getState();
   const query = getQuery(state);
@@ -169,11 +177,9 @@ export const queryKeyDown = key => async (dispatch, getState) => {
         case HANDLED_KEYS.RETURN:
           if (highlightedFunction) {
             chosenQuery = query + highlightedFunction.expansion;
-            // dispatch(queryInputChange(chosenQuery));
           } else if (query) {
             chosenQuery = query;
           }
-
           dispatch(startMonitoringFunction(chosenQuery));
           break;
         default:

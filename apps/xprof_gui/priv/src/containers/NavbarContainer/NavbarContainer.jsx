@@ -9,6 +9,7 @@ import {
   setPositionOnFunction,
   switchGrid,
   switchInputType,
+  toggleInputType,
 } from '../../actions';
 import {
   getStatus,
@@ -48,6 +49,7 @@ const mapDispatchToProps = {
   setPositionOnFunction,
   switchGrid,
   switchInputType,
+  toggleInputType,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(NavContainer);

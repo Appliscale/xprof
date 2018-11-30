@@ -16,6 +16,7 @@ export const CALLS_COLUMNS = {
   ARGS: 'args',
   RES: 'res',
 };
+export const SWITCH_INPUT_TYPE_HOTKEY = 'ctrl+i';
 export const NOTIFICATIONS_SEVERITY = {
   INFO: 'INFO',
   WARNING: 'WARNING',

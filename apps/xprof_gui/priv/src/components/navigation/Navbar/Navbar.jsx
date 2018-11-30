@@ -32,6 +32,7 @@ const propTypes = {
   numberOfMonitoredFunctions: PropTypes.number,
   selectedInputType: PropTypes.string,
   switchInputType: PropTypes.func.isRequired,
+  toggleInputType: PropTypes.func.isRequired,
   favourites: PropTypes.arrayOf(PropTypes.string),
 };
 
@@ -74,6 +75,7 @@ const Navbar = ({
   numberOfMonitoredFunctions,
   selectedInputType,
   switchInputType,
+  toggleInputType,
   favourites,
 }) => (
   <nav className="navbar navbar-default navbar-fixed-top">
@@ -110,6 +112,7 @@ const Navbar = ({
         isConnection={isConnection}
         selectedInputType={selectedInputType}
         switchInputType={switchInputType}
+        toggleInputType={toggleInputType}
       />
     </div>
   </nav>
