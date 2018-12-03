@@ -14,8 +14,6 @@ import {
   setCallsControl,
   addNotification,
   setLastAsCurrentPage,
-  setCallsControl,
-  addNotification,
   addY,
 } from '../actions';
 import * as XProf from '../api';
