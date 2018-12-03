@@ -378,24 +378,24 @@ do_handle_req(<<"mode">>, _Params) ->
     Json = jsone:encode({[{mode, Mode}]}),
     {200, Json};
 
-handle_req(<<"fav_enabled">>, _Params) ->
+do_handle_req(<<"fav_enabled">>, _Params) ->
     FavouritesEnabled = xprof_gui_favourites_config:is_enabled(),
     Json = jsone:encode({[{enabled, FavouritesEnabled}]}),
     {200, Json};
 
-handle_req(<<"fav_add">>, Params) ->
+do_handle_req(<<"fav_add">>, Params) ->
     Query = get_query(Params),
     Funs = xprof_gui_favourites:add(Query),
     Json = jsone:encode(Funs),
     {200, Json};
 
-handle_req(<<"fav_remove">>, Params) ->
+do_handle_req(<<"fav_remove">>, Params) ->
     Query = get_query(Params),
     Funs = xprof_gui_favourites:remove(Query),
     Json = jsone:encode(Funs),
     {200, Json};
 
-handle_req(<<"fav_get_all">>, _Params) ->
+do_handle_req(<<"fav_get_all">>, _Params) ->
     Funs = xprof_gui_favourites:get_all(),
     Json = jsone:encode(Funs),
     {200, Json}.
