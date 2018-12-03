@@ -3,6 +3,8 @@ import { shallow } from 'enzyme';
 import QueryInput from './QueryInput';
 import { HANDLED_KEY_CODES } from '../../../constants';
 
+jest.mock('mousetrap');
+
 describe('QueryInput component', () => {
   let props;
   let wrapper;
@@ -13,6 +15,7 @@ describe('QueryInput component', () => {
       queryInputChange: jest.fn(),
       query: '',
       isConnection: true,
+      toggleInputType: jest.fn(),
     };
     wrapper = shallow(<QueryInput {...props} />);
   });

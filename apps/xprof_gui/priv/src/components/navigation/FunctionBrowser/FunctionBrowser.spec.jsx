@@ -12,6 +12,8 @@ describe('FunctionBrowser component', () => {
     functionClick: jest.fn(),
     setPositionOnFunction: jest.fn(),
     isConnection: true,
+    switchInputType: jest.fn(),
+    toggleInputType: jest.fn(),
   };
   it('renders', () => {
     const wrapper = shallow(<FunctionBrowser {...props} />);

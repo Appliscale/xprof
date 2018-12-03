@@ -10,6 +10,7 @@ describe('Root component', () => {
     props = {
       getTraceStatus: jest.fn(),
       getMode: jest.fn(),
+      getFavourites: jest.fn(),
     };
     wrapper = shallow(<Root {...props} />);
   });
