@@ -8,7 +8,7 @@
    ,stdlib
    ,compiler
    ,lager
-   ,customized_hdr_histogram
+   ,hdr_histogram
    ]}
  ,{env,[]}
  ,{modules, []}
