@@ -233,7 +233,9 @@
          when StatusCode :: integer(),
               Body :: binary().
 handle_req(What, Params) ->
-    try do_handle_req(What, Params)
+    try Res = do_handle_req(What, Params),
+         lager:error("handle_req(~p, ~p) ->~n ~p~n", [What, Params, Res]),
+         Res
     catch C:E ->
             lager:error("Error handling REST API request \"~s\" ~p ~p:~p",
                         [What, Params, C, E]),
