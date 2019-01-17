@@ -161,7 +161,8 @@ export function dataTransform(dataInput) {
     });
   });
 
-  const dataDomain = _.uniq(allValues).sort((a, b) => a - b);
+  const maxDomain = _.max(allValues);
+  const minDomain = _.min(allValues);
 
   const colorRange = [
     '#ffffcc',
@@ -176,7 +177,7 @@ export function dataTransform(dataInput) {
   ];
 
   const colorScale = d3.scaleQuantile()
-    .domain(dataDomain)
+    .domain([minDomain, maxDomain])
     .range(colorRange);
 
   const dataGrid = dataLocation.map((u) => {
@@ -489,7 +490,7 @@ const flip = (x) => {
   return 10;
 };
 
-export function renderTooltipFromRect(tooltip, id, graphID) {
+function renderTooltipFromRect(tooltip, id, graphID) {
   const element = document.querySelector(`[id='${id}-${graphID}']`);
   const data = element && collectData(element);
   const flipSide = flip(d3.event.pageX);
@@ -610,3 +611,181 @@ const getWrapperWidth = (id) => {
 export const updateSize = (func, id) => func(getWrapperWidth(id));
 
 export const executeIfExists = (element, func, args) => element && func(args);
+
+/* ---------- */
+
+export function generateRectangles(row, graphID, dataGrid, tooltip) {
+  // filling it with color-rectangles
+  row.selectAll('.rectangle')
+    .data(d => d)
+    .enter().append('rect')
+    .attr('class', 'r')
+    .attr('id', d => `${d.id}-${graphID}`)
+    .attr('x', d => d.x)
+    .attr('y', d => d.y)
+    .attr('height', d => d.height)
+    .attr('width', d => d.width)
+    .attr('time', d => getAttr(d.id, dataGrid, 'time'))
+    .attr('value', d => getAttr(
+      d.id, dataGrid,
+      getAttr(d.id, dataGrid, 'bucket'),
+    ))
+    .attr('bucket', d => getAttr(d.id, dataGrid, 'bucket'))
+    // eslint-disable-next-line
+    .style('fill', d => getAttr(d.id, dataGrid, 'color') || 'white')
+    .style('cursor', 'crosshair')
+    .on('mouseover', d => renderTooltipFromRect(tooltip, d.id, graphID));
+}
+
+export function generateRows(grid, gData, graphID) {
+  return grid
+    .selectAll('.row')
+    .data(gData)
+    .enter()
+    .append('g')
+    // eslint-disable-next-line
+    .attr('class', (_, i) => `row-${i}-${graphID}`);
+}
+
+/*
+    Creating the xAxis abstract container.
+
+    The axis won't be a common d3 axis as the heatmap looks better
+    with so-called bar-axis. Every color-rectangle will have
+    corresponding axis-rectangle below and on the left side of the grid.
+    That's why we are not calling the d3 axis method but instead we
+    create a single, special grid-row and grid-column.
+*/
+function generateXAxisSelection(graphID, size) {
+  return d3.select(`#x-${graphID}`)
+    .append('svg')
+    .attr('id', `xAxis-${graphID}`)
+    .attr('width', size.width + 20)
+    .attr('height', size.marginBottom);
+}
+
+function generateXRowContainer(xAxis, graphID, xData, size) {
+  return xAxis
+    .selectAll(`.xRow-${graphID}`)
+    // eslint-disable-next-line
+    .data(xData, (_, i) => `xRow-${i}`)
+    .enter()
+    .append('g')
+    .attr('class', `.xRow-${graphID}`)
+    .attr('width', size.marginBottom);
+}
+
+/*
+    In d3 it is impossible to have a <text> nested inside the <rect>.
+    That is why we are creating the abstract <g> group SVG container
+    with two children ('rect', 'text') - each of them have to be
+    positioned separately.
+*/
+function generateXRowTicks(graphID, xRowContainer) {
+  return xRowContainer.selectAll(`.xLabelSquare-${graphID}`)
+    .data(d => d, d => `xRowG-${d.id}`)
+    .enter().append('g')
+    .attr('id', d => `x${d.id}`);
+}
+
+// The 'rect' child
+function appendXRectanglesToTicks(xRowG, graphID, times) {
+  xRowG.append('rect')
+    .attr('class', `xLabelSquare-${graphID}`)
+    .attr('id', d => `x${d.id}`)
+    .attr('x', d => d.x)
+    .attr('y', d => d.y)
+    .attr('height', d => d.height / 8)
+    .attr('width', d => d.width)
+    .style('fill', d => colorTick(spaceLabels(d.id, times.length, 10, 5)))
+    .style('stroke', 'white');
+}
+
+// The 'text' child
+function appendXLabelsToTicks(xRowG, graphID, times) {
+  xRowG.append('text')
+    .attr('class', `xLabel-${graphID}`)
+    .attr('id', (d, i) => `xl${i}-${graphID}`)
+    .attr('x', (d, i) => getPositionX(d, i, times))
+    .attr(
+      'y',
+      (d, i) => getPositionY(d, i, times),
+    )
+    .style('fill', 'black')
+    .style('z-index', 1)
+    .style('font', () => calcFont('x'))
+    .text((d, i) => renderTimeLabels(d, i, times));
+}
+
+export function generateXAxis(graphID, size, columns, width, times) {
+  const xAxis = generateXAxisSelection(graphID, size);
+  const xData = gridData(1, columns, width, size.marginBottom);
+  const xRowContainer = generateXRowContainer(xAxis, graphID, xData, size);
+  const xRowTicks = generateXRowTicks(graphID, xRowContainer);
+  appendXRectanglesToTicks(xRowTicks, graphID, times);
+  appendXLabelsToTicks(xRowTicks, graphID, times);
+}
+/* -------------- */
+
+function generateYAxisSelection(graphID, size) {
+  return d3.select(`#y-${graphID}`)
+    .append('svg')
+    .attr('id', `yAxis-${graphID}`)
+    .attr('width', size.marginLeft)
+    .attr('height', size.height);
+}
+
+function generateYRowContainer(yAxis, graphID, yData, gData, size, tooltip) {
+  return yAxis.selectAll(`.yCol-${graphID}`)
+    // eslint-disable-next-line
+    .data(yData, (_, i) => `yCol-${i}`)
+    .enter()
+    .append('g')
+    .attr('class', `yCol-${graphID}`)
+    // eslint-disable-next-line
+    .attr('id', (_, i) => `${gData[i][0].rowName}-yCol`)
+    .attr('width', size.marginLeft)
+    .on('mouseout', () => tooltip.style('visibility', 'hidden'));
+}
+
+function generateYRowTicks(yColumnContainer, graphID) {
+  return yColumnContainer.selectAll(`.yLabelSquare-${graphID}`)
+    .data(d => d, d => `yColG-${d.id}`)
+    .enter().append('g')
+    .attr('id', d => `y${d.id}`);
+}
+
+function appendYRectanglesToTicks(yColumnTicks, graphID) {
+  yColumnTicks.append('rect')
+    .attr('class', `yLabelSquare-${graphID}`)
+    .attr('id', d => `y${d.id}`)
+    .attr('x', d => d.x)
+    .attr('y', d => d.y)
+    .attr('height', d => d.height)
+    .attr('width', d => d.width)
+    .style('fill', '#f5f5f5')
+    .style('stroke', 'white');
+}
+
+function appendYLabelsToTicks(yColumnTicks, graphID, names, tooltip) {
+  yColumnTicks.append('text')
+    .attr('class', `yLabel-${graphID}`)
+    .attr('x', d => d.x + 4)
+    .attr('y', d => d.y + (0.7 * d.height))
+    .style('fill', 'black')
+    .style('font', () => calcFont('y'))
+    .style('cursor', 'default')
+    .text(d => names[label('y', d.id)])
+    .on('mouseover', d => renderLabelTooltip(tooltip, d, names));
+}
+
+// eslint-disable-next-line max-len
+export function generateYAxis(graphID, size, rows, height, tooltip, gData, names) {
+  const yAxis = generateYAxisSelection(graphID, size);
+  const yData = gridData(rows, 1, size.marginLeft, height);
+  const yColumnContainer =
+    generateYRowContainer(yAxis, graphID, yData, gData, size, tooltip);
+  const yColumnTicks = generateYRowTicks(yColumnContainer, graphID);
+  appendYRectanglesToTicks(yColumnTicks, graphID);
+  appendYLabelsToTicks(yColumnTicks, graphID, names, tooltip);
+}

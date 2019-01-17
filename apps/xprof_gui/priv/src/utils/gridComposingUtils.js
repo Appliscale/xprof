@@ -3,8 +3,6 @@ import {
   gridData,
   dataTransform,
   label,
-  spaceLabels,
-  colorTick,
   renderTimeLabels,
   getPositionY,
   getPositionX,
@@ -15,8 +13,10 @@ import {
   trackCursor,
   initTooltip,
   composeID,
-  renderTooltipFromRect,
-  renderLabelTooltip,
+  generateRectangles,
+  generateRows,
+  generateXAxis,
+  generateYAxis,
 } from './gridUtils';
 
 export function compose(props) {
@@ -53,133 +53,17 @@ export function compose(props) {
     */
     .on('mouseout', () => tooltip.style('visibility', 'hidden'));
 
-  // creating the abstract one row representation
-  const row = grid.selectAll('.row')
-    .data(gData)
-    .enter().append('g')
-    .attr('class', (_, i) => `row-${i}-${graphID}`);
+  // creating the abstract rows representation
+  const rows = generateRows(grid, gData, graphID);
 
   // filling it with color-rectangles
-  row.selectAll('.rectangle')
-    .data(d => d)
-    .enter().append('rect')
-    .attr('class', 'r')
-    .attr('id', d => `${d.id}-${graphID}`)
-    .attr('x', d => d.x)
-    .attr('y', d => d.y)
-    .attr('height', d => d.height)
-    .attr('width', d => d.width)
-    .attr('time', d => getAttr(d.id, dataGrid, 'time'))
-    .attr('value', d => getAttr(
-      d.id, dataGrid,
-      getAttr(d.id, dataGrid, 'bucket'),
-    ))
-    .attr('bucket', d => getAttr(d.id, dataGrid, 'bucket'))
-    // eslint-disable-next-line
-    .style('fill', d => getAttr(d.id, dataGrid, 'color') || 'white') // '#f5f5f5'
-    .style('cursor', 'crosshair')
-    .on('mouseover', d => renderTooltipFromRect(tooltip, d.id, graphID));
+  generateRectangles(rows, graphID, dataGrid, tooltip);
 
   // Append x axis
-  // creating the xAxis abstract container
-  const xAxis = d3.select(`#x-${graphID}`)
-    .append('svg')
-    .attr('id', `xAxis-${graphID}`)
-    .attr('width', size.width + 20)
-    .attr('height', size.marginBottom);
-
-  /*
-    The axis won't be a common d3 axis as the heatmap looks better
-    with so-called bar-axis. Every color-rectangle will have
-    corresponding axis-rectangle below and on the left side of the grid.
-    That's why we are not calling the d3 axis method but instead we
-    create a single, special grid-row and grid-column.
-  */
-
-  const xData = gridData(1, c, w, size.marginBottom);
-
-  const xRow = xAxis.selectAll(`.xRow-${graphID}`)
-    .data(xData, (_, i) => `xRow-${i}`)
-    .enter()
-    .append('g')
-    .attr('class', `.xRow-${graphID}`)
-    .attr('width', size.marginBottom);
-
-  /*
-    In d3 it is impossible to have a <text> nested inside the <rect>.
-    That is why we are creating the abstract <g> group SVG container
-    with two children - each of them have to be positioned separately.
-  */
-
-  const xRowG = xRow.selectAll(`.xLabelSquare-${graphID}`)
-    .data(d => d, d => `xRowG-${d.id}`)
-    .enter().append('g')
-    .attr('id', d => `x${d.id}`);
-
-  // Appending the rectangles and the labels separately.
-  xRowG.append('rect')
-    .attr('class', `xLabelSquare-${graphID}`)
-    .attr('id', d => `x${d.id}`)
-    .attr('x', d => d.x)
-    .attr('y', d => d.y)
-    .attr('height', d => d.height / 8)
-    .attr('width', d => d.width)
-    .style('fill', d => colorTick(spaceLabels(d.id, times.length, 10, 5)))
-    .style('stroke', 'white');
-  xRowG.append('text')
-    .attr('class', `xLabel-${graphID}`)
-    .attr('id', (d, i) => `xl${i}-${graphID}`)
-    .attr('x', (d, i) => getPositionX(d, i, times))
-    .attr(
-      'y',
-      (d, i) => getPositionY(d, i, times),
-    )
-    .style('fill', 'black')
-    .style('z-index', 1)
-    .style('font', () => calcFont('x'))
-    .text((d, i) => renderTimeLabels(d, i, times));
+  generateXAxis(graphID, size, c, w, times);
 
   // Append y axis
-  const yAxis = d3.select(`#y-${graphID}`)
-    .append('svg')
-    .attr('id', `yAxis-${graphID}`)
-    .attr('width', size.marginLeft)
-    .attr('height', size.height);
-
-  const yData = gridData(r, 1, size.marginLeft, h);
-
-  const yCol = yAxis.selectAll(`.yCol-${graphID}`)
-    .data(yData, (_, i) => `yCol-${i}`)
-    .enter()
-    .append('g')
-    .attr('class', `yCol-${graphID}`)
-    .attr('id', (_, i) => `${gData[i][0].rowName}-yCol`)
-    .attr('width', size.marginLeft)
-    .on('mouseout', () => tooltip.style('visibility', 'hidden'));
-
-  const yColG = yCol.selectAll(`.yLabelSquare-${graphID}`)
-    .data(d => d, d => `yColG-${d.id}`)
-    .enter().append('g')
-    .attr('id', d => `y${d.id}`);
-
-  yColG.append('rect')
-    .attr('class', `yLabelSquare-${graphID}`)
-    .attr('id', d => `y${d.id}`)
-    .attr('x', d => d.x)
-    .attr('y', d => d.y)
-    .attr('height', d => d.height)
-    .attr('width', d => d.width)
-    .style('fill', '#f5f5f5')
-    .style('stroke', 'white');
-  yColG.append('text')
-    .attr('class', `yLabel-${graphID}`)
-    .attr('x', d => d.x + 4)
-    .attr('y', d => d.y + (0.7 * d.height))
-    .style('fill', 'black')
-    .style('font', () => calcFont('y'))
-    .style('cursor', 'default')
-    .text(d => names[label('y', d.id)])
-    .on('mouseover', d => renderLabelTooltip(tooltip, d, names));
+  generateYAxis(graphID, size, r, h, tooltip, gData, names);
 }
 
 export function update(props) {
