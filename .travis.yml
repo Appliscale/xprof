@@ -3,10 +3,13 @@ branches:
     only:
         - master
         - release_2.0
+        - hist
 matrix:
     include:
         - otp_release: 20.0
         - otp_release: 19.3
+        - otp_release: 19.3
+          env: XPROF_ERL_HIST=true
         - otp_release: 18.3
           env: COWBOY_VERSION=1.1.2
         - otp_release: 17.5

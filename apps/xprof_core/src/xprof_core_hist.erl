@@ -56,6 +56,13 @@
          same/3
         ]).
 
+%% API with compile time configurable backend
+-export([hdr_new/2,
+         hdr_record/2,
+         hdr_reset/1,
+         hdr_stats/1
+        ]).
+
 -define(TABLE, ?MODULE).
 
 -define(TOTAL_COUNT_INDEX, 2).
@@ -79,6 +86,48 @@
         }).
 
 %%
+%% API with compile time configurable backend
+%%
+
+-ifdef(XPROF_ERL_HIST).
+
+hdr_new(Max, Prec) ->
+    new(Max, Prec).
+
+hdr_record(HistRef, Value) ->
+    record(HistRef, Value).
+
+hdr_reset(HistRef) ->
+    reset(HistRef).
+
+hdr_stats(HistRef) ->
+    stats(HistRef).
+
+-else.
+
+hdr_new(Max, Prec) ->
+    hdr_histogram:open(Max, Prec).
+
+hdr_record(HistRef, Value) ->
+    hdr_histogram:record(HistRef, Value).
+
+hdr_reset(HistRef) ->
+    hdr_histogram:reset(HistRef).
+
+hdr_stats(HistRef) ->
+    [{count, hdr_histogram:get_total_count(HistRef)},
+     {min,   hdr_histogram:min(HistRef)},
+     {mean,  hdr_histogram:mean(HistRef)},
+     {max,   hdr_histogram:max(HistRef)},
+     {p50,   hdr_histogram:percentile(HistRef, 50.0)},
+     {p75,   hdr_histogram:percentile(HistRef, 75.0)},
+     {p90,   hdr_histogram:percentile(HistRef, 90.0)},
+     {p99,   hdr_histogram:percentile(HistRef, 99.0)}
+    ].
+
+-endif.
+
+%%
 %% Aliases from hdr_histogram NIF API
 %%
 
@@ -98,7 +147,9 @@ same(H, A, B) ->
     ets:first(H#hist.table), %% badarg if H was deleted (table does not exist)
     lowest_equivalent_value(H, A) =:= lowest_equivalent_value(H, B).
 
-%%-----------
+%%
+%% Primary API
+%%
 
 new(Max, Precision) ->
     new(1, Max, Precision).

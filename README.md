@@ -199,7 +199,7 @@ Registry.dispatch(MyApp.Registry, "topic1", _) -> nil; (MyApp.Registry, "topic2"
 
 ## Erlang records
 
-Elrang record syntax is supported in the queries and works similar to the Erlang
+Erlang record syntax is supported in the queries and works similar to the Erlang
 shell. XProf keeps a single global list of loaded record definitions. Record
 definitions can be loaded at startup time from modules listed in app env
 `load_records` or at runtime calling `xprof_core:rr(Module)` (see documentation
@@ -207,6 +207,19 @@ of `xprof_core` for more details). The record definitions are extracted from
 debug_info of the beam files belonging to the loaded modules. As the list is
 global there can be only one record with the same name loaded at a time and
 records loaded later might override previously loaded ones.
+
+## Compile-time configuration
+
+`XPROF_ERL_HIST` - By default XProf uses the `hdr_histogram_erl` NIF
+library. If you have compilation problems you can choose to use a
+native Erlang histogram implementation by defining the OS env var
+`XPROF_ERL_HIST` when compiling `xprof_core`.
+
+`COWBOY_VERSION` - By default XProf uses Cowboy version 2.x. This
+version is only supported from Erlang/OTP 19 and is not backwards
+compatible with older Cowboy versions. If for some reason you would
+like to use Cowboy version 1.x you can define the OS env var
+`COWBOY_VERSION=1` when compiling `xprof_gui`.
 
 ## Contributing
 

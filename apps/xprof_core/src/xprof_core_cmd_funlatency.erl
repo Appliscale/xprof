@@ -86,7 +86,7 @@ init(Options, _MFASpec) ->
                   undefined -> undefined;
                   _ -> 0
               end,
-    {ok, HDR} = xprof_core_hist:new(MaxDuration, 3),
+    {ok, HDR} = xprof_core_hist:hdr_new(MaxDuration, 3),
     {ok, #state{hdr_ref = HDR,
                 max_duration = MaxDuration,
                 ignore_recursion = IgnoreRecursion,
@@ -116,9 +116,9 @@ handle_event({trace_ts, Pid, Tag, MFA, RetOrExc, EndTime},
                             lager:error("Call ~p took ~p ms that is larger than the maximum "
                                         "that can be stored (~p ms)",
                                         [MFA, CallTime/1000, MaxDuration div 1000]),
-                            ok = xprof_core_hist:record(Ref, MaxDuration);
+                            ok = xprof_core_hist:hdr_record(Ref, MaxDuration);
                        true ->
-                            ok = xprof_core_hist:record(Ref, CallTime)
+                            ok = xprof_core_hist:hdr_record(Ref, CallTime)
                     end,
 
                     maybe_capture({Pid, CallTime, Args, {Tag, NewRet}},
@@ -128,7 +128,7 @@ handle_event({trace_ts, Pid, Tag, MFA, RetOrExc, EndTime},
 
 take_snapshot(State = #state{hdr_ref = Ref, nomatch_count = NoMatch}) ->
     Snapshot = get_current_hist_stats(Ref, NoMatch),
-    xprof_core_hist:reset(Ref),
+    xprof_core_hist:hdr_reset(Ref),
     maybe_reset_nomatch_count(Snapshot, State, NoMatch).
 
 maybe_reset_nomatch_count(Snapshot, _State, _NoMatch = undefined) ->
@@ -211,7 +211,7 @@ maybe_capture({_Pid, CallTime, Args, _Res} = Item, Threshold, _State) ->
     end.
 
 get_current_hist_stats(HistRef, NoMatch) ->
-    [{count, Count}|_] = Stats = xprof_core_hist:stats(HistRef),
+    [{count, Count}|_] = Stats = xprof_core_hist:hdr_stats(HistRef),
     case NoMatch of
         undefined ->
             Stats;
