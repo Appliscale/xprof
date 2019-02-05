@@ -219,6 +219,7 @@ maybe_make_snapshot(State = #state{name=Name, last_ts=LastTS,
         DiffMicro when DiffMicro >= ?ONE_SEC ->
             NewState = save_snapshot(NowTS, State),
             remove_outdated_snapshots(Name, xprof_core_lib:now2epoch(NowTS)-WindSize),
+	    xprof_core_lib:notify_event_handler({snapshot, NowTS}),
             {calc_next_timeout(DiffMicro), NewState#state{last_ts = NowTS}};
         DiffMicro ->
             {calc_next_timeout(DiffMicro), State}
@@ -226,7 +227,7 @@ maybe_make_snapshot(State = #state{name=Name, last_ts=LastTS,
 
 calc_next_timeout(DiffMicro) ->
     DiffMilli = DiffMicro div 1000,
-    1000 - DiffMilli rem 1000.
+    1000 - (DiffMilli rem 1000).
 
 save_snapshot(NowTS, State = #state{name = Name, cb_mod = CmdCB, cb_state = CBState}) ->
     Epoch = xprof_core_lib:now2epoch(NowTS),
