@@ -86,7 +86,7 @@ init(Options, _MFASpec) ->
                   undefined -> undefined;
                   _ -> 0
               end,
-    {ok, HDR} = hdr_histogram:open(MaxDuration, 3),
+    {ok, HDR} = xprof_core_hist:hdr_new(MaxDuration, 3),
     {ok, #state{hdr_ref = HDR,
                 max_duration = MaxDuration,
                 ignore_recursion = IgnoreRecursion,
@@ -116,9 +116,9 @@ handle_event({trace_ts, Pid, Tag, MFA, RetOrExc, EndTime},
                             lager:error("Call ~p took ~p ms that is larger than the maximum "
                                         "that can be stored (~p ms)",
                                         [MFA, CallTime/1000, MaxDuration div 1000]),
-                            ok = hdr_histogram:record(Ref, MaxDuration);
+                            ok = xprof_core_hist:hdr_record(Ref, MaxDuration);
                        true ->
-                            ok = hdr_histogram:record(Ref, CallTime)
+                            ok = xprof_core_hist:hdr_record(Ref, CallTime)
                     end,
 
                     maybe_capture({Pid, CallTime, Args, {Tag, NewRet}},
@@ -128,7 +128,7 @@ handle_event({trace_ts, Pid, Tag, MFA, RetOrExc, EndTime},
 
 take_snapshot(State = #state{hdr_ref = Ref, nomatch_count = NoMatch}) ->
     Snapshot = get_current_hist_stats(Ref, NoMatch),
-    hdr_histogram:reset(Ref),
+    xprof_core_hist:hdr_reset(Ref),
     maybe_reset_nomatch_count(Snapshot, State, NoMatch).
 
 maybe_reset_nomatch_count(Snapshot, _State, _NoMatch = undefined) ->
@@ -211,30 +211,16 @@ maybe_capture({_Pid, CallTime, Args, _Res} = Item, Threshold, _State) ->
     end.
 
 get_current_hist_stats(HistRef, NoMatch) ->
-    Count = hdr_histogram:get_total_count(HistRef),
-    TotalCountAndRate =
-        case NoMatch of
-            undefined ->
-                [];
-            _ ->
-                TotalCount = Count + NoMatch,
-                [{total_count, TotalCount},
-                 {match_rate, percent(Count, TotalCount)}]
-        end,
-    [{min,         hdr_histogram:min(HistRef)},
-     {mean,        hdr_histogram:mean(HistRef)},
-     %%{median,      hdr_histogram:median(HistRef)},
-     {max,         hdr_histogram:max(HistRef)},
-     %%{stddev,      hdr_histogram:stddev(HistRef)},
-     %%{p25,         hdr_histogram:percentile(HistRef,25.0)},
-     {p50,         hdr_histogram:percentile(HistRef,50.0)},
-     {p75,         hdr_histogram:percentile(HistRef,75.0)},
-     {p90,         hdr_histogram:percentile(HistRef,90.0)},
-     {p99,         hdr_histogram:percentile(HistRef,99.0)},
-     %%{p9999999,    hdr_histogram:percentile(HistRef,99.9999)},
-     %%{memsize,     hdr_histogram:get_memory_size(HistRef)},
-     {count,       Count}
-     |TotalCountAndRate].
+    [{count, Count}|_] = Stats = xprof_core_hist:hdr_stats(HistRef),
+    case NoMatch of
+        undefined ->
+            Stats;
+        _ ->
+            TotalCount = Count + NoMatch,
+            [{total_count, TotalCount},
+             {match_rate, percent(Count, TotalCount)}
+             |Stats]
+    end.
 
 percent(_, 0) ->
     0;

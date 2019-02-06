@@ -9,7 +9,9 @@
          init_per_suite/1,
          end_per_suite/1,
          init_per_group/2,
-         end_per_group/2
+         end_per_group/2,
+         init_per_testcase/2,
+         end_per_testcase/2
         ]).
 
 %% Test cases
@@ -75,6 +77,14 @@ init_per_group( simulate_tracing, Config) ->
 end_per_group( simulate_tracing, Config) ->
     xprof_core:demonitor(?config(mfa, Config)).
 
+
+init_per_testcase(_, Config) ->
+    xprof_core_lib:set_event_handler(self()),
+    Config.
+
+end_per_testcase(_, _Config) ->
+    xprof_core_lib:unset_event_handler().
+
 %% test cases
 
 all_tracing(Config) ->
@@ -91,12 +101,12 @@ basic_tracing(PidSpec, Config) ->
 
     test_fun(),
     test_fun(),
-    ct:sleep(1000),
+    wait_snapshot(1050),
     test_fun(),
     test_fun(),
-    ct:sleep(2000),
+    wait_snapshot(1050),
 
-    Values = xprof_core:get_data(?config(mfa, Config), Last),
+    Values = xprof_core:get_data(?config(mfa, Config), Last - 1),
 
     [Items1,Items2|_] = Values,
     ?assert(0 =< proplists:get_value(count, Items1)),
@@ -116,12 +126,12 @@ spawner_tracing(Config) ->
 
     spawn_test_fun(),
     spawn_test_fun(),
-    ct:sleep(1000),
+    wait_snapshot(1050),
     spawn_test_fun(),
     spawn_test_fun(),
-    ct:sleep(2000),
+    wait_snapshot(1050),
 
-    Values = xprof_core:get_data(?config(mfa, Config), Last),
+    Values = xprof_core:get_data(?config(mfa, Config), Last - 1),
 
     [Items1, Items2|_] = Values,
     ?assert(0 =< proplists:get_value(count, Items1)),
@@ -183,7 +193,8 @@ monitor_crashing_fun(_Config) ->
     maybe_crash_test_fun(false),
     catch maybe_crash_test_fun(true),
     maybe_crash_test_fun(false),
-    ct:sleep(2000),
+    wait_snapshot(1010),
+    wait_snapshot(1010),
 
     Items = xprof_core:get_data(MFA, Last - 1),
     %% it is possible that the 3 function calls are spread
@@ -249,7 +260,7 @@ monitor_keep_recursive_fun(_Config) ->
     Last = get_print_current_time(),
 
     recursive_test_fun(10),
-    ct:sleep(1000),
+    wait_snapshot(1010),
 
     %% all 10 samples are recorded
     [Items1|_] = xprof_core:get_data(MFA, Last),
@@ -275,7 +286,7 @@ monitor_ms(_Config) ->
 
     test_fun(10),
     test_fun(2),
-    ct:sleep(1000),
+    wait_snapshot(1010),
 
     %% although the function was called 2 times
     %% only the second call matched the match-spec
@@ -426,7 +437,7 @@ long_call(_Config) ->
 
     test_fun(20),
     test_fun(200),
-    ct:sleep(1000),
+    wait_snapshot(1010),
 
     [StatsItems|_] = xprof_core:get_data(MFA, Last),
     %% both calls should be recorded
@@ -479,7 +490,7 @@ return_matching(_Config) ->
     test_fun(40),
     %% not handled - no match
     test_fun(50),
-    ct:sleep(1000),
+    wait_snapshot(1010),
 
     [Items1|_] = xprof_core:get_data(MFA, Last),
     ?assertEqual(2, proplists:get_value(count, Items1)),
@@ -503,7 +514,7 @@ return_matching_query(_Config) ->
 
     test_fun(10),
     test_fun(20),
-    ct:sleep(1000),
+    wait_snapshot(1010),
 
     [Items1|_] = xprof_core:get_data(MFA, Last),
     ?assertEqual(1, proplists:get_value(count, Items1)),
@@ -540,7 +551,7 @@ return_matching_exception(_Config) ->
     %% error:function_clause does not match
     catch maybe_crash_test_fun(42),
 
-    ct:sleep(1000),
+    wait_snapshot(1010),
 
     [Items1|_] = xprof_core:get_data(MFA, Last),
     ?assertEqual(2, proplists:get_value(count, Items1)),
@@ -582,3 +593,16 @@ get_print_current_time() ->
     Last = MS * 1000000 + S,
     ct:pal("Time before test: ~p", [Last]),
     Last.
+
+wait_snapshot(Timeout) ->
+    StartT = os:timestamp(),
+    receive
+        {snapshot, SnaphostT}  ->
+            ct:pal("snapshot (~p) took ~p ms ~n",
+                   [SnaphostT, timer:now_diff(SnaphostT, StartT)/1000]),
+            ok
+    after
+        Timeout ->
+            ct:pal("timeout waiting ~p ms for snapshot", [Timeout]),
+            ok
+    end.
