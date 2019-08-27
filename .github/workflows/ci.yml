@@ -42,10 +42,6 @@ jobs:
         - otp_version: 18
           old_cowboy: true
 
-        - otp_version: 17
-          run_dialyzer: true
-          old_cowboy: true
-
     steps:
     - uses: actions/checkout@v2
 
