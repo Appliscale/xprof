@@ -7,6 +7,9 @@
          set_mode/1,
          get_mode/0,
          get_mode_cb/0,
+         set_event_handler/1,
+         unset_event_handler/0,
+         notify_event_handler/1,
          prefix/2,
          prefix_rest/2,
          err/1, err/2, err/3,
@@ -52,6 +55,24 @@ get_mode_cb() ->
     case get_mode() of
         erlang -> xprof_core_erlang_syntax;
         elixir -> xprof_core_elixir_syntax
+    end.
+
+set_event_handler(EventHandler) ->
+    application:set_env(xprof_core, event_handler, EventHandler).
+
+unset_event_handler() ->
+    application:unset_env(xprof_core, event_handler).
+
+notify_event_handler(Msg) ->
+    case application:get_env(xprof_core, event_handler) of
+	undefined ->
+	    ok;
+	{ok, Pid} ->
+	    try Pid ! Msg
+	    catch _:_ ->
+		    %% ignore crash
+		    {error, no_event_handler}
+	    end
     end.
 
 -spec detect_mode() -> xprof_core:mode().

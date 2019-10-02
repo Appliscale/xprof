@@ -1,0 +1,12 @@
+case os:getenv("XPROF_ERL_HIST") of
+    false ->
+        CONFIG;
+    _ ->
+        ErlOpts = proplists:get_value(erl_opts, CONFIG, []),
+        NewErlOpts = {erl_opts, [{d, 'XPROF_ERL_HIST'}|ErlOpts]},
+        Config2 = lists:keystore(erl_opts, 1, CONFIG, NewErlOpts),
+
+        Deps = proplists:get_value(deps, CONFIG, []),
+        NewDeps = {deps, lists:keydelete(hdr_histogram, 1, Deps)},
+        lists:keystore(deps, 1, Config2, NewDeps)
+end.
