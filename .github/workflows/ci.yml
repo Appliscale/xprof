@@ -33,7 +33,6 @@ jobs:
         - otp_version: 21
           send_coverage: true
           run_dialyzer: true
-          build_docs: true
 
         - otp_version: 20
 
@@ -71,9 +70,6 @@ jobs:
     - if: matrix.run_dialyzer
       run: make dialyzer
       timeout-minutes: 8
-
-    - if: matrix.build_docs
-      run: make doc
 
     - if: matrix.send_coverage && success()
       run: ./rebar3 as test coveralls send
@@ -123,6 +119,39 @@ jobs:
 
     - if: ${{ !matrix.skip }}
       run: make test_${{ matrix.json_lib }}
+
+  test_docs:
+    name: Test generating documentation
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        include:
+          - elixir: 1.15.x
+            otp_version: 26
+            rebar3: '3.22.1'
+            # hdr_histogram NIF requires the below PR to be merged to build on OTP 26
+            # https://github.com/HdrHistogram/hdr_histogram_erl/pull/44
+            erl_hist: true
+
+    steps:
+    - uses: actions/checkout@v3
+    - uses: erlef/setup-beam@v1
+      with:
+        otp-version: ${{matrix.otp_version}}
+        elixir-version: ${{matrix.elixir}}
+        rebar3-version: ${{matrix.rebar3}}
+
+    - if: matrix.erl_hist
+      run: echo "XPROF_ERL_HIST=true" >> $GITHUB_ENV
+
+    - name: Cache hex packages
+      uses: actions/cache@v3
+      with:
+        path: $HOME/.cache/rebar3
+        key: ${{ matrix.otp_version }}-rebar3-cache
+
+    - run: make gen_ex_doc
 
   test_elixir:
     name: Test with Elixir (Elixir ${{matrix.elixir}} | OTP ${{matrix.otp_version}})

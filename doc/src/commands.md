@@ -24,7 +24,7 @@ error
 ```
 
 ```elixir
-%funlatency retmatch: {:error, _},
+%Funlatency retmatch: {:error, _},
             mfa: Client.req/2
 ```
 
@@ -41,7 +41,7 @@ non-empty list.
 ```
 
 ```elixir
-%funlatency retmatch: fn({:ok, [_|_]}) -> false;
+%Funlatency retmatch: fn({:ok, [_|_]}) -> false;
                       (_)-> true end,
             mfa: Client.req(id, _) -> message(id)
 ```
@@ -58,7 +58,7 @@ but only captures the first element.
 ```
 
 ```elixir
-%funlatency retmatch: fn([h|_]) -> {true, h} end,
+%Funlatency retmatch: fn([h|_]) -> {true, h} end,
             mfa: Client.req/2
 ```
 
@@ -90,6 +90,6 @@ request map can take at runtime:
 ```
 
 ```elixir
-%argdist enum: 5,
+%Argdist enum: 5,
          mfa: Client.req(req) -> message(map_get(:cmp_id, req))
 ```

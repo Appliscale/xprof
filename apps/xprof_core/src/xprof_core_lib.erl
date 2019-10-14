@@ -1,3 +1,4 @@
+%% @private
 -module(xprof_core_lib).
 
 -export([mfaspec2atom/1,

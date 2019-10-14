@@ -1,3 +1,4 @@
+%% @private
 -module(xprof_core_query).
 
 -export([param_to_term/1,

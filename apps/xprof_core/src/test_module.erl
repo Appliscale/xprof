@@ -1,6 +1,7 @@
 %%% @doc Module to generate sample data
 %%% start tracing on `test_module:expensive_fun/1'
 %%% @end
+%%% @private
 -module(test_module).
 -export([start/0]).
 

@@ -1,6 +1,7 @@
 %%%
 %%% @doc Module to parse and format expressions in Elixir syntax
 %%%
+%%% @private
 -module(xprof_core_elixir_syntax).
 
 -behaviour(xprof_core_language).
@@ -25,7 +26,7 @@
 
 %% Elixir quoted expressions
 -type ex_quoted() :: tuple() | ex_literal().
--type ex_literal() :: atom() | number() | binary() | fun((...) -> any()) | {any(), any()} | [any()].
+-type ex_literal() :: atom() | number() | binary() | fun() | {any(), any()} | list().
 %% Erlang abstract syntax tree
 -type erl_ast() :: tuple().
 

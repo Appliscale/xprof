@@ -1,4 +1,5 @@
 %%% @doc Server to store loaded record definitions.
+%%% @private
 -module(xprof_core_records).
 
 -export([start_link/0,

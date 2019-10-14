@@ -2,6 +2,7 @@
 %%% @doc Callback functions that need to be implemented
 %%% for a language-specific behaviour
 %%%
+%%% @private
 -module(xprof_core_language).
 
 %% Function for start monitoring
@@ -47,7 +48,7 @@
 -callback fmt_param(xprof_core:param_name()) ->
     Formatted :: binary().
 
--callback fmt_param_and_delim(xprof_core:param()) ->
+-callback fmt_param_and_delim(xprof_core:param_name()) ->
     Formatted :: binary().
 
 -callback fmt_exception(Class :: throw | error | exit, Reason :: term()) ->

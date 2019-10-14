@@ -1,3 +1,4 @@
+%% @private
 -module(xprof_core_vm_info).
 
 -include_lib("compiler/src/beam_disasm.hrl").
