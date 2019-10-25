@@ -24,7 +24,8 @@ log/
 dialyzer.actual
 dialyzer.expected.filtered
 
-doc
+doc/html
+doc/src/readme.md
 apps/*/doc
 .edts
 
