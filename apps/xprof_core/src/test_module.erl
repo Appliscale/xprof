@@ -18,7 +18,7 @@ loop() ->
 expensive_fun(SleepTime) ->
     timer:sleep(SleepTime).
 
--ifdef(rand_module).
+-ifndef(before_OTP_18).
 random_uniform(N) ->
     rand:uniform(N).
 -else.
