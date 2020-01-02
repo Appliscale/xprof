@@ -1,10 +1,11 @@
-import { initial, last } from 'lodash';
+import { last } from 'lodash';
 import * as types from '../constants/ActionTypes';
 
 const initialState = {
   calls: {},
   controls: {},
   panel: {},
+  paginations: {},
 };
 
 const tracing = (state = initialState, action) => {
@@ -19,16 +20,16 @@ const tracing = (state = initialState, action) => {
         ...state,
         calls: {
           ...state.calls,
-          [action.functionName]: [
-            ...initial(state.calls[action.functionName]),
-            {
-              ...last(state.calls[action.functionName]),
-              sort: {
-                ...last(state.calls[action.functionName]).sort,
-                items: action.updatedItems,
-              },
-            },
-          ],
+          [action.functionName]: state.calls[action.functionName].map((c, i) =>
+            (i === action.index
+              ? {
+                ...last(state.calls[action.functionName]),
+                sort: {
+                  ...last(state.calls[action.functionName]).sort,
+                  items: action.updatedItems,
+                },
+              }
+              : c)),
         },
       };
     case types.SORT_CALLS:
@@ -36,10 +37,9 @@ const tracing = (state = initialState, action) => {
         ...state,
         calls: {
           ...state.calls,
-          [action.functionName]: [
-            ...initial(state.calls[action.functionName]),
-            action.sortedCalls,
-          ],
+          // eslint-disable-next-line
+          [action.functionName]: state.calls[action.functionName].map(
+            (c, i) => (i === action.index ? action.sortedCalls : c)),
         },
       };
     case types.SET_CALLS_CONTROL:
@@ -50,6 +50,38 @@ const tracing = (state = initialState, action) => {
           ...action.control,
         },
       };
+    case types.SET_PAGINATIONS:
+      return {
+        ...state,
+        paginations: {
+          ...state.paginations,
+          ...action.paginations,
+        },
+      };
+    case types.SET_CALLS_PAGE: {
+      return {
+        ...state,
+        paginations: {
+          ...state.paginations,
+          [action.functionName]: {
+            ...state.paginations[action.functionName],
+            current: action.page,
+          },
+        },
+      };
+    }
+    case types.SET_START_CALLS_PAGE: {
+      return {
+        ...state,
+        paginations: {
+          ...state.paginations,
+          [action.functionName]: {
+            ...state.paginations[action.functionName],
+            start: action.start,
+          },
+        },
+      };
+    }
     default:
       return state;
   }

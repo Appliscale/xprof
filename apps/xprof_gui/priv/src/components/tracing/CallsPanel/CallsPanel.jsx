@@ -3,12 +3,13 @@ import React from 'react';
 import { CallsTable, CallsInput, CallsUtilsButtons } from '../';
 
 const defaultProps = {
-  lastCalls: {},
+  currentCalls: {},
   panelVisibility: false,
+  currentCallsPage: 1,
 };
 
 const propTypes = {
-  lastCalls: PropTypes.objectOf(PropTypes.any),
+  currentCalls: PropTypes.objectOf(PropTypes.any),
   handleThresholdChange: PropTypes.func.isRequired,
   handleLimitChange: PropTypes.func.isRequired,
   toggleCallsTracing: PropTypes.func.isRequired,
@@ -24,10 +25,16 @@ const propTypes = {
   expand: PropTypes.func.isRequired,
   shrink: PropTypes.func.isRequired,
   isConnection: PropTypes.bool.isRequired,
+  currentCallsPage: PropTypes.number,
+  countCallsPages: PropTypes.number.isRequired,
+  startCallsPage: PropTypes.number.isRequired,
+  nextCallsPagination: PropTypes.func.isRequired,
+  previousCallsPagination: PropTypes.func.isRequired,
+  setCallsPage: PropTypes.func.isRequired,
 };
 
 const CallsPanel = ({
-  lastCalls,
+  currentCalls,
   handleThresholdChange,
   handleLimitChange,
   toggleCallsTracing,
@@ -39,6 +46,12 @@ const CallsPanel = ({
   expand,
   shrink,
   isConnection,
+  currentCallsPage,
+  countCallsPages,
+  startCallsPage,
+  nextCallsPagination,
+  previousCallsPagination,
+  setCallsPage,
 }) => (
   <div className="panel panel-default">
     <div className="panel-heading">
@@ -63,13 +76,19 @@ const CallsPanel = ({
           handleLimitChange={handleLimitChange}
           toggleCallsTracing={toggleCallsTracing}
           isConnection={isConnection}
+          currentCallsPage={currentCallsPage}
+          countCallsPages={countCallsPages}
+          startCallsPage={startCallsPage}
+          nextCallsPagination={nextCallsPagination}
+          previousCallsPagination={previousCallsPagination}
+          setCallsPage={setCallsPage}
         />
       </div>
     ) : null}
     {panelVisibility ? (
       <CallsTable
         monitored={monitored}
-        sort={lastCalls.sort}
+        sort={currentCalls.sort}
         sortCallsBy={sortCallsBy}
         toggleExpandItem={toggleExpandItem}
       />

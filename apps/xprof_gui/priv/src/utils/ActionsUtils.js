@@ -10,7 +10,12 @@ import {
   NOTIFICATIONS,
   COLUMNS,
 } from '../constants';
-import { setCallsControl, addNotification, addY } from '../actions';
+import {
+  setCallsControl,
+  addNotification,
+  setLastAsCurrentPage,
+  addY,
+} from '../actions';
 import * as XProf from '../api';
 
 export const determineNextCallsForFun = (json, lastCalls, calls, name) => {
@@ -106,6 +111,16 @@ export const determineNextControl = (json, lastcalls) => {
       break;
   }
   return control;
+};
+
+export const isStartingNextCapturing = (json, lastcalls) => {
+  switch (callsDecision(json, lastcalls)) {
+    case CAPTURE_CALLS_ACTION.START_NEXT_CALLS_CAPTURE:
+      return true;
+    default:
+      break;
+  }
+  return false;
 };
 
 export const determineIncomingDps = (dps, ts) => {
@@ -235,7 +250,9 @@ export const determineNextCalls = async (
       if (!isEmpty(nextControlForFun)) {
         dispatch(setCallsControl({ [completeFunName]: nextControlForFun }));
       }
-
+      if (isStartingNextCapturing(json, lastCalls)) {
+        dispatch(setLastAsCurrentPage(completeFunName));
+      }
       const nextCallsForFun = determineNextCallsForFun(
         json,
         lastCalls,

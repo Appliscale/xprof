@@ -99,6 +99,7 @@ export const PLACEHOLDER = {
   HAVE_FAVOURITES: 'Hello BEAMer! Search your favourites queries.',
   DONT_HAVE_FAVOURITES: "Hello BEAMer! You don't have favourites queries.",
 };
+export const VISIBLE_PAGES_NUMBER_LIMIT = 5;
 export const MAX_GRID = 3;
 export const MAX_GRID_SMALLER = 2;
 export const GRID_WIDTH_BREAKPOINT = 1280;
