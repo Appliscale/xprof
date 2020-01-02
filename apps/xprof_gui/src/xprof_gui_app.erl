@@ -21,10 +21,10 @@
 %% Application callbacks
 
 start(_StartType, _StartArgs) ->
-    maybe_start_favourites(),
+    FavResult = maybe_start_favourites(),
     case start_cowboy() of
         {ok, _} ->
-            {ok, self()};
+            FavResult;
         {error, _} = Error ->
             Error
     end.
@@ -70,7 +70,7 @@ maybe_start_favourites() ->
     case xprof_gui_favourites_config:is_enabled() of
         false ->
             %% do nothing
-            ok;
+            {ok, self()};
         true ->
             {ok, _} = xprof_gui_favourites_sup:start_link()
     end.
