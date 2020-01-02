@@ -7,6 +7,7 @@ import {
   update,
   executeIfExists,
 } from '../../../utils';
+import { GRAPH_INITIAL_SIZE } from '../../../constants';
 
 class Grid extends React.Component {
   constructor(props) {
@@ -75,8 +76,12 @@ class Grid extends React.Component {
   }
 }
 
+Grid.defaultProps = {
+  size: GRAPH_INITIAL_SIZE,
+};
+
 Grid.propTypes = {
-  size: PropTypes.shape(PropTypes.any).isRequired,
+  size: PropTypes.shape(PropTypes.any),
   graphID: PropTypes.string.isRequired,
   setSize: PropTypes.func.isRequired,
 };

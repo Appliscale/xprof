@@ -10,25 +10,34 @@ import {
   sortCallsBy,
   expandTracingPanel,
   shrinkTracingPanel,
+  nextCallsPagination,
+  previousCallsPagination,
+  setCallsPage,
 } from '../../actions';
 import {
-  getFunctionCalls,
+  getCurrentCallsForFunction,
   getFunctionControl,
   getFunctionTracingVisibility,
   isConnection,
+  getCountCallsPages,
+  getCurrentCallsPage,
+  getStartCallsPage,
 } from '../../selectors';
 
 const TracingContainer = props => <Tracing {...props} />;
 
 const mapStateToProps = (state, ownProps) => ({
   monitored: ownProps.monitored,
-  calls: getFunctionCalls(state, ownProps.monitored.query),
+  currentCalls: getCurrentCallsForFunction(state, ownProps.monitored.query),
   controls: getFunctionControl(state, ownProps.monitored.query),
   panelVisibility: getFunctionTracingVisibility(
     state,
     ownProps.monitored.query,
   ),
   isConnection: isConnection(state),
+  countCallsPages: getCountCallsPages(state, ownProps.monitored.query),
+  currentCallsPage: getCurrentCallsPage(state, ownProps.monitored.query),
+  startCallsPage: getStartCallsPage(state, ownProps.monitored.query),
 });
 
 const mapDispatchToProps = {
@@ -40,6 +49,9 @@ const mapDispatchToProps = {
   sortCallsBy,
   expandTracingPanel,
   shrinkTracingPanel,
+  nextCallsPagination,
+  previousCallsPagination,
+  setCallsPage,
 };
 
 const con = connect(mapStateToProps, mapDispatchToProps)(TracingContainer);

@@ -1,12 +1,19 @@
-import { getLastCallsForFunction, getFunctionControl } from '../selectors';
+import {
+  getCurrentCallsForFunction,
+  getFunctionControl,
+  getCountCallsPages,
+  getStartCallsPage,
+  getCurrentCallsPage,
+} from '../selectors';
 import * as types from '../constants/ActionTypes';
 import { determineNextControlSwitch, sortItems } from '../utils';
-import { SORT } from '../constants';
+import { SORT, VISIBLE_PAGES_NUMBER_LIMIT } from '../constants';
 
-const toggleExpand = (functionName, updatedItems) => ({
+const toggleExpand = (functionName, updatedItems, index) => ({
   type: types.TOGGLE_EXPAND_ITEM,
   functionName,
   updatedItems,
+  index,
 });
 
 export const setCallsControl = control => ({
@@ -14,18 +21,75 @@ export const setCallsControl = control => ({
   control,
 });
 
-const updateLastCallsForFunction = (functionName, sortedCalls) => ({
+export const setPaginations = paginations => ({
+  type: types.SET_PAGINATIONS,
+  paginations,
+});
+
+const updateCurrentCallsForFunction = (functionName, sortedCalls, index) => ({
   type: types.SORT_CALLS,
   functionName,
   sortedCalls,
+  index,
 });
+
+export const setCallsPage = (functionName, page) => ({
+  type: types.SET_CALLS_PAGE,
+  functionName,
+  page,
+});
+
+export const setStartCallsPage = (functionName, start) => ({
+  type: types.SET_START_CALLS_PAGE,
+  functionName,
+  start,
+});
+
+export const previousCallsPagination = functionName => (dispatch, getState) => {
+  const state = getState();
+  const start = getStartCallsPage(state, functionName);
+  const jumpTo =
+    start - VISIBLE_PAGES_NUMBER_LIMIT < 0
+      ? 0
+      : start - VISIBLE_PAGES_NUMBER_LIMIT;
+  dispatch(setStartCallsPage(functionName, jumpTo));
+};
+
+export const nextCallsPagination = functionName => (dispatch, getState) => {
+  const state = getState();
+  const start = getStartCallsPage(state, functionName);
+  const count = getCountCallsPages(state, functionName);
+  const jumpTo =
+    start + VISIBLE_PAGES_NUMBER_LIMIT + VISIBLE_PAGES_NUMBER_LIMIT > count
+      ? count - VISIBLE_PAGES_NUMBER_LIMIT
+      : start + VISIBLE_PAGES_NUMBER_LIMIT;
+  dispatch(setStartCallsPage(functionName, jumpTo));
+};
+
+export const setLastAsCurrentPage = functionName => (dispatch, getState) => {
+  const state = getState();
+  const count = getCountCallsPages(state, functionName);
+  const start = getStartCallsPage(state, functionName);
+
+  dispatch(setCallsPage(functionName, count));
+  if (count >= start + VISIBLE_PAGES_NUMBER_LIMIT) {
+    // eslint-disable-next-line
+    dispatch(
+      // eslint-disable-next-line
+      setStartCallsPage(functionName, count - VISIBLE_PAGES_NUMBER_LIMIT + 1),);
+  }
+};
 
 export const toggleExpandItem = (monitored, item) => (dispatch, getState) => {
   const state = getState();
   const functionName = monitored.query;
-  const lastCallsForFunction = getLastCallsForFunction(state, functionName);
+  const index = getCurrentCallsPage(state, functionName);
+  const currentCallsForFunction = getCurrentCallsForFunction(
+    state,
+    functionName,
+  );
 
-  const updatedItems = lastCallsForFunction.sort.items.map((call) => {
+  const updatedItems = currentCallsForFunction.sort.items.map((call) => {
     if (call.id === item.id) {
       return {
         ...call,
@@ -35,7 +99,7 @@ export const toggleExpandItem = (monitored, item) => (dispatch, getState) => {
     return call;
   });
 
-  dispatch(toggleExpand(functionName, updatedItems));
+  dispatch(toggleExpand(functionName, updatedItems, index));
 };
 
 export const toggleCallsTracing = monitored => async (dispatch, getState) => {
@@ -80,21 +144,25 @@ export const handleLimitChange = (monitored, value) => (dispatch, getState) => {
 export const sortCallsBy = (monitored, column) => (dispatch, getState) => {
   const state = getState();
   const functionName = monitored.query;
-  const lastCallsForFunction = getLastCallsForFunction(state, functionName);
+  const index = getCurrentCallsPage(state, functionName);
+  const currentCallsForFunction = getCurrentCallsForFunction(
+    state,
+    functionName,
+  );
   const order =
-    lastCallsForFunction.sort.column === column &&
-    lastCallsForFunction.sort.order === SORT.ASCENDING
+    currentCallsForFunction.sort.column === column &&
+    currentCallsForFunction.sort.order === SORT.ASCENDING
       ? SORT.DESCENDING
       : SORT.ASCENDING;
 
   const sortLastCalls = {
-    ...lastCallsForFunction,
+    ...currentCallsForFunction,
     sort: {
-      items: sortItems(lastCallsForFunction.items, column, order),
+      items: sortItems(currentCallsForFunction.items, column, order),
       column,
       order,
     },
   };
 
-  dispatch(updateLastCallsForFunction(functionName, sortLastCalls));
+  dispatch(updateCurrentCallsForFunction(functionName, sortLastCalls, index));
 };

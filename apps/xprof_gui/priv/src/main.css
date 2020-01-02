@@ -198,6 +198,10 @@ input#searchBox {
   transition: all 200ms ease-out !important;
 }
 
+.disabled-prev-next {
+  background-color: #67d8b7 !important;
+}
+
 /* Grid switch icon */
 .btn-grid-switch {
   padding: 2px 7px;

@@ -30,10 +30,13 @@ export const CHANGE_SIZE = 'CHANGE_SIZE';
 // tracing
 export const UPDATE_CALLS = 'UPDATE_CALLS';
 export const SET_CALLS_CONTROL = 'SET_CALLS_CONTROL';
+export const SET_PAGINATIONS = 'SET_PAGINATIONS';
 export const SORT_CALLS = 'SORT_CALLS';
 export const TOGGLE_EXPAND_ITEM = 'TOGGLE_EXPAND_ITEM';
 export const EXPAND_TRACING_PANEL = 'EXPAND_TRACING_PANEL';
 export const SHRINK_TRACING_PANEL = 'SHRINK_TRACING_PANEL';
+export const SET_CALLS_PAGE = 'SET_CALLS_PAGE';
+export const SET_START_CALLS_PAGE = 'SET_START_CALLS_PAGE';
 export const SET_GRID = 'SET_GRID';
 
 // explore
