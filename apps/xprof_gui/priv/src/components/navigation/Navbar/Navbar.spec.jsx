@@ -15,6 +15,8 @@ describe('Navbar component', () => {
     setPositionOnFunction: jest.fn(),
     isConnection: true,
     switchGrid: jest.fn(),
+    switchInputType: jest.fn(),
+    toggleInputType: jest.fn(),
   };
   it('renders', () => {
     const wrapper = shallow(<Navbar {...props} />);

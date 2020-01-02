@@ -1,10 +1,12 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import { QueryInput, ACModal } from '../';
+import { QueryInput, ACModal, InputSwitch } from '../';
+import { INPUT_TYPE } from '../../../constants';
 
 const defaultProps = {
   position: -1,
-  placeholder: 'Hello BEAMer! Please specify your trace pattern here.',
+  placeholder: '',
+  selectedInputType: INPUT_TYPE.SEARCH,
 };
 
 const propTypes = {
@@ -17,6 +19,9 @@ const propTypes = {
   position: PropTypes.number,
   setPositionOnFunction: PropTypes.func.isRequired,
   isConnection: PropTypes.bool.isRequired,
+  selectedInputType: PropTypes.string,
+  switchInputType: PropTypes.func.isRequired,
+  toggleInputType: PropTypes.func.isRequired,
 };
 
 const FunctionBrowser = ({
@@ -29,19 +34,21 @@ const FunctionBrowser = ({
   position,
   setPositionOnFunction,
   isConnection,
+  selectedInputType,
+  switchInputType,
+  toggleInputType,
 }) => (
   <form className="navbar-form">
     <div className="form-group" style={{ display: 'inline' }}>
       <div className="input-group" style={{ display: 'table' }}>
-        <span className="input-group-addon" style={{ width: '1%' }}>
-          <span className="glyphicon glyphicon-search" />
-        </span>
+        <InputSwitch selected={selectedInputType} onChange={switchInputType} />
         <QueryInput
           queryKeyDown={queryKeyDown}
           queryInputChange={queryInputChange}
           query={query}
           placeholder={placeholder}
           isConnection={isConnection}
+          toggleInputType={toggleInputType}
         />
         <ACModal
           functions={functions}

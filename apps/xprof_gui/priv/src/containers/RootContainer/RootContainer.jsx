@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import Root from '../../components/Root';
-import { getTraceStatus, getMode } from '../../actions';
+import { getTraceStatus, getMode, getFavourites } from '../../actions';
 
 const RootContainer = props => <Root {...props} />;
 
@@ -12,6 +12,7 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = {
   getTraceStatus,
   getMode,
+  getFavourites,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(RootContainer);

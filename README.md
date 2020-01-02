@@ -124,12 +124,13 @@ You can configure XProf by changing the below application variables:
 |--------------|------------------------|----------------|-------------|
 | `xprof_gui`  | `ip`                   | any            | Listen address of the web interface (in tuple format, see [`inet:ip_address()`](http://erlang.org/doc/man/inet.html#type-ip_address)) |
 | `xprof_gui`  | `port`                 | 7890           | Port for the web interface |
+| `xprof_gui`  | `favourites_enabled`   | true           | Whether saving/loading favourite queries is enabled |
+| `xprof_gui`  | `favourites_config`    | ./favourites.cfg | Path of the file storing favourite queries |
 | `xprof_core` | `max_tracer_queue_len` | 1000           | Overflow protection. If main tracer proccess will have more than 1000 messages in its process queue tracing will be stopped and one needs to use trace button to resume. The purpose of this is to prevent out of memory crashes when tracer process is not able to process incomming traces fast enough. This may happen when we trace very "hot" function. |
 | `xprof_core` | `max_duration`         | 30000          | The largest duration value in ms. In case a call takes even longer, this maximum value is stored instead. |
 | `xprof_core` | `ignore_recursion`     | true           | Whether to only measure the outermost call to a recursive function or not (ie. measure all calls). |
 | `xprof_core` | `mode`                 | <autodetected> | Syntax mode (`erlang` or `elixir`) |
 | `xprof_core` | `load_records`         | []             | List of modules from which to load record definitions at startup. |
-
 
 ## Compile-time configuration
 
@@ -147,19 +148,33 @@ like to use Cowboy version 1.x you can define the OS env var
 ## Web Interface
 
 XProf's web interface supports a lot of small but convenient features
-as query autocomplition, list of called functions, collapsing graphs,
-multiple graphs in a row and so on.
+as query autocomplition, recent queries, favourite queries, list of
+called functions, collapsing graphs, multiple graphs in a row and so
+on.
 
 ### Keyboard shortcuts
 
+- **Ctrl-i**: switch between "search" and "favourites" mode of the query box
+
+In "search" mode
 - **UP**/**DOWN** arrows (cursor in query box): scroll through recent queries
 - **UP**/**DOWN** arrows (cursor in suggestion list below query box): scroll
   through auto-completion suggestions
 - **TAB**: if no suggetion is selected yet auto-complete to longest common
   prefix of dropdown list items. Otherwise copy the selected item to the search
   box and refresh the dropdown list.
-- **ENTER**: start tracing either the selected suggestion if there is any or the
+- **ENTER**: start monitoring either the selected suggestion if there is any or the
   expression in the search box.
+
+In "favorites" mode
+- Search only starts after typing the second character. (For 0 and 1
+  chars you see the list of all favorite queries)
+- **UP**/**DOWN** arrows: scroll through the list
+- **ENTER**: start monitoring highlighted query if there is any (also
+  added to recent queries)
+- **ESC**: reset search (clear the query box and hide the list)
+- **TAB**: show full list of favourite queries, when the query box is
+  empty and the list isn't visible
 
 ## Contributing
 

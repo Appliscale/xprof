@@ -8,6 +8,8 @@ import {
   toggleTraceStatus,
   setPositionOnFunction,
   switchGrid,
+  switchInputType,
+  toggleInputType,
 } from '../../actions';
 import {
   getStatus,
@@ -19,6 +21,8 @@ import {
   getExample,
   isConnection,
   getNumberOfMonitoredFunctions,
+  getSelectedInputType,
+  getFavourites,
 } from '../../selectors';
 
 const NavContainer = props => <Navbar {...props} />;
@@ -33,6 +37,8 @@ const mapStateToProps = state => ({
   example: getExample(state),
   isConnection: isConnection(state),
   numberOfMonitoredFunctions: getNumberOfMonitoredFunctions(state),
+  selectedInputType: getSelectedInputType(state),
+  favourites: getFavourites(state),
 });
 
 const mapDispatchToProps = {
@@ -42,6 +48,8 @@ const mapDispatchToProps = {
   queryInputChange,
   setPositionOnFunction,
   switchGrid,
+  switchInputType,
+  toggleInputType,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(NavContainer);

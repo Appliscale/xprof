@@ -1,5 +1,6 @@
 import { without } from 'lodash';
 import * as types from '../constants/ActionTypes';
+import { INPUT_TYPE } from '../constants';
 
 const initialState = {
   query: '',
@@ -11,6 +12,8 @@ const initialState = {
   inputType: null,
   example: null,
   history: [],
+  favourites: [],
+  selectedInputType: INPUT_TYPE.SEARCH,
 };
 
 const navigation = (state = initialState, action) => {
@@ -63,6 +66,16 @@ const navigation = (state = initialState, action) => {
       return {
         ...state,
         dirtyInput: action.query,
+      };
+    case types.SWITCH_INPUT_TYPE:
+      return {
+        ...state,
+        selectedInputType: action.inputType,
+      };
+    case types.UPDATE_FAVOURITES:
+      return {
+        ...state,
+        favourites: action.favourites,
       };
     default:
       return state;

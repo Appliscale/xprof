@@ -16,6 +16,7 @@ export const CALLS_COLUMNS = {
   ARGS: 'args',
   RES: 'res',
 };
+export const SWITCH_INPUT_TYPE_HOTKEY = 'ctrl+i';
 export const NOTIFICATIONS_SEVERITY = {
   INFO: 'INFO',
   WARNING: 'WARNING',
@@ -80,14 +81,29 @@ export const NOTIFICATIONS = {
         ? 'The grid has been changed to 1 graph per row'
         : `The grid has been changed to ${columns} graphs per row`),
   },
+  UPDATED_FAVOURITES: {
+    SEVERITY: NOTIFICATIONS_SEVERITY.INFO,
+    MESSAGE: 'List of favourites function has been updated',
+  },
+  UPDATE_FAVOURITES_ERROR: {
+    SEVERITY: NOTIFICATIONS_SEVERITY.ERROR,
+    MESSAGE: "Couldn't update list of favourites functions",
+  },
 };
-export const MODE_DETECTED = (language, inputType, example) =>
-  'Hello BEAMer! I have detected that you are using an ' +
-  `${language} project, please specify your ${inputType} ` +
-  `here e.g. ${example}`;
-export const MODE_UNKNOWN =
-  'Hello BEAMer! Please specify your trace pattern here.';
+export const PLACEHOLDER = {
+  MODE_DETECTED: (language, inputType, example) =>
+    'Hello BEAMer! I have detected that you are using an ' +
+    `${language} project, please specify your ${inputType} ` +
+    `here e.g. ${example}`,
+  MODE_UNKNOWN: 'Hello BEAMer! Please specify your trace pattern here.',
+  HAVE_FAVOURITES: 'Hello BEAMer! Search your favourites queries.',
+  DONT_HAVE_FAVOURITES: "Hello BEAMer! You don't have favourites queries.",
+};
 export const VISIBLE_PAGES_NUMBER_LIMIT = 5;
 export const MAX_GRID = 3;
 export const MAX_GRID_SMALLER = 2;
 export const GRID_WIDTH_BREAKPOINT = 1280;
+export const INPUT_TYPE = {
+  SEARCH: 'search',
+  FAVOURITES: 'favourites',
+};

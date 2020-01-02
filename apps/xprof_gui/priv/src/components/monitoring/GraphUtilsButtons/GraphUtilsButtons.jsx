@@ -4,6 +4,7 @@ import React from 'react';
 const defaultProps = {
   panelVisibility: true,
   hasCallees: false,
+  isFavourite: false,
 };
 
 const propTypes = {
@@ -14,6 +15,8 @@ const propTypes = {
   expand: PropTypes.func.isRequired,
   shrink: PropTypes.func.isRequired,
   isConnection: PropTypes.bool.isRequired,
+  toggleFavourite: PropTypes.func.isRequired,
+  isFavourite: PropTypes.bool,
 };
 
 const GraphUtilsButtons = ({
@@ -24,6 +27,8 @@ const GraphUtilsButtons = ({
   expand,
   shrink,
   isConnection,
+  toggleFavourite,
+  isFavourite,
 }) => (
   <span>
     <button
@@ -63,6 +68,21 @@ const GraphUtilsButtons = ({
         <span className="glyphicon glyphicon-thick glyphicon-search" />
       </button>
     ) : null}
+    <button
+      onClick={() => toggleFavourite(!isFavourite)}
+      type="button"
+      className={`graph-util-button graph-utils-fav close ${isFavourite
+        ? 'o-70'
+        : ''}`}
+      data-dismiss="modal"
+      aria-label="Favourites"
+    >
+      <span
+        className={`glyphicon glyphicon-star ${isFavourite
+          ? 'text-warning'
+          : ''}`}
+      />
+    </button>
   </span>
 );
 

@@ -11,6 +11,7 @@ import {
   shrinkGraphPanel,
   calleeClick,
   setSize,
+  toggleFavourite,
 } from '../../actions';
 import {
   getFunctionData,
@@ -20,6 +21,7 @@ import {
   isConnection,
   getSize,
   getIDs,
+  isFavourite,
   getFunctionY,
 } from '../../selectors';
 
@@ -38,6 +40,7 @@ const mapStateToProps = (state, ownProps) => ({
   size: getSize(state),
   ids: getIDs(state),
   isConnection: isConnection(state),
+  isFavourite: isFavourite(state, ownProps.monitored.query),
 });
 
 const mapDispatchToProps = {
@@ -50,6 +53,7 @@ const mapDispatchToProps = {
   shrinkGraphPanel,
   calleeClick,
   setSize,
+  toggleFavourite,
 };
 
 const con = connect(mapStateToProps, mapDispatchToProps)(MonitoringContainer);

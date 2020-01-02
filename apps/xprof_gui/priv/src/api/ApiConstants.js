@@ -16,3 +16,7 @@ export const START_CAPTURING_CALLS = `${API_HOSTNAME}/api/capture`;
 export const LANGUANGE_MODE = `${API_HOSTNAME}/api/mode`;
 export const GET_FUNCTIONS_CALLEES = `${API_HOSTNAME}/api/get_callees`;
 export const GET_MODE = `${API_HOSTNAME}/api/mode`;
+export const ADD_FAVOURITE_FUNCTION = `${API_HOSTNAME}/api/fav_add`;
+export const REMOVE_FAVOURITE_FUNCTION = `${API_HOSTNAME}/api/fav_remove`;
+export const ALL_FAVOURITE_FUNCTIONS = `${API_HOSTNAME}/api/fav_get_all`;
+export const FAVOURITES_ENABLED = `${API_HOSTNAME}/api/fav_enabled`;
