@@ -245,10 +245,9 @@ put_pid(MFA, Pid) ->
 erase_pid(MFA) ->
     erase({handler, MFA}).
 
-%% FIXME OTP 19+
 %% the rand module was introduced in OTP 18.0
 %% and random module was deprecated in OTP 19.0
--ifdef(rand_module).
+-ifndef(before_OTP_18).
 random_uniform() ->
     rand:uniform().
 -else.

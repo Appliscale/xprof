@@ -534,10 +534,7 @@ int_floor(F) ->
 
 -endif.
 
-%% FIXME OTP 19+
-%% Remove this section when we no longer support old Erlang versions
-%% (R16B - 18)
--ifdef(before_OTP_19).
+-ifdef(before_OTP_18).
 
 math_log2(V) ->
     math:log(V)/math:log(2).
