@@ -21,7 +21,7 @@
     "bootstrap": "3.3.7",
     "bootswatch": "3.3.7",
     "c3": "0.4.11",
-    "jquery": "2.1.4",
+    "jquery": "3.5.0",
     "react": "15.4.1",
     "react-bootstrap": "0.30.7",
     "react-c3js": "0.1.16",
