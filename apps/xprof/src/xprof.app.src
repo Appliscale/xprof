@@ -3,7 +3,9 @@
  ,{vsn, "2.0.0-rc.4"}
  ,{registered, []}
  ,{applications,
-   [xprof_core,
+   [kernel,
+    stdlib,
+    xprof_core,
     xprof_gui
    ]}
  ,{env,[]}
