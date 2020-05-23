@@ -145,6 +145,22 @@ compatible with older Cowboy versions. If for some reason you would
 like to use Cowboy version 1.x you can define the OS env var
 `COWBOY_VERSION=1` when compiling `xprof_gui`.
 
+`XPROF_JSON_LIB` - By default XProf uses the `jsone` library. If you
+would like to use a different json library you can define the OS env
+var `XPROF_JSON_LIB` when compiling `xprof_gui`. It is assumed that
+the library module exports an `encode/1` function that returns the
+encoded binary. If your preferred json library uses a different name
+for such a function, you can set it with `XPROF_JSON_ENC_FUN`.
+
+Examples
+
+```
+export XPROF_ERL_HIST=true
+export COWBOY_VERSION=1
+export XPROF_JSON_LIB='Elixir.Jason'
+export XPROF_JSON_ENC_FUN='encode!'
+```
+
 ## Web Interface
 
 XProf's web interface supports a lot of small but convenient features
