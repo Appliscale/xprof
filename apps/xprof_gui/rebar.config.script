@@ -60,4 +60,18 @@ CowboyVsn =
           end
   end.
 
-CowboyVsn(JsonLib(CONFIG)).
+Rebar2 =
+  fun(Config0) ->
+          case erlang:function_exported(rebar3, main, 1) of
+              true -> % rebar3
+                  Config0;
+              false -> % rebar 2.x or older
+                  %% Only include app names for deps.
+                  %% Top level app should declare source and version.
+                  Deps = proplists:get_value(deps, Config0, []),
+                  NewDeps = [element(1, Dep)||Dep <- Deps],
+                  lists:keystore(deps, 1, Config0, {deps, NewDeps})
+          end
+  end.
+
+Rebar2(CowboyVsn(JsonLib(CONFIG))).
