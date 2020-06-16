@@ -6,7 +6,10 @@ branches:
 matrix:
     include:
         - otp_release: 23.0
-          env: NEW_REBAR=true
+          env:
+          - NEW_REBAR=true
+          # hdr_histogram up to 0.4.0 fails to compile with OTP 23
+          - XPROF_ERL_HIST=true
         - otp_release: 22.3
           env: NEW_REBAR=true
         - otp_release: 21.3
