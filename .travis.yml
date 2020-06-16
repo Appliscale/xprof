@@ -5,6 +5,12 @@ branches:
         - release_2.0
 matrix:
     include:
+        - otp_release: 23.0
+          env: NEW_REBAR=true
+        - otp_release: 22.3
+          env: NEW_REBAR=true
+        - otp_release: 21.3
+          env: NEW_REBAR=true
         - otp_release: 20.3
         - otp_release: 19.3
         - otp_release: 19.3
@@ -23,6 +29,8 @@ cache:
         - $HOME/.cache/rebar3
         - apps/xprof_gui/priv/node_modules
 install:
+    - if [ -n "$NEW_REBAR" ]; then curl -O -L https://s3.amazonaws.com/rebar3/rebar3 && chmod +x ./rebar3 ; fi
+    - ./rebar3 --version
     - ./rebar3 deps
     - nvm install 8.11.1 && nvm use 8.11.1
     - make bootstrap_front_end
