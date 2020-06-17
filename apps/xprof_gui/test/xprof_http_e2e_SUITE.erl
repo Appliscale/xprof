@@ -435,9 +435,20 @@ decode_json("") ->
 decode_json(Body) ->
     jsone:decode(list_to_binary(Body), [{object_format, proplist}]).
 
+-ifdef(OTP_RELEASE).
+%% uri_string module was instriduced in OTP 21
+proplist_to_query_string(PL) ->
+    uri_string:compose_query(PL).
+
+-else.
+%% pre-OTP 21
+%% http_uri module is deprecated in OTP 23
+%% and scheduled for removal in OTP 25
 proplist_to_query_string([]) ->
     "";
 proplist_to_query_string([{K, V}]) ->
     K ++ "=" ++ http_uri:encode(V);
 proplist_to_query_string([{K, V} | Rest]) ->
     K ++ "=" ++ http_uri:encode(V) ++ "&" ++ proplist_to_query_string(Rest).
+
+-endif.
