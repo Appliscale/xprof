@@ -46,5 +46,4 @@ script:
     - if [ $TRAVIS_OTP_RELEASE = "20.3" ]; then make doc dialyzer; fi
     - if [ $TRAVIS_OTP_RELEASE = "17.5" ]; then make dialyzer; fi   # run dialyzer with cowboy 1.x too
 after_success:
-    - ./rebar3 cover
-    - if [ $TRAVIS_OTP_RELEASE = "20.3" ]; then ./rebar3 coveralls send; fi
+    - if [ $TRAVIS_OTP_RELEASE = "20.3" ]; then ./rebar3 as test coveralls send; fi
