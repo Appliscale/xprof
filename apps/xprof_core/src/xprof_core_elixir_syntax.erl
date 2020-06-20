@@ -393,6 +393,11 @@ do_parse_tokens(Tokens) ->
     %% added in Elixir 1.6.0
     %% Support `columns: true' in `Code.string_to_quoted'
     put(elixir_parser_columns, true),
+    %% Elixir 1.10 renamed or superseeded by
+    %% elixir_pairing_metadata -> elixir_token_metadata
+    %% elixir_formatter_metadata -> elixir_literal_encoder
+    put(elixir_token_metadata, false),
+    put(elixir_literal_encoder, false),
 
     try elixir_parser:parse(Tokens) of
         {error, {_Loc, _Mod, _Err}} = Error ->
@@ -407,7 +412,9 @@ do_parse_tokens(Tokens) ->
     after
         erase(elixir_parser_file),
         erase(elixir_formatter_metadata),
-        erase(elixir_parser_columns)
+        erase(elixir_parser_columns),
+        erase(elixir_token_metadata),
+        erase(elixir_literal_encoder)
     end.
 
 err_str({ErrorPrefix, ErrorSuffix}) ->

@@ -16,7 +16,7 @@ statistics to get an overview of the system. Then capture arguments
 and results (return value or exception) of function calls that lasted
 longer than given number of milliseconds.
 
-With the introduction of xprof-commands via an extened query syntax in
+With the introduction of xprof-commands via an extended query syntax in
 2.0 more versatile stats, filters and other features became available.
 
 ## How does it look like
@@ -43,7 +43,7 @@ you would guess from the name, it takes a bit of sleep). In the video we:
 5. Type in function that you would like to start tracing.
 6. Start tracing clicking green button.
 
-The preferred way is to add the `xprof` *Hex* package as a dependency to you rebar3 config or Mix project file:
+The preferred way is to add the `xprof` *Hex* package as a dependency to your rebar3 config or Mix project file:
 
 ```erlang
 %% rebar.config (at least version `3.3.3` is required):
@@ -80,7 +80,8 @@ You can also fetch from the github repository (not recommended, only for develop
 
 ## Supported Versions
 
-XProf currently supports Erlang/OTP R16B - 20. Newer OTP versions might work but are not tested.
+XProf currently supports Erlang/OTP R16B - 23. Newer OTP versions (if
+any) might work but are not tested.
 
 ## Syntax mode
 
@@ -145,6 +146,22 @@ compatible with older Cowboy versions. If for some reason you would
 like to use Cowboy version 1.x you can define the OS env var
 `COWBOY_VERSION=1` when compiling `xprof_gui`.
 
+`XPROF_JSON_LIB` - By default XProf uses the `jsone` library. If you
+would like to use a different json library you can define the OS env
+var `XPROF_JSON_LIB` when compiling `xprof_gui`. It is assumed that
+the library module exports an `encode/1` function that returns the
+encoded binary. If your preferred json library uses a different name
+for such a function, you can set it with `XPROF_JSON_ENC_FUN`.
+
+Examples
+
+```
+export XPROF_ERL_HIST=true
+export COWBOY_VERSION=1
+export XPROF_JSON_LIB='Elixir.Jason'
+export XPROF_JSON_ENC_FUN='encode!'
+```
+
 ## Web Interface
 
 XProf's web interface supports a lot of small but convenient features
@@ -207,7 +224,7 @@ served by cowboy server (*XProf's* dependency).
 
 To develop `xprof` in a convenient way the following setup is recommended.
 
-You have to invoke following command once, if you do not have dependencies or
+You have to invoke following command once, if you do not have js dependencies or
 you need to update them:
 
 ```bash
@@ -229,5 +246,5 @@ development mode which is also going to recompile all *JS* files into
 achieve that use following command:
 
 ```bash
-$ name dev_front_end
+$ make dev_front_end
 ```

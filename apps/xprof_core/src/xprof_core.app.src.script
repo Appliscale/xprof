@@ -1,0 +1,10 @@
+case os:getenv("XPROF_ERL_HIST") of
+    false ->
+        CONFIG;
+    _ ->
+        %% Delete hdr_histogram from list of applications
+        [{application, App, Opts}] = CONFIG,
+        Apps = proplists:get_value(applications, Opts),
+        NewOpts = lists:keystore(applications, 1, Opts, {applications, Apps -- [hdr_histogram]}),
+        [{application, App, NewOpts}]
+end.

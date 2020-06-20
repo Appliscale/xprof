@@ -5,6 +5,16 @@ branches:
         - release_2.0
 matrix:
     include:
+        - otp_release: 23.0
+          env:
+          - NEW_REBAR=true
+          # hdr_histogram up to 0.4.0 fails to compile with OTP 23
+          - XPROF_ERL_HIST=true
+          - ELIXIR_VERSION=1.10.3
+        - otp_release: 22.3
+          env: NEW_REBAR=true
+        - otp_release: 21.3
+          env: NEW_REBAR=true
         - otp_release: 20.3
         - otp_release: 19.3
         - otp_release: 19.3
@@ -21,16 +31,19 @@ matrix:
 cache:
     directories:
         - $HOME/.cache/rebar3
+        - $HOME/.kiex/
         - apps/xprof_gui/priv/node_modules
 install:
+    - if [ -n "$ELIXIR_VERSION" ]; then kiex use "$ELIXIR_VERSION" --default || (kiex install "$ELIXIR_VERSION" && kiex use "$ELIXIR_VERSION" --default); fi
+    - if [ -n "$NEW_REBAR" ]; then curl -O -L https://s3.amazonaws.com/rebar3/rebar3 && chmod +x ./rebar3 ; fi
+    - ./rebar3 --version
     - ./rebar3 deps
     - nvm install 8.11.1 && nvm use 8.11.1
     - make bootstrap_front_end
 script:
-    - make test
-    - make test_front_end
+    - kiex use "$ELIXIR_VERSION" && make test
+    - if [ $TRAVIS_OTP_RELEASE = "20.3" ]; then make test_front_end; fi
     - if [ $TRAVIS_OTP_RELEASE = "20.3" ]; then make doc dialyzer; fi
     - if [ $TRAVIS_OTP_RELEASE = "17.5" ]; then make dialyzer; fi   # run dialyzer with cowboy 1.x too
 after_success:
-    - ./rebar3 cover
-    - if [ $TRAVIS_OTP_RELEASE = "20.3" ]; then ./rebar3 coveralls send; fi
+    - if [ $TRAVIS_OTP_RELEASE = "20.3" ]; then ./rebar3 as test coveralls send; fi

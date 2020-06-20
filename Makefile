@@ -6,15 +6,20 @@ VERSION:=$(shell grep vsn apps/xprof/src/xprof.app.src | cut -d '"' -f 2)
 ifdef COWBOY_VERSION
 	MAYBE_UPDATE_COWBOY = ./rebar3 upgrade cowboy
 endif
+ifdef XPROF_ERL_HIST
+	MAYBE_UNLOCK_HIST = ./rebar3 unlock hdr_histogram
+endif
 
 compile:
 	$(MAYBE_UPDATE_COWBOY)
+	$(MAYBE_UNLOCK_HIST)
 	./rebar3 compile
 
 dev: dev_front_end dev_back_end
 
 dev_back_end:
 	$(MAYBE_UPDATE_COWBOY)
+	$(MAYBE_UNLOCK_HIST)
 	./rebar3 as dev compile, shell
 
 dev_front_end:
@@ -33,6 +38,7 @@ build_prod_front_end:
 
 test: compile
 	$(MAYBE_UPDATE_COWBOY)
+	$(MAYBE_UNLOCK_HIST)
 	./rebar3 do eunit -c, ct -c, cover
 
 doc:
@@ -51,6 +57,7 @@ gen_ex_doc: ~/.mix/escripts/ex_doc ./doc/docs.exs ./doc/src/readme.md ./doc/src/
 
 dialyzer:
 	$(MAYBE_UPDATE_COWBOY)
+	$(MAYBE_UNLOCK_HIST)
 	./rebar3 dialyzer
 
 publish:
