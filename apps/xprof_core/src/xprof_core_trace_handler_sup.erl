@@ -23,13 +23,12 @@ init([]) ->
 
     SupFlags = {RestartStrategy, MaxRestarts, MaxSecondsBetweenRestarts},
 
-    Child = {
-        xprof_core_trace_handler,
-            {xprof_core_trace_handler, start_link, []},
-            permanent,
-            5000,
-            worker,
-            [xprof_core_trace_handler]
-        },
+    Child = {xprof_core_trace_handler,
+             {xprof_core_trace_handler, start_link, []},
+             permanent,
+             5000,
+             worker,
+             [xprof_core_trace_handler]
+            },
 
     {ok, {SupFlags, [Child]}}.

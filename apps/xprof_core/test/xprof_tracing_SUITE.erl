@@ -18,6 +18,7 @@
 -export([not_found_error/1,
          already_traced_error/1,
          not_captured_error/1,
+         monitor_undef/1,
          monitor_many_funs/1,
          monitor_recursive_fun/1,
          monitor_keep_recursive_fun/1,
@@ -43,6 +44,7 @@ all() ->
     [not_found_error,
      already_traced_error,
      not_captured_error,
+     monitor_undef,
      monitor_many_funs,
      monitor_recursive_fun,
      monitor_keep_recursive_fun,
@@ -207,10 +209,17 @@ monitor_crashing_fun(_Config) ->
     ok.
 
 
+monitor_undef(_Config) ->
+    ?assertEqual({error, "Undefined module undefined_module"},
+                 xprof_core:monitor({'undefined_module', f, 0})),
+    ?assertEqual({error, "Undefined function erl_scan:string/0"},
+                 xprof_core:monitor({erl_scan, string, 0})),
+    ok.
+
 monitor_many_funs(_Config) ->
     MFAs = [{code, all_loaded, 0}, {?MODULE, test_fun, 0},
             {?MODULE, spawn_test_fun, 0}, {os, timestamp, 0},
-            {erl_scan, string, 0}],
+            {erl_scan, string, 1}],
 
     ?assertEqual([], xprof_core:get_all_monitored()),
 

@@ -33,7 +33,7 @@ get_available_funs_test_() ->
      {"Local functions are listed after exported ones",
       fun() ->
               L1 = ?M:get_available_funs(<<"xprof_core_vm_info:">>),
-              ?assertMatch([<<"xprof_core_vm_info:get_available_funs/1">>|_], L1),
+              ?assertMatch([<<"xprof_core_vm_info:ensure_mfa/1">>|_], L1),
               ?assert(lists:member(<<"xprof_core_vm_info:filter_funs/3">>, L1))
       end},
      {"Generated functions are filtered out",

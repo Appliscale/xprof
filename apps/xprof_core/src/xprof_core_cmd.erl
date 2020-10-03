@@ -12,7 +12,8 @@
 
 -export([expand_query/1,
          process_query/2,
-         process_cmd/2]).
+         process_cmd/2,
+         prepare_start/1]).
 
 %%
 %% Callback functions that need to be implemented
@@ -21,6 +22,9 @@
 
 %% Return list of mandatory params
 -callback mandatory_params() -> [atom()].
+
+%% Return list of optional params
+-callback optional_params() -> [atom()].
 
 %% Convert param value from syntax-tree format to Erlang term or expression
 %% (Useful to implement some syntactic sugar/shorthands)
@@ -32,6 +36,19 @@
 %% additional params)
 -callback param_to_internal(Key :: atom(), Value :: term()) ->
     {ok, NewValue :: term()} | {error, Reason :: term()}.
+
+%% Any preparation or check needed before starting the command
+%% Executed in the process calling xprof_core
+-callback prepare_start(xprof_core:options()) ->
+    ok | {error, Reason :: term()}.
+
+%% Pretty print error terms returned by one of the other callbacks
+-callback format_error(term()) -> string().
+
+%% Generate unique id from command options
+%% There can be only one trace handler per command id
+%% (In the future this will be an opaque type, but today it is an MFA)
+-callback get_cmd_id(xprof_core:options()) -> xprof_core:mfa_id().
 
 -record(cmd, {name, cb_mod, desc}).
 
@@ -172,6 +189,9 @@ format_error(Reason) ->
         false ->
             xprof_core_lib:fmt_err("Unexpected error handling query: ~p", [Reason])
     end.
+
+prepare_start({start_cmd, _Cmd, Options, CmdCB, _Query}) ->
+    CmdCB:prepare_start(Options).
 
 %% @doc Get expansion suggestions for the given possibly incomplete query.
 -spec expand_query(binary()) -> {CommonPrefix :: binary(), [Match]}
