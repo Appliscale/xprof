@@ -24,6 +24,47 @@ get_available_funs_test_() ->
               ?assertNot(lists:member(<<"xprof_core_vm_info:module_info/0">>, L1)),
               ?assertNot(lists:member(<<"xprof_core_vm_info:module_info/1">>, L1))
       end},
+     {"Not loaded modules are listed",
+      fun() ->
+              ensure_unloaded(test_module),
+
+              L1 = ?M:get_available_funs(<<"test">>),
+              ?assert(lists:member(<<"test_module:">>, L1)),
+
+              ?assertNot(erlang:module_loaded(test_module))
+      end},
+     {"Not loaded module does not get loaded to list functions",
+      fun() ->
+              ensure_unloaded(test_module),
+
+              L1 = ?M:get_available_funs(<<"test_module:">>),
+              ?assert(lists:member(<<"test_module:start/0">>, L1)),
+              ?assert(lists:member(<<"test_module:loop/0">>, L1)),
+
+              ?assertNot(erlang:module_loaded(test_module))
+      end},
+     {"Not loaded and stripped module has exported functions listed",
+      {setup,
+       fun() ->
+               ensure_unloaded(test_module),
+               File = code:which(test_module),
+               BackupFile = File ++ ".backup",
+               {ok, _} = file:copy(File, BackupFile),
+               {ok, {test_module, _}} = beam_lib:strip(File),
+               {File, BackupFile}
+       end,
+       fun({File, BackupFile}) ->
+               file:delete(File),
+               file:rename(BackupFile, File)
+       end,
+       fun() ->
+               L1 = ?M:get_available_funs(<<"test_module:">>),
+               ?assert(lists:member(<<"test_module:start/0">>, L1)),
+               ?assertNot(lists:member(<<"test_module:loop/0">>, L1)),
+
+               ?assertNot(erlang:module_loaded(test_module))
+       end}
+     },
      {"Local functions are also listed if query contains colon",
       fun() ->
               L1 = ?M:get_available_funs(<<"xprof_core_vm_info:">>),
@@ -136,6 +177,32 @@ get_available_funs_elixir_test_() ->
                   ?assertEqual([], ?M:get_available_funs(<<"System.module_info/">>)),
                   ?assertEqual([], ?M:get_available_funs(<<"System.__info__">>))
           end},
+         {"Not loaded modules are listed",
+          fun() ->
+                  ensure_unloaded('Elixir.Calendar'),
+
+                  L1 = ?M:get_available_funs(<<"Calen">>),
+                  ?assert(lists:member(<<"Calendar.">>, L1)),
+
+                  ?assertNot(erlang:module_loaded('Elixir.Calendar'))
+          end},
+         {"Not loaded module does not get loaded to list functions",
+          fun() ->
+                  ensure_unloaded('Elixir.Task'),
+                  ensure_unloaded('Elixir.Task.Supervisor'),
+
+                  L1 = ?M:get_available_funs(<<"Task.">>),
+                  ?assert(lists:member(<<"Task.start_link/1">>, L1)),
+                  ?assert(lists:member(<<"Task.Supervisor.">>, L1)),
+
+                  %% let's expand Task.Supervisor
+                  L2 = ?M:get_available_funs(<<"Task.">>),
+                  ?assert(lists:member(<<"Task.start_link/1">>, L2)), %% exported
+                  ?assert(lists:member(<<"Task.exit/2">>, L2)), %% local
+
+                  ?assertNot(erlang:module_loaded('Elixir.Calendar')),
+                  ?assertNot(erlang:module_loaded('Elixir.Calendar.ISO'))
+          end},
          {"Local functions are also listed if query contains dot",
           fun() ->
                   L1 = ?M:get_available_funs(<<"System.">>),
@@ -246,3 +313,7 @@ scan_and_parse(Str, StartLoc) ->
         erl_scan:tokens([], Str, StartLoc),
     {ok, Form} = erl_parse:parse_form(Tokens),
     [Form|scan_and_parse(Rest, EndLoc)].
+
+ensure_unloaded(Mod) ->
+    code:purge(Mod),
+    code:delete(Mod).
