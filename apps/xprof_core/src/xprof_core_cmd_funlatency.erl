@@ -4,6 +4,7 @@
          optional_params/0,
          param_from_ast/2,
          param_to_internal/2,
+         prepare_start/1,
          format_error/1,
 
          get_cmd_id/1,
@@ -52,6 +53,11 @@ param_to_internal(retmatch, Fun) ->
     end;
 param_to_internal(_, _) ->
    {error, unknown_param}.
+
+prepare_start(Options) ->
+    MFASpec = proplists:get_value(mfa, Options),
+    MFA = xprof_core_lib:mfaspec2id(MFASpec),
+    xprof_core_vm_info:ensure_mfa(MFA).
 
 format_error(not_fun) ->
     "Must be a fun of arity 1 or 2";

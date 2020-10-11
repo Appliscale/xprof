@@ -4,7 +4,8 @@
 
 -export([
     get_available_funs/1,
-    get_called_funs/1
+    get_called_funs/1,
+    ensure_mfa/1
 ]).
 
 %% @doc Return list of existing module/funcion/arity that match query.
@@ -151,4 +152,26 @@ get_called_funs({Mod, Fun, Arity}) ->
         _:_ ->
             %% TODO: proper error handling
             []
+    end.
+
+-spec ensure_mfa(mfa()) -> ok | {error, string()}.
+ensure_mfa({Mod, Fun, Arity}) ->
+    case code:ensure_loaded(Mod) of
+        {module, Mod} ->
+            %% `functions' may not include certain BIFs for example
+            %% on OTP 21 `os:timestamp/0' was missing and only
+            %% included in `exports' (fixed by OTP 23)
+            FA = {Fun, Arity},
+            case lists:member(FA, Mod:module_info(functions)) orelse
+                 lists:member(FA, Mod:module_info(exports)) of
+                true ->
+                    ok;
+                false ->
+                    ModeCB = xprof_core_lib:get_mode_cb(),
+                    xprof_core_lib:fmt_err("Undefined function ~s",
+                                           [ModeCB:fmt_mfa(Mod, Fun, Arity)])
+            end;
+        {error, _} ->
+            ModeCB = xprof_core_lib:get_mode_cb(),
+            xprof_core_lib:fmt_err("Undefined module ~s", [ModeCB:fmt_mod(Mod)])
     end.

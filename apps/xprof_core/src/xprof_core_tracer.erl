@@ -47,7 +47,7 @@ monitor_query(Query, AdditionalParams) ->
         {error, _} = Error ->
             Error;
         StartCmd ->
-            gen_server:call(?MODULE, StartCmd)
+            prepare_and_start_cmd(StartCmd)
     end.
 
 %%% @doc Start monitoring based on the specified command and parameters.
@@ -57,6 +57,14 @@ monitor_cmd(Cmd, Params) ->
         {error, _} = Error ->
             Error;
         StartCmd ->
+            prepare_and_start_cmd(StartCmd)
+    end.
+
+prepare_and_start_cmd(StartCmd) ->
+    case xprof_core_cmd:prepare_start(StartCmd) of
+        {error, _} = Error ->
+            Error;
+        ok ->
             gen_server:call(?MODULE, StartCmd)
     end.
 
@@ -98,13 +106,16 @@ handle_call({start_cmd, Cmd, Options, CmdCB, Query}, _From, State) ->
         Pid when is_pid(Pid) ->
             {reply, {error, already_traced}, State};
         undefined ->
-            MFASpec = proplists:get_value(mfa, Options),
-            {ok, Pid} = supervisor:start_child(xprof_core_trace_handler_sup,
-                                               [Cmd, Options, MFASpec, CmdCB]),
-            put_pid(CmdId, Pid),
-            %% funs stored in reversed order of start monitoring
-            NState = setup_trace_all_if_initialized(State),
-            {reply, ok, NState#state{funs = [{CmdId, Query}|State#state.funs]}}
+            case supervisor:start_child(xprof_core_trace_handler_sup,
+                                        [Cmd, Options, CmdCB]) of
+                {ok, Pid} ->
+                    put_pid(CmdId, Pid),
+                    %% funs stored in reversed order of start monitoring
+                    NState = setup_trace_all_if_initialized(State),
+                    {reply, ok, NState#state{funs = [{CmdId, Query}|State#state.funs]}};
+                {error, Reason} ->
+                    {reply, {error, Reason}, State}
+            end
     end;
 handle_call({demonitor, MFA}, _From, State) ->
     xprof_core_trace_handler:trace_mfa_off(MFA),

@@ -9,7 +9,7 @@
 
 -behaviour(gen_server).
 
--export([start_link/4,
+-export([start_link/3,
          data/2,
 
          capture/3,
@@ -41,8 +41,10 @@
 -define(WINDOW_SIZE, 10*60). %% 10 min window size
 
 %% @doc Starts new process registered localy.
--spec start_link(xprof_core:cmd(), xprof_core:options(), xprof_core:mfa_spec(), module()) -> {ok, pid()}.
-start_link(_Cmd, Options, MFASpec, CmdCB) ->
+-spec start_link(xprof_core:cmd(), xprof_core:options(), module())
+                -> {ok, pid()} | {error, string()}.
+start_link(_Cmd, Options, CmdCB) ->
+    MFASpec = proplists:get_value(mfa, Options),
     Name = xprof_core_lib:mfaspec2atom(MFASpec),
     gen_server:start_link({local, Name}, ?MODULE, [Name, Options, MFASpec, CmdCB], []).
 
@@ -129,14 +131,19 @@ init([Name, Options, MFASpec, CmdCB]) ->
     {ok, CBState} = CmdCB:init(Options, MFASpec),
     init_storage(Name),
     %% add trace pattern with args capturing turned off
-    capture_args_trace_off(MFASpec),
-    {ok, #state{mfa_spec = MFASpec,
-                name = Name,
-                last_ts = os:timestamp(),
-                window_size = ?WINDOW_SIZE,
-                cb_mod = CmdCB,
-                cb_state = CBState
-               }, 1000}.
+    case capture_args_trace_off(MFASpec) of
+        0 ->
+            %% should not happen after ensure_mfa
+            {stop, {no_match_mfaspec, MFASpec}};
+        _ ->
+            {ok, #state{mfa_spec = MFASpec,
+                        name = Name,
+                        last_ts = os:timestamp(),
+                        window_size = ?WINDOW_SIZE,
+                        cb_mod = CmdCB,
+                        cb_state = CBState
+                       }, 1000}
+    end.
 
 handle_call({capture, Threshold, Limit}, _From,
             State = #state{mfa_spec = MFASpec}) ->
@@ -274,11 +281,11 @@ capture_item(Item,
         capture_args_trace_off(MFASpec),
     State#state{capture_counter = Count + 1}.
 
--spec capture_args_trace_on(xprof_core:mfa_spec()) -> any().
+-spec capture_args_trace_on(xprof_core:mfa_spec()) -> non_neg_integer().
 capture_args_trace_on({MFAId, {_MSOff, MSOn}}) ->
     erlang:trace_pattern(MFAId, MSOn, [local]).
 
--spec capture_args_trace_off(xprof_core:mfa_spec()) -> any().
+-spec capture_args_trace_off(xprof_core:mfa_spec()) -> non_neg_integer().
 capture_args_trace_off({MFAId, {MSOff, _MSOn}}) ->
     erlang:trace_pattern(MFAId, MSOff, [local]).
 
