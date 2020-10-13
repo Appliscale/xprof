@@ -78,6 +78,10 @@ get_called_funs_test_() ->
      fun() ->
              ?assertEqual([{lists, reverse, 2}], ?M:get_called_funs({lists, reverse, 1}))
      end},
+     {"Lists calls from preloaded modules in OTP",
+     fun() ->
+             ?assertEqual([{erlang, fun_info_1, 3}], ?M:get_called_funs({erlang, fun_info, 1}))
+     end},
      {"Doesn't list anything for BIF functions (containing erlang:nif_error/1 call)",
      fun() ->
              ?assertEqual([], ?M:get_called_funs({lists, reverse, 2}))
@@ -88,29 +92,33 @@ get_called_funs_test_() ->
       end},
      {"Extract calls from loaded xprof modules",
      fun() ->
-             code:load_file(xprof_core_lib),
+             %% This module might be cover compiled
              Calls = ?M:get_called_funs({xprof_core_lib, detect_mode, 0}),
              ?assertEqual(2, length(Calls)),
              ?assertEqual([{application, which_applications, 0}, {lists, keymember, 3}], Calls)
      end},
      {"Extract calls from xprof_core_vm_info:get_called_funs/1",
      fun() ->
-             code:load_file(?M),
+             %% This module might be cover compiled
              Calls = ?M:get_called_funs({?M, get_called_funs, 1}),
              ExpectedCalls = [{beam_disasm,file,1},
+                              {code,objfile_extension,0},
+                              {code,where_is_file,1},
                               {code,which,1},
+                              {erlang,'++',2},
+                              {erlang,atom_to_list,1},
+                              {erlang,throw,1},
                               {lists,filtermap,2},
                               {lists,flatten,1},
                               {lists,usort,1},
-                              {xprof_core_lib,get_mode_cb,0}
-                             ],
-             ?assertEqual(length(ExpectedCalls), length(Calls)),
-             ?assertEqual(ExpectedCalls, Calls)
+                              {xprof_core_lib,get_mode_cb,0}],
+             ?assertEqual({length(ExpectedCalls), ExpectedCalls},
+                          {length(Calls), Calls})
      end},
      {"Returns empty list on erroneous query",
      fun() ->
              Calls = ?M:get_called_funs({not_existing, function_call, 5}),
-             ?assertEqual(Calls, [])
+             ?assertEqual([], Calls)
      end}
     ].
 

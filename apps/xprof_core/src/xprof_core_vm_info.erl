@@ -98,7 +98,20 @@ get_modules() ->
 get_called_funs({Mod, Fun, Arity}) ->
     try
         %% Get file for given module and disassemble it
-        File = code:which(Mod),
+        File = case code:which(Mod) of
+                   File0 when is_list(File0), File0 =/= "" ->
+                       File0;
+                   _ ->
+                       %% File might be cover_compiled or preloaded
+                       %% (inspired by c:find_beam/1)
+                       BaseName = atom_to_list(Mod) ++ code:objfile_extension(),
+                       case code:where_is_file(BaseName) of
+                           File0 when is_list(File0) ->
+                               File0;
+                           Error ->
+                               throw(Error)
+                       end
+               end,
         #beam_file{module = Mod, code = Disasm} = beam_disasm:file(File),
 
         %% extract beamasm operations for given function
