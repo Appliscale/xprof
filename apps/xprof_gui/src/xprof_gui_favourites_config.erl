@@ -10,7 +10,9 @@ load_queries() ->
     case file:consult(File) of
         {ok, Queries} -> {ok, Queries};
         {error, Reason} ->
-            lager:warning("Couldn't open file: ~p. Using empty favourites list.", [Reason]),
+            error_logger:warning_msg(
+              "~p: Couldn't open file: ~p. Using empty favourites list.",
+              [?MODULE, Reason]),
             {ok, []}
     end.
 

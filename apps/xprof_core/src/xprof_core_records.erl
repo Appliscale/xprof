@@ -72,8 +72,13 @@ record_print_fun() ->
 init([]) ->
     ets:new(?TABLE, [set, protected, named_table, {read_concurrency, true}]),
     Mods = application:get_env(xprof_core, load_records, []),
-    RecNames = lists:flatmap(fun get_and_store_record_defs/1, Mods),
-    lager:info("Loaded records: ~p", [RecNames]),
+    case Mods of
+        [] ->
+            ok;
+        _ ->
+            RecNames = lists:flatmap(fun get_and_store_record_defs/1, Mods),
+            error_logger:info_msg("~p: Loaded records: ~p", [?MODULE, RecNames])
+    end,
     {ok, #state{}}.
 
 handle_call({load_records, Mod}, _From, State) ->

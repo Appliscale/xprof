@@ -235,8 +235,9 @@
 handle_req(What, Params) ->
     try do_handle_req(What, Params)
     catch C:E ->
-            lager:error("Error handling REST API request \"~s\" ~p ~p:~p",
-                        [What, Params, C, E]),
+            error_logger:error_msg(
+              "~p: Error handling REST API request \"~s\" ~p ~p:~p",
+              [?MODULE, What, Params, C, E]),
             500
     end.
 
@@ -249,8 +250,6 @@ do_handle_req(<<"funs">>, Params) ->
             ]},
     Json = xprof_gui_json:encode(Data),
 
-    lager:debug("Returning ~b functions matching phrase \"~s\"", [length(Funs), Query]),
-
     {200, Json};
 
 do_handle_req(<<"get_callees">>, Req) ->
@@ -261,8 +260,6 @@ do_handle_req(<<"get_callees">>, Req) ->
 
 do_handle_req(<<"mon_start">>, Params) ->
     Query = get_query(Params),
-
-    lager:info("Starting monitoring via web on '~s'~n", [Query]),
 
     case xprof_core:monitor_pp(Query) of
         ok ->
@@ -278,9 +275,7 @@ do_handle_req(<<"mon_start">>, Params) ->
     end;
 
 do_handle_req(<<"mon_stop">>, Params) ->
-    MFA = {M, F, A} = get_mfa(Params),
-
-    lager:info("Stopping monitoring via web on ~w:~w/~w~n",[M, F, A]),
+    MFA = get_mfa(Params),
 
     xprof_core:demonitor(MFA),
     204;
@@ -319,7 +314,7 @@ do_handle_req(<<"trace_set">>, Params) ->
             xprof_core:trace(pause),
             204;
         Spec ->
-            lager:info("Wrong spec for tracing: ~p",[Spec]),
+            error_logger:warning_msg("~p: Wrong spec for tracing: ~p", [?MODULE, Spec]),
             400
     end;
 
@@ -329,12 +324,9 @@ do_handle_req(<<"trace_status">>, _Params) ->
     {200, Json};
 
 do_handle_req(<<"capture">>, Params) ->
-    MFA = {M, F, A} = get_mfa(Params),
+    MFA = get_mfa(Params),
     Threshold = get_int(<<"threshold">>, Params),
     Limit = get_int(<<"limit">>, Params),
-
-    lager:info("Capture ~b calls to ~w:~w/~w~n exceeding ~b ms",
-               [Limit, M, F, A, Threshold]),
 
     case xprof_core:capture(MFA, Threshold, Limit) of
         {ok, CaptureId} ->
@@ -347,8 +339,6 @@ do_handle_req(<<"capture">>, Params) ->
 
 do_handle_req(<<"capture_stop">>, Params) ->
     MFA = get_mfa(Params),
-
-    lager:info("Stopping slow calls capturing for ~p", [MFA]),
 
     case xprof_core:capture_stop(MFA) of
         ok ->

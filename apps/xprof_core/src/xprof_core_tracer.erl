@@ -70,8 +70,7 @@ prepare_and_start_cmd(StartCmd) ->
 
 %% @doc Stops monitoring specified function calls.
 -spec demonitor(xprof_core:mfa_id()) -> ok.
-demonitor({Mod, Fun, Arity} = MFA) ->
-    lager:info("Stopping monitoring ~w:~w/~w",[Mod,Fun,Arity]),
+demonitor(MFA) ->
     gen_server:call(?MODULE, {demonitor, MFA}).
 
 %% @doc Returns list of monitored functions
@@ -83,7 +82,6 @@ all_monitored() ->
 %% processes or processes that are spawned by specified spawner pid.
 -spec trace(pid() | pause| resume | all | {spawner, pid()}) -> ok.
 trace(PidOrSpec) ->
-    lager:info("Tracing ~p", [PidOrSpec]),
     gen_server:call(?MODULE, {trace, PidOrSpec}).
 
 %% @doc Returns current tracing state.

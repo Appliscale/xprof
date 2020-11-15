@@ -7,7 +7,6 @@
    [kernel
    ,stdlib
    ,cowboy
-   ,lager
    ,jsone
    ]}
  ,{env,[]}
