@@ -65,16 +65,14 @@ defp deps do
   end
 ```
 
-You can also fetch from the github repository (not recommended, only for development):
-(TODO: finalize below example, needs raw and rsync resouce plugins)
+You can also fetch from the github repository (not recommended, only for development, requires rebar 3.14):
 
 ```erlang
 {deps, [
-       ...
-       {xprof_umbrella, {raw, {git, "https://github.com/appliscale/xprof.git", {tag, "2.0.0-rc.4"}}}},
-       {xprof_core, {rsync, "_build/default/lib/xprof_umbrella/apps/xprof_core"}},
-       {xprof_gui, {rsync, "_build/default/lib/xprof_umbrella/apps/xprof_gui"}},
-       {xprof, {rsync, "_build/default/lib/xprof_umbrella/apps/xprof"}},
+        ...
+        {xprof_core, {git_subdir, "https://github.com/gomoripeti/xprof.git", {tag, "2.0.0-rc.4"}, "apps/xprof_core"}},
+        {xprof_gui, {git_subdir, "https://github.com/gomoripeti/xprof.git", {tag, "2.0.0-rc.4"}, "apps/xprof_gui"}},
+        {xprof, {git_subdir, "https://github.com/gomoripeti/xprof.git", {tag, "2.0.0-rc.4"}, "apps/xprof"}}
 ]}.
 ```
 
