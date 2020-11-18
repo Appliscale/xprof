@@ -7,7 +7,6 @@
    [kernel
    ,stdlib
    ,compiler
-   ,lager
    ,hdr_histogram
    ]}
  ,{env,[]}

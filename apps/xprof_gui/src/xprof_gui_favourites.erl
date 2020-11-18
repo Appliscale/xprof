@@ -59,8 +59,7 @@ handle_call({add, XprofQuery}, _From, State = #state{queries = Queries}) ->
 
 handle_call(get_all, _From, State = #state{queries = Queries}) ->
     {reply, Queries, State};
-handle_call(Request, _From, State) ->
-    lager:warning("Received unknown message: ~p", [Request]),
+handle_call(_Request, _From, State) ->
     {reply, ignored, State}.
 
 handle_cast(_Msg, State) ->

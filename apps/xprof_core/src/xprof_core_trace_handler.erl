@@ -68,10 +68,7 @@ data(MFA, FromEpoch) ->
 %% than specified time threshold.
 -spec capture(xprof_core:mfa_id(), non_neg_integer(), non_neg_integer()) ->
                      {ok, non_neg_integer()} | {error, not_found}.
-capture(MFA = {M,F,A}, Threshold, Limit) ->
-    lager:info("Capturing ~p calls to ~w:~w/~w that exceed ~p ms:",
-               [Limit, M, F, A, Threshold]),
-
+capture(MFA, Threshold, Limit) ->
     Name = xprof_core_lib:mfa2atom(MFA),
     try
         gen_server:call(Name, {capture, Threshold, Limit})
@@ -170,8 +167,7 @@ handle_call(capture_stop, _From, State = #state{mfa_spec = MFASpec}) ->
     ets:insert(Name, {capture_spec, Id, Threshold, Count, Limit}),
     {Timeout, NewState2} = maybe_make_snapshot(NewState),
     {reply, ok, NewState2, Timeout};
-handle_call(Request, _From, State) ->
-    lager:warning("Received unknown message: ~p", [Request]),
+handle_call(_Request, _From, State) ->
     {reply, ignored, State}.
 
 handle_cast(_Msg, State) ->

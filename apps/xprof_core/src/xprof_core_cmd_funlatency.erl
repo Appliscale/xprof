@@ -119,9 +119,10 @@ handle_event({trace_ts, Pid, Tag, MFA, RetOrExc, EndTime},
                 {true, NewRet} ->
                     CallTime = timer:now_diff(EndTime, StartTime),
                     if CallTime > MaxDuration ->
-                            lager:error("Call ~p took ~p ms that is larger than the maximum "
-                                        "that can be stored (~p ms)",
-                                        [MFA, CallTime/1000, MaxDuration div 1000]),
+                            error_logger:warning_msg(
+                              "~p: Call ~p took ~p ms that is larger than the maximum "
+                              "that can be stored (~p ms)",
+                              [?MODULE, MFA, CallTime/1000, MaxDuration div 1000]),
                             ok = xprof_core_hist:hdr_record(Ref, MaxDuration);
                        true ->
                             ok = xprof_core_hist:hdr_record(Ref, CallTime)
