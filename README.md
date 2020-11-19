@@ -31,12 +31,6 @@ you would guess from the name, it takes a bit of sleep). In the video we:
 
 [![XProf Demo](doc/assets/xprof_demo_1.2.1_screenshot.png)](https://youtu.be/CRPC6zloDS0 "XProf Demo")
 
-## Versions
-
-The latest stable version of XProf is 1.3.0. The upcoming 2.0.0 version is in continuous development on the `release_2.0` branch, everyone is encouraged to test the latest release condidate from hex.pm.
-
-XProf currently supports Erlang/OTP R16B - 20 (both 1.x and 2.x versions). Newer OTP versions might work but are not tested.
-
 ## How to use it
 
 1. Add `xprof` to your build tool config file (and optionally also to the
