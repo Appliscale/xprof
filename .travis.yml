@@ -2,24 +2,48 @@ language: erlang
 branches:
     only:
         - master
-otp_release:
-    - 20.0
-    - 19.3
-    - 18.3
-    - 17.5
-    - R16B03-1
+        - release_2.0
+matrix:
+    include:
+        - otp_release: 23.0
+          env:
+          - NEW_REBAR=true
+          # hdr_histogram up to 0.4.0 fails to compile with OTP 23
+          - XPROF_ERL_HIST=true
+          - ELIXIR_VERSION=1.10.3
+        - otp_release: 22.3
+          env: NEW_REBAR=true
+        - otp_release: 21.3
+          env: NEW_REBAR=true
+        - otp_release: 20.3
+        - otp_release: 19.3
+        - otp_release: 19.3
+          env: XPROF_ERL_HIST=true
+        - otp_release: 18.3
+          dist: trusty
+          env: COWBOY_VERSION=1.1.2
+        - otp_release: 17.5
+          dist: trusty
+          env: COWBOY_VERSION=1.1.2
+        - otp_release: R16B03-1
+          dist: trusty
+          env: COWBOY_VERSION=1.1.2
 cache:
     directories:
         - $HOME/.cache/rebar3
-        - priv/node_modules
+        - $HOME/.kiex/
+        - apps/xprof_gui/priv/node_modules
 install:
+    - if [ -n "$ELIXIR_VERSION" ]; then kiex use "$ELIXIR_VERSION" --default || (kiex install "$ELIXIR_VERSION" && kiex use "$ELIXIR_VERSION" --default); fi
+    - if [ -n "$NEW_REBAR" ]; then curl -O -L https://s3.amazonaws.com/rebar3/rebar3 && chmod +x ./rebar3 ; fi
+    - ./rebar3 --version
     - ./rebar3 deps
-    - nvm install 6.2 && nvm use 6.2
+    - nvm install 8.11.1 && nvm use 8.11.1
     - make bootstrap_front_end
 script:
-    - make test
-    - make test_front_end
-    - if [ $TRAVIS_OTP_RELEASE = "20.0" ]; then make doc dialyzer; fi
+    - kiex use "$ELIXIR_VERSION" && make test
+    - if [ $TRAVIS_OTP_RELEASE = "20.3" ]; then make test_front_end; fi
+    - if [ $TRAVIS_OTP_RELEASE = "20.3" ]; then make doc dialyzer; fi
+    - if [ $TRAVIS_OTP_RELEASE = "17.5" ]; then make dialyzer; fi   # run dialyzer with cowboy 1.x too
 after_success:
-    - ./rebar3 cover
-    - if [ $TRAVIS_OTP_RELEASE = "18.3" ]; then ./rebar3 coveralls send; fi
+    - if [ $TRAVIS_OTP_RELEASE = "20.3" ]; then ./rebar3 as test coveralls send; fi

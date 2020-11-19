@@ -1,0 +1,47 @@
+
+EnsureMacro =
+  fun(Macro, Value, Config0) ->
+          ErlOpts = proplists:get_value(erl_opts, Config0, []),
+          ErlOptsCleared =
+              lists:filter(fun({d, Macro}) -> false;
+                              ({d, Macro, _}) -> false;
+                              (_) -> true
+                           end, ErlOpts),
+          NewErlOpts = [{d, Macro, Value}|ErlOptsCleared],
+          lists:keystore(erl_opts, 1, Config0, {erl_opts, NewErlOpts})
+  end.
+
+DeleteDep =
+  fun(Dep, Config0) ->
+          Deps = proplists:get_value(deps, Config0, []),
+          DepsCleared = lists:keydelete(Dep, 1, Deps),
+          lists:keystore(deps, 1, Config0, {deps, DepsCleared})
+  end.
+
+ErlHist =
+  fun(Config0) ->
+          case os:getenv("XPROF_ERL_HIST") of
+              false ->
+                  Config0;
+              _ ->
+                  Config1 = EnsureMacro('XPROF_ERL_HIST', true, Config0),
+                  %% hdr_histogram also deleted from .app.src applications
+                  DeleteDep(hdr_histogram, Config1)
+          end
+  end.
+
+Rebar2 =
+  fun(Config0) ->
+          case erlang:function_exported(rebar3, main, 1) of
+              true -> % rebar3
+                  Config0;
+              false -> % rebar 2.x or older
+                  %% Only include app names for deps.
+                  %% Top level app should declare source and version.
+                  Deps = proplists:get_value(deps, Config0, []),
+                  NewDeps = [element(1, Dep)||Dep <- Deps],
+                  lists:keystore(deps, 1, Config0, {deps, NewDeps})
+          end
+  end.
+
+Rebar2(ErlHist(CONFIG)).

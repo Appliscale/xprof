@@ -1,0 +1,19 @@
+{application, xprof,
+ [{description, "Visual tracer and profiler for BEAM languages"}
+ ,{vsn, "2.0.0-rc.4"}
+ ,{registered, []}
+ ,{applications,
+   [kernel,
+    stdlib,
+    xprof_core,
+    xprof_gui
+   ]}
+ ,{env,[]}
+ ,{modules, []}
+ ,{files, ["rebar.config", "src/"]}
+ ,{licenses, ["BSD-3-Clause"]}
+ ,{maintainers, ["Marcin Kasprowicz", "Marcin Kolodziej",
+                 "Michal Niec", "Pawel Pikula",
+                 "Peter Gomori", "Wojciech Gawronski"]}
+ ,{links, [{"Github", "https://github.com/appliscale/xprof"}]}
+ ]}.
