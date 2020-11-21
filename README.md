@@ -50,7 +50,7 @@ The preferred way is to add the `xprof` *Hex* package as a dependency to your re
 
 {deps, [
        ...
-       {xprof, "2.0.0-rc.4"}
+       {xprof, "2.0.0-rc.5"}
 ]}.
 ```
 
@@ -60,7 +60,7 @@ The preferred way is to add the `xprof` *Hex* package as a dependency to your re
 defp deps do
     [
       ...
-      {:xprof, "~> 2.0.0-rc.4"}
+      {:xprof, "~> 2.0.0-rc.5"}
     ]
   end
 ```
@@ -70,9 +70,9 @@ You can also fetch from the github repository (not recommended, only for develop
 ```erlang
 {deps, [
         ...
-        {xprof_core, {git_subdir, "https://github.com/gomoripeti/xprof.git", {tag, "2.0.0-rc.4"}, "apps/xprof_core"}},
-        {xprof_gui, {git_subdir, "https://github.com/gomoripeti/xprof.git", {tag, "2.0.0-rc.4"}, "apps/xprof_gui"}},
-        {xprof, {git_subdir, "https://github.com/gomoripeti/xprof.git", {tag, "2.0.0-rc.4"}, "apps/xprof"}}
+        {xprof_core, {git_subdir, "https://github.com/gomoripeti/xprof.git", {tag, "2.0.0-rc.5"}, "apps/xprof_core"}},
+        {xprof_gui, {git_subdir, "https://github.com/gomoripeti/xprof.git", {tag, "2.0.0-rc.5"}, "apps/xprof_gui"}},
+        {xprof, {git_subdir, "https://github.com/gomoripeti/xprof.git", {tag, "2.0.0-rc.5"}, "apps/xprof"}}
 ]}.
 ```
 
