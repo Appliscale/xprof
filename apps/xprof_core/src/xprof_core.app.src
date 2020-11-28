@@ -11,7 +11,7 @@
    ]}
  ,{env,[]}
  ,{modules, []}
- ,{files, ["rebar.config", "src/"]}
+ ,{files, ["rebar.config", "rebar.config.script", "src/"]}
  ,{licenses, ["BSD-3-Clause"]}
  ,{maintainers, ["Marcin Kasprowicz", "Marcin Kolodziej",
                  "Michal Niec", "Pawel Pikula",
