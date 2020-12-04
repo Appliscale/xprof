@@ -3,8 +3,8 @@ EnsureMacro =
   fun(Macro, Value, Config0) ->
           ErlOpts = proplists:get_value(erl_opts, Config0, []),
           ErlOptsCleared =
-              lists:filter(fun({d, Macro}) -> false;
-                              ({d, Macro, _}) -> false;
+              lists:filter(fun({d, M}) when M =:= Macro -> false;
+                              ({d, M, _}) when M =:= Macro -> false;
                               (_) -> true
                            end, ErlOpts),
           NewErlOpts = [{d, Macro, Value}|ErlOptsCleared],
@@ -42,7 +42,7 @@ JsonLib =
               false ->
                   Config0;
               JsonMod ->
-                  Config1 = EnsureMacro("XPROF_JSON_LIB", list_to_atom(JsonMod), Config0),
+                  Config1 = EnsureMacro('XPROF_JSON_LIB', list_to_atom(JsonMod), Config0),
                   Config2 = EnvToMacro("XPROF_JSON_ENC_FUN", Config1),
                   %% jsone also deleted from .app.src applications
                   DeleteDep(jsone, Config2)
