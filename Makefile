@@ -39,7 +39,13 @@ build_prod_front_end:
 test: compile
 	$(MAYBE_UPDATE_COWBOY)
 	$(MAYBE_UNLOCK_HIST)
-	./rebar3 do eunit -c, ct -c, cover
+	./rebar3 as test do cover --reset, eunit -c, ct -c, cover --verbose
+
+test_jiffy:
+	$(MAYBE_UPDATE_COWBOY)
+	$(MAYBE_UNLOCK_HIST)
+	export XPROF_JSON_LIB=jiffy; \
+	./rebar3 as test_jiffy do compile, dialyzer, cover --reset, ct -c, cover --verbose
 
 doc:
 	./rebar3 edoc

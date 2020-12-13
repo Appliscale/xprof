@@ -12,4 +12,4 @@
 
 -spec encode(term()) -> binary().
 encode(Data) ->
-    ?XPROF_JSON_LIB:?XPROF_JSON_ENC_FUN(Data).
+    iolist_to_binary(?XPROF_JSON_LIB:?XPROF_JSON_ENC_FUN(Data)).
