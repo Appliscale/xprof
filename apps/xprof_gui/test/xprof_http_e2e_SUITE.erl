@@ -34,6 +34,7 @@
          no_capture_data_when_not_traced/1,
          capture_data_when_traced_test/1,
          capture_data_with_formatted_exception_test/1,
+         capture_data_with_large_result/1,
          error_when_stopping_not_traced_fun/1,
          error_when_stopping_not_started_capture/1,
          dont_receive_new_capture_data_after_stop/1,
@@ -75,6 +76,7 @@ groups() ->
        no_capture_data_when_not_traced,
        capture_data_when_traced_test,
        capture_data_with_formatted_exception_test,
+       capture_data_with_large_result,
        error_when_stopping_not_traced_fun,
        error_when_stopping_not_started_capture,
        dont_receive_new_capture_data_after_stop,
@@ -331,6 +333,22 @@ capture_data_with_formatted_exception_test(_Config) ->
                   || Item <- proplists:get_value(<<"items">>, Data)]),
     ok.
 
+capture_data_with_large_result(_Config) ->
+    given_capture_slow_calls_of("xprof_http_e2e_SUITE", "large_result_function", 0, 10, 10),
+    %% call function once
+    large_result_function(),
+    {200, Data} = make_get_request("api/capture_data",
+                                   [
+                                    {"mod", "xprof_http_e2e_SUITE"},
+                                    {"fun", "large_result_function"},
+                                    {"arity", "0"},
+                                    {"offset", "0"}
+                                   ]),
+    ?assertMatch([<<"[1, 2, 3,", _/binary>>],
+                 [proplists:get_value(<<"res">>, Item)
+                  || Item <- proplists:get_value(<<"items">>, Data)]),
+    ok.
+
 in_this_project_we_should_detect_erlang(_Config) ->
     {200, Mode} = make_get_request("api/mode"),
     ?assertEqual([{<<"mode">>, <<"erlang">>}], Mode),
@@ -415,6 +433,14 @@ long_function() ->
     %% captured return value.
     %% Now it should be formatted as a unicode string.
     [164].
+
+large_result_function() ->
+    timer:sleep(50),
+    %% When using jiffy as json encoder, instead of a binary it might
+    %% return an iolist (it splits up the result into a list of
+    %% binaries if the terms are too large). This used to crash the
+    %% xprof cowboy handler.
+    lists:seq(1, 1000).
 
 crash_function() ->
     dummy = timer:sleep(50).
