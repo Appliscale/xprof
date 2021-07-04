@@ -63,6 +63,8 @@
     "whatwg-fetch": "2.0.3"
   },
   "devDependencies": {
+    "@babel/core": "^7.14.6",
+    "@babel/preset-env": "^7.14.7",
     "babel-eslint": "7.2.3",
     "babel-jest": "20.0.3",
     "babel-loader": "^8.2.2",
