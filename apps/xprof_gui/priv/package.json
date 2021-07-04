@@ -64,7 +64,7 @@
     "sw-precache-webpack-plugin": "0.11.4",
     "tachyons": "4.10.0",
     "url-loader": "0.6.2",
-    "webpack": "3.5.1",
+    "webpack": "^5.42.0",
     "webpack-manifest-plugin": "1.2.1",
     "whatwg-fetch": "2.0.3"
   },
