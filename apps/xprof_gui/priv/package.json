@@ -116,7 +116,9 @@
       "<rootDir>/config/polyfills.js",
       "<rootDir>/config/jest/setupTests.js"
     ],
-    "setupTestFrameworkScriptFile": "./node_modules/jest-enzyme/lib/index.js",
+    "setupFilesAfterEnv": [
+      "./node_modules/jest-enzyme/lib/index.js"
+    ],
     "testMatch": [
       "<rootDir>/src/**/__tests__/**/*.js?(x)",
       "<rootDir>/src/**/?(*.)(spec|test).js?(x)"
