@@ -63,7 +63,6 @@
     "style-loader": "0.19.0",
     "tachyons": "4.10.0",
     "url-loader": "0.6.2",
-    "webpack-manifest-plugin": "1.2.1",
     "whatwg-fetch": "2.0.3"
   },
   "devDependencies": {
@@ -87,7 +86,8 @@
     "react-test-renderer": "^17.0.2",
     "sw-precache-webpack-plugin": "^1.0.0",
     "webpack": "^5.42.0",
-    "webpack-dev-server": "^3.11.2"
+    "webpack-dev-server": "^3.11.2",
+    "webpack-manifest-plugin": "^3.1.1"
   },
   "scripts": {
     "precommit": "lint-staged",
