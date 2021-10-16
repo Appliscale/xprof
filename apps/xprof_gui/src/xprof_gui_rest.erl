@@ -399,10 +399,7 @@ do_handle_req(<<"fav_get_all">>, _Params) ->
 get_mfa(Params) ->
     {binary_to_atom(proplists:get_value(<<"mod">>, Params), latin1),
      binary_to_atom(proplists:get_value(<<"fun">>, Params), latin1),
-     case proplists:get_value(<<"arity">>, Params) of
-         <<"_">> -> '_';
-         Arity -> binary_to_integer(Arity)
-     end}.
+     binary_to_integer(proplists:get_value(<<"arity">>, Params))}.
 
 -spec get_query([{binary(), binary() | true}]) -> binary().
 get_query(Params) ->

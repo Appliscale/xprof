@@ -116,7 +116,7 @@ get_record_defs(Mod) ->
     case code:get_object_code(Mod) of
         {_Mod, Bin, _Filename} ->
             case beam_lib:chunks(Bin, [abstract_code]) of
-                {ok, {_Mod, [{abstract_code, {raw_abstract_v1, Forms}}]}} ->
+                {ok, {_, [{abstract_code, {raw_abstract_v1, Forms}}]}} ->
                     Defs =
                         [{RecName, {attribute, Anno, record, {RecName, remove_types(Fields)}}}
                          || {attribute, Anno, record, {RecName, Fields}} <- Forms],

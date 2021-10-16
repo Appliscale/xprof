@@ -21,9 +21,6 @@ mfaspec2atom({MFAId, {_MSOff, _MSOn}}) ->
     mfa2atom(MFAId).
 
 -spec mfa2atom(xprof_core:mfa_id()) -> xprof_core:mfa_name().
-mfa2atom({M, F, '_'}) ->
-    list_to_atom(string:join(["xprof_", atom_to_list(M),
-                              atom_to_list(F), "_"], "_"));
 mfa2atom({M,F,A}) ->
     list_to_atom(string:join(["xprof_", atom_to_list(M),
                               atom_to_list(F), integer_to_list(A)], "_")).

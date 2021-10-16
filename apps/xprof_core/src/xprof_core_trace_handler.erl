@@ -286,10 +286,6 @@ capture_args_trace_off({MFAId, {MSOff, _MSOn}}) ->
     erlang:trace_pattern(MFAId, MSOff, [local]).
 
 -spec trace_mfa_off(xprof_core:mfa_id()) -> any().
-trace_mfa_off({M, F, '_'}) ->
-    %% FIXME: this will turn off tracing also
-    %% for the same function with a given arity
-    erlang:trace_pattern({M, F, '_'}, false, [local]);
 trace_mfa_off(MFA) ->
     erlang:trace_pattern(MFA, false, [local]).
 

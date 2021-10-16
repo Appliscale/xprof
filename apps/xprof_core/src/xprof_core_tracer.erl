@@ -230,9 +230,8 @@ trace(PidSpec, How, Flags) ->
     end.
 
 -spec send2pids(mfa(), term()) -> any().
-send2pids({M, F, _} = MFA, Msg) ->
+send2pids({_M, _F, _A} = MFA, Msg) ->
     send2pid(MFA, Msg),
-    send2pid({M, F, '_'}, Msg),
     ok.
 
 -spec send2pid(xprof_core:mfa_id(), term()) -> any().
