@@ -241,7 +241,7 @@ get_data_for_not_traced_fun(_Config) ->
     ?assertMatch({404, _}, make_get_request("api/data", [
                                              {"mod", "dict"},
                                              {"fun", "new"},
-                                             {"arity", "_"}
+                                             {"arity", "0"}
                                             ])),
     ok.
 

@@ -63,9 +63,8 @@
 %% Used to initiate tracing (both by `xprof_core_tracer' and
 %% `xprof_core_trace_handler').
 
--type mfa_id() :: {module(), atom(), arity() | '_'}.
+-type mfa_id() :: {module(), atom(), arity()}.
 %% Used by the GUI and `xprof_core_tracer' to identify mfas.
-%% Arity of `` '_' '' means all arities.
 %% Similar to type `erlang:trace_pattern_mfa()'.
 
 -type mfa_name() :: atom().
