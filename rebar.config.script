@@ -37,4 +37,10 @@ GithubActions =
           end
   end.
 
-GithubActions(Travis(CONFIG)).
+PrintConfig =
+  fun(Config) ->
+  	      io:format(user, "CONFIG ~p~n", [[case X of {coveralls_repo_token, _} -> {coveralls_repo_token, "xxx"}; _ -> X end || X <- Config]]),
+	      Config
+  end.
+
+PrintConfig(GithubActions(Travis(CONFIG))).

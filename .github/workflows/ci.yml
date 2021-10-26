@@ -17,14 +17,14 @@ jobs:
       fail-fast: false
       matrix:
         include:
-        - otp_version: 23
-          elixir_version: 1.10.3
-          new_rebar: true
-          # hdr_histogram up to 0.4.0 fails to compile with OTP 23
-          erl_hist: true
-
-        - otp_version: 22
-          new_rebar: true
+#        - otp_version: 23
+#          elixir_version: 1.10.3
+#          new_rebar: true
+#          # hdr_histogram up to 0.4.0 fails to compile with OTP 23
+#          erl_hist: true
+#
+#        - otp_version: 22
+#          new_rebar: true
 
         - otp_version: 21
           new_rebar: true
@@ -32,19 +32,19 @@ jobs:
           run_dialyzer: true
           build_docs: true
 
-        - otp_version: 20
-
-        - otp_version: 19
-
-        - otp_version: 19
-          erl_hist: true
-
-        - otp_version: 18
-          old_cowboy: true
-
-        - otp_version: 17
-          run_dialyzer: true
-          old_cowboy: true
+#        - otp_version: 20
+#
+#        - otp_version: 19
+#
+#        - otp_version: 19
+#          erl_hist: true
+#
+#        - otp_version: 18
+#          old_cowboy: true
+#
+#        - otp_version: 17
+#          run_dialyzer: true
+#          old_cowboy: true
 
     steps:
     - uses: actions/checkout@v2
@@ -79,120 +79,121 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       continue-on-error: true
 
-  test_jiffy:
-    name: Test different json lib (OTP ${{ matrix.otp_version }})
-    runs-on: ubuntu-latest
-
-    container: erlang:${{ matrix.otp_version }}
-
-    strategy:
-      matrix:
-        include:
-        - otp_version: 21
-          new_rebar: true
-
-        - otp_version: 18
-          old_cowboy: true
-
-    steps:
-    - uses: actions/checkout@v2
-
-    - if: matrix.new_rebar
-      run: curl -O -L https://github.com/erlang/rebar3/releases/download/3.15.2/rebar3 && chmod +x ./rebar3
-
-    - if: matrix.old_cowboy
-      run: echo "COWBOY_VERSION=1.1.2" >> $GITHUB_ENV
-
-    - name: Cache hex packages
-      uses: actions/cache@v2
-      with:
-        path: $HOME/.cache/rebar3
-        key: ${{ matrix.otp_version }}-rebar3-cache-jiffy
-
-    - run: make test_jiffy
-
-  test_elixir:
-    name: Test with Elixir (Elixir ${{matrix.elixir}} | OTP ${{matrix.otp_version}})
-    runs-on: ubuntu-18.04
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - elixir: 1.4.x
-            otp_version: 18
-            old_cowboy: true
-
-          - elixir: 1.5.x
-            otp_version: 18
-            old_cowboy: true
-
-          - elixir: 1.6.x
-            otp_version: 19
-
-          - elixir: 1.7.x
-            otp_version: 19
-
-          - elixir: 1.8.x
-            otp_version: 20
-
-          - elixir: 1.9.x
-            otp_version: 20
-
-          - elixir: 1.10.x
-            otp_version: 21
-            new_rebar: true
-
-          - elixir: 1.11.x
-            otp_version: 22
-            new_rebar: true
-
-          - elixir: 1.12.x
-            otp_version: 23
-            new_rebar: true
-            # hdr_histogram up to 0.4.0 fails to compile with OTP 23
-            erl_hist: true
-
-
-    steps:
-    - uses: actions/checkout@v2
-    - uses: erlef/setup-beam@v1
-      with:
-        otp-version: ${{matrix.otp_version}}
-        elixir-version: ${{matrix.elixir}}
-    - if: matrix.new_rebar
-      run: curl -O -L https://github.com/erlang/rebar3/releases/download/3.15.2/rebar3 && chmod +x ./rebar3
-
-    - if: matrix.erl_hist
-      run: echo "XPROF_ERL_HIST=true" >> $GITHUB_ENV
-
-    - if: matrix.old_cowboy
-      run: echo "COWBOY_VERSION=1.1.2" >> $GITHUB_ENV
-
-    - name: Cache hex packages
-      uses: actions/cache@v2
-      with:
-        path: $HOME/.cache/rebar3
-        key: ${{ matrix.otp_version }}-rebar3-cache
-
-    - run: make test
-
-  test_front_end:
-    name: Test front-end
-    runs-on: ubuntu-latest
-
-    steps:
-    - uses: actions/checkout@v2
-
-    - uses: actions/setup-node@v1
-      with:
-        node-version: '8'
-
-    - name: Cache build artifacts
-      uses: actions/cache@v2
-      with:
-        path: apps/xprof_gui/priv/node_modules
-        key: test_front_end
-
-    - run: make bootstrap_front_end
-
-    - run: make test_front_end
+#  test_jiffy:
+#    name: Test different json lib (OTP ${{ matrix.otp_version }})
+#    runs-on: ubuntu-latest
+#
+#    container: erlang:${{ matrix.otp_version }}
+#
+#    strategy:
+#      matrix:
+#        include:
+#        - otp_version: 21
+#          new_rebar: true
+#
+#        - otp_version: 18
+#          old_cowboy: true
+#
+#    steps:
+#    - uses: actions/checkout@v2
+#
+#    - if: matrix.new_rebar
+#      run: curl -O -L https://github.com/erlang/rebar3/releases/download/3.15.2/rebar3 && chmod +x ./rebar3
+#
+#    - if: matrix.old_cowboy
+#      run: echo "COWBOY_VERSION=1.1.2" >> $GITHUB_ENV
+#
+#    - name: Cache hex packages
+#      uses: actions/cache@v2
+#      with:
+#        path: $HOME/.cache/rebar3
+#        key: ${{ matrix.otp_version }}-rebar3-cache-jiffy
+#
+#    - run: make test_jiffy
+#
+#  test_elixir:
+#    name: Test with Elixir (Elixir ${{matrix.elixir}} | OTP ${{matrix.otp_version}})
+#    runs-on: ubuntu-18.04
+#    strategy:
+#      fail-fast: false
+#      matrix:
+#        include:
+#          - elixir: 1.4.x
+#            otp_version: 18
+#            old_cowboy: true
+#
+#          - elixir: 1.5.x
+#            otp_version: 18
+#            old_cowboy: true
+#
+#          - elixir: 1.6.x
+#            otp_version: 19
+#
+#          - elixir: 1.7.x
+#            otp_version: 19
+#
+#          - elixir: 1.8.x
+#            otp_version: 20
+#
+#          - elixir: 1.9.x
+#            otp_version: 20
+#
+#          - elixir: 1.10.x
+#            otp_version: 21
+#            new_rebar: true
+#
+#          - elixir: 1.11.x
+#            otp_version: 22
+#            new_rebar: true
+#
+#          - elixir: 1.12.x
+#            otp_version: 23
+#            new_rebar: true
+#            # hdr_histogram up to 0.4.0 fails to compile with OTP 23
+#            erl_hist: true
+#
+#
+#    steps:
+#    - uses: actions/checkout@v2
+#    - uses: erlef/setup-beam@v1
+#      with:
+#        otp-version: ${{matrix.otp_version}}
+#        elixir-version: ${{matrix.elixir}}
+#    - if: matrix.new_rebar
+#      run: curl -O -L https://github.com/erlang/rebar3/releases/download/3.15.2/rebar3 && chmod +x ./rebar3
+#
+#    - if: matrix.erl_hist
+#      run: echo "XPROF_ERL_HIST=true" >> $GITHUB_ENV
+#
+#    - if: matrix.old_cowboy
+#      run: echo "COWBOY_VERSION=1.1.2" >> $GITHUB_ENV
+#
+#    - name: Cache hex packages
+#      uses: actions/cache@v2
+#      with:
+#        path: $HOME/.cache/rebar3
+#        key: ${{ matrix.otp_version }}-rebar3-cache
+#
+#    - run: make test
+#
+#  test_front_end:
+#    name: Test front-end
+#    runs-on: ubuntu-latest
+#
+#    steps:
+#    - uses: actions/checkout@v2
+#
+#    - uses: actions/setup-node@v1
+#      with:
+#        node-version: '8'
+#
+#    - name: Cache build artifacts
+#      uses: actions/cache@v2
+#      with:
+#        path: apps/xprof_gui/priv/node_modules
+#        key: test_front_end
+#
+#    - run: make bootstrap_front_end
+#
+#    - run: make test_front_end
+#
