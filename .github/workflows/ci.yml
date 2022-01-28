@@ -20,7 +20,7 @@ jobs:
         - otp_version: 23
           elixir_version: 1.10.3
           new_rebar: true
-          # hdr_histogram up to 0.4.0 fails to compile with OTP 23
+          # hdr_histogram up to 0.4.0 fails to compile with OTP 23+
           erl_hist: true
 
         - otp_version: 22
@@ -30,7 +30,6 @@ jobs:
           new_rebar: true
           send_coverage: true
           run_dialyzer: true
-          build_docs: true
 
         - otp_version: 20
 
@@ -70,14 +69,46 @@ jobs:
       run: make dialyzer
       timeout-minutes: 8
 
-    - if: matrix.build_docs
-      run: make doc
-
     - if: matrix.send_coverage && success()
       run: ./rebar3 as test coveralls send
       env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       continue-on-error: true
+
+  test_docs:
+    name: Test generating documentation
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        include:
+          - elixir: 1.12.x
+            otp_version: 24
+            new_rebar: true
+            # hdr_histogram up to 0.4.0 fails to compile with OTP 23+
+            erl_hist: true
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - uses: erlef/setup-beam@v1
+      with:
+        otp-version: ${{matrix.otp_version}}
+        elixir-version: ${{matrix.elixir}}
+
+    - if: matrix.new_rebar
+      run: curl -O -L https://github.com/erlang/rebar3/releases/download/3.15.2/rebar3 && chmod +x ./rebar3
+
+    - if: matrix.erl_hist
+      run: echo "XPROF_ERL_HIST=true" >> $GITHUB_ENV
+
+    - name: Cache hex packages
+      uses: actions/cache@v2
+      with:
+        path: $HOME/.cache/rebar3
+        key: 24-rebar3-cache
+
+    - run: make gen_ex_doc
 
   test_jiffy:
     name: Test different json lib (OTP ${{ matrix.otp_version }})

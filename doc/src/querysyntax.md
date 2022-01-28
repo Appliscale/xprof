@@ -26,7 +26,7 @@ give a function definition instead of arity. This gives the user the
 full power of match specifications and can be used both to selectively
 measure duration of function calls that match complicated filters and
 to capture only part of the arguments. The function has the same
-limitations as `dbg:fun2ms/1`. (See [Match Specifications in
+limitations as [`dbg:fun2ms/1`](`:dbg.fun2ms/1`). (See [Match Specifications in
 Erlang](http://erlang.org/doc/apps/erts/match_spec.html) and
 [ms\_transform](http://erlang.org/doc/man/ms_transform.html)).
 
@@ -113,7 +113,7 @@ simple query or an XProf-flavoured match-spec fun.
 The Erlang syntax is similar to a record,
 
 ```erlang
-#cmd param1: {"val", 1}, mfa: mod:fun(_)
+#cmd param1 = {"val", 1}, mfa = mod:fun(_)
 ```
 
 while the Elixir syntax is similar to a struct, both without the curly brackets.

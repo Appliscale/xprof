@@ -5,9 +5,10 @@
            "doc/src/commands.md": []
           ],
   api_reference: false,
-  output: "doc/html/",
+  output: "apps/xprof/doc",
   assets: "doc/assets",
-  logo: "./apps/xprof_gui/priv/build/xprof_icon.png",
+  logo: "apps/xprof_gui/priv/build/xprof_icon.png",
+  proglang: "erlang",
   source_url: "https://github.com/Appliscale/xprof",
   homepage_url: "http://xprof.appliscale.io",
 ]
