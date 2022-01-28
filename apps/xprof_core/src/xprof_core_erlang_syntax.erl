@@ -87,7 +87,7 @@ parse_query(Query) when is_list(Query) ->
 -spec parse_incomplete_query(string()) ->
     {ok, Cmd, Params}
   | {incomplete_cmd, CmdPrefix}
-  | {incomplete_key, KeyPrefix, Cmd, ParamsSoFar}
+  | {incomplete_key, KeyPrefix | {Key, EqPrefix}, Cmd, ParamsSoFar}
   | {incomplete_value, Key, ValuePrefix, Cmd, ParamsSoFar}
   | {error, Reason :: any()}
   when
@@ -97,6 +97,7 @@ parse_query(Query) when is_list(Query) ->
       ParamsSoFar :: xprof_core:params(),
       Key :: atom(),
       KeyPrefix :: string(),
+      EqPrefix :: string(),
       ValuePrefix :: string().
 %% throw:{error, Reason :: term()}
 parse_incomplete_query(Query) ->
