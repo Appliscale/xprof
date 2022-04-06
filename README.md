@@ -100,7 +100,7 @@ options. For details see the page on [Query syntax](doc/src/querysyntax.md)
 By default XProf only measures the outermost call to a recursive function. For
 example `lists:map(fun f/1, [1, 2, 3]).` will only register one call to
 `lists:map/2`. This is also true for indirectly recursive functions (such as
-when `a` calls `b` and `b` calls `a` again). This behaviour can be undesireable
+when `a` calls `b` and `b` calls `a` again). This behaviour can be undesirable
 so it can be disabled by setting the `ignore_recursion` environment variable to
 false.
 
@@ -125,7 +125,7 @@ You can configure XProf by changing the below application variables:
 | `xprof_gui`  | `port`                 | 7890           | Port for the web interface |
 | `xprof_gui`  | `favourites_enabled`   | true           | Whether saving/loading favourite queries is enabled |
 | `xprof_gui`  | `favourites_config`    | ./favourites.cfg | Path of the file storing favourite queries |
-| `xprof_core` | `max_tracer_queue_len` | 1000           | Overflow protection. If main tracer proccess will have more than 1000 messages in its process queue tracing will be stopped and one needs to use trace button to resume. The purpose of this is to prevent out of memory crashes when tracer process is not able to process incomming traces fast enough. This may happen when we trace very "hot" function. |
+| `xprof_core` | `max_tracer_queue_len` | 1000           | Overflow protection. If main tracer process will have more than 1000 messages in its process queue tracing will be stopped and one needs to use trace button to resume. The purpose of this is to prevent out of memory crashes when tracer process is not able to process incoming traces fast enough. This may happen when we trace very "hot" function. |
 | `xprof_core` | `max_duration`         | 30000          | The largest duration value in ms. In case a call takes even longer, this maximum value is stored instead. |
 | `xprof_core` | `ignore_recursion`     | true           | Whether to only measure the outermost call to a recursive function or not (ie. measure all calls). |
 | `xprof_core` | `mode`                 | <autodetected> | Syntax mode (`erlang` or `elixir`) |

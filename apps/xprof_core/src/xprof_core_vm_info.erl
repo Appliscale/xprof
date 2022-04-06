@@ -8,7 +8,7 @@
     ensure_mfa/1
 ]).
 
-%% @doc Return list of existing module/funcion/arity that match query.
+%% @doc Return list of existing module/function/arity that match query.
 %%
 %% If query does not contain colon only the global functions
 %% (excluding module_info) of all the matching modules are listed.
@@ -22,7 +22,7 @@ get_available_funs(Query) ->
 
     AllMods = get_modules(),
 
-    %% find the module which is fully writen out in the query
+    %% find the module which is fully written out in the query
     %% and return all its functions
     ExactMatch = find_mods(Query, AllMods, ModeCB),
     ExactMods = [Mod||{Mod, _} <- ExactMatch],

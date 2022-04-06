@@ -17,7 +17,7 @@
 
 %%
 %% Callback functions that need to be implemented
-%% for a command behvaiour
+%% for a command behaviour
 %%
 
 %% Return list of mandatory params
@@ -173,7 +173,7 @@ format_error({Where, Cmd, Key, unknown_param})
 format_error({Where, _Cmd, Key, wrong_value})
   when Where =:= param_from_ast;
        Where =:= param_to_internal ->
-    xprof_core_lib:fmt_err("Paremeter ~p has wrong value type", [Key]);
+    xprof_core_lib:fmt_err("Parameter ~p has wrong value type", [Key]);
 format_error({param_to_internal, Cmd, Key, Reason}) ->
     CmdCB = get_cmd_callback(Cmd),
     xprof_core_lib:fmt_err("Error converting parameter ~p to internal format: ~s",

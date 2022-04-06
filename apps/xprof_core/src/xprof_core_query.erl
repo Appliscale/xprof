@@ -29,7 +29,7 @@ param_to_fun({'fun', _Loc, _Clauses} = ValueAst) ->
                 {error, {Loc, Mod, Res}} ->
                     xprof_core_lib:fmt_err(Loc, Mod, Res);
                 ok ->
-                    %% The error did not come from the linter, but happend
+                    %% The error did not come from the linter, but happened
                     %% during evaluation.
                     xprof_core_lib:fmt_err("~p", [Reason])
             end

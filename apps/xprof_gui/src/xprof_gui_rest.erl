@@ -218,7 +218,7 @@
 %%%   <li> 200: {"mode": "erlang"/"elixir"} </li>
 %%% </ul>
 %%%
-%%% Get syntax mode, if not set explicitely in the backend, it will be
+%%% Get syntax mode, if not set explicitly in the backend, it will be
 %%% autodetected.
 %%%
 %%% @end

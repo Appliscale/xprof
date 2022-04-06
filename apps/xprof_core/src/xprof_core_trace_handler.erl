@@ -48,7 +48,7 @@ start_link(_Cmd, Options, CmdCB) ->
     Name = xprof_core_lib:mfaspec2atom(MFASpec),
     gen_server:start_link({local, Name}, ?MODULE, [Name, Options, MFASpec, CmdCB], []).
 
-%% @doc Returns histogram data for seconds that occured after FromEpoch.
+%% @doc Returns histogram data for seconds that occurred after FromEpoch.
 -spec data(xprof_core:mfa_id(), non_neg_integer()) -> [proplists:proplist()] |
                                                  {error, not_found}.
 data(MFA, FromEpoch) ->

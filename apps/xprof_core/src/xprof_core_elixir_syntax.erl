@@ -290,7 +290,7 @@ build_fn(Clauses) ->
     {'fn', ?meta, Clauses}.
 
 %% @doc Match various supported query syntaxes in the quoted expression
-%% Note: as Elixir supports ommitting parens the below are always equivalent
+%% Note: as Elixir supports omitting parens the below are always equivalent
 %% "Mod.fun Args" => "Mod.fun(Args)"
 %% "Mod.fun" => "Mod.fun()"
 -spec parse_quoted(ex_quoted())
@@ -393,7 +393,7 @@ do_parse_tokens(Tokens) ->
     %% added in Elixir 1.6.0
     %% Support `columns: true' in `Code.string_to_quoted'
     put(elixir_parser_columns, true),
-    %% Elixir 1.10 renamed or superseeded by
+    %% Elixir 1.10 renamed or superseded by
     %% elixir_pairing_metadata -> elixir_token_metadata
     %% elixir_formatter_metadata -> elixir_literal_encoder
     put(elixir_token_metadata, false),
