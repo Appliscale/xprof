@@ -306,12 +306,12 @@ rl() ->
 %% Syntax mode
 %%
 
-%% @doc Set syntax mode explicitely.
+%% @doc Set syntax mode explicitly.
 -spec set_mode(xprof_core:mode()) -> ok.
 set_mode(Mode) ->
     xprof_core_lib:set_mode(Mode).
 
-%% @doc Get syntax mode, if not set explicitely it will be autodetected.
+%% @doc Get syntax mode, if not set explicitly it will be autodetected.
 -spec get_mode() -> xprof_core:mode().
 get_mode() ->
     xprof_core_lib:get_mode().

@@ -30,7 +30,7 @@ error
 
 The matcher value can also be an anonymous function receiving the
 return value as input and returning a boolean, whether to capture the
-given call or not. The bellow example will only capture a call if it
+given call or not. The below example will only capture a call if it
 returns some unexpected result which is not an ok-tuple with a
 non-empty list.
 
