@@ -48,6 +48,18 @@ test_jiffy:
 	export XPROF_JSON_LIB=jiffy; \
 	$(REBAR3) as test_jiffy do compile, dialyzer, cover --reset, ct -c, cover --verbose
 
+test_jsx:
+	$(MAYBE_UPDATE_COWBOY)
+	$(MAYBE_UNLOCK_HIST)
+	export XPROF_JSON_LIB=jsx; \
+	$(REBAR3) as test_jsx do compile, dialyzer, cover --reset, ct -c, cover --verbose
+
+test_thoas:
+	$(MAYBE_UPDATE_COWBOY)
+	$(MAYBE_UNLOCK_HIST)
+	export XPROF_JSON_LIB=thoas; \
+	$(REBAR3) as test_thoas do compile, dialyzer, cover --reset, ct -c, cover --verbose
+
 doc:
 	$(REBAR3) edoc
 

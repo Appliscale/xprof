@@ -228,12 +228,12 @@ capture_stop(MFA) ->
                        Limit :: non_neg_integer(),
                        HasMore :: boolean()
                       },
-       Items :: [{proplists:proplist()}].
+       Items :: [proplists:proplist()].
 get_captured_data_pp(MFA, Offset) ->
     case xprof_core:get_captured_data(MFA, Offset) of
         {ok, CaptureSpec, Items} ->
             ModeCb = xprof_core_lib:get_mode_cb(),
-            ItemsJson = [{args_res2proplist(Item, ModeCb)} || Item <- Items],
+            ItemsJson = [args_res2proplist(Item, ModeCb) || Item <- Items],
             {ok, CaptureSpec, ItemsJson};
         Error ->
             Error

@@ -180,9 +180,10 @@ try_to_start_monitoring_invalid_query(_Config) ->
 monitor_valid_query(_Config) ->
     {204, _} = make_get_request("api/mon_start", [{"query", "dict:new/0"}]),
     {200, Monitored}  = make_get_request("api/mon_get_all"),
-    ?assertEqual([[{<<"mfa">>, [<<"dict">>, <<"new">>, 0]},
-                   {<<"query">>, <<"dict:new/0">>},
-                   {<<"graph_type">>, <<"percentiles">>}]],
+    ?assertEqual([[{<<"graph_type">>, <<"percentiles">>},
+                   {<<"mfa">>, [<<"dict">>, <<"new">>, 0]},
+                   {<<"query">>, <<"dict:new/0">>}
+                  ]],
                  Monitored),
     ok.
 
@@ -190,17 +191,19 @@ monitor_valid_query_twice(_Config) ->
     {204, _} = make_get_request("api/mon_start", [{"query", "dict:new/0"}]),
     {409, _} = make_get_request("api/mon_start", [{"query", "dict:new/0"}]),
     {200, Monitored}  = make_get_request("api/mon_get_all"),
-    ?assertEqual([[{<<"mfa">>, [<<"dict">>, <<"new">>, 0]},
-                   {<<"query">>, <<"dict:new/0">>},
-                   {<<"graph_type">>, <<"percentiles">>}]],
+    ?assertEqual([[{<<"graph_type">>, <<"percentiles">>},
+                   {<<"mfa">>, [<<"dict">>, <<"new">>, 0]},
+                   {<<"query">>, <<"dict:new/0">>}
+                  ]],
                  Monitored),
     ok.
 
 stop_monitoring(_Config) ->
     given_traced("dict:new/0"),
-    {200, [[{<<"mfa">>, [<<"dict">>, <<"new">>, 0]},
-            {<<"query">>, <<"dict:new/0">>},
-            {<<"graph_type">>, <<"percentiles">>}]
+    {200, [[{<<"graph_type">>, <<"percentiles">>},
+            {<<"mfa">>, [<<"dict">>, <<"new">>, 0]},
+            {<<"query">>, <<"dict:new/0">>}
+           ]
           ]} =
         make_get_request("api/mon_get_all"),
     {204, _} = make_get_request("api/mon_stop", [
@@ -215,10 +218,10 @@ monitor_query_with_matchspec(_Config) ->
     Q = "lists:delete(_, [E]) -> true",
     ?assertMatch({204, _}, make_get_request("api/mon_start", [{"query", Q}])),
     {200, Monitored}  = make_get_request("api/mon_get_all"),
-    ?assertEqual([[{<<"mfa">>, [<<"lists">>, <<"delete">>, 2]},
-                   {<<"query">>, list_to_binary(Q)},
-                   {<<"graph_type">>, <<"percentiles">>}]
-                 ],
+    ?assertEqual([[{<<"graph_type">>, <<"percentiles">>},
+                   {<<"mfa">>, [<<"lists">>, <<"delete">>, 2]},
+                   {<<"query">>, list_to_binary(Q)}
+                  ]],
                  Monitored),
     ok.
 
@@ -459,10 +462,18 @@ make_get_request(Path, Params) ->
 decode_json("") ->
     "";
 decode_json(Body) ->
-    jsone:decode(list_to_binary(Body), [{object_format, proplist}]).
+    sort_json(jsone:decode(list_to_binary(Body), [{object_format, proplist}])).
+
+sort_json([{_, _} | _] = Json) ->
+    lists:sort([{K, sort_json(V)} || {K, V} <- Json]);
+sort_json([_ | _] = Json) ->
+    [sort_json(V) || V <- Json];
+sort_json(Json) ->
+    Json.
+
 
 -ifdef(OTP_RELEASE).
-%% uri_string module was instriduced in OTP 21
+%% uri_string module was introduced in OTP 21
 proplist_to_query_string(PL) ->
     uri_string:compose_query(PL).
 

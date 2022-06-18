@@ -73,8 +73,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       continue-on-error: true
 
-  test_jiffy:
-    name: Test different json lib (OTP ${{ matrix.otp_version }})
+  test_json_lib:
+    name: Test different json lib (${{ matrix.json_lib }} | OTP ${{ matrix.otp_version }})
     runs-on: ubuntu-latest
 
     container: erlang:${{ matrix.otp_version }}
@@ -82,11 +82,16 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
+        otp_version: [19, 21]
+        json_lib: [jiffy, jsx, thoas]
         include:
-        - otp_version: 21
-
         - otp_version: 19
           old_cowboy: true
+
+        # thoas requires OTP 21+
+        - otp_version: 19
+          json_lib: thoas
+          skip: true
 
         # fails with "Package not found in registry: jiffy-1.1.0."
         #- otp_version: 18
@@ -106,9 +111,10 @@ jobs:
       uses: actions/cache@v2
       with:
         path: $HOME/.cache/rebar3
-        key: ${{ matrix.otp_version }}-rebar3-cache-jiffy
+        key: ${{ matrix.otp_version }}-rebar3-cache-json-lib
 
-    - run: make test_jiffy
+    - if: ${{ !matrix.skip }}
+      run: make test_${{ matrix.json_lib }}
 
   test_elixir:
     name: Test with Elixir (Elixir ${{matrix.elixir}} | OTP ${{matrix.otp_version}})
