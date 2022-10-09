@@ -18,16 +18,12 @@ jobs:
       matrix:
         include:
         - otp_version: 23
-          elixir_version: 1.10.3
-          new_rebar: true
           # hdr_histogram up to 0.4.0 fails to compile with OTP 23
           erl_hist: true
 
         - otp_version: 22
-          new_rebar: true
 
         - otp_version: 21
-          new_rebar: true
           send_coverage: true
           run_dialyzer: true
           build_docs: true
@@ -40,13 +36,15 @@ jobs:
           erl_hist: true
 
         - otp_version: 18
+          # default: rebar 3.7.4 xprof_core_hist_SUITE: Segmentation fault (core dumped)
+          old_rebar: true
           old_cowboy: true
 
     steps:
     - uses: actions/checkout@v2
 
-    - if: matrix.new_rebar
-      run: curl -O -L https://github.com/erlang/rebar3/releases/download/3.15.2/rebar3 && chmod +x ./rebar3
+    - if: matrix.old_rebar
+      run: echo "REBAR3=./rebar3" >> $GITHUB_ENV
 
     - if: matrix.erl_hist
       run: echo "XPROF_ERL_HIST=true" >> $GITHUB_ENV
@@ -82,19 +80,24 @@ jobs:
     container: erlang:${{ matrix.otp_version }}
 
     strategy:
+      fail-fast: false
       matrix:
         include:
         - otp_version: 21
-          new_rebar: true
 
-        - otp_version: 18
+        - otp_version: 19
           old_cowboy: true
+
+        # fails with "Package not found in registry: jiffy-1.1.0."
+        #- otp_version: 18
+        #  old_rebar: true
+        #  old_cowboy: true
 
     steps:
     - uses: actions/checkout@v2
 
-    - if: matrix.new_rebar
-      run: curl -O -L https://github.com/erlang/rebar3/releases/download/3.15.2/rebar3 && chmod +x ./rebar3
+    - if: matrix.old_rebar
+      run: echo "REBAR3=./rebar3" >> $GITHUB_ENV
 
     - if: matrix.old_cowboy
       run: echo "COWBOY_VERSION=1.1.2" >> $GITHUB_ENV
@@ -116,35 +119,42 @@ jobs:
         include:
           - elixir: 1.4.x
             otp_version: 18
+            # rebar3: '3.7.4' - xprof_core_hist_SUITE: Segmentation fault (core dumped)
+            old_rebar: true
             old_cowboy: true
 
           - elixir: 1.5.x
             otp_version: 18
+            old_rebar: true
             old_cowboy: true
 
           - elixir: 1.6.x
             otp_version: 19
+            rebar3: '3.15.2'
 
           - elixir: 1.7.x
             otp_version: 19
+            rebar3: '3.15.2'
 
           - elixir: 1.8.x
             otp_version: 20
+            rebar3: '3.15.2'
 
           - elixir: 1.9.x
             otp_version: 20
+            rebar3: '3.15.2'
 
           - elixir: 1.10.x
             otp_version: 21
-            new_rebar: true
+            rebar3: '3.15.2'
 
           - elixir: 1.11.x
             otp_version: 22
-            new_rebar: true
+            rebar3: '3.18.0'
 
           - elixir: 1.12.x
             otp_version: 23
-            new_rebar: true
+            rebar3: '3.19.0'
             # hdr_histogram up to 0.4.0 fails to compile with OTP 23
             erl_hist: true
 
@@ -155,8 +165,10 @@ jobs:
       with:
         otp-version: ${{matrix.otp_version}}
         elixir-version: ${{matrix.elixir}}
-    - if: matrix.new_rebar
-      run: curl -O -L https://github.com/erlang/rebar3/releases/download/3.15.2/rebar3 && chmod +x ./rebar3
+        rebar3-version: ${{matrix.rebar3}}
+
+    - if: matrix.old_rebar
+      run: echo "REBAR3=./rebar3" >> $GITHUB_ENV
 
     - if: matrix.erl_hist
       run: echo "XPROF_ERL_HIST=true" >> $GITHUB_ENV
