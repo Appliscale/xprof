@@ -245,9 +245,9 @@ do_handle_req(<<"funs">>, Params) ->
     Query = get_query(Params),
 
     {CommonPrefix, Funs} = xprof_core:expand_query(Query),
-    Data = {[{expansion, CommonPrefix},
-             {matches, [{[{expansion, Exp},{label, Label}]}||{Exp, Label} <- Funs]}
-            ]},
+    Data = #{expansion => CommonPrefix,
+             matches => [#{expansion => Exp, label => Label} || {Exp, Label} <- Funs]
+            },
     Json = xprof_gui_json:encode(Data),
 
     {200, Json};
@@ -265,11 +265,11 @@ do_handle_req(<<"mon_start">>, Params) ->
         ok ->
             204;
         {error, already_traced} ->
-            Data = {[{message, <<"The requested function is already monitored">>}]},
+            Data = #{message => <<"The requested function is already monitored">>},
             Json = xprof_gui_json:encode(Data),
             {409, Json};
         {error, Msg} ->
-            Data = {[{message, unicode:characters_to_binary(Msg)}]},
+            Data = #{message => unicode:characters_to_binary(Msg)},
             Json = xprof_gui_json:encode(Data),
             {400, Json}
     end;
@@ -282,13 +282,13 @@ do_handle_req(<<"mon_stop">>, Params) ->
 
 do_handle_req(<<"mon_get_all">>, _Params) ->
     Funs = xprof_core:get_all_monitored(),
-    FunsArr = [{[{<<"mfa">>, [Mod, Fun, Arity]},
-                 {<<"query">>, Query},
-                 {<<"graph_type">>, case Query of
-                                        <<"#argdist ", _/binary>> -> <<"grid">>;
-                                        _ -> <<"percentiles">>
-                                    end}
-                ]}
+    FunsArr = [#{<<"mfa">> => [Mod, Fun, Arity],
+                 <<"query">> => Query,
+                 <<"graph_type">> => case Query of
+                                         <<"#argdist ", _/binary>> -> <<"grid">>;
+                                         _ -> <<"percentiles">>
+                                     end
+                }
                || {{Mod, Fun, Arity}, Query} <- Funs],
     Json = xprof_gui_json:encode(FunsArr),
     {200, Json};
@@ -301,7 +301,7 @@ do_handle_req(<<"data">>, Params) ->
         {error, not_found} ->
             404;
         Vals ->
-            Json = xprof_gui_json:encode([{Val} || Val <- Vals]),
+            Json = xprof_gui_json:encode([maps:from_list(Val) || Val <- Vals]),
             {200, Json}
     end;
 
@@ -320,7 +320,7 @@ do_handle_req(<<"trace_set">>, Params) ->
 
 do_handle_req(<<"trace_status">>, _Params) ->
     {_, Status} = xprof_core:get_trace_status(),
-    Json = xprof_gui_json:encode({[{status, Status}]}),
+    Json = xprof_gui_json:encode(#{status => Status}),
     {200, Json};
 
 do_handle_req(<<"capture">>, Params) ->
@@ -330,7 +330,7 @@ do_handle_req(<<"capture">>, Params) ->
 
     case xprof_core:capture(MFA, Threshold, Limit) of
         {ok, CaptureId} ->
-            Json = xprof_gui_json:encode({[{capture_id, CaptureId}]}),
+            Json = xprof_gui_json:encode(#{capture_id => CaptureId}),
 
             {200, Json};
         {error, not_found} ->
@@ -357,23 +357,23 @@ do_handle_req(<<"capture_data">>, Params) ->
         {error, not_found} ->
             404;
         {ok, {Id, Threshold, Limit, HasMore}, Items} ->
-            Data = {[{capture_id, Id},
-                     {threshold, Threshold},
-                     {limit, Limit},
-                     {items, Items},
-                     {has_more, HasMore}]},
+            Data = #{capture_id => Id,
+                     threshold => Threshold,
+                     limit => Limit,
+                     items => [maps:from_list(I) || I <- Items],
+                     has_more => HasMore},
             Json = xprof_gui_json:encode(Data),
             {200, Json}
     end;
 
 do_handle_req(<<"mode">>, _Params) ->
     Mode = xprof_core:get_mode(),
-    Json = xprof_gui_json:encode({[{mode, Mode}]}),
+    Json = xprof_gui_json:encode(#{mode => Mode}),
     {200, Json};
 
 do_handle_req(<<"fav_enabled">>, _Params) ->
     FavouritesEnabled = xprof_gui_favourites_config:is_enabled(),
-    Json = xprof_gui_json:encode({[{enabled, FavouritesEnabled}]}),
+    Json = xprof_gui_json:encode(#{enabled => FavouritesEnabled}),
     {200, Json};
 
 do_handle_req(<<"fav_add">>, Params) ->
