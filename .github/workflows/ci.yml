@@ -41,7 +41,7 @@ jobs:
           old_cowboy: true
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
 
     - if: matrix.old_rebar
       run: echo "REBAR3=./rebar3" >> $GITHUB_ENV
@@ -53,7 +53,7 @@ jobs:
       run: echo "COWBOY_VERSION=1.1.2" >> $GITHUB_ENV
 
     - name: Cache hex packages
-      uses: actions/cache@v2
+      uses: actions/cache@v3
       with:
         path: $HOME/.cache/rebar3
         key: ${{ matrix.otp_version }}-rebar3-cache
@@ -99,7 +99,7 @@ jobs:
         #  old_cowboy: true
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
 
     - if: matrix.old_rebar
       run: echo "REBAR3=./rebar3" >> $GITHUB_ENV
@@ -108,7 +108,7 @@ jobs:
       run: echo "COWBOY_VERSION=1.1.2" >> $GITHUB_ENV
 
     - name: Cache hex packages
-      uses: actions/cache@v2
+      uses: actions/cache@v3
       with:
         path: $HOME/.cache/rebar3
         key: ${{ matrix.otp_version }}-rebar3-cache-json-lib
@@ -166,7 +166,7 @@ jobs:
 
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
     - uses: erlef/setup-beam@v1
       with:
         otp-version: ${{matrix.otp_version}}
@@ -183,7 +183,7 @@ jobs:
       run: echo "COWBOY_VERSION=1.1.2" >> $GITHUB_ENV
 
     - name: Cache hex packages
-      uses: actions/cache@v2
+      uses: actions/cache@v3
       with:
         path: $HOME/.cache/rebar3
         key: ${{ matrix.otp_version }}-rebar3-cache
@@ -195,14 +195,14 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
 
-    - uses: actions/setup-node@v1
+    - uses: actions/setup-node@v3
       with:
         node-version: '8'
 
     - name: Cache build artifacts
-      uses: actions/cache@v2
+      uses: actions/cache@v3
       with:
         path: apps/xprof_gui/priv/node_modules
         key: test_front_end
