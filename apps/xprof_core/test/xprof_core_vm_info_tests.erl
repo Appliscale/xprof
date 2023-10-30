@@ -121,7 +121,7 @@ get_called_funs_test_() ->
      end},
      {"Lists calls from preloaded modules in OTP",
      fun() ->
-             ?assertEqual([{erlang, fun_info_1, 3}], ?M:get_called_funs({erlang, fun_info, 1}))
+             ?assertEqual([{auth, get_cookie, 0}], ?M:get_called_funs({erlang, get_cookie, 0}))
      end},
      {"Doesn't list anything for BIF functions (containing erlang:nif_error/1 call)",
      fun() ->
