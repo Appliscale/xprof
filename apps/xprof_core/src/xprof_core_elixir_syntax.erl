@@ -365,11 +365,15 @@ tokenizer(Str, StartColumn) ->
     unify_tokenizer_output(
       elixir_tokenizer:tokenize(Str, 1, StartColumn, [])).
 
+unify_tokenizer_output({ok, _Line, _Column, _Warnings, Tokens}) ->
+    {ok, Tokens};
 unify_tokenizer_output({ok, Tokens}) ->
     {ok, Tokens};
 unify_tokenizer_output({ok, _Line, _Column, Tokens}) ->
     %% FIXME old format returned before Elixir 1.6.0
     {ok, Tokens};
+unify_tokenizer_output({error, {_Line, _Column, Error, TokenHint}, Rest, _Warnings, SoFar}) ->
+    {error, {Error, TokenHint, Rest, SoFar}};
 unify_tokenizer_output({error, {_Line, _Column, Error, TokenHint}, Rest, SoFar}) ->
     {error, {Error, TokenHint, Rest, SoFar}};
 unify_tokenizer_output({error, {_Line, Error, TokenHint}, Rest, SoFar}) ->
@@ -440,7 +444,11 @@ quoted_to_ast(Quoted) ->
     %%  like 'return_trace()' required for fun2ms)
     Env = maps:put(function, {ms, 0}, elixir:env_for_eval([])),
     try elixir:quoted_to_erl(Quoted, Env) of
-        {Ast, _NewEnv, _Scope} -> {ok, Ast}
+        {Ast, _NewEnv, _Scope} ->
+            %% before Elixir 1.13.0 the return value had a different format
+            {ok, Ast};
+        {Ast, _NewErlS, _NewExS, _NewEnv} ->
+            {ok, Ast}
     catch error:Exception ->
             case 'Elixir.Exception':'exception?'(Exception) of
                 true ->

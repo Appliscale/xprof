@@ -5,6 +5,9 @@
 -define(M, xprof_core_elixir_syntax).
 
 parse_match_spec_test_() ->
+    %% some literals loose their location information in elixir_parser
+    %% but it is backfilled later by string_to_quoted
+    %% LiteralLine is 0 until Elixir 1.12, and 1 since 1.13
     Tests =
         [%% arity explicitly defined
          ?_assertEqual({mfa,{'Elixir.Mod','fun',1}},
@@ -29,13 +32,13 @@ parse_match_spec_test_() ->
                           [],
                           [{call,1,{atom,1,message},[{var, 1, Var_a}]}]}]},
                        ?M:parse_match_spec("App.Mod.fun a, _ -> message a")),
-         ?_assertEqual({clauses,mod,'fun',
-                        [{clause,1,[{atom,0,ok}],[],[{atom,0,true}]}]},
+         ?_assertMatch({clauses,mod,'fun',
+                        [{clause,1,[{atom,LiteralLine,ok}],[],[{atom,LiteralLine,true}]}]},
                        ?M:parse_match_spec(":mod.fun(:ok) -> true")),
          ?_assertMatch({clauses,'Elixir.Mod','fun',
                         [{clause,1,
                           [{var,1,Var_a}],
-                          [[{op,1,'>',{var,1,Var_a},{integer,0,1}}]],
+                          [[{op,1,'>',{var,1,Var_a},{integer,_LiteralLine,1}}]],
                           [{call,1,{atom,1,return_trace},[]}]}]},
                        ?M:parse_match_spec("Mod.fun(a) when a > 1 -> return_trace()")),
 
@@ -93,25 +96,25 @@ parse_match_spec_test_() ->
          %% Valid quoted syntax - shortcuts
 
          %% Missing args and body
-         ?_assertEqual({clauses,'Elixir.App.Mod','fun',[{clause,1,[],[],[{atom,0,true}]}]},
+         ?_assertMatch({clauses,'Elixir.App.Mod','fun',[{clause,1,[],[],[{atom,_LiteralLine,true}]}]},
                        ?M:parse_match_spec("App.Mod.fun")),
-         ?_assertEqual({clauses,mod,'fun',[{clause,1,[],[],[{atom,0,true}]}]},
+         ?_assertMatch({clauses,mod,'fun',[{clause,1,[],[],[{atom,_LiteralLine,true}]}]},
                        ?M:parse_match_spec(":mod.fun")),
 
          %% Only args present, no body
-         ?_assertEqual({clauses,'Elixir.App.Mod','fun',
-                        [{clause,1,[{atom,0,ok}],[],[{atom,0,true}]}]},
+         ?_assertMatch({clauses,'Elixir.App.Mod','fun',
+                        [{clause,1,[{atom,LiteralLine,ok}],[],[{atom,LiteralLine,true}]}]},
                        ?M:parse_match_spec("App.Mod.fun(:ok)")),
-         ?_assertEqual({clauses,mod,'fun',
-                        [{clause,1,[{atom,0,ok}],[],[{atom,0,true}]}]},
+         ?_assertMatch({clauses,mod,'fun',
+                        [{clause,1,[{atom,LiteralLine,ok}],[],[{atom,LiteralLine,true}]}]},
                        ?M:parse_match_spec(":mod.fun(:ok)")),
 
          %% Args and guards present, but no body
          ?_assertMatch({clauses,'Elixir.App.Mod','fun',
                         [{clause,1,[{var,1,Var_a}],
-                          [[{op,1,'<',{var,1,Var_a},{integer,0,1}}],
-                           [{op,1,'>',{var,1,Var_a},{integer,0,10}}]],
-                          [{atom,0,true}]}]},
+                          [[{op,1,'<',{var,1,Var_a},{integer,LiteralLine,1}}],
+                           [{op,1,'>',{var,1,Var_a},{integer,LiteralLine,10}}]],
+                          [{atom,LiteralLine,true}]}]},
                        ?M:parse_match_spec("App.Mod.fun(a) when a < 1 when a > 10"))
         ],
     xprof_core_test_lib:run_elixir_unit_tests(Tests).
