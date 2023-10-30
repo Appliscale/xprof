@@ -80,8 +80,7 @@ ensure_body_test_() ->
 ms_test_() ->
     [?_assertEqual(
         {error,
-         "matching (=) in fun head cannot be translated into a match-spec "
-         "at column 7"},
+         "matching (=) in fun head cannot be translated into a match-spec"},
         ?M:fun2ms("m:f(A = {B, _}) -> {A, B}")),
      ?_assertEqual(
         {error,
