@@ -438,27 +438,71 @@ mod_to_atom({__aliasis, _, _} = Quoted) ->
 %% @doc Convert an Elixir quoted expression to an Erlang abstract syntax tree
 -spec quoted_to_ast(ex_quoted()) -> {ok, erl_ast()} | {error, Reason :: string()}.
 quoted_to_ast(Quoted) ->
+    case erlang:function_exported('Elixir.Code', with_diagnostics, 1) of
+        true ->
+            %% Since Elixir 1.15.0 the compiler can emit a list of
+            %% warnings and errors, but does not return them
+            case 'Elixir.Code':with_diagnostics(
+                   fun() -> quoted_to_erl(Quoted) end) of
+                {{ok, Ast}, _} ->
+                    {ok, Ast};
+                {{error, _}, Diagnostics} ->
+                    fmt_elixir_diagnostic(Diagnostics)
+            end;
+        false ->
+            case quoted_to_erl(Quoted) of
+                {ok, Ast} ->
+                    {ok, Ast};
+                {error, Exception} ->
+                    case 'Elixir.Exception':'exception?'(Exception) of
+                        true ->
+                            fmt_elixir_exception(Exception);
+                        false ->
+                            erlang:error(Exception)
+                            %%xprof_core_lib:err("cannot convert quoted expression to Erlang AST")
+                    end
+            end
+    end.
+
+quoted_to_erl(Quoted) ->
     %% pretend that the quoted expression is within a function,
     %% this way local function calls are allowed
     %% (also expressions which look like local function calls
     %%  like 'return_trace()' required for fun2ms)
     Env = maps:put(function, {ms, 0}, elixir:env_for_eval([])),
+
     try elixir:quoted_to_erl(Quoted, Env) of
         {Ast, _NewEnv, _Scope} ->
-            %% before Elixir 1.13.0 the return value had a different format
+            %% before Elixir 1.13.0 the return value of
+            %% `elixir:quoted_to_erl/2` had a different format
             {ok, Ast};
         {Ast, _NewErlS, _NewExS, _NewEnv} ->
             {ok, Ast}
     catch error:Exception ->
-            case 'Elixir.Exception':'exception?'(Exception) of
-                true ->
-                    xprof_core_lib:fmt_err(
-                      "~ts", ['Elixir.Exception':message(Exception)]);
-                false ->
-                    erlang:error(Exception)
-                    %%xprof_core_lib:err("cannot convert quoted expression to Erlang AST")
-            end
+            {error, Exception}
     end.
+
+fmt_elixir_diagnostic(Diagnostics) ->
+    %% Ignore warnings and take the message from the first error
+    [#{message := Msg}|_] = [D || D = #{severity := error} <- Diagnostics],
+    xprof_core_lib:fmt_err("~ts", [Msg]).
+
+fmt_elixir_exception(Exception) ->
+    Message =
+        %% remove file+line prefix
+        case 'Elixir.Exception':message(Exception) of
+            <<"nofile:1: ", Rest/binary>> ->
+                Rest;
+            <<"nofile:1:", Rest/binary>> ->
+                %% keep column number
+                Rest;
+            <<"nofile: ", Rest/binary>> ->
+                %% no line number - unlikely
+                Rest;
+            Msg ->
+                Msg
+        end,
+    xprof_core_lib:fmt_err("~ts", [Message]).
 
 %% @doc Convert an Elixir-style camel-case alias to an Erlang-style snake-case
 %% atom.

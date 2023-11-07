@@ -73,10 +73,10 @@ parse_match_spec_test_() ->
             catch ?M:parse_match_spec("a+b ->")),
          %% fn_to_clauses
          ?_assertMatch(
-            {error,"nofile:1: cannot invoke remote function Mod.fun/1 inside " ++ _},
+            {error,"cannot invoke remote function Mod.fun/1 inside " ++ _},
             catch ?M:parse_match_spec("Mod.fun(1) -> true; Mod.fun(2) -> false")),
          ?_assertMatch(
-            {error,"nofile:1: cannot mix clauses with different arities in" ++ _},
+            {error,"cannot mix clauses with different arities in" ++ _},
             catch ?M:parse_match_spec("Mod.fun(1) -> true; (1, 2) -> false")),
 
          ?_assertMatch(
@@ -88,7 +88,7 @@ parse_match_spec_test_() ->
                 %% but will fail conversion to matchspec
                 {clauses,'Elixir.Mod','fun', [_]} -> ok
             catch
-                {error,"nofile:1: cannot invoke remote function :erlang.//2 inside " ++ _} ->
+                {error,"cannot invoke remote function :erlang.//2 inside " ++ _} ->
                     %% error message slightly changed in Elixir 1.8.0
                     ok
             end),
