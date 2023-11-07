@@ -198,7 +198,7 @@ get_available_funs_elixir_test_() ->
                   %% let's expand Task.Supervisor
                   L2 = ?M:get_available_funs(<<"Task.">>),
                   ?assert(lists:member(<<"Task.start_link/1">>, L2)), %% exported
-                  ?assert(lists:member(<<"Task.exit/2">>, L2)), %% local
+                  ?assert(lists:member(<<"Task.flush_reply/1">>, L2)), %% local
 
                   ?assertNot(erlang:module_loaded('Elixir.Calendar')),
                   ?assertNot(erlang:module_loaded('Elixir.Calendar.ISO'))
