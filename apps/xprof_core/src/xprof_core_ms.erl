@@ -45,8 +45,14 @@ ms(Clauses, RecDefs) ->
             %% (see https://github.com/erlang/otp/commit/8db6c68b)
             workaround_empty_args_ms(
               ms(workaround_empty_args_cl(Clauses), RecDefs));
-        {error,[{_, [{Loc ,ms_transform, ERR_HEADMATCH}]}], _} ->
-            xprof_core_lib:err(Loc, ?MODULE, ms_transform_headmatch);
+        {error,[{_, [{_Loc ,ms_transform, ERR_HEADMATCH}]}], _} ->
+            %% Before OTP 24.0 the column of a match expression was
+            %% the column of the `=' sign. Since OTP 24.0 erl_parse
+            %% sets it to the start column of the left-hand-side
+            %% expression. This later value does not give a nice
+            %% looking, additional info so let's not include column in
+            %% the error
+            xprof_core_lib:err(1, ?MODULE, ms_transform_headmatch);
         {error,[{_,[{Loc,Mod,Code}|_]}|_],_} ->
             xprof_core_lib:err(Loc, Mod, Code);
         MS ->

@@ -121,7 +121,7 @@ get_called_funs_test_() ->
      end},
      {"Lists calls from preloaded modules in OTP",
      fun() ->
-             ?assertEqual([{erlang, fun_info_1, 3}], ?M:get_called_funs({erlang, fun_info, 1}))
+             ?assertEqual([{auth, get_cookie, 0}], ?M:get_called_funs({erlang, get_cookie, 0}))
      end},
      {"Doesn't list anything for BIF functions (containing erlang:nif_error/1 call)",
      fun() ->
@@ -129,7 +129,7 @@ get_called_funs_test_() ->
      end},
      {"Doesn't list itself in case of recursive function",
       fun() ->
-              ?assertEqual([], ?M:get_called_funs({lists, nth, 2}))
+              ?assertEqual([], ?M:get_called_funs({lists, prefix, 2}))
       end},
      {"Extract calls from loaded xprof modules",
      fun() ->
@@ -198,7 +198,7 @@ get_available_funs_elixir_test_() ->
                   %% let's expand Task.Supervisor
                   L2 = ?M:get_available_funs(<<"Task.">>),
                   ?assert(lists:member(<<"Task.start_link/1">>, L2)), %% exported
-                  ?assert(lists:member(<<"Task.exit/2">>, L2)), %% local
+                  ?assert(lists:member(<<"Task.flush_reply/1">>, L2)), %% local
 
                   ?assertNot(erlang:module_loaded('Elixir.Calendar')),
                   ?assertNot(erlang:module_loaded('Elixir.Calendar.ISO'))
