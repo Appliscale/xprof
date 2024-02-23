@@ -78,7 +78,7 @@ You can also fetch from the github repository (not recommended, only for develop
 
 ## Supported Versions
 
-XProf currently supports Erlang/OTP R16B - 23. Newer OTP versions (if
+XProf currently supports Erlang/OTP 18 - 26. Newer OTP versions (if
 any) might work but are not tested.
 
 ## Syntax mode
