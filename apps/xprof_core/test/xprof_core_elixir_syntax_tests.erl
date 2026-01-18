@@ -134,7 +134,13 @@ parse_query_test_() ->
          ?_assertEqual({error, "Missing value for parameter key:"},
                        ?M:parse_query("%cmd key: ")),
          ?_assertEqual(%%{error,"Incomplete value for parameter :key"},
-                       {error, "missing terminator: ] (for \"[\" starting at line 1) at column 16"},
+                       case xprof_core_test_lib:is_elixir_version(">= 1.16.0") of
+                           true ->
+                               %% Elixir 1.16+ no longer includes the "for X starting at" hint
+                               {error, "missing terminator: ] at column 16"};
+                           false ->
+                               {error, "missing terminator: ] (for \"[\" starting at line 1) at column 16"}
+                       end,
                        ?M:parse_query("%cmd key: [1, 2,")),
          ?_assertMatch({error, "Expected parameter name missing at the end of the query"},
                        ?M:parse_query("%cmd k1: 1,")),
@@ -201,7 +207,14 @@ parse_incomplete_query_test_() ->
 
 fmt_test_() ->
     Tests =
-        [?_assertEqual(<<"** (MatchError) no match of right hand side value: :dummy">>,
+        [?_assertEqual(case xprof_core_test_lib:is_elixir_version(">= 1.19.0") of
+                           true ->
+                               %% in version 1.19.0 the MatchError message
+                               %% was reformatted to print the value on its own line
+                               <<"** (MatchError) no match of right hand side value:\n\n    :dummy\n">>;
+                           false ->
+                               <<"** (MatchError) no match of right hand side value: :dummy">>
+                       end,
                        ?M:fmt_exception(error, {badmatch, dummy})),
          ?_assertEqual(<<"** (throw) :dummy">>,
                        ?M:fmt_exception(throw, dummy)),

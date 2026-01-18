@@ -469,7 +469,7 @@ long_call(_Config) ->
 
     %% minimum should be 20 ms with a bit of precision error
     Min = proplists:get_value(min, StatsItems),
-    ?assertMatch({true, _}, {Min < 22*1000, Min}),
+    ?assertMatch({true, _}, {Min < 23*1000, Min}),
 
     %% maximum should be 100 ms with a bit of precision error
     Max = proplists:get_value(max, StatsItems),

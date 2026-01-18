@@ -37,4 +37,23 @@ GithubActions =
           end
   end.
 
-GithubActions(Travis(CONFIG)).
+%% Suppress dialyzer "unknown function" warnings for calls into the optional,
+%% dynamically-loaded Elixir runtime (see xprof_core_elixir_syntax). The
+%% `no_unknown` warning and the underlying behaviour of failing on unknown
+%% functions were introduced in OTP 24; on older releases the option is
+%% rejected and unknown functions don't affect the exit status anyway.
+DialyzerNoUnknown =
+  fun(Config) ->
+          case list_to_integer(erlang:system_info(otp_release)) of
+              Rel when Rel >= 24 ->
+                  Dialyzer = proplists:get_value(dialyzer, Config, []),
+                  Warnings = proplists:get_value(warnings, Dialyzer, []),
+                  Dialyzer1 = lists:keystore(warnings, 1, Dialyzer,
+                                             {warnings, [no_unknown | Warnings]}),
+                  lists:keystore(dialyzer, 1, Config, {dialyzer, Dialyzer1});
+              _ ->
+                  Config
+          end
+  end.
+
+DialyzerNoUnknown(GithubActions(Travis(CONFIG))).

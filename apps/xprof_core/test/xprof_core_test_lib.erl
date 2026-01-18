@@ -79,7 +79,19 @@ get_elixir_ebin(Elixir) ->
     Cmd = Elixir ++ " -e 'IO.puts :code.lib_dir(:elixir, :ebin)'",
     case eunit_lib:command(Cmd) of
         {0, Output} ->
-            _ElixirEbin = string:strip(Output, right, $\n);
+            %% Take the last line to handle warnings on earlier lines
+            Lines = string:tokens(Output, "\n"),
+            ElixirEbin = lists:last(Lines),
+            %% Verify the path exists
+            case filelib:is_dir(ElixirEbin) of
+                true ->
+                    ElixirEbin;
+                false ->
+                    io:format(user,
+                              "~nElixir ebin directory does not exist: ~p - skipping elixir tests~n",
+                              [ElixirEbin]),
+                    error
+            end;
         {Status, Output} ->
             io:format(user,
                       "~nfound elixir unusable - skipping elixir tests:~n"

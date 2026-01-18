@@ -17,6 +17,12 @@ jobs:
       fail-fast: false
       matrix:
         include:
+        - otp_version: 28
+          erl_hist: true
+
+        - otp_version: 27
+          erl_hist: true
+
         - otp_version: 26
           # hdr_histogram NIF requires the below PR to be merged to build on OTP 26
           # https://github.com/HdrHistogram/hdr_histogram_erl/pull/44
@@ -51,6 +57,11 @@ jobs:
       with:
         path: $HOME/.cache/rebar3
         key: ${{ matrix.otp_version }}-rebar3-cache
+
+    # cowboy 2.7+ require OTP 20 and 2.11+ require OTP 24+. On OTP 19-23 pin to
+    # cowboy 2.6.3, last version that compiles fine on these old OTP versions.
+    - if: ${{ matrix.otp_version <= 23 && !matrix.old_cowboy }}
+      run: echo "COWBOY_VERSION=2.6.3" >> $GITHUB_ENV
 
     - run: make test
 
@@ -107,6 +118,11 @@ jobs:
     - if: matrix.old_cowboy
       run: echo "COWBOY_VERSION=1.1.2" >> $GITHUB_ENV
 
+    # cowboy 2.7+ require OTP 20 and 2.11+ require OTP 24+. On OTP 19-23 pin to
+    # cowboy 2.6.3, last version that compiles fine on these old OTP versions.
+    - if: ${{ matrix.otp_version <= 23 && !matrix.old_cowboy }}
+      run: echo "COWBOY_VERSION=2.6.3" >> $GITHUB_ENV
+
     - run: make test
 
   test_json_lib:
@@ -130,6 +146,11 @@ jobs:
         path: $HOME/.cache/rebar3
         key: ${{ matrix.otp_version }}-rebar3-cache-json-lib
 
+    # cowboy 2.7+ require OTP 20 and 2.11+ require OTP 24+. On OTP 19-23 pin to
+    # cowboy 2.6.3, last version that compiles fine on these old OTP versions.
+    - if: ${{ matrix.otp_version <= 23 && !matrix.old_cowboy }}
+      run: echo "COWBOY_VERSION=2.6.3" >> $GITHUB_ENV
+
     - run: make test_${{ matrix.json_lib }}
 
   test_docs:
@@ -139,9 +160,9 @@ jobs:
     strategy:
       matrix:
         include:
-          - elixir: 1.15.x
-            otp_version: 26
-            rebar3: '3.22.1'
+          - elixir: 1.18.x
+            otp_version: 27
+            rebar3: '3.24.0'
             # hdr_histogram NIF requires the below PR to be merged to build on OTP 26
             # https://github.com/HdrHistogram/hdr_histogram_erl/pull/44
             erl_hist: true
@@ -200,6 +221,30 @@ jobs:
             erl_hist: true
             os: ubuntu-latest
 
+          - elixir: 1.16.x
+            otp_version: 26
+            rebar3: '3.23.0'
+            erl_hist: true
+            os: ubuntu-latest
+
+          - elixir: 1.17.x
+            otp_version: 27
+            rebar3: '3.23.0'
+            erl_hist: true
+            os: ubuntu-latest
+
+          - elixir: 1.18.x
+            otp_version: 27
+            rebar3: '3.24.0'
+            erl_hist: true
+            os: ubuntu-latest
+
+          - elixir: 1.19.x
+            otp_version: 28
+            rebar3: '3.25.1'
+            erl_hist: true
+            os: ubuntu-latest
+
     steps:
     - uses: actions/checkout@v3
     - uses: erlef/setup-beam@v1
@@ -222,6 +267,11 @@ jobs:
       with:
         path: $HOME/.cache/rebar3
         key: ${{ matrix.otp_version }}-rebar3-cache
+
+    # cowboy 2.7+ require OTP 20 and 2.11+ require OTP 24+. On OTP 19-23 pin to
+    # cowboy 2.6.3, last version that compiles fine on these old OTP versions.
+    - if: ${{ matrix.otp_version <= 23 && !matrix.old_cowboy }}
+      run: echo "COWBOY_VERSION=2.6.3" >> $GITHUB_ENV
 
     - run: make test
 
