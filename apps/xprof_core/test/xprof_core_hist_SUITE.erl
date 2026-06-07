@@ -30,11 +30,15 @@
 -include_lib("common_test/include/ct.hrl").
 
 -define(BADARG(Expr), (fun() ->
-                               case (catch Expr) of
-                                   {'EXIT', {badarg, _}} -> ok;
+                               try Expr of
                                    __Other__ -> ct:fail([{line, ?LINE},
                                                          {expected, badarg},
                                                          {actual, __Other__}])
+                               catch
+                                   error:badarg -> ok;
+                                   __C__:__E__ -> ct:fail([{line, ?LINE},
+                                                           {expected, badarg},
+                                                           {actual, {__C__, __E__}}])
                                end
                        end)()).
 
@@ -184,7 +188,9 @@ load_histograms() ->
     InitGroupProc = self(),
     proc_lib:spawn(
       fun() ->
-              Res = (catch xprof_core_hist:open(raw_table, 3600 * 1000 * 1000, 3)),
+              Res = try xprof_core_hist:open(raw_table, 3600 * 1000 * 1000, 3)
+                    catch _:Reason -> {'EXIT', Reason}
+                    end,
               InitGroupProc ! Res,
               receive _ -> stop end
       end),

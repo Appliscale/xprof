@@ -17,6 +17,10 @@ jobs:
       fail-fast: false
       matrix:
         include:
+        - otp_version: 29
+          erl_hist: true
+          run_dialyzer: true
+
         - otp_version: 28
           erl_hist: true
 
@@ -242,6 +246,12 @@ jobs:
           - elixir: 1.19.x
             otp_version: 28
             rebar3: '3.25.1'
+            erl_hist: true
+            os: ubuntu-latest
+
+          - elixir: 1.20.x
+            otp_version: 29
+            rebar3: '3.27.0'
             erl_hist: true
             os: ubuntu-latest
 

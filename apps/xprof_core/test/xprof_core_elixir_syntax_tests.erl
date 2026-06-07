@@ -44,40 +44,40 @@ parse_match_spec_test_() ->
 
          ?_assertMatch(
             {error,"expression is not an xprof match-spec fun" ++ _},
-            catch ?M:parse_match_spec("")),
+            try ?M:parse_match_spec("") catch Reason -> Reason end),
          ?_assertMatch(
             {error,"expression is not an xprof match-spec fun" ++ _},
-            catch ?M:parse_match_spec("a+b")),
+            try ?M:parse_match_spec("a+b") catch Reason -> Reason end),
 
          %% tokenizer errors
          ?_assertEqual(
             {error,"missing terminator: \" (for string starting at line 1) at column 1"},
-            catch ?M:parse_match_spec("\"Mod.fun/1")),
+            try ?M:parse_match_spec("\"Mod.fun/1") catch Reason -> Reason end),
          ?_assertEqual(
             {error,"missing terminator: ' (for string starting at line 1) at column 15"},
-            catch ?M:parse_match_spec("Mod.fun(_) -> 'true")),
+            try ?M:parse_match_spec("Mod.fun(_) -> 'true") catch Reason -> Reason end),
          ?_assertEqual(
             {error,"syntax error before:  at column 4"},
-            catch ?M:parse_match_spec("Mod.")),
+            try ?M:parse_match_spec("Mod.") catch Reason -> Reason end),
          ?_assertEqual(
             {error,"syntax error before:  at column 9"},
-            catch ?M:parse_match_spec("Mod.fun *")),
+            try ?M:parse_match_spec("Mod.fun *") catch Reason -> Reason end),
          %% real-world typo :)
          ?_assertEqual(
             {error,"syntax error before: '->' at column 12"},
-            catch ?M:parse_match_spec("Mod.fun(a) -> when a > 1 -> true")),
+            try ?M:parse_match_spec("Mod.fun(a) -> when a > 1 -> true") catch Reason -> Reason end),
 
          %% parse_quoted does not match
          ?_assertMatch(
             {error,"expression is not an xprof match-spec fun"},
-            catch ?M:parse_match_spec("a+b ->")),
+            try ?M:parse_match_spec("a+b ->") catch Reason -> Reason end),
          %% fn_to_clauses
          ?_assertMatch(
             {error,"cannot invoke remote function Mod.fun/1 inside " ++ _},
-            catch ?M:parse_match_spec("Mod.fun(1) -> true; Mod.fun(2) -> false")),
+            try ?M:parse_match_spec("Mod.fun(1) -> true; Mod.fun(2) -> false") catch Reason -> Reason end),
          ?_assertMatch(
             {error,"cannot mix clauses with different arities in" ++ _},
-            catch ?M:parse_match_spec("Mod.fun(1) -> true; (1, 2) -> false")),
+            try ?M:parse_match_spec("Mod.fun(1) -> true; (1, 2) -> false") catch Reason -> Reason end),
 
          ?_assertMatch(
             ok,

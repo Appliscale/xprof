@@ -325,7 +325,7 @@ dont_receive_new_capture_data_after_stop(_Config) ->
 capture_data_with_formatted_exception_test(_Config) ->
     given_capture_slow_calls_of("xprof_http_e2e_SUITE", "crash_function", 0, 10, 10),
     %% call function once
-    catch crash_function(),
+    try crash_function() catch _:_ -> ok end,
     xprof_core_test_lib:wait_traces_processed({xprof_http_e2e_SUITE, crash_function, 0}),
     {200, Data} = make_get_request("api/capture_data",
                                    [
