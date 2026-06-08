@@ -7,6 +7,7 @@
    [kernel
    ,stdlib
    ,compiler
+   ,syntax_tools
    ,hdr_histogram
    ]}
  ,{env,[]}
