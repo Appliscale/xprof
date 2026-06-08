@@ -70,11 +70,11 @@ doc:
 gen_ex_doc: ./doc/src/readme.md
 	$(MAYBE_UPDATE_COWBOY)
 	$(MAYBE_UNLOCK_HIST)
-	$(REBAR3) ex_doc --app xprof_core
-	$(REBAR3) ex_doc --app xprof_gui
+	$(REBAR3) as docs ex_doc --app xprof_core
+	$(REBAR3) as docs ex_doc --app xprof_gui
 	cp _build/docs/lib/xprof_core/ebin/xprof_core.beam _build/docs/lib/xprof/ebin
 	cp _build/docs/lib/xprof_gui/ebin/xprof_gui_rest.beam _build/docs/lib/xprof/ebin
-	$(REBAR3) ex_doc --app xprof
+	$(REBAR3) as docs ex_doc --app xprof
 
 dialyzer:
 	$(MAYBE_UPDATE_COWBOY)
