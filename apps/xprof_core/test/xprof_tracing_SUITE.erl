@@ -247,7 +247,7 @@ monitor_recursive_fun(_Config) ->
     Last = get_print_current_time(),
 
     recursive_test_fun(10),
-    ct:sleep(1000),
+    wait_snapshot(1010),
 
     %% although the function was called 10 times recursively
     %% only 1 sample is recorded
@@ -323,7 +323,7 @@ capture_args_res(_Config) ->
     test_fun(10),
     test_fun(33),
 
-    ct:sleep(10), %% Let trace messages reach the process
+    xprof_core_test_lib:wait_traces_processed(MFA),
 
     {ok, {Id, 20, 3, true}, [Item1, Item2]} =
         xprof_core:get_captured_data(MFA, 0),
@@ -335,7 +335,7 @@ capture_args_res(_Config) ->
     test_fun(7),
     test_fun(40),
 
-    ct:sleep(10), %% Let trace messages reach the process
+    xprof_core_test_lib:wait_traces_processed(MFA),
 
     {ok, {Id, 20, 3, false}, [Item3]} = xprof_core:get_captured_data(MFA, 2),
     ?assertMatch({_Num, _Pid, _Time, [40], {return_from, {res, 40}}}, Item3),
@@ -368,7 +368,7 @@ capture_args_ms(_Config) ->
     test_fun(33),
     test_fun(40),
 
-    ct:sleep(10), %% Let trace messages reach the process
+    xprof_core_test_lib:wait_traces_processed(MFA),
 
     {ok, {Id, 20, 2, false}, [Item1, Item2]} =
         xprof_core:get_captured_data(MFA, 0),
@@ -390,7 +390,7 @@ capture_exception(_Config) ->
 
     catch maybe_crash_test_fun(true),
 
-    ct:sleep(10), %% Let trace messages reach the process
+    xprof_core_test_lib:wait_traces_processed(MFA),
 
     {ok, {Id, 1, 3, true}, [Item1]} =
         xprof_core:get_captured_data(MFA, 0),
@@ -413,7 +413,7 @@ capture_stop(_Config) ->
     test_fun(10),
     test_fun(33),
 
-    ct:sleep(10), %% Let trace messages reach the process
+    xprof_core_test_lib:wait_traces_processed(MFA),
 
     {ok, {Id, 20, 5, true}, [Item1, Item2]} =
         xprof_core:get_captured_data(MFA, 0),
