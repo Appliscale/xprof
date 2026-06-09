@@ -78,8 +78,8 @@ You can also fetch from the github repository (not recommended, only for develop
 
 ## Supported Versions
 
-XProf currently supports Erlang/OTP 18 - 26. Newer OTP versions (if
-any) might work but are not tested.
+XProf currently supports Erlang/OTP 18 - 29 and Elixir 1.11-1.20.
+Newer OTP versions (if any) might work but are not tested.
 
 ## Syntax mode
 

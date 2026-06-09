@@ -366,6 +366,9 @@ tokenizer(Str, StartColumn) ->
     unify_tokenizer_output(
       elixir_tokenizer:tokenize(Str, 1, StartColumn, [])).
 
+unify_tokenizer_output({ok, _Line, _Column, _Warnings1, Tokens, _Warnings2}) ->
+    %% Elixir 1.18+ format - tokens are accumulated in reverse order
+    {ok, lists:reverse(Tokens)};
 unify_tokenizer_output({ok, _Line, _Column, _Warnings, Tokens}) ->
     {ok, Tokens};
 unify_tokenizer_output({ok, Tokens}) ->
@@ -373,6 +376,14 @@ unify_tokenizer_output({ok, Tokens}) ->
 unify_tokenizer_output({ok, _Line, _Column, Tokens}) ->
     %% FIXME old format returned before Elixir 1.6.0
     {ok, Tokens};
+%% Elixir 1.18+ error format: {error, {MetaList, [ErrorMsg, Hint], []}, Rest, _Extra, SoFar}
+%% used for "missing terminator" errors; Rest is the remaining input from error pos
+unify_tokenizer_output({error, {_MetaList, [ErrorMsg, Hint], []}, Rest, _Extra, SoFar}) ->
+    {error, {lists:flatten(ErrorMsg), Hint, Rest, SoFar}};
+%% Elixir 1.18+ error format: {error, {MetaList, ErrorStr, HintList}, Rest, _Extra, SoFar}
+%% used for "unexpected token" and similar errors
+unify_tokenizer_output({error, {_MetaList, Error, HintList}, Rest, _Extra, SoFar}) ->
+    {error, {Error, HintList, Rest, SoFar}};
 unify_tokenizer_output({error, {_Line, _Column, Error, TokenHint}, Rest, _Warnings, SoFar}) ->
     {error, {Error, TokenHint, Rest, SoFar}};
 unify_tokenizer_output({error, {_Line, _Column, Error, TokenHint}, Rest, SoFar}) ->

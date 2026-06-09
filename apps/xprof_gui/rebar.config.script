@@ -49,14 +49,22 @@ JsonLib =
           end
   end.
 
+%% The COWBOY_VERSION env var selects the cowboy dependency version:
+%%   * unset      -> keep the default version from rebar.config
+%%   * "1"/"1.x"  -> cowboy 1.1.2 (the last 1.x release); its API differs
+%%                   from 2.x so the COWBOY_VERSION_1 macro is also defined
+%%   * any other  -> used verbatim, e.g. an older 2.x that still supports
+%%                   the OTP release being tested (cowboy 2.11+ need OTP 24+)
 CowboyVsn =
   fun(Config0) ->
           case os:getenv("COWBOY_VERSION") of
+              false ->
+                  Config0;
               "1" ++ _ ->
                   Config1 = EnsureMacro('COWBOY_VERSION_1', true, Config0),
                   ReplaceDep({cowboy, "1.1.2"}, cowboy, Config1);
-              _ ->
-                  Config0
+              Vsn ->
+                  ReplaceDep({cowboy, Vsn}, cowboy, Config0)
           end
   end.
 

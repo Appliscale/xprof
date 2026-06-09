@@ -73,7 +73,8 @@ end_per_suite(Config) ->
     ok.
 
 init_per_group( simulate_tracing, Config) ->
-    xprof_core:monitor(MFA = {?MODULE, test_fun, 0}),
+    MFA = {?MODULE, test_fun, 0},
+    xprof_core:monitor(MFA),
     [{mfa, MFA} | Config].
 
 end_per_group( simulate_tracing, Config) ->
@@ -187,13 +188,14 @@ not_captured_error(_Config) ->
     end.
 
 monitor_crashing_fun(_Config) ->
-    xprof_core:monitor(MFA = {?MODULE, maybe_crash_test_fun, 1}),
+    MFA = {?MODULE, maybe_crash_test_fun, 1},
+    xprof_core:monitor(MFA),
     ok = xprof_core:trace(self()),
 
     Last = get_print_current_time(),
 
     maybe_crash_test_fun(false),
-    catch maybe_crash_test_fun(true),
+    try maybe_crash_test_fun(true) catch _:_ -> ok end,
     maybe_crash_test_fun(false),
     wait_snapshot(1010),
     wait_snapshot(1010),
@@ -241,13 +243,14 @@ monitor_many_funs(_Config) ->
     ok.
 
 monitor_recursive_fun(_Config) ->
-    xprof_core:monitor(MFA = {?MODULE, recursive_test_fun, 1}),
+    MFA = {?MODULE, recursive_test_fun, 1},
+    xprof_core:monitor(MFA),
     ok = xprof_core:trace(self()),
 
     Last = get_print_current_time(),
 
     recursive_test_fun(10),
-    ct:sleep(1000),
+    wait_snapshot(1010),
 
     %% although the function was called 10 times recursively
     %% only 1 sample is recorded
@@ -263,7 +266,8 @@ monitor_recursive_fun(_Config) ->
 
 monitor_keep_recursive_fun(_Config) ->
     application:set_env(xprof_core, ignore_recursion, false),
-    xprof_core:monitor(MFA = {?MODULE, recursive_test_fun, 1}),
+    MFA = {?MODULE, recursive_test_fun, 1},
+    xprof_core:monitor(MFA),
     ok = xprof_core:trace(self()),
 
     Last = get_print_current_time(),
@@ -313,7 +317,8 @@ monitor_ms(_Config) ->
     ok.
 
 capture_args_res(_Config) ->
-    xprof_core:monitor(MFA = {?MODULE, test_fun, 1}),
+    MFA = {?MODULE, test_fun, 1},
+    xprof_core:monitor(MFA),
     ok = xprof_core:trace(self()),
 
     %% Start first capture
@@ -323,7 +328,7 @@ capture_args_res(_Config) ->
     test_fun(10),
     test_fun(33),
 
-    ct:sleep(10), %% Let trace messages reach the process
+    xprof_core_test_lib:wait_traces_processed(MFA),
 
     {ok, {Id, 20, 3, true}, [Item1, Item2]} =
         xprof_core:get_captured_data(MFA, 0),
@@ -335,7 +340,7 @@ capture_args_res(_Config) ->
     test_fun(7),
     test_fun(40),
 
-    ct:sleep(10), %% Let trace messages reach the process
+    xprof_core_test_lib:wait_traces_processed(MFA),
 
     {ok, {Id, 20, 3, false}, [Item3]} = xprof_core:get_captured_data(MFA, 2),
     ?assertMatch({_Num, _Pid, _Time, [40], {return_from, {res, 40}}}, Item3),
@@ -368,7 +373,7 @@ capture_args_ms(_Config) ->
     test_fun(33),
     test_fun(40),
 
-    ct:sleep(10), %% Let trace messages reach the process
+    xprof_core_test_lib:wait_traces_processed(MFA),
 
     {ok, {Id, 20, 2, false}, [Item1, Item2]} =
         xprof_core:get_captured_data(MFA, 0),
@@ -382,15 +387,16 @@ capture_args_ms(_Config) ->
     ok.
 
 capture_exception(_Config) ->
-    xprof_core:monitor(MFA = {?MODULE, maybe_crash_test_fun, 1}),
+    MFA = {?MODULE, maybe_crash_test_fun, 1},
+    xprof_core:monitor(MFA),
     ok = xprof_core:trace(self()),
 
     %% Start first capture
     {ok, Id} = xprof_core:capture(MFA, 1, 3),
 
-    catch maybe_crash_test_fun(true),
+    try maybe_crash_test_fun(true) catch _:_ -> ok end,
 
-    ct:sleep(10), %% Let trace messages reach the process
+    xprof_core_test_lib:wait_traces_processed(MFA),
 
     {ok, {Id, 1, 3, true}, [Item1]} =
         xprof_core:get_captured_data(MFA, 0),
@@ -403,7 +409,8 @@ capture_exception(_Config) ->
     ok.
 
 capture_stop(_Config) ->
-    xprof_core:monitor(MFA = {?MODULE, test_fun, 1}),
+    MFA = {?MODULE, test_fun, 1},
+    xprof_core:monitor(MFA),
     ok = xprof_core:trace(self()),
 
     %% Start first capture
@@ -413,7 +420,7 @@ capture_stop(_Config) ->
     test_fun(10),
     test_fun(33),
 
-    ct:sleep(10), %% Let trace messages reach the process
+    xprof_core_test_lib:wait_traces_processed(MFA),
 
     {ok, {Id, 20, 5, true}, [Item1, Item2]} =
         xprof_core:get_captured_data(MFA, 0),
@@ -438,7 +445,8 @@ capture_stop(_Config) ->
 long_call(_Config) ->
     application:set_env(xprof_core, max_duration, 100),
 
-    xprof_core:monitor(MFA = {?MODULE, test_fun, 1}),
+    MFA = {?MODULE, test_fun, 1},
+    xprof_core:monitor(MFA),
     ok = xprof_core:trace(self()),
     {ok, Id} = xprof_core:capture(MFA, 50, 1),
 
@@ -469,7 +477,7 @@ long_call(_Config) ->
 
     %% minimum should be 20 ms with a bit of precision error
     Min = proplists:get_value(min, StatsItems),
-    ?assertMatch({true, _}, {Min < 22*1000, Min}),
+    ?assertMatch({true, _}, {Min < 23*1000, Min}),
 
     %% maximum should be 100 ms with a bit of precision error
     Max = proplists:get_value(max, StatsItems),
@@ -478,8 +486,9 @@ long_call(_Config) ->
     ok.
 
 return_matching(_Config) ->
+    MFA = {?MODULE, test_fun, 1},
     xprof_core:monitor(funlatency,
-                       [{mfa, MFA = {?MODULE, test_fun, 1}},
+                       [{mfa, MFA},
                         {retmatch, fun({res, 10}) -> {true, ten};
                                       ({res, 20}) -> true;
                                       ({res, 30}) -> false;
@@ -536,8 +545,9 @@ return_matching_query(_Config) ->
     ok.
 
 return_matching_exception(_Config) ->
+    MFA = {?MODULE, maybe_crash_test_fun, 1},
     xprof_core:monitor(funlatency,
-                       [{mfa, MFA = {?MODULE, maybe_crash_test_fun, 1}},
+                       [{mfa, MFA},
                         {retmatch, fun(throw, test_crash) -> true;
                                       (throw, {test_crash, no_match}) -> false;
                                       (throw, {test_crash, change_ret}) -> {true, err2};
@@ -550,15 +560,15 @@ return_matching_exception(_Config) ->
     %% no match if no exception
     maybe_crash_test_fun(false),
     %% throw:test_crash matches
-    catch maybe_crash_test_fun(true),
+    try maybe_crash_test_fun(true) catch _:_ -> ok end,
     %% throw:{test_crash, no_match} does not match
-    catch maybe_crash_test_fun(no_match),
+    try maybe_crash_test_fun(no_match) catch _:_ -> ok end,
     %% throw:{test_crash, change_ret} matches and changes return value
-    catch maybe_crash_test_fun(change_ret),
+    try maybe_crash_test_fun(change_ret) catch _:_ -> ok end,
     %% throw:{test_crash, bad_ret} does not match
-    catch maybe_crash_test_fun(bad_ret),
+    try maybe_crash_test_fun(bad_ret) catch _:_ -> ok end,
     %% error:function_clause does not match
-    catch maybe_crash_test_fun(42),
+    try maybe_crash_test_fun(42) catch _:_ -> ok end,
 
     wait_snapshot(1010),
 

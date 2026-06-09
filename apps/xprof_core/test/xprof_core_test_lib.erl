@@ -3,7 +3,8 @@
 -export([is_elixir_version/1,
          is_elixir_available/0,
          run_elixir_unit_tests/1,
-         ensure_elixir_setup_for_e2e_test/0]).
+         ensure_elixir_setup_for_e2e_test/0,
+         wait_traces_processed/1]).
 
 -define(EUNIT_NOAUTO, true).
 -include_lib("eunit/include/eunit.hrl").
@@ -78,7 +79,19 @@ get_elixir_ebin(Elixir) ->
     Cmd = Elixir ++ " -e 'IO.puts :code.lib_dir(:elixir, :ebin)'",
     case eunit_lib:command(Cmd) of
         {0, Output} ->
-            _ElixirEbin = string:strip(Output, right, $\n);
+            %% Take the last line to handle warnings on earlier lines
+            Lines = string:tokens(Output, "\n"),
+            ElixirEbin = lists:last(Lines),
+            %% Verify the path exists
+            case filelib:is_dir(ElixirEbin) of
+                true ->
+                    ElixirEbin;
+                false ->
+                    io:format(user,
+                              "~nElixir ebin directory does not exist: ~p - skipping elixir tests~n",
+                              [ElixirEbin]),
+                    error
+            end;
         {Status, Output} ->
             io:format(user,
                       "~nfound elixir unusable - skipping elixir tests:~n"
@@ -100,3 +113,32 @@ del_elixir_from_path(ElixirEbin) ->
         false -> ok;
         Error -> throw(Error)
     end.
+
+%% Trace data is collected asynchronously through a two-hop pipeline:
+%%
+%%   traced process --[erlang:trace]--> xprof_core_tracer --[erlang:send]-->
+%%       per-MFA handler (registered under xprof_core_lib:mfa2atom/1) --> ETS
+%%
+%% A test that reads this data right after making the traced calls can race
+%% the delivery and processing of those messages (the source of intermittent
+%% "expected N, got 0" failures). This makes such reads deterministic without
+%% sleeping, by draining each hop of the pipeline in turn:
+%%
+%%   1. erlang:trace_delivered/1 returns once all trace messages generated
+%%      before the call have reached the *tracer's* mailbox.
+%%   2. sys:get_state/1 on the tracer forces it to process those messages
+%%      (its mailbox is FIFO) and forward them with erlang:send/2, which is
+%%      synchronous into the local handler's mailbox.
+%%   3. sys:get_state/1 on the handler then forces it to process them, so the
+%%      recorded data is in ETS and queryable.
+-spec wait_traces_processed(mfa()) -> ok.
+wait_traces_processed(MFA) ->
+    Ref = erlang:trace_delivered(all),
+    receive
+        {trace_delivered, all, Ref} -> ok
+    after 5000 ->
+            error(trace_delivered_timeout)
+    end,
+    _ = sys:get_state(xprof_core_tracer),
+    _ = sys:get_state(xprof_core_lib:mfa2atom(MFA)),
+    ok.

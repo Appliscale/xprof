@@ -158,7 +158,9 @@ handle_info({trace_ts, _Spawner, spawn, NewProc, _MFArgs,_TimeStamp},
 
     case rand:uniform() < Sample of
         true ->
-            catch erlang:trace(NewProc, true, [call, procs, timestamp]);
+            try erlang:trace(NewProc, true, [call, procs, timestamp])
+            catch _:_ -> ok
+            end;
         false ->
             ok
     end,

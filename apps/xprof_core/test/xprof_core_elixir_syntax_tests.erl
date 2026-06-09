@@ -44,40 +44,40 @@ parse_match_spec_test_() ->
 
          ?_assertMatch(
             {error,"expression is not an xprof match-spec fun" ++ _},
-            catch ?M:parse_match_spec("")),
+            try ?M:parse_match_spec("") catch Reason -> Reason end),
          ?_assertMatch(
             {error,"expression is not an xprof match-spec fun" ++ _},
-            catch ?M:parse_match_spec("a+b")),
+            try ?M:parse_match_spec("a+b") catch Reason -> Reason end),
 
          %% tokenizer errors
          ?_assertEqual(
             {error,"missing terminator: \" (for string starting at line 1) at column 1"},
-            catch ?M:parse_match_spec("\"Mod.fun/1")),
+            try ?M:parse_match_spec("\"Mod.fun/1") catch Reason -> Reason end),
          ?_assertEqual(
             {error,"missing terminator: ' (for string starting at line 1) at column 15"},
-            catch ?M:parse_match_spec("Mod.fun(_) -> 'true")),
+            try ?M:parse_match_spec("Mod.fun(_) -> 'true") catch Reason -> Reason end),
          ?_assertEqual(
             {error,"syntax error before:  at column 4"},
-            catch ?M:parse_match_spec("Mod.")),
+            try ?M:parse_match_spec("Mod.") catch Reason -> Reason end),
          ?_assertEqual(
             {error,"syntax error before:  at column 9"},
-            catch ?M:parse_match_spec("Mod.fun *")),
+            try ?M:parse_match_spec("Mod.fun *") catch Reason -> Reason end),
          %% real-world typo :)
          ?_assertEqual(
             {error,"syntax error before: '->' at column 12"},
-            catch ?M:parse_match_spec("Mod.fun(a) -> when a > 1 -> true")),
+            try ?M:parse_match_spec("Mod.fun(a) -> when a > 1 -> true") catch Reason -> Reason end),
 
          %% parse_quoted does not match
          ?_assertMatch(
             {error,"expression is not an xprof match-spec fun"},
-            catch ?M:parse_match_spec("a+b ->")),
+            try ?M:parse_match_spec("a+b ->") catch Reason -> Reason end),
          %% fn_to_clauses
          ?_assertMatch(
             {error,"cannot invoke remote function Mod.fun/1 inside " ++ _},
-            catch ?M:parse_match_spec("Mod.fun(1) -> true; Mod.fun(2) -> false")),
+            try ?M:parse_match_spec("Mod.fun(1) -> true; Mod.fun(2) -> false") catch Reason -> Reason end),
          ?_assertMatch(
             {error,"cannot mix clauses with different arities in" ++ _},
-            catch ?M:parse_match_spec("Mod.fun(1) -> true; (1, 2) -> false")),
+            try ?M:parse_match_spec("Mod.fun(1) -> true; (1, 2) -> false") catch Reason -> Reason end),
 
          ?_assertMatch(
             ok,
@@ -134,7 +134,13 @@ parse_query_test_() ->
          ?_assertEqual({error, "Missing value for parameter key:"},
                        ?M:parse_query("%cmd key: ")),
          ?_assertEqual(%%{error,"Incomplete value for parameter :key"},
-                       {error, "missing terminator: ] (for \"[\" starting at line 1) at column 16"},
+                       case xprof_core_test_lib:is_elixir_version(">= 1.16.0") of
+                           true ->
+                               %% Elixir 1.16+ no longer includes the "for X starting at" hint
+                               {error, "missing terminator: ] at column 16"};
+                           false ->
+                               {error, "missing terminator: ] (for \"[\" starting at line 1) at column 16"}
+                       end,
                        ?M:parse_query("%cmd key: [1, 2,")),
          ?_assertMatch({error, "Expected parameter name missing at the end of the query"},
                        ?M:parse_query("%cmd k1: 1,")),
@@ -201,7 +207,14 @@ parse_incomplete_query_test_() ->
 
 fmt_test_() ->
     Tests =
-        [?_assertEqual(<<"** (MatchError) no match of right hand side value: :dummy">>,
+        [?_assertEqual(case xprof_core_test_lib:is_elixir_version(">= 1.19.0") of
+                           true ->
+                               %% in version 1.19.0 the MatchError message
+                               %% was reformatted to print the value on its own line
+                               <<"** (MatchError) no match of right hand side value:\n\n    :dummy\n">>;
+                           false ->
+                               <<"** (MatchError) no match of right hand side value: :dummy">>
+                       end,
                        ?M:fmt_exception(error, {badmatch, dummy})),
          ?_assertEqual(<<"** (throw) :dummy">>,
                        ?M:fmt_exception(throw, dummy)),
