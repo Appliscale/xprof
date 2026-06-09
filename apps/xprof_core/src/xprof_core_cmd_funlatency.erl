@@ -1,3 +1,4 @@
+%% @private
 -module(xprof_core_cmd_funlatency).
 
 -export([mandatory_params/0,

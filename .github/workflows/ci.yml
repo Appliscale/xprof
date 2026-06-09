@@ -33,20 +33,6 @@ jobs:
         - otp_version: 21
           send_coverage: true
           run_dialyzer: true
-          build_docs: true
-
-        - otp_version: 20
-
-        - otp_version: 19
-
-        - otp_version: 19
-          erl_hist: true
-
-        - otp_version: 18
-          # old_rebar fails with "Package not found in registry: {<<"hdr_histogram">>,<<"0.5.0">>}."
-          # with hdr_histogram NIF: xprof_core_hist_SUITE: Segmentation fault (core dumped)
-          erl_hist: true
-          old_cowboy: true
 
     steps:
     - uses: actions/checkout@v3
@@ -72,14 +58,56 @@ jobs:
       run: make dialyzer
       timeout-minutes: 8
 
-    - if: matrix.build_docs
-      run: make doc
-
     - if: matrix.send_coverage && success()
       run: ./rebar3 as test coveralls send
       env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       continue-on-error: true
+
+  # Same as the "test" job but for OTP 18-20, whose containers ship a glibc
+  # too old for the node20 runtime that actions/checkout and actions/cache
+  # now require. This job checks out with plain git and skips the cache.
+  test_legacy:
+    name: OTP ${{ matrix.otp_version }} (legacy)
+    runs-on: ubuntu-latest
+    container: erlang:${{ matrix.otp_version }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+        - otp_version: 20
+
+        - otp_version: 19
+
+        - otp_version: 19
+          erl_hist: true
+
+        - otp_version: 18
+          # old_rebar fails with "Package not found in registry: {<<"hdr_histogram">>,<<"0.5.0">>}."
+          # with hdr_histogram NIF: xprof_core_hist_SUITE: Segmentation fault (core dumped)
+          erl_hist: true
+          old_cowboy: true
+
+    steps:
+    - name: Checkout with git (avoids node-based actions on old glibc)
+      run: |
+        git config --global --add safe.directory $GITHUB_WORKSPACE
+        git init -q
+        git remote add origin "https://github.com/${{ github.repository }}"
+        git fetch -q --depth 1 origin "${{ github.ref }}"
+        git checkout -q FETCH_HEAD
+
+    - if: matrix.old_rebar
+      run: echo "REBAR3=./rebar3" >> $GITHUB_ENV
+
+    - if: matrix.erl_hist
+      run: echo "XPROF_ERL_HIST=true" >> $GITHUB_ENV
+
+    - if: matrix.old_cowboy
+      run: echo "COWBOY_VERSION=1.1.2" >> $GITHUB_ENV
+
+    - run: make test
 
   test_json_lib:
     name: Test different json lib (${{ matrix.json_lib }} | OTP ${{ matrix.otp_version }})
@@ -90,30 +118,11 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        otp_version: [19, 21]
+        otp_version: [21]
         json_lib: [jiffy, jsx, thoas]
-        include:
-        - otp_version: 19
-          old_cowboy: true
-
-        # thoas requires OTP 21+
-        - otp_version: 19
-          json_lib: thoas
-          skip: true
-
-        # fails with "Package not found in registry: jiffy-1.1.0."
-        #- otp_version: 18
-        #  old_rebar: true
-        #  old_cowboy: true
 
     steps:
     - uses: actions/checkout@v3
-
-    - if: matrix.old_rebar
-      run: echo "REBAR3=./rebar3" >> $GITHUB_ENV
-
-    - if: matrix.old_cowboy
-      run: echo "COWBOY_VERSION=1.1.2" >> $GITHUB_ENV
 
     - name: Cache hex packages
       uses: actions/cache@v3
@@ -121,8 +130,40 @@ jobs:
         path: $HOME/.cache/rebar3
         key: ${{ matrix.otp_version }}-rebar3-cache-json-lib
 
-    - if: ${{ !matrix.skip }}
-      run: make test_${{ matrix.json_lib }}
+    - run: make test_${{ matrix.json_lib }}
+
+  test_docs:
+    name: Test generating documentation
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        include:
+          - elixir: 1.15.x
+            otp_version: 26
+            rebar3: '3.22.1'
+            # hdr_histogram NIF requires the below PR to be merged to build on OTP 26
+            # https://github.com/HdrHistogram/hdr_histogram_erl/pull/44
+            erl_hist: true
+
+    steps:
+    - uses: actions/checkout@v3
+    - uses: erlef/setup-beam@v1
+      with:
+        otp-version: ${{matrix.otp_version}}
+        elixir-version: ${{matrix.elixir}}
+        rebar3-version: ${{matrix.rebar3}}
+
+    - if: matrix.erl_hist
+      run: echo "XPROF_ERL_HIST=true" >> $GITHUB_ENV
+
+    - name: Cache hex packages
+      uses: actions/cache@v3
+      with:
+        path: $HOME/.cache/rebar3
+        key: ${{ matrix.otp_version }}-rebar3-cache
+
+    - run: make gen_ex_doc
 
   test_elixir:
     name: Test with Elixir (Elixir ${{matrix.elixir}} | OTP ${{matrix.otp_version}})
@@ -131,60 +172,15 @@ jobs:
       fail-fast: false
       matrix:
         include:
-        # runner ubuntu-20.4 is only compatible with OTP 20+
-        # earlier OTP versions fail with:
-        # no match of right hand side value: {:error, {:ssl, {'no such file or directory', 'ssl.app'}}}
-        # running ubuntu-18.4 was removed on 2022.04.03
-        # https://github.com/actions/runner-images/issues/6002
-        #  - elixir: 1.4.x
-        #    otp_version: 18
-        #    rebar3: '3.7.4'
-        #    old_cowboy: true
-        #    # with hdr_histogram NIF: xprof_core_hist_SUITE: Segmentation fault (core dumped)
-        #    erl_hist: true
-        #    os: ubuntu-18.04
-
-          - elixir: 1.5.x
-            otp_version: 20
-            rebar3: '3.7.4'
-            old_cowboy: true
-            erl_hist: true
-            os: ubuntu-20.04
-
-          - elixir: 1.6.x
-            otp_version: 20
-            rebar3: '3.15.2'
-            os: ubuntu-20.04
-
-          - elixir: 1.7.x
-            otp_version: 20
-            rebar3: '3.15.2'
-            os: ubuntu-20.04
-
-          - elixir: 1.8.x
-            otp_version: 20
-            rebar3: '3.15.2'
-            os: ubuntu-20.04
-
-          - elixir: 1.9.x
-            otp_version: 20
-            rebar3: '3.15.2'
-            os: ubuntu-20.04
-
-          - elixir: 1.10.x
-            otp_version: 21
-            rebar3: '3.15.2'
-            os: ubuntu-20.04
-
-          - elixir: 1.11.x
-            otp_version: 22
+          - elixir: 1.11.4
+            otp_version: 24
             rebar3: '3.18.0'
-            os: ubuntu-20.04
+            os: ubuntu-latest
 
           - elixir: 1.12.x
-            otp_version: 23
+            otp_version: 24
             rebar3: '3.19.0'
-            os: ubuntu-20.04
+            os: ubuntu-latest
 
           - elixir: 1.13.x
             otp_version: 24

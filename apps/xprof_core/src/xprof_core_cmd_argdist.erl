@@ -1,3 +1,4 @@
+%% @private
 -module(xprof_core_cmd_argdist).
 
 -behaviour(xprof_core_cmd).

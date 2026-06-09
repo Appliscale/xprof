@@ -1,4 +1,5 @@
 %% @doc xprof top level supervisor.
+%% @private
 -module(xprof_core_sup).
 
 -behaviour(supervisor).

@@ -1,6 +1,7 @@
 %%%
 %%% @doc Module to parse and format expressions in Erlang syntax
 %%%
+%%% @private
 -module(xprof_core_erlang_syntax).
 
 -behaviour(xprof_core_language).

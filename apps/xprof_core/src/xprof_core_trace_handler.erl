@@ -5,6 +5,7 @@
 %% registers itself localy under a atom that consists of MFA and xprof_
 %% prefix. The same name is used to create public ETS table that holds entries
 %% with call time stats for every second.
+%% @private
 -module(xprof_core_trace_handler).
 
 -behaviour(gen_server).

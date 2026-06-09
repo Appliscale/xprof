@@ -1,5 +1,6 @@
 %% @doc XProf Core application callback
 %% @end
+%% @private
 -module(xprof_core_app).
 
 -behaviour(application).

@@ -1,4 +1,5 @@
 %%% @doc Supervisor
+%%% @private
 -module(xprof_core_trace_handler_sup).
 
 -behaviour(supervisor).

@@ -1,3 +1,4 @@
+%% @private
 -module(xprof_core_ms).
 
 -export([fun2ms/1,

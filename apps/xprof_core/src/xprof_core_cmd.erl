@@ -8,6 +8,7 @@
 %%% - other -> no trace_pattern -> xprof_core_tracer should find out where to send trace based on trace tag (maybe)
 %%%   -> can only be turned off by trace/3
 %%%   - cmd id = ??? (single tracer per cmd-name or trace tag)
+%%% @private
 -module(xprof_core_cmd).
 
 -export([expand_query/1,
@@ -28,7 +29,7 @@
 
 %% Convert param value from syntax-tree format to Erlang term or expression
 %% (Useful to implement some syntactic sugar/shorthands)
--callback param_from_ast(Key :: atom(), Ast :: erl_parse:syntax_tree()) ->
+-callback param_from_ast(Key :: atom(), Ast :: erl_parse:abstract_expr()) ->
     {ok, Value :: term()} | {error, Reason :: term()}.
 
 %% Validate param value and optionally convert to internal format
