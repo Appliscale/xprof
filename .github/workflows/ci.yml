@@ -172,60 +172,15 @@ jobs:
       fail-fast: false
       matrix:
         include:
-        # runner ubuntu-20.4 is only compatible with OTP 20+
-        # earlier OTP versions fail with:
-        # no match of right hand side value: {:error, {:ssl, {'no such file or directory', 'ssl.app'}}}
-        # running ubuntu-18.4 was removed on 2022.04.03
-        # https://github.com/actions/runner-images/issues/6002
-        #  - elixir: 1.4.x
-        #    otp_version: 18
-        #    rebar3: '3.7.4'
-        #    old_cowboy: true
-        #    # with hdr_histogram NIF: xprof_core_hist_SUITE: Segmentation fault (core dumped)
-        #    erl_hist: true
-        #    os: ubuntu-18.04
-
-          - elixir: 1.5.x
-            otp_version: 20
-            rebar3: '3.7.4'
-            old_cowboy: true
-            erl_hist: true
-            os: ubuntu-20.04
-
-          - elixir: 1.6.x
-            otp_version: 20
-            rebar3: '3.15.2'
-            os: ubuntu-20.04
-
-          - elixir: 1.7.x
-            otp_version: 20
-            rebar3: '3.15.2'
-            os: ubuntu-20.04
-
-          - elixir: 1.8.x
-            otp_version: 20
-            rebar3: '3.15.2'
-            os: ubuntu-20.04
-
-          - elixir: 1.9.x
-            otp_version: 20
-            rebar3: '3.15.2'
-            os: ubuntu-20.04
-
-          - elixir: 1.10.x
-            otp_version: 21
-            rebar3: '3.15.2'
-            os: ubuntu-20.04
-
-          - elixir: 1.11.x
-            otp_version: 22
+          - elixir: 1.11.4
+            otp_version: 24
             rebar3: '3.18.0'
-            os: ubuntu-20.04
+            os: ubuntu-latest
 
           - elixir: 1.12.x
-            otp_version: 23
+            otp_version: 24
             rebar3: '3.19.0'
-            os: ubuntu-20.04
+            os: ubuntu-latest
 
           - elixir: 1.13.x
             otp_version: 24
