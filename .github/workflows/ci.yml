@@ -35,37 +35,19 @@ jobs:
         - otp_version: 25
 
         - otp_version: 24
-
-        - otp_version: 23
-
-        - otp_version: 22
-
-        - otp_version: 21
           send_coverage: true
-          run_dialyzer: true
 
     steps:
     - uses: actions/checkout@v3
 
-    - if: matrix.old_rebar
-      run: echo "REBAR3=./rebar3" >> $GITHUB_ENV
-
     - if: matrix.erl_hist
       run: echo "XPROF_ERL_HIST=true" >> $GITHUB_ENV
-
-    - if: matrix.old_cowboy
-      run: echo "COWBOY_VERSION=1.1.2" >> $GITHUB_ENV
 
     - name: Cache hex packages
       uses: actions/cache@v3
       with:
         path: $HOME/.cache/rebar3
         key: ${{ matrix.otp_version }}-rebar3-cache
-
-    # cowboy 2.7+ require OTP 20 and 2.11+ require OTP 24+. On OTP 19-23 pin to
-    # cowboy 2.6.3, last version that compiles fine on these old OTP versions.
-    - if: ${{ matrix.otp_version <= 23 && !matrix.old_cowboy }}
-      run: echo "COWBOY_VERSION=2.6.3" >> $GITHUB_ENV
 
     - run: make test
 
@@ -74,60 +56,10 @@ jobs:
       timeout-minutes: 8
 
     - if: matrix.send_coverage && success()
-      run: ./rebar3 as test coveralls send
+      run: make send_coveralls
       env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       continue-on-error: true
-
-  # Same as the "test" job but for OTP 18-20, whose containers ship a glibc
-  # too old for the node20 runtime that actions/checkout and actions/cache
-  # now require. This job checks out with plain git and skips the cache.
-  test_legacy:
-    name: OTP ${{ matrix.otp_version }} (legacy)
-    runs-on: ubuntu-latest
-    container: erlang:${{ matrix.otp_version }}
-
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-        - otp_version: 20
-
-        - otp_version: 19
-
-        - otp_version: 19
-          erl_hist: true
-
-        - otp_version: 18
-          # old_rebar fails with "Package not found in registry: {<<"hdr_histogram">>,<<"0.5.0">>}."
-          # with hdr_histogram NIF: xprof_core_hist_SUITE: Segmentation fault (core dumped)
-          erl_hist: true
-          old_cowboy: true
-
-    steps:
-    - name: Checkout with git (avoids node-based actions on old glibc)
-      run: |
-        git config --global --add safe.directory $GITHUB_WORKSPACE
-        git init -q
-        git remote add origin "https://github.com/${{ github.repository }}"
-        git fetch -q --depth 1 origin "${{ github.ref }}"
-        git checkout -q FETCH_HEAD
-
-    - if: matrix.old_rebar
-      run: echo "REBAR3=./rebar3" >> $GITHUB_ENV
-
-    - if: matrix.erl_hist
-      run: echo "XPROF_ERL_HIST=true" >> $GITHUB_ENV
-
-    - if: matrix.old_cowboy
-      run: echo "COWBOY_VERSION=1.1.2" >> $GITHUB_ENV
-
-    # cowboy 2.7+ require OTP 20 and 2.11+ require OTP 24+. On OTP 19-23 pin to
-    # cowboy 2.6.3, last version that compiles fine on these old OTP versions.
-    - if: ${{ matrix.otp_version <= 23 && !matrix.old_cowboy }}
-      run: echo "COWBOY_VERSION=2.6.3" >> $GITHUB_ENV
-
-    - run: make test
 
   test_json_lib:
     name: Test different json lib (${{ matrix.json_lib }} | OTP ${{ matrix.otp_version }})
@@ -138,7 +70,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        otp_version: [21]
+        otp_version: [24]
         json_lib: [jiffy, jsx, thoas]
 
     steps:
@@ -149,11 +81,6 @@ jobs:
       with:
         path: $HOME/.cache/rebar3
         key: ${{ matrix.otp_version }}-rebar3-cache-json-lib
-
-    # cowboy 2.7+ require OTP 20 and 2.11+ require OTP 24+. On OTP 19-23 pin to
-    # cowboy 2.6.3, last version that compiles fine on these old OTP versions.
-    - if: ${{ matrix.otp_version <= 23 && !matrix.old_cowboy }}
-      run: echo "COWBOY_VERSION=2.6.3" >> $GITHUB_ENV
 
     - run: make test_${{ matrix.json_lib }}
 
@@ -263,25 +190,14 @@ jobs:
         elixir-version: ${{matrix.elixir}}
         rebar3-version: ${{matrix.rebar3}}
 
-    - if: matrix.old_rebar
-      run: echo "REBAR3=./rebar3" >> $GITHUB_ENV
-
     - if: matrix.erl_hist
       run: echo "XPROF_ERL_HIST=true" >> $GITHUB_ENV
-
-    - if: matrix.old_cowboy
-      run: echo "COWBOY_VERSION=1.1.2" >> $GITHUB_ENV
 
     - name: Cache hex packages
       uses: actions/cache@v3
       with:
         path: $HOME/.cache/rebar3
         key: ${{ matrix.otp_version }}-rebar3-cache
-
-    # cowboy 2.7+ require OTP 20 and 2.11+ require OTP 24+. On OTP 19-23 pin to
-    # cowboy 2.6.3, last version that compiles fine on these old OTP versions.
-    - if: ${{ matrix.otp_version <= 23 && !matrix.old_cowboy }}
-      run: echo "COWBOY_VERSION=2.6.3" >> $GITHUB_ENV
 
     - run: make test
 

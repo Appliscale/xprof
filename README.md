@@ -1,4 +1,4 @@
-XProf [![Build Status](https://travis-ci.org/Appliscale/xprof.svg?branch=master)](https://travis-ci.org/Appliscale/xprof) [![Coverage Status](https://coveralls.io/repos/github/Appliscale/xprof/badge.svg?branch=master)](https://coveralls.io/github/Appliscale/xprof?branch=master) [![Hex.pm](https://img.shields.io/hexpm/v/xprof.svg?style=flat-square)](https://hex.pm/packages/xprof) [![Hex.pm](https://img.shields.io/hexpm/dt/xprof.svg?style=flat-square)](https://hex.pm/packages/xprof) [![Gitter](https://badges.gitter.im/Appliscale/xprof.svg)](https://gitter.im/Appliscale/xprof?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
+XProf [![Coverage Status](https://coveralls.io/repos/github/Appliscale/xprof/badge.svg?branch=master)](https://coveralls.io/github/Appliscale/xprof?branch=master) [![Hex.pm](https://img.shields.io/hexpm/v/xprof.svg?style=flat-square)](https://hex.pm/packages/xprof) [![Hex.pm](https://img.shields.io/hexpm/dt/xprof.svg?style=flat-square)](https://hex.pm/packages/xprof) [![Gitter](https://badges.gitter.im/Appliscale/xprof.svg)](https://gitter.im/Appliscale/xprof?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 =====
 
 *XProf* is a visual tracer and profiler that allows you to track execution of Elixir / Erlang
@@ -78,7 +78,7 @@ You can also fetch from the github repository (not recommended, only for develop
 
 ## Supported Versions
 
-XProf currently supports Erlang/OTP 18 - 29 and Elixir 1.11-1.20.
+XProf currently supports Erlang/OTP 24 - 29 and Elixir 1.11-1.20.
 Newer OTP versions (if any) might work but are not tested.
 
 ## Syntax mode
@@ -138,12 +138,6 @@ library. If you have compilation problems you can choose to use a
 native Erlang histogram implementation by defining the OS env var
 `XPROF_ERL_HIST` when compiling `xprof_core`.
 
-`COWBOY_VERSION` - By default XProf uses Cowboy version 2.x. This
-version is only supported from Erlang/OTP 19 and is not backwards
-compatible with older Cowboy versions. If for some reason you would
-like to use Cowboy version 1.x you can define the OS env var
-`COWBOY_VERSION=1` when compiling `xprof_gui`.
-
 `XPROF_JSON_LIB` - By default XProf uses the `jsone` library. If you
 would like to use a different json library you can define the OS env
 var `XPROF_JSON_LIB` when compiling `xprof_gui`. It is assumed that
@@ -155,7 +149,6 @@ Examples
 
 ```
 export XPROF_ERL_HIST=true
-export COWBOY_VERSION=1
 export XPROF_JSON_LIB='Elixir.Jason'
 export XPROF_JSON_ENC_FUN='encode!'
 ```

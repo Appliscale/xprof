@@ -510,27 +510,8 @@ count_at_index(It, Index) ->
     %% Index is zero based
     element(Index + ?TOTAL_COUNT_INDEX + 1, It#it.counts).
 
-%% ceil/1 and floor/1 were introduced in OTP 20
--ifdef(ceil_floor).
-
 int_ceil(F) ->
     erlang:ceil(F).
 
 int_floor(F) ->
     erlang:floor(F).
-
--else.
-
-int_ceil(F) ->
-    R = round(F),
-    if R < F -> R + 1;
-       true -> R
-    end.
-
-int_floor(F) ->
-    R = round(F),
-    if R > F -> R - 1;
-       true -> R
-    end.
-
--endif.

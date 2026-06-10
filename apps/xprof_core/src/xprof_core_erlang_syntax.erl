@@ -24,17 +24,6 @@
 %% exported to fool dialyzer about breaking an opaque type
 -export([id/1]).
 
-%% in OTP 21 `format_exception/7' was moved from `lib' module to `erl_error'
--ifdef(OTP_RELEASE).
--if(?OTP_RELEASE >= 21).
-%% in OTP 21 or hifher
--define(ERL_ERROR_MOD, erl_error).
--endif.
--else.
-%% in OTP 20 or lower
--define(ERL_ERROR_MOD, lib).
--endif.
-
 %% @doc Parse a query string that represents either an xprof-flavoured
 %% match-spec fun or an extended xprof query in Erlang syntax.
 %%
@@ -364,8 +353,8 @@ fmt_exception(Class, Reason) ->
     PrettyFun = fun(Term, _Indent) -> do_fmt_term(Term) end,
     Encoding = unicode,
     unicode:characters_to_binary(
-      ["** "|?ERL_ERROR_MOD:format_exception(1, Class, Reason, Stacktrace,
-                                             SkipFun, PrettyFun, Encoding)]).
+      ["** "|erl_error:format_exception(1, Class, Reason, Stacktrace,
+                                        SkipFun, PrettyFun, Encoding)]).
 
 fmt_term(Term) ->
     unicode:characters_to_binary(do_fmt_term(Term)).
