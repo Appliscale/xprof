@@ -1,8 +1,6 @@
 %%% @doc Cowboy 2.x compatible HTTP handler
 -module(xprof_gui_cowboy2_handler).
 
--ifndef(COWBOY_VERSION_1).
-
 -behavior(cowboy_handler).
 
 %% xprof_gui_app callback
@@ -38,5 +36,3 @@ init(Req0, State) ->
                 cowboy_req:reply(StatusCode, ?HDR_NO_CONTENT, Req0)
         end,
     {ok, Req, State}.
-
--endif.

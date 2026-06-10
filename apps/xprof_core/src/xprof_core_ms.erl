@@ -36,16 +36,8 @@ default_ms() ->
 %% (the transform_from_shell api does not support recods as the shell
 %%  already expanded records before it passes the fun clauses as input)
 ms(Clauses, RecDefs) ->
-    IsEmptyArgs = (get_arity(Clauses) =:= 0),
-    ERR_DBG_HEAD = 3,
     ERR_HEADMATCH = 4,
     case ms_transform(Clauses, RecDefs) of
-        {error,[{_, [{_, ms_transform, ERR_DBG_HEAD}|_]}|_], _} when IsEmptyArgs ->
-            %% A bug in ms_trasform that was only fixed in OTP 19.2 prevents
-            %% empty list as head in "dbg:fun2ms(fun([]) -> ..."
-            %% (see https://github.com/erlang/otp/commit/8db6c68b)
-            workaround_empty_args_ms(
-              ms(workaround_empty_args_cl(Clauses), RecDefs));
         {error,[{_, [{_Loc ,ms_transform, ERR_HEADMATCH}]}], _} ->
             %% Before OTP 24.0 the column of a match expression was
             %% the column of the `=' sign. Since OTP 24.0 erl_parse
@@ -91,13 +83,6 @@ build_list([]) ->
 build_list([Arg|Args]) ->
     Loc = element(2, Arg),
     {cons, Loc, Arg, build_list(Args)}.
-
-workaround_empty_args_cl(Clauses) ->
-    [{clause, Loc, [{var, 0, '_'}], Guards, Body}
-      ||{clause, Loc, [], Guards, Body} <- Clauses].
-
-workaround_empty_args_ms(Ms) ->
-    [{[], G, B} || {['_'], G, B} <- Ms].
 
 %% @doc The match spec fun clauses are wrapped into a form list
 %% which contains the record definitions from module M

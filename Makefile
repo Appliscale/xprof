@@ -2,23 +2,17 @@ JS_PRIV=apps/xprof_gui/priv
 BIN_DIR:=node_modules/.bin
 REBAR3?=$(shell which rebar3 || echo ./rebar3)
 
-# this will update cowboy version based on rebar.config overwriting the lock file
-ifdef COWBOY_VERSION
-	MAYBE_UPDATE_COWBOY = $(REBAR3) upgrade cowboy
-endif
 ifdef XPROF_ERL_HIST
 	MAYBE_UNLOCK_HIST = $(REBAR3) unlock hdr_histogram
 endif
 
 compile:
-	$(MAYBE_UPDATE_COWBOY)
 	$(MAYBE_UNLOCK_HIST)
 	$(REBAR3) compile
 
 dev: dev_front_end dev_back_end
 
 dev_back_end:
-	$(MAYBE_UPDATE_COWBOY)
 	$(MAYBE_UNLOCK_HIST)
 	$(REBAR3) as dev compile, shell
 
@@ -37,27 +31,26 @@ build_prod_front_end:
 	cd $(JS_PRIV); npm run build
 
 test: compile
-	$(MAYBE_UPDATE_COWBOY)
 	$(MAYBE_UNLOCK_HIST)
 	$(REBAR3) as test do cover --reset, eunit -c, ct -c, cover --verbose
 
 test_jiffy:
-	$(MAYBE_UPDATE_COWBOY)
 	$(MAYBE_UNLOCK_HIST)
 	export XPROF_JSON_LIB=jiffy; \
 	$(REBAR3) as test_jiffy do compile, dialyzer, cover --reset, ct -c, cover --verbose
 
 test_jsx:
-	$(MAYBE_UPDATE_COWBOY)
 	$(MAYBE_UNLOCK_HIST)
 	export XPROF_JSON_LIB=jsx; \
 	$(REBAR3) as test_jsx do compile, dialyzer, cover --reset, ct -c, cover --verbose
 
 test_thoas:
-	$(MAYBE_UPDATE_COWBOY)
 	$(MAYBE_UNLOCK_HIST)
 	export XPROF_JSON_LIB=thoas; \
 	$(REBAR3) as test_thoas do compile, dialyzer, cover --reset, ct -c, cover --verbose
+
+send_coveralls:
+	$(REBAR3) as test coveralls send
 
 doc:
 	$(REBAR3) edoc
@@ -68,7 +61,6 @@ doc:
 	    -e '1 s|\[!\[.*||' README.md > ./doc/src/readme.md
 
 gen_ex_doc: ./doc/src/readme.md
-	$(MAYBE_UPDATE_COWBOY)
 	$(MAYBE_UNLOCK_HIST)
 	$(REBAR3) as docs ex_doc --app xprof_core
 	$(REBAR3) as docs ex_doc --app xprof_gui
@@ -77,7 +69,6 @@ gen_ex_doc: ./doc/src/readme.md
 	$(REBAR3) as docs ex_doc --app xprof
 
 dialyzer:
-	$(MAYBE_UPDATE_COWBOY)
 	$(MAYBE_UNLOCK_HIST)
 	$(REBAR3) dialyzer
 
@@ -87,4 +78,4 @@ publish:
 publish_docs: gen_ex_doc
 	$(REBAR3) as publish hex docs
 
-.PHONY: compile dev dev_back_end dev_front_end npm bootstrap_front_end test_front_end build_prod_front_end test doc gen_ex_doc dialyzer publish publish_docs
+.PHONY: compile dev dev_back_end dev_front_end npm bootstrap_front_end test_front_end build_prod_front_end test send_coveralls doc gen_ex_doc dialyzer publish publish_docs

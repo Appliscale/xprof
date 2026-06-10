@@ -12,11 +12,7 @@
 -define(DEF_WEB_IF_IP, any).
 -define(DEF_WEB_IF_PORT, 7890).
 -define(LISTENER, xprof_http_listener).
--ifdef(COWBOY_VERSION_1).
--define(HANDLER_MOD, xprof_gui_cowboy1_handler).
--else.
 -define(HANDLER_MOD, xprof_gui_cowboy2_handler).
--endif.
 
 %% Application callbacks
 
